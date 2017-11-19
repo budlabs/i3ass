@@ -1,0 +1,135 @@
+#!/bin/bash
+
+NAME="i3run"
+VERSION="0.001"
+AUTHOR="budRich"
+CONTACT='robstenklippa@gmail.com'
+CREATED="2017-04-20"
+UPDATED="2017-11-19"
+
+about="
+$NAME - $VERSION - $UPDATED
+created: $CREATED by $AUTHOR
+===============================
+This is a run or raise or hide script for i3wm.
+It looks for a window matching a given criteria.
+
+These are the actions taken depending on the state of the found window:
+
+If found window is active and not handled by i3fyra - mark and hide
+If found window is active and handled by i3fyra     - do nothing
+If found window is handled by i3fyra and hidden     - show container, activate
+If found window is not handled by i3fyra and hidden - show window, activate
+If no window is found                               - run command
+
+Hidden in this context, means, not on the current workspace.
+Show in this context means, move window to current workspace.
+
+This might not be desired behaviour for some workflows, but htat's how it works.
+
+usage
+-----
+$NAME -h|v|i|c|t [CRITERIA] [-e COMMAND] 
+
+option | argument | function
+----------------------------
+
+-v     |           | Show version and exit.
+-h     |           | Show this info and exit. 
+-c     | CLASS     | Search for windows with the given CLASS
+-i     | INSTANCE  | Search for windows with the given INSTANCE
+-t     | TITLE     | Search for windows with the given TITLE
+-e     | COMMAND   | Command to run if no window is found.
+
+it is important that -e COMMAND is last of the options.
+-e is optional, if no COMMAND is passed and no window is found, nothing happens.
+It is also important that COMMAND will spawn a window matching the criteria,
+otherwise the script will get stuck in a loop waiting for the window to appear.
+
+dependencies
+------------
+
+* i3list
+* i3get 
+  since i3get is slightly faster and have sync option, 
+  it is used to wait for a window to appear after COMMAND is executed.
+
+contact
+-------
+$CONTACT
+"
+
+while getopts :c:i:t:e:l: option; do
+  case "${option}" in
+    v) printf "$NAME - version: $VERSION\n"  && \
+       printf "updated: $UPDATED by $AUTHOR\n" \
+        && exit;;
+    h) printf "${about}\n" && exit;;
+    i) acri=("-i" "${OPTARG}") ;;
+    c) acri=("-c" "${OPTARG}") ;;
+    t) acri=("-t" "${OPTARG}") ;;
+    e) command="${OPTARG}"     ;;
+  esac
+done
+
+declare -A gla
+
+alst=($(i3list ${acri[@]}))
+
+gla[AWW]=${alst[0]}   #  current workspace
+gla[VIS]=${alst[1]}   #  visible containers
+gla[HID]=${alst[2]}   #  hidden containers
+gla[EXS]=${alst[3]}   #  existing containers (VIS+HID)
+gla[AWP]=${alst[4]}   #  Active window position (b|e|m|g|i)
+gla[AWS]=${alst[6]}   #  Active window status (f|a|n)
+gla[AWC]=${alst[7]}   #  Active window container (A|B|C|D|X)
+gla[AWI]=${alst[9]}   #  Active window id (con_id)
+gla[AWM]=${alst[10]}  #  Active window mark
+gla[TWP]=${alst[11]}  #  Target window position (b|e|m|g|i)
+gla[TWS]=${alst[13]}  #  Target window status (f|a|n)
+gla[TWC]=${alst[14]}  #  Target window container (A|B|C|D|X)
+gla[TWW]=${alst[15]}  #  Target window workspace
+gla[TWI]=${alst[16]}  #  Target window id (con_id)
+gla[TWM]=${alst[17]}  #  Target window mark
+
+# 94301996421552|1|X|aug|
+
+# if window doesn't exist, launch the command.
+if [[ ${gla[TWI]} = X ]]; then
+  eval "${command}" > /dev/null 2>&1 & 
+  i3get -y ${acri[@]} 
+  exit
+fi
+
+# if target window is active (current), send it to the scratchpad.
+# else focus target window.
+if [[ ${gla[AWI]} = ${gla[TWI]} ]]; then
+  if [[ ${gla[TWC]} = X ]]; then
+    [[ ${gla[TWP]} != 'g' ]] && fs=t || fs=f
+    i3-msg "[con_id=${gla[TWI]}]" \
+    mark "$fs-${gla[TWI]}", \
+    move scratchpad > /dev/null 2>&1
+  fi
+else
+  if [[ ${gla[TWC]} = X ]]; then
+
+    if [[ ${gla[AWW]} != ${gla[TWW]} ]]; then
+
+      if [[ -n ${gla[TWM]} ]]; then
+        ofs=${gla[TWM]%%'-'*}
+        [[ $ofs = 'f' ]] \
+          && fs=enable || fs=disable
+      else
+        [[ ${gla[TWP]} = g ]] \
+          && fs=enable || fs=disable
+      fi
+      
+      i3-msg "[con_id=${gla[TWI]}]" \
+        move to workspace ${gla[AWW]}, \
+        floating $fs > /dev/null 2>&1
+    fi
+  else
+    [[ ${gla[TWC]} =~ [${gla[HID]}] ]] && fyra -s ${gla[TWC]}
+  fi
+  i3-msg [con_id=${gla[TWI]}] focus > /dev/null 2>&1
+fi

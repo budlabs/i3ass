@@ -1,0 +1,403 @@
+#!/bin/sh
+
+NAME="i3list"
+VERSION="0.123"
+AUTHOR="budRich"
+CONTACT='robstenklippa@gmail.com'
+CREATED="2017-10-06"
+UPDATED="2017-11-19"
+
+about="
+$NAME - $VERSION - $UPDATED
+created: $CREATED by $AUTHOR
+===============================
+This script is vital for i3fyra to work. But it can be used on it's own
+or with other scripts. i3list is also used by i3run. i3list parses the
+output of the command:
+i3-msg -t get_tree 
+and returns a long string with 43 values separated by spaces. This strange 
+output format is made to make it possible to pipe the output to other scripts. 
+A lot of the information is specific to i3fyra, but if i3list doesn't find a 
+value an X will be placed in it's place in the output.
+
+The idea, is to use this script once, and get all the info about i3's current
+state in one big chunk. So one doesn't have to make more requests for 
+tree output. It have speeded up my own scripts a lot. And it also makes many
+listener scripts unnecessary. The parsing is done with awk, and it is very
+fast, about 25ms on my average computer (i5, 4GB). Same operation with pure
+bash would take at least a whole second (x40).
+
+I have made another script, i3get, that works in a similar way but where you
+choose which information you want in the output. It is slightly faster (5ms).
+
+usage
+-----
+$NAME [OPTION CRITERIA]
+
+option | argument | function
+----------------------------
+
+-v     |           | Show version and exit.
+-h     |           | Show this info and exit. 
+-c     | CLASS     | Search for windows with the given CLASS
+-i     | INSTANCE  | Search for windows with the given INSTANCE
+-t     | TITLE     | Search for windows with the given TITLE
+-n     | CON_ID    | Search for windows with the given CON_ID
+-d     | WINDOW_ID | Search for windows with the given WINDOW ID
+-m     | CON_MARK  | Search for windows with the given MARK
+
+If no option is passed, active window will be target.
+
+example output:
+\$ i3list
+  1 ABD C ABDC g u a X 1 94834554562528 f-94834554562528 g u a X 1 \
+  94834554562528 f-94834554562528 t 94834555596640 94834555347456 \
+  94834555596640 t 94834555517248 94834555517248 94834555517248 t \
+  94834555385280 94834555385280 94834555385280 t 94834555516528 \
+  94834555556800 94834555556800 1069 585 234 1056 900 234 A BD 1600 900
+
+Below is a cipher for the output:
+
+field: 0   - AWW -  current workspace
+field: 1   - VIS -  visible containers
+field: 2   - HID -  hidden containers
+field: 3   - EXS -  existing containers (VIS+HID)
+field: 4   - AWP -  Active window position (b|e|m|o|g|i)
+field: 5   - AWL -  Active window layout (t|v|h|s|u)
+field: 6   - AWS -  Active window status (f|a|n)
+field: 7   - AWC -  Active window container (A|B|C|D|X)
+field: 8   - AWW -  Active window workspace
+field: 9   - AWI -  Active window id (con_id)
+field: 10  - AWM -  Active window mark
+field: 11  - TWP -  Target window position (b|e|m|o|g|i)
+field: 12  - TWL -  Target window layout (t|v|h|s|u)
+field: 13  - TWS -  Target window status (f|a|n)
+field: 14  - TWC -  Target window container (A|B|C|D|X)
+field: 15  - TWW -  Target window workspace
+field: 16  - TWI -  Target window id (con_id)
+field: 17  - TWM -  Target window mark
+field: 18  - LOA -  Container A layout
+field: 19  - FCA -  Container A first child (con_id)
+field: 20  - LCA -  Container A last child (con_id)
+field: 21  - ACA -  Container A focused child (con_id)
+field: 22  - LOB -  Container B layout
+field: 23  - FCB -  Container B first child (con_id)
+field: 24  - LCB -  Container B last child (con_id)
+field: 25  - ACB -  Container B focused child (con_id)
+field: 26  - LOC -  Container C layout
+field: 27  - FCC -  Container C first child (con_id)
+field: 28  - LCC -  Container C last child (con_id)
+field: 29  - ACC -  Container C focused child (con_id)
+field: 30  - LOD -  Container D layout
+field: 31  - FCD -  Container D first child (con_id)
+field: 32  - LCD -  Container D last child (con_id)
+field: 33  - ACD -  Container D focused child (con_id)
+field: 34  - SAB -  Stored AB split (mark i34SAB_*)
+field: 35  - SAC -  Stored AC split (mark i34SAC_*)
+field: 36  - SBD -  Stored BD split (mark i34SBD_*)
+field: 37  - CAB -  Current AB split (width of i34XAC)
+field: 38  - CAC -  Current AC split (height of i34A)
+field: 39  - CBD -  Current BD split (height of i34B)
+field: 40  - FAC -  Family AC memory (mark i34FAC_*)
+field: 41  - FBD -  Family AC memory (mark i34FBD_*)
+field: 42  - SDW -  Width of current workspace
+field: 43  - SDH -  Height of curent workspace
+
+position (b|e|m|g|i)
+b - beginning  first child in container
+e - end        last child in container
+m - middle     neither first or last
+o - only       only child in container
+g - floating   not handled by i3fyra
+i - tiled      not handled by i3fyra
+
+layout (t|v|h|s|u)
+t - tabbed
+v - vertical
+h - horizontal
+s - stacked
+u - unknown (not handled by i3fyra)
+
+status (f|a|n)
+f - focused (visible window in a tabbed container)
+a - active window
+n = neither active or focused
+
+The best way to handle the output is to put it in an array.
+Example:
+\$ list_array=\$(i3list)
+\$ echo \${list_array[42]}
+  1600 # width of current workspace
+
+dependencies
+------------
+
+* i3wm
+
+contact
+-------
+$CONTACT
+"
+
+while getopts :c:i:t:n:d:r:m:ayvh option
+do
+  case "${option}" in
+    i) crit="\"instance\"" srch="${OPTARG}";;
+    c) crit="\"class\"" srch="${OPTARG}";;
+    t) crit="\"title\"" srch="${OPTARG}";;
+    n) crit="\"id\"" srch="${OPTARG}";;
+    d) crit="\"window\"" srch="${OPTARG}";;
+    m) crit="\"marks\"" srch="${OPTARG}";;
+    a) crit="\"focused\"" && srch="true";;
+    y) synk=1;;
+    v) printf "$NAME - version: $VERSION\n"  && \
+       printf "updated: $UPDATED by $AUTHOR\n" \
+        && exit;;
+    h) printf "${about}\n" && exit;;
+  esac
+done
+
+synk=${synk:=0}
+[ -z "$crit" ] && crit="\"focused\"" && srch="true"
+
+containerlist(){
+ 
+  i3-msg -t get_tree \
+  | awk -v RS=',' -F':' \
+    -v chkl="$(echo i34{A..D})" -v crit="${crit}" -v srch="${srch}" \
+    '
+      BEGIN{
+        hit="0";trg="0";act="0";marko="X";wsdchk="0"
+        VIS="X";HID="X";EXS="X"
+        split(chkl,alst," ",seps)
+        
+        SDW="X";SDH="X";CWS="X"
+        FAC="X";FBD="X"
+
+        SAB="X";SAC="X";SBD="X"
+        CAB="X";CAC="X";CBD="X"
+
+        TWP="X";TWL="X";TWS="X";TWC="X"
+        TWW="X";TWI="X";TWM="X"
+
+        AWP="X";AWL="X";AWS="X";AWC="X"
+        AWW="X";AWI="X";AWM="X"
+
+        LOA="X";FCA="X";LCA="X";ACA="X"
+        LOB="X";FCB="X";LCB="X";ACB="X"
+        LOC="X";FCC="X";LCC="X";ACC="X"
+        LOD="X";FCD="X";LCD="X";ACD="X"
+      }
+
+      hit!=0 && $0~"{" {hit++}
+      hit!=0 && $0~"}" {hit--}
+      hit!=0 && $1=="\"focus\"" {
+        gsub("[[]|[]]","",$2)
+        conta[marko]["focused"]=$2
+      }
+
+      $1=="\"type\"" && $2=="\"workspace\"" {wsdchk="1"}
+      wsdchk=="1" && $1=="\"width\""  {dim["w"]=$2}
+      wsdchk=="1" && $1=="\"height\"" {gsub("}","",$2);dim["h"]=$2;wsdchk="2"}
+      $1=="\"num\"" {curws=$2}
+      wsdchk=="2" && $1=="\"num\"" {
+        dim[$2]["w"]=dim["w"]
+        dim[$2]["h"]=dim["h"]
+        wsdchk="0"
+      }
+
+      $1~"{\"id\"" || $2~"\"id\"" {
+        wid=$NF
+        if(trg=="0" || act=="0"){cid=$NF}
+        if(hit!=0){
+          conta[marko]["childs"]=conta[marko]["childs"] wid " "
+          conta[marko]["id"]=cid
+        }
+      }
+      
+      trg=="0" && $1==crit && $2 ~ srch  {TWI=cid;trg="1";}
+      trg=="0" && $2 ~ crit && $3 ~ srch {trg="1";TWI=cid}
+      act=="0" && $1=="\"focused\"" && $2=="true" {act="1";AWI=cid}
+      numchk=="1" && $1=="\"width\""  {dim[curws]["w"]=$2}
+      numchk=="1" && $1=="\"height\"" {gsub("}","",$2);dim[curws]["h"]=$2;numchk=0}
+      abchk=="1" && $1=="\"width\""  {CAB=$2;abchk=0}
+      acchk=="1" && $1=="\"height\"" {gsub("}","",$2);CAC=$2;acchk=0}
+      bdchk=="1" && $1=="\"height\"" {gsub("}","",$2);CBD=$2;bdchk=0}
+
+      $1=="\"floating\"" {
+        if(trg!="2" || act!="2") {
+
+          if(cid == AWI){
+            if($2~"on"){AWP="g"}
+            if($2!~"on"){AWP="i"}
+            AWW=curws
+            AWC="X"
+            AWL="u"
+            AWS="a"
+            if(cid == conta[marko]["id"]){
+              AWC=marko
+              AWL=conta[marko]["layout"]
+            }
+            if(cmrk!=""){AWM=cmrk}
+            act="2"
+          }
+
+          if(cid == TWI){
+            if($2~"on"){TWP="g"}
+            if($2!~"on"){TWP="i"}
+            TWW=curws
+            TWC="X"
+            TWL="u"
+            TWS="n"
+            if(TWI == AWI){TWS="a"}
+            if(cid == conta[marko]["id"]){
+              TWC=marko
+              TWL=conta[marko]["layout"]
+            }
+            if(cmrk!=""){TWM=cmrk}
+            trg="2"
+          }
+       }
+       cmrk=""
+     }
+
+      $1=="\"marks\"" {
+        gsub("[[]|[]]|\"","",$2);
+        for (m in alst) {
+          if(alst[m] == $2){
+            hit=1
+            gsub("i34","",alst[m])
+            marko=alst[m]
+            conta[marko]["ws"]=curws
+            conta[marko]["layout"]="-"}
+        }
+
+        cmrk=$2
+
+        if($2~"i34SAB"){
+          split($2,asplt,"_")
+          SAB=asplt[2]
+        }
+        if($2~"i34SAC"){
+          split($2,asplt,"_")
+          SAC=asplt[2]
+        }
+        if($2~"i34SBD"){
+          split($2,asplt,"_")
+          SBD=asplt[2]
+        }
+        if($2~"i34FAC"){
+          split($2,asplt,"_")
+          FAC=asplt[2]
+        }
+        if($2~"i34FBD"){
+          split($2,asplt,"_")
+          FBD=asplt[2]
+        }
+        if($2=="i34XAC"){abchk=1}
+        if($2=="i34A"){acchk=1}
+        if($2=="i34B"){bdchk=1}
+      }
+
+      hit!=0 && $1=="\"layout\"" && conta[marko]["layout"]=="-" {
+        gsub("\"","",$2)
+        if($2=="tabbed")
+          conta[marko]["layout"]="t"
+        if($2=="splith")
+          conta[marko]["layout"]="h"
+        if($2=="splitv")
+          conta[marko]["layout"]="v"
+        if($2=="stacked")
+          conta[marko]["layout"]="s"
+      }
+
+      END{
+        FS=" "
+        if(AWC!="X"){AWP="m"}
+        if(TWC!="X"){TWP="m"}
+        for (c in conta) {
+          $0=conta[c]["childs"]; tmplngth=NF
+          split(conta[c]["childs"],achld," ")
+          i=0
+          for(d in achld){
+            i++
+            
+            if(c~/^A$|^B$|^C$|^D$/){
+              if(i == tmplngth){
+                if(AWC==c && AWI==achld[d]){AWP="e"}
+                if(TWC==c && TWI==achld[d]){TWP="e"}
+                conta[c]["LC"]=achld[d]
+              }
+              if(i==1){
+                if(AWC==c && AWI==achld[d]){AWP="b"}
+                if(TWC==c && TWI==achld[d]){TWP="b"}
+                conta[c]["FC"]=achld[d]
+              }
+              if(tmplngth==1){
+                if(AWC==c){AWP="o"}
+                if(TWC==c){TWP="o"}
+              }
+            }
+          }
+        }   
+
+        if(TWS!="a"){
+          TWS="n"
+          if(conta[TWC]["focused"]==TWI){TWS="f"}
+        }
+
+        if(TWI==""){
+          TWC="X";TWW="X";TWP="X";TWI="X"}
+
+        for (c in conta) {
+          if(c~/^A$|^B$|^C$|^D$/){
+
+            if(conta[c]["ws"]==AWW){gsub("X","",VIS);VIS=VIS c}
+            if(conta[c]["ws"]!=AWW){gsub("X","",HID);HID=HID c}
+
+            if(c=="A"){
+              LOA=conta[c]["layout"]
+              FCA=conta[c]["FC"]
+              LCA=conta[c]["LC"]
+              ACA=conta[c]["focused"]
+            }
+            if(c=="B"){
+              LOB=conta[c]["layout"]
+              FCB=conta[c]["FC"]
+              LCB=conta[c]["LC"]
+              ACB=conta[c]["focused"]
+            }
+            if(c=="C"){
+              LOC=conta[c]["layout"]
+              FCC=conta[c]["FC"]
+              LCC=conta[c]["LC"]
+              ACC=conta[c]["focused"]
+            }
+            if(c=="D"){
+              LOD=conta[c]["layout"]
+              FCD=conta[c]["FC"]
+              LCD=conta[c]["LC"]
+              ACD=conta[c]["focused"]
+            }
+          }
+        }
+        EXS=VIS HID
+        if(EXS=="XX"){EXS="X"}
+        else{gsub("X","",EXS)}
+        
+        print AWW " " VIS " " HID " " EXS " " \
+          AWP " " AWL " " AWS " " AWC " " AWW " " AWI " " AWM " " \
+          TWP " " TWL " " TWS " " TWC " " TWW " " TWI " " TWM " " \
+          LOA " " FCA " " LCA " " ACA " " \
+          LOB " " FCB " " LCB " " ACB " " \
+          LOC " " FCC " " LCC " " ACC " " \
+          LOD " " FCD " " LCD " " ACD " " \
+          SAB " " SAC " " SBD " " \
+          CAB " " CAC " " CBD " " \
+          FAC " " FBD " " \
+          dim[AWW]["w"] " " dim[AWW]["h"]
+      }
+    '
+}
+
+containerlist

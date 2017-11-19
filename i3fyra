@@ -1,0 +1,956 @@
+#!/bin/bash
+
+NAME="i3fyra"
+VERSION="0.420"
+AUTHOR="budRich"
+CONTACT='robstenklippa@gmail.com'
+CREATED="2017-01-14"
+UPDATED="2017-11-19"
+
+about="
+$NAME - $VERSION - $UPDATED
+created: $CREATED by $AUTHOR
+===============================
+An advanced simple tiling layout for i3wm. 
+The layout consists of four containers:
+
+  A B
+  C D
+
+The internal layout of the containers doesn't matter.
+
+A is always to the right of B and D. And always above C.
+B is always to the left of A and C. And always above D.
+
+This means that the containers will change names if their position changes.
+
+The size of the containers are defined by the three splits: AB, AC and BD.
+Container A and C are siblings and container B and D are siblings. 
+
+If ABC are visible but D is hidden or none existent, layout becomes:
+
+  A B
+  C B
+
+If action: *move up* (-m u) would be called when B container is active 
+and D is hidden. Container D would be shown. If action would have been:
+*move down* (-m d), D would be shown and B and D would swap position and name.
+If action would have been *move left* (-m l) the active window in B would be
+moved to container A. If action was: *move right* (-m r) A and C would be hidden:
+
+  B B
+  B B
+
+If we now call action: *move left* (-m l) A and C would be shown again but
+to the right of B, the containers would also change names, so B becomes A, 
+A becomes B and C becomes D:
+
+  A B
+  A D
+
+usage
+-----
+$NAME [OPTTION] [ARGUMENT]
+
+option | argument | action
+--------------------------
+-v     |          | Show version info and exit.
+
+-h     |          | Help, shows this info.
+
+-a     |          | Autolayout. If current window is tiled: floating enabled
+                    If window is floating, it will be put in a visible container.
+                    If there is no visible containers. The window will be placed
+                    in a hidden container. If no containers exist, container 'A'
+                    will be created and the window will be put there.
+
+-s     | A|B|C|D  | Show target container. If it doesn't exist, it will be 
+                    created and current window will be put in it.
+                    If it is visible, nothing happens.
+
+-w     | i3list   | Use target i3list instead of getting a new list.
+
+-m     | A|B|C|D  | Moves current window to target container, either defined by
+         u|d|l|r    it's name or it's position relative to the current container
+                    with a direction: [l|left][r|right][u|up][d|down]
+                    If the container doesnt exist it is created. If argument is
+                    a direction and there is no container in that direction, 
+                    Connected container(s) visibility is toggled.
+                    If current window is floating or not inside ABCD, normal 
+                    movement is performed. Distance for moving floating windows
+                    with this action can be defined with the -p option. Example:
+                    i3fyra -p 30 -m r
+                    Will move current window 30 pixels to the right, 
+                    if it is floating.
+         
+-z     | A|B|C|D  | Hide target container if it is visible, otherwise do nothing.
+
+-f     | u|d|l|r  | move focus in target direction. 
+
+-t     | u|d|l|r  | move focus inside current container (switch tabs). Autowarp.
+
+-p     | INT      | Distance in pixels to move a floating window. Defaults to 30.
+
+-l     | '[AB=INT] [AC=INT] [BD=INT]' | alter splits
+                    Changes the given splits. INT is a distance in pixels.
+                    AB is on X axis from the left side if INT is positive, from
+                       the right side if it is negative.
+                    AC and BD is on Y axis from the top if INT is positive, from
+                       the bottom if it is negative.
+                    The whole argument needs to be quoted. Example:
+                    fyra -l 'AB=-300 BD=420'
+
+dependencies
+------------
+
+* i3list
+* i3gw
+
+contact
+-------
+$CONTACT
+"
+
+initglobals(){
+
+  local z
+
+  # alst is the results from i3list placed in an array.
+
+  gla[AWW]=${alst[0]}   #  current workspace
+  gla[VIS]=${alst[1]}   #  visible containers
+  gla[HID]=${alst[2]}   #  hidden containers
+  gla[EXS]=${alst[3]}   #  existing containers (VIS+HID)
+  gla[AWP]=${alst[4]}   #  Active window position (b|e|m|g|i)
+  gla[AWL]=${alst[5]}   #  Active window layout (t|v|h|s|u)
+  gla[AWS]=${alst[6]}   #  Active window status (f|a|n)
+  gla[AWC]=${alst[7]}   #  Active window container (A|B|C|D|X)
+  gla[AWW]=${alst[8]}   #  Active window workspace
+  gla[AWI]=${alst[9]}   #  Active window id (con_id)
+  gla[AWM]=${alst[10]}  #  Active window mark
+  gla[TWP]=${alst[11]}  #  Target window position (b|e|m|g|i)
+  gla[TWL]=${alst[12]}  #  Target window layout (t|v|h|s|u)
+  gla[TWS]=${alst[13]}  #  Target window status (f|a|n)
+  gla[TWC]=${alst[14]}  #  Target window container (A|B|C|D|X)
+  gla[TWW]=${alst[15]}  #  Target window workspace
+  gla[TWI]=${alst[16]}  #  Target window id (con_id)
+  gla[TWM]=${alst[17]}  #  Target window mark
+  gla[LOA]=${alst[18]}  #  Container A layout
+  gla[FCA]=${alst[19]}  #  Container A first child (con_id)
+  gla[LCA]=${alst[20]}  #  Container A last child (con_id)
+  gla[ACA]=${alst[21]}  #  Container A focused child (con_id)
+  gla[LOB]=${alst[22]}  #  Container B layout
+  gla[FCB]=${alst[23]}  #  Container B first child (con_id)
+  gla[LCB]=${alst[24]}  #  Container B last child (con_id)
+  gla[ACB]=${alst[25]}  #  Container B focused child (con_id)
+  gla[LOC]=${alst[26]}  #  Container C layout
+  gla[FCC]=${alst[27]}  #  Container C first child (con_id)
+  gla[LCC]=${alst[28]}  #  Container C last child (con_id)
+  gla[ACC]=${alst[29]}  #  Container C focused child (con_id)
+  gla[LOD]=${alst[30]}  #  Container D layout
+  gla[FCD]=${alst[31]}  #  Container D first child (con_id)
+  gla[LCD]=${alst[32]}  #  Container D last child (con_id)
+  gla[ACD]=${alst[33]}  #  Container D focused child (con_id)
+  gla[SAB]=${alst[34]}  #  Stored AB split (mark i34SAB_*)
+  gla[SAC]=${alst[35]}  #  Stored AC split (mark i34SAC_*)
+  gla[SBD]=${alst[36]}  #  Stored BD split (mark i34SBD_*)
+  gla[CAB]=${alst[37]}  #  Current AB split (width of i34XAC)
+  gla[CAC]=${alst[38]}  #  Current AC split (height of i34A)
+  gla[CBD]=${alst[39]}  #  Current BD split (height of i34B)
+  gla[FAC]=${alst[40]}  #  Family AC memory (mark i34FAC_*)
+  gla[FBD]=${alst[41]}  #  Family AC memory (mark i34FBD_*)
+  gla[SDW]=${alst[42]}  #  Width of current workspace
+  gla[SDH]=${alst[43]}  #  Height of curent workspace
+
+  gla[ALL]=ABCD # all containers sorted by appearance
+
+  for (( z = 0; z < 4; z++ )); do
+    def[$((z+1))]=${gla[ALL]:$z:1} # array with default container positions
+    loa[$((z+1))]=${gla[ALL]:$z:1} # array with actual container positions
+    [[ ${gla[AWC]} = ${gla[ALL]:$z:1} ]] && ncur=$((z+1)) # theoretic position of active container
+  done
+
+  gla[ALL]=ACBD # all containers sorted by families
+}
+
+applysplits(){
+  local i tsn tsv osv par dir tsp osp dirv csp mrk ssv
+  asplt=(${1})
+  for i in ${!asplt[@]}; do
+    tsn="${asplt[$i]%\=*}" # target name of split
+    tsv="${asplt[$i]#*\=}" # target value of split
+    osv="${gla[C${tsn}]}"  # current value of split
+    ssv="${gla[S${tsn}]}"  # stored value of split
+
+    [[ $tsn = AB ]] && par=${gla[SDW]} dir=width mrk=i34XAC \
+                    || par=${gla[SDH]} dir=height mrk=i34${tsn:0:1}
+
+    ((tsv<0)) && tsv=$((tsv*-1)) tsv=$((par-tsv))
+    tsp=$(echo $tsv $par | awk '{print $1/$2*100 }')
+    osp=$(echo $osv $par | awk '{print $1/$2*100 }')
+    tsp=${tsp%.*} osp=${osp%.*}
+
+    ((tsp==osp)) && continue
+    ((tsp>osp)) && dirv=grow csp=$((tsp-osp)) \
+                || dirv=shrink csp=$((osp-tsp))
+
+    i3-msg -q "[con_mark=$mrk]" \
+      resize $dirv $dir $csp px or $csp ppt
+
+    if [[ $ssv = X ]]; then
+      i3gw "i34S${tsn}_${tsv}"  > /dev/null 2>&1
+      i3-msg -q "[con_mark=i34S${tsn}_${tsv}]" move scratchpad
+    else
+      i3-msg -q "[con_mark=i34S${tsn}]" mark "i34S${tsn}_${tsv}"
+    fi
+  done
+}
+
+tabswitch(){
+  local dir ldir
+
+  [[ ${gla[AWC]} = X ]] || [[ ${gla[AWP]} = o ]] && return
+
+  dir=${1:-r}
+  dir=${dir:0:1}
+
+  [[ ${gla[AWL]} =~ v|s ]] && dir=${dir/l/u} dir=${dir/r/d}
+
+  case $dir in
+    l ) ldir=left  ;;
+    r ) ldir=right ;;
+    u ) ldir=up    ;;
+    d ) ldir=down  ;;
+  esac
+
+  if [[ ${gla[AWP]} = e ]] && [[ $dir =~ r|d ]]; then
+    i3-msg -q "[con_id=${gla[FC${gla[AWC]}]}]" focus
+    #statements
+  elif [[ ${gla[AWP]} = b ]] && [[ $dir =~ l|u ]]; then
+    i3-msg -q "[con_id=${gla[LC${gla[AWC]}]}]" focus
+    #statements
+  else
+    i3-msg -q focus $ldir
+  fi
+}
+
+windowfocus(){
+  
+  local cur dir trg sib twin cous ldir
+  local awp awl shd normove trgid
+
+  cur=${gla[AWC]}
+
+  dir=${1:-r}
+  shd=${dir:0:1}  # first letter in direction
+
+  case $shd in
+    l ) ldir=left  ;;
+    r ) ldir=right ;;
+    u ) ldir=up    ;;
+    d ) ldir=down  ;;
+  esac
+
+  normove=0
+
+  if [[ $dir =~ A|B|C|D ]]; then
+    if [[ $dir =~ [${gla[EXS]}] ]]; then
+      containershow $dir
+      i3-msg -q "[con_mark=i34${dir}]" focus
+    fi
+    return
+  fi
+
+  echo ${gla[AWP]}
+
+  # normal movement if:
+  while :;do
+    [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = m ]] && [[ $shd =~ [lr] ]] \
+      && normove=1 && echo k1 && break
+    [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = b ]] && [[ $shd = r ]]  \
+      && normove=1 && echo k2 && break
+    [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = e ]] && [[ $shd = l ]]  \
+      && normove=1 && echo k3 && break
+    [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = m ]] && [[ $shd =~ u|d ]] \
+      && normove=1 && echo k4 && break
+    [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = b ]] && [[ $shd = d ]]  \
+      && normove=1 && echo k5 && break
+    [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = e ]] && [[ $shd = u ]]  \
+      && normove=1 && echo k6 && break
+
+    break
+  done
+
+  # if window isn't handled by i34, move it normaly
+  if [[ $cur = X ]] || [[ $normove = 1 ]]; then
+    [[ ! $shd =~ l|r|u|d ]] && return
+    i3-msg -q focus $ldir && return
+  fi
+
+  # if window is the only visible window handled by i34, do nothing
+  ((${#gla[VIS]}==1)) && return
+
+  case $cur in
+    A ) twin=B cous=D sib=C ;;
+    B ) twin=A cous=C sib=D ;;
+    C ) twin=D cous=B sib=A ;;
+    D ) twin=C cous=A sib=B ;;
+  esac
+
+  trg=X
+
+  # if up down, focus sib if it is visible
+  if   [[ $shd = u ]] && [[ $sib =~ [${gla[VIS]}] ]]; then
+    [[ ${gla[LO${sib}]} = v ]] && i3-msg -q "[con_id=${gla[LC${sib}]}]" focus \
+                               || i3-msg -q "[con_id=${gla[AC${sib}]}]" focus
+  elif [[ $shd = d ]] && [[ $sib =~ [${gla[VIS]}] ]]; then
+    [[ ${gla[LO${sib}]} = v ]] && i3-msg -q "[con_id=${gla[FC${sib}]}]" focus \
+                               || i3-msg -q "[con_id=${gla[AC${sib}]}]" focus
+
+  elif [[ $shd =~ l|r ]]; then
+
+    if [[ $twin =~ [${gla[VIS]}] ]]; then
+      trg=$twin
+    elif [[ $cous =~ [${gla[VIS]}] ]]; then
+      trg=$cous
+    fi
+
+    [[ $trg = X ]] && return
+
+    if [[ ${gla[LO$trg]} != h ]]; then
+      trgid=${gla[AC${trg}]}
+    elif [[ $shd = l ]]; then
+      trgid=${gla[LC${trg}]} 
+    elif [[ $shd = r ]]; then
+      trgid=${gla[FC${trg}]}
+    fi 
+    i3-msg -q "[con_id=${trgid}]" focus
+  fi
+}
+
+windowmove(){
+
+  local cur dir wall trg sib twin cous i xofam
+  local tfam ofam ntrg trg i34W lstcnts exst tfammem
+  local shd normove
+  cur=${gla[AWC]}
+  dir=$1
+  normove=0
+
+  if [[ $dir =~ A|B|C|D ]]; then
+    if [[ $dir =~ [${gla[VIS]}${gla[HID]}] ]]; then
+      containershow $dir
+      i3-msg -q "[con_id=${gla[AWI]}]" floating disable, move to mark i34${dir}
+    else
+      containershow $dir
+    fi
+    i3-msg -q "[con_id=${gla[AWI]}]" focus
+    return
+  fi
+
+  shd=${dir:0:1}  # first letter in direction
+
+  # normal movement if:
+  while :;do
+    [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = m ]] && [[ $shd =~ [lr] ]] \
+      && normove=1 && break
+    [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = b ]] && [[ $shd = r ]]  \
+      && normove=1 && break
+    [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = e ]] && [[ $shd = l ]]  \
+      && normove=1 && break
+    [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = m ]] && [[ $shd =~ [ud] ]] \
+      && normove=1 && break
+    [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = b ]] && [[ $shd = d ]]  \
+      && normove=1 && break
+    [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = e ]] && [[ $shd = u ]]  \
+      && normove=1 && break
+
+    break
+  done
+
+  # if window isn't handled by i34, move it normaly
+  if [[ $cur = X ]] || [[ $normove = 1 ]]; then
+    [[ ! ${dir:0:1} =~ l|r|u|d ]] && return
+    if [[ ${#dir} = 1 ]]; then
+      case $dir in
+        l ) dir=left  ;;
+        r ) dir=right ;;
+        u ) dir=up    ;;
+        d ) dir=down  ;;
+      esac
+    fi
+
+    # speed can be set with -p option
+    speed=${speed:-10}
+    i3-msg -q "[con_id=${gla[AWI]}]" move $dir $speed
+
+    return
+  fi
+
+  exst=${gla[VIS]}${gla[HID]}
+  exst=${exst//X/}
+
+  # if window is the only window handled by i34, do nothing
+  [[ ${gla[AWP]} = o ]] && ((${#exst}==1)) && return
+
+  case $cur in
+    A ) twin=B cous=D sib=C tfam=AC ofam=BD ;;
+    B ) twin=A cous=C sib=D tfam=BD ofam=AC ;;
+    C ) twin=D cous=B sib=A tfam=AC ofam=BD ;;
+    D ) twin=C cous=A sib=B tfam=BD ofam=AC ;;
+  esac
+
+  declare -A dv
+
+  dv[l]="-1"
+  dv[r]="1"
+  dv[u]="-2"
+  dv[d]="2"
+
+  wall=0
+
+  ntrg=$((ncur+${dv[${dir:0:1}]}))
+
+  [[ $ncur = 2 ]] && [[ ${dir:0:1} = r ]] && ntrg=5
+  [[ $ncur = 3 ]] && [[ ${dir:0:1} = l ]] && ntrg=0
+
+  ntrg=$((ntrg<1?0:ntrg))
+  [[ ! $ntrg =~ [1-4] ]] \
+  || [[ ${loa[$ntrg]} = ${loa[$ncur]} ]] && wall=1
+
+  if ((wall==1)); then
+    # if cur is only existing and active is only child, return
+    if [[ $dir =~ u|d ]]; then
+      # sibling action
+      if [[ $sib =~ [${gla[VIS]}] ]]; then
+        # hide sibling
+        containerhide $sib
+      else
+        # show sibling
+
+        if [[ $sib =~ [${gla[HID]}] ]]; then
+        # show hidden sibbling
+        containershow $sib
+        trg=$sib
+        else
+          if [[ ${gla[AWP]} != o ]]; then
+            containerrename $cur $sib
+            containershow $cur
+            echo "case 4"
+          else
+            # get number of existing ofams:
+            for (( i = 0; i < 2; i++ )); do
+              [[ ${ofam:$i:1} =~ [${gla[VIS]}${gla[HID]}] ]] && xofam+=${ofam:$i:1}
+            done
+
+            if ((${#xofam}==2)); then
+
+              if [[ ${awop:2:1} = o ]]; then # only child
+                for (( i = 0; i < 2; i++ )); do
+                  containershow ${ofam:$i:1}
+                done
+                [[ $dir = u ]] \
+                  && i3-msg -q "[con_id=${gla[AWI]}]" move to mark i34${ofam:0:1} \
+                  || i3-msg -q "[con_id=${gla[AWI]}]" move to mark i34${ofam:1:1}
+                cur=NOSWAP
+              else
+              # rename cur -> sib, move act to cur
+                containerrename $cur $sib
+                containershow $cur
+                trg=$sib
+              fi
+
+            elif ((${#xofam}==1)); then
+              # rename existing ofam cousin and show it
+              [[ $xofam != $cous ]] && containerrename $xofam $cous
+              containershow $cous
+              # rename cur -> twin, hide show, cur=twin trg=cous
+              containerrename $cur $twin
+              containerhide $twin
+              containershow $twin
+              trg=$cous cur=$twin
+              echo "case 3"
+            
+            fi
+          fi
+        fi
+        # swapcheck
+        if [[ $cur != NOSWAP ]]; then
+          [[ $dir = u ]] && ((ncur>2)) \
+            && swapmeet "i34${cur}" "i34${trg}"
+          [[ $dir = d ]] && ((ncur<3)) \
+            && swapmeet "i34${cur}" "i34${trg}"
+        fi
+      fi
+    else
+      # family action
+
+      if [[ ${loa[1]} != ${loa[2]} ]]; then
+        familyhide $ofam
+      else
+        # show opfam
+
+        [[ $ofam = AC ]] && tfammem=${gla[FAC]} || tfammem=${gla[FBD]}
+
+        if [[ ${tfammem} != X ]]; then 
+          # show last opfam
+          for (( i = 0; i < ${#tfammem}; i++ )); do
+            [[ ${tfammem:$i:1} =~ [${gla[HID]}] ]] \
+              && containershow ${tfammem:$i:1} && i34W+=${tfammem:$i:1} && echo prio1
+          done
+        fi
+
+        if [[ ${tfammem} = X ]] || [[ -z ${i34W} ]]; then
+          # show hidden opfam not in last
+          for (( i = 0; i < 2; i++ )); do
+            [[ ${ofam:$i:1} =~ [${gla[HID]}] ]] \
+              && containershow ${ofam:$i:1} && i34W+=${ofam:$i:1} && echo prio2
+          done
+        fi
+
+        if [[ -z ${i34W} ]] && [[ $sib =~ [${gla[VIS]}${gla[HID]}] ]]; then
+          # rename sib if it exist -> ${ofam:0:1} hide and show
+          containerrename $sib ${ofam:0:1}
+          [[ ${ofam:0:1} =~ [${gla[VIS]}] ]] && containerhide ${ofam:0:1}
+          containershow ${ofam:0:1}
+          echo "renaming $sib -> ${ofam:0:1}"
+          echo prio3
+        elif [[ -z ${i34W} ]]; then
+          # rename cur ${ofam:0:1} hide and show, create cur from act
+          containerrename $cur ${ofam:0:1}
+          containershow $cur
+          echo prio4
+        fi
+
+        echo "$dir nc:$ncur %:$((ncur%2))"
+        # swapcheck
+        [[ $dir = r ]] && [[ $((ncur%2)) -eq 1 ]] \
+          && swapmeet "i34X${tfam}" "i34X${ofam}" 
+        [[ $dir = l ]] && [[ $((ncur%2)) -eq 0 ]] \
+          && swapmeet "i34X${tfam}" "i34X${ofam}"
+      fi
+    fi
+  else
+    i3-msg -q "[con_id=${gla[AWI]}]" move to mark "i34${loa[$ntrg]}"
+  fi
+  i3-msg -q "[con_id=${gla[AWI]}]" focus
+}
+
+familyhide(){
+  local tfam=$1
+  local trg famchk tfammem fammrk
+
+  for (( i = 0; i < 2; i++ )); do
+    trg=${tfam:$i:1}
+    if [[ ${trg} =~ [${gla[VIS]}] ]]; then
+      echo "$((${gla[SDH]}))"
+      i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
+        move absolute position 0 px 0 px, \
+        resize set "$((${gla[SDW]}/2))" px "$((${gla[SDH]}/2))" px, \
+        move scratchpad
+      # add to trg to hid
+      gla[HID]+=$trg
+      gla[VIS]=${gla[VIS]/$trg/}
+      gla[VIS]=${gla[VIS]:-X}
+      famchk+=${trg}
+    fi
+    echo "hiding fam $trg --- $tfam"
+  done
+  # get infomark
+
+  fammrk="i34F${tfam}_"
+  # update/create info mark
+  if [[ ${gla[F${tfam}]} = X ]]; then
+    i3gw "${fammrk}${famchk}"  > /dev/null 2>&1
+    i3-msg -q "[con_mark=${fammrk}${famchk}]" move scratchpad
+  else
+    i3-msg -q "[con_mark=${fammrk}${fammem}]" mark "${fammrk}${famchk}]"
+  fi
+
+  # note splits
+  if [[ ${gla[CAB]} != X ]] && [[ ${gla[CAB]} -ne $((${gla[SDW]})) ]] && [[ ${gla[CAB]} -ne $((${gla[SDW]}/2)) ]]; then
+    if [[ ${gla[SAB]} = X ]]; then
+      i3gw "i34SAB_${gla[CAB]}"  > /dev/null 2>&1
+      i3-msg -q "[con_mark=i34SAB_${gla[CAB]}]" move scratchpad
+    else
+      i3-msg -q "[con_mark=i34SAB_${gla[SAB]}]" mark "i34SAB_${gla[CAB]}"
+    fi
+    gla[SAB]=${gla[CAB]}
+  fi
+
+  if [[ ${gla[C${tfam}]} != X ]] && [[ ${gla[C${tfam}]} -ne $((${gla[SDH]})) ]] && [[ ${gla[C${tfam}]} -ne $((${gla[SDH]}/2)) ]]; then
+    if [[ ${gla[S${tfam}]} = X ]]; then
+      i3gw "i34S${tfam}_${gla[C${tfam}]}"  > /dev/null 2>&1
+      i3-msg -q "[con_mark=i34S${tfam}_${gla[C${tfam}]}]" move scratchpad
+    else
+      i3-msg -q "[con_mark=i34S${tfam}_${gla[S${tfam}]}]" mark "i34S${tfam}_${gla[C${tfam}]}"
+    fi
+    gla[S${tfam}]=${gla[C${tfam}]}
+  fi
+
+  dothelo
+}
+
+familycreate(){
+  local trg tfam
+  trg=$1
+
+  [[ $trg =~ A|C ]] && tfam=AC || tfam=BD
+
+  i3-msg -q "[con_mark=i34X${tfam}]" unmark
+  i3gw gurra  > /dev/null 2>&1
+  i3-msg -q "[con_mark=gurra]" move to mark i34XAB, split v, layout tabbed
+
+  i3-msg -q "[con_mark=i34${trg}]" move to workspace ${gla[AWW]}, \
+    floating disable, \
+    move to mark gurra
+  i3-msg -q "[con_mark=gurra]" focus, focus parent
+  i3-msg -q mark i34X${tfam}
+  i3-msg -q "[con_mark=gurra]" layout default, split v
+  i3-msg -q "[con_mark=gurra]" kill
+  i3-msg -q "[con_mark=i34X${tfam}]" layout splitv, split v
+  i3-msg -q "[con_mark=i34XAB]" layout splith, split h
+}
+
+layoutcreate(){
+  local trg fam
+
+  trg=$1
+  [[ $trg =~ A|C ]] && fam=AC || fam=BD
+
+  i3-msg -q "[con_mark=i34XAB]" unmark
+  i3gw gurra  > /dev/null 2>&1
+  i3-msg -q "[con_mark=gurra]" split v, layout tabbed, focus parent
+  i3-msg -q mark i34X${fam}, focus parent
+  i3-msg -q mark i34XAB
+
+
+  i3-msg -q "[con_mark=i34${trg}]" move to workspace ${gla[AWW]}, \
+    floating disable, \
+    move to mark gurra
+  i3-msg -q "[con_mark=gurra]" layout default, split h
+
+  i3-msg -q "[con_mark=gurra]" kill
+  i3-msg -q "[con_mark=i34X${fam}]" layout splitv, split v
+  i3-msg -q "[con_mark=i34XAB]" layout splith, split h
+}
+
+containershow(){
+  local trg sts k tpos tdest tfam
+  local tsplit tperc sperc sdir
+  trg=$1
+  sts=none
+
+  [[ $trg =~ [${gla[VIS]}] ]] && sts=visible
+  [[ $trg =~ [${gla[HID]}] ]] && sts=hidden
+
+  case $sts in
+    visible ) return ;;
+    none    ) containercreate $trg ;;
+    hidden  )
+      # tfam=family for target
+      [[ $trg =~ A|C ]] && tfam=AC || tfam=BD
+      # tpos=theoratical position (1-4) for target
+      for k in ${!def[@]}; do
+        [[ ${def[$k]} = $trg ]] && tpos=$k && break
+      done
+
+      # ocnt=container currently occupying tpos
+      ocnt=${loa[$tpos]}
+      # if ocnt is family, move trg to famcont
+      # tdest= target destination
+      [[ $ocnt =~ [$tfam] ]] && tdest=i34X${tfam} || tdest=i34XAB
+
+      # if ocnt=X, create layout/family
+      if [[ $ocnt = X ]]; then
+        layoutcreate $trg
+      else
+        if [[ $tdest = i34XAB ]]; then
+          familycreate $trg
+        else
+          i3-msg -q "[con_mark=i34${trg}]" move to workspace ${gla[AWW]}, \
+            floating disable, move to mark ${tdest}
+        fi
+
+        swap=0
+        [[ $tdest = i34XAB ]] \
+          && ((tpos%2==1)) && swap=("X${tfam}" "X${gla[ALL]/$tfam/}")
+        [[ $tdest = i34X${tfam} ]] \
+          && ((tpos<3)) && swap=(${trg} ${tfam/$trg/})
+        [[ $swap != 0 ]] \
+          && i3-msg -q "[con_mark=i34${swap[0]}]" \
+             swap container with mark i34${swap[1]}
+
+
+        # resizing
+        if [[ $tdest = i34XAB ]]; then
+          tspl=${gla[SAB]} tdim=${gla[SDW]} sdir=width tmrk=i34XAC
+        else
+          tspl=${gla[S${tfam}]} tdim=${gla[SDH]} sdir=height tmrk=i34${tfam:0:1}
+        fi
+
+        if [[ $tspl != X ]] || [[ $tspl != $tdim ]]; then
+          sajz=($(echo $tspl $tdim | awk '{
+            tperc=$1/$2*100
+            if(tperc>50){sperc=tperc-50;sdir="grow"}
+            if(tperc<50){sperc=50-tperc;sdir="shrink"}
+            if(tperc==50){sperc=50}
+            print sperc " " sdir
+          }'))
+
+          [[ ${sajz[0]} != 50 ]] && i3-msg -q "[con_mark=$tmrk]" \
+            resize ${sajz[1]} $sdir ${sajz[0]%.*} px or ${sajz[0]%.*} ppt
+        fi
+      fi
+      gla[VIS]+=$trg
+      gla[HID]=${gla[HID]/$trg/}
+      dothelo
+    ;;
+  esac
+}
+
+containercreate(){
+  local trg 
+
+  trg=$1
+
+  if [[ ${gla[TWI]} = X ]]; then
+    eval "${command}" > /dev/null 2>&1 & 
+    gla[TWI]=$(i3get ${crit} -y)
+  fi
+
+  i3gw gurra  > /dev/null 2>&1
+  i3-msg -q "[con_mark=gurra]" \
+    split h, layout tabbed
+  i3-msg -q "[con_id=${gla[TWI]}]" \
+    floating disable, move to mark gurra
+  i3-msg -q "[con_mark=gurra]" \
+    focus, focus parent
+  i3-msg -q mark i34${trg}
+  i3-msg -q "[con_mark=gurra]" kill
+    
+  # after creation, move cont to scratch
+  i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
+    move absolute position 0 px 0 px, \
+    resize set $((${gla[SDW]}/2)) px $((${gla[SDH]}/2)) px, \
+    move scratchpad
+  # add to trg to hid
+  gla[HID]+=$trg
+  # run container show to show container
+  containershow $trg
+}
+
+containerhide(){
+  local trg tfam famchk tfammem
+  
+  trg=$1
+
+  [[ $trg =~ A|C ]] && tfam=AC tfammem=$FAC || tfam=BD tfammem=$FBD
+
+  i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
+    move absolute position 0 px 0 px, \
+    resize set $((${gla[SDW]}/2)) px $((${gla[SDH]}/2)) px, \
+    move scratchpad
+  # add to trg to hid
+  gla[HID]+=$trg
+  gla[VIS]=${gla[VIS]/$trg/}
+  gla[VIS]=${gla[VIS]:-X}
+
+  # if trg is last of it's fam, note it.
+  famchk=${tfam/$trg/}
+
+  if [[ ! $famchk =~ [${gla[VIS]}] ]]; then
+    if [[ $tfammem = X ]]; then
+      i3gw "i34F${tfam}_${trg}"  > /dev/null 2>&1
+      i3-msg -q "[con_mark=i34F${tfam}_${trg}]" move scratchpad
+    else
+      i3-msg -q "[con_mark=i34F${tfam}_${tfammem}]" mark "i34W${tfam}_${trg}"
+    fi
+  fi
+
+  # note splits
+  if [[ ${gla[CAB]} != X ]] && [[ ${gla[CAB]} -ne $((${gla[SDW]})) ]] && [[ ${gla[CAB]} -ne $((${gla[SDW]}/2)) ]]; then
+    if [[ ${gla[SAB]} = X ]]; then
+      i3gw "i34SAB_${gla[CAB]}"  > /dev/null 2>&1
+      i3-msg -q "[con_mark=i34SAB_${gla[CAB]}]" move scratchpad
+    else
+      i3-msg -q "[con_mark=i34SAB_]" unmark, mark "i34SAB_${gla[CAB]}"
+    fi
+    gla[SAB]=${gla[CAB]}
+  fi
+
+  if [[ ${gla[C${tfam}]} != X ]] && [[ ${gla[C${tfam}]} -ne $((${gla[SDH]})) ]] && [[ ${gla[C${tfam}]} -ne $((${gla[SDH]}/2)) ]]; then
+    if [[ ${gla[S${tfam}]} = X ]]; then
+      i3gw "i34S${tfam}_${gla[C${tfam}]}"  > /dev/null 2>&1
+      i3-msg -q "[con_mark=i34S${tfam}_${gla[C${tfam}]}]" move scratchpad
+    else
+      i3-msg -q "[con_mark=i34S${tfam}_${gla[S${tfam}]}]" mark "i34S${tfam}_${gla[C${tfam}]}"
+    fi
+    gla[S${tfam}]=${gla[C${tfam}]}
+  fi
+
+  dothelo
+}
+
+swapmeet(){
+  local m1=$1
+  local m2=$2
+  local i k cur
+  local exc # existintg containers
+  declare -A acn # array with containers (k=current name, v=twin name)
+
+  i3-msg -q "[con_mark=${m1}]" swap mark ${m2}, mark i34tmp
+  i3-msg -q "[con_mark=${m2}]" mark ${m1}
+  i3-msg -q "[con_mark=i34tmp]" mark ${m2}
+
+  # if targets are families, remark all containers with their twins
+  if [[ $m1 =~ X ]]; then
+    tspl=${gla[SAB]} tdim=${gla[SDW]} sdir=width tmrk=i34XAC
+    exc=${gla[VIS]}${gla[HID]}
+    echo "family swapfest, remarking $exc"
+    for (( i = 0; i < ${#exc}; i++ )); do
+      cur=${exc:$i:1}
+      case $cur in
+        A ) acn[$cur]=B ;;
+        B ) acn[$cur]=A ;;
+        C ) acn[$cur]=D ;;
+        D ) acn[$cur]=C ;;
+      esac
+      i3-msg -q "[con_mark=i34${cur}]" mark i34tmp${cur}
+    done
+    for k in ${!acn[@]}; do
+      i3-msg -q "[con_mark=i34tmp${k}]" mark i34${acn[$k]}
+      echo "remarking $k -> ${acn[$k]}"
+    done
+  else
+    [[ $tfam = AC ]] && tspl=${gla[SAC]} || tspl=${gla[SBD]}
+    tdim=${gla[SDH]} sdir=height tmrk=i34${tfam:0:1}
+  fi
+
+  # invert split
+  if [[ $tspl != X ]] || [[ $tspl != $tdim ]]; then
+    tspl=$((tdim-tspl))
+    sajz=($(echo $tspl $tdim | awk '{
+      tperc=$1/$2*100
+      if(tperc>50){sperc=(tperc-50)*2;sdir="grow"}
+      if(tperc<50){sperc=(50-tperc)*2;sdir="shrink"}
+      if(tperc==50){sperc=50}
+      print sperc " " sdir
+    }'))
+    echo "sss ${sajz[@]} $sdir $tmrk"
+    [[ ${sajz[0]} != 50 ]] && i3-msg "[con_mark=$tmrk]" \
+      resize ${sajz[1]} $sdir ${sajz[0]%.*} px or ${sajz[0]%.*} ppt
+  fi
+}
+
+containerrename(){
+
+  local oname nname tvis
+
+  oname=$1
+  nname=$2
+
+  # get visibility of target
+  [[ $oname =~ [${gla[VIS]}] ]] \
+    && gla[VIS]=${gla[VIS]/$oname/$nname} \
+    || gla[HID]=${gla[HID]/$oname/$nname}
+
+  i3-msg -q "[con_mark=i34${oname}]" mark i34${nname}
+
+  dothelo
+}
+
+togglefloat(){
+  # get floting state of current window
+  if [[ ${gla[AWP]} = g ]]; then
+    # it floats
+    # make current tiled and put it in first found visible container
+    # if no visible container, first found hidden container
+    # if none exist create A
+
+    if [[ ${gla[VIS]} != X ]]; then
+      trg=${gla[VIS]:0:1}
+    elif [[ ${gla[HID]} != X ]]; then
+      trg=${gla[HID]:0:1}
+    else
+      trg=A
+    fi
+
+    # if $trg doesn't exist, create it.
+    if [[ $trg =~ [${gla[EXS]}] ]]; then
+      containershow $trg
+      i3-msg -q "[con_id=${gla[AWI]}]" floating disable, \
+        move to mark "i34${trg}"
+    else
+      containershow $trg
+    fi
+  else
+    # window is tiled, make it float
+    i3-msg -q "[con_id=${gla[AWI]}]" floating enable
+  fi
+}
+
+dothelo(){
+  local fill k i cfill
+  for k in ${!def[@]}; do
+    loa[$k]=${def[$k]}
+    [[ ! ${def[$k]} =~ [${gla[VIS]}] ]] && fill+="$k"
+  done
+
+  [[ ${#gla[VIS]} = 0 ]] && gla[VIS]=X
+
+  if [[ ${#gla[VIS]} =~ 2|3 ]]; then
+    for (( i = 0; i < ${#fill}; i++ )); do
+      cfill=${fill:$i:1}
+      if ((cfill<3)); then
+        [[ ! $((cfill+2)) =~ [$fill] ]] \
+          && loa[$cfill]=${def[$((cfill+2))]} && continue
+      else
+        [[ ! $((cfill-2)) =~ [$fill] ]] \
+          && loa[$cfill]=${def[$((cfill-2))]} && continue
+      fi
+
+      if ((cfill%2==1)); then
+        [[ ! $((cfill+1)) =~ [$fill] ]] \
+          && loa[$cfill]=${def[$((cfill+1))]} && continue
+      else
+        [[ ! $((cfill-1)) =~ [$fill] ]] \
+          && loa[$cfill]=${def[$((cfill-1))]} && continue 
+      fi  
+    done
+  elif [[ ${#gla[VIS]} = 1 ]]; then
+    loa[1]=${gla[VIS]}
+    loa[2]=${gla[VIS]}
+    loa[3]=${gla[VIS]}
+    loa[4]=${gla[VIS]}
+  fi
+}
+
+while getopts :vhas:c:l:w:z:m:p:f:t: option; do
+  case "${option}" in
+    v) printf '%s\n%s\n' "$NAME - version: $VERSION" \
+                         "updated: $UPDATED by $AUTHOR" && exit;;
+    h) printf '%s\n' "${about}" && exit;;
+    a) cmd=togglefloat && break;;
+    s) target=${OPTARG} cmd=containershow ;;
+    c) crit=${OPTARG} ;;
+    w) windowlist="${OPTARG}" ;;
+    m) target=${OPTARG} cmd=windowmove ;;
+    z) cmd=containerhide target=${OPTARG} ;;
+    f) cmd=windowfocus target=${OPTARG} ;;
+    t) cmd=tabswitch target=${OPTARG} ;;
+    l) cmd=applysplits target="${OPTARG}" ;;
+    p) speed=${OPTARG} ;;
+  esac
+done
+
+alst=(${windowlist:=$(i3list)})
+declare -A gla # globals array
+declare -a def # default container positions array
+declare -a loa # actual container positions array
+
+initglobals
+
+dothelo # setup actual layout array: loa
+
+${cmd} "${target}" # run command
