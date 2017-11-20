@@ -129,7 +129,7 @@ else
         floating $fs > /dev/null 2>&1
     fi
   else
-    [[ ${gla[TWC]} =~ [${gla[HID]}] ]] && fyra -s ${gla[TWC]}
+    [[ ${gla[TWC]} =~ [${gla[HID]}] ]] && i3fyra -s ${gla[TWC]}
   fi
   i3-msg [con_id=${gla[TWI]}] focus > /dev/null 2>&1
 fi
