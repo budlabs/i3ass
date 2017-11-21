@@ -59,7 +59,7 @@ contact
 $CONTACT
 "
 
-while getopts :c:i:t:e:l: option; do
+while getopts :c:i:t:e:l:vh option; do
   case "${option}" in
     v) printf "$NAME - version: $VERSION\n"  && \
        printf "updated: $UPDATED by $AUTHOR\n" \

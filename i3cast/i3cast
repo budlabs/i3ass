@@ -96,11 +96,7 @@ TMP_FILE=/tmp/cast/tmpcast.mkv
 # but you might want to change at least -s 1366x768 to match
 # your resolution.
 COMMAND="ffmpeg -y -f x11grab -s $(xdpyinfo | grep dimensions | awk '{print $2;}') -i :0.0 -f alsa -i default -c:v libx264 -c:a flac /tmp/cast/tmpcast.mkv"
-termcmd=$(cat << EOF
-urxvtc -name castterm -e bash -c \
-  && ${COMMAND}"
-EOF
-)
+termcmd="urxvtc -name castterm -e bash -c '${COMMAND}'"
 
 [[ -n $GIF_IS_JIF ]] && HOSTS+="\ngfycat"
 
@@ -159,6 +155,7 @@ if [[ -z $cid ]]; then
   rm -f $TMP_FILE
   # start recording
   i3run -i castterm -e "$termcmd"
+  echo hhh
   # send it to scratchpad
   i3-msg "[instance=castterm]" move scratchpad
 else
