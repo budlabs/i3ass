@@ -1,20 +1,42 @@
 
-i3ass - assistance scripts for i3 
-=================================
+i3ass - i3 assistance scripts 
+=============================
 
-Ingredients:  
-------------
-|script|function|
-|:------|:-------|
-|i3fyra |An advanced simple layout         |
-|i3run  |Run, Raise or hide a window       |
-|i3get  |Get information about i3          |
-|i3cast |Create and upload screenrecordings|
-|i3list |Get lots of information about i3  |
-|i3gw   |Ghost window wrapper script       |
-|i3mtm  |Move window to a chosen mark      |
-|i3term |Launch a program inside a terminal|
-|i3zen  |Move a window to the zenter       |
+|**script**              |**function**|
+|:-----------------------|:-----------|
+|[i3fyra](/i3ass/i3fyra) |An advanced simple layout         |
+|[i3run](/i3ass/i3run)   |Run, Raise or hide a window       |
+|[i3get](/i3ass/i3get)   |Get information about i3          |
+|[i3cast](/i3ass/i3cast) |Create and upload screenrecordings|
+|[i3list](/i3ass/i3list) |Get lots of information about i3  |
+|[i3gw](/i3ass/i3gw)     |Ghost window wrapper script       |
+|[i3mtm](/i3ass/i3mtm)   |Move window to a chosen mark      |
+|[i3term](/i3ass/i3term) |Launch a program inside a terminal|
+|[i3zen](/i3ass/i3zen)   |Move a window to the zenter       |
 
+license
+-------
+All **i3ass** scripts are licensed with the **MIT license**
 
+``` text
+Copyright (c) 2017 Nils Kvist
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+```
 

@@ -37,7 +37,7 @@ r [tcidnmw]   desired return.
 example
 ---------
 ``` shell
-# Search for window with instance name *sublime_text*. 
+# Search for window with instance name sublime_text. 
 # Request workspace, title and floating state.
 
 $ i3get -i sublime_text -r wtf
