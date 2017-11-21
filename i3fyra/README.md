@@ -52,7 +52,7 @@ usage
 -----
 `i3fyra [OPTTION] [ARGUMENT]`
 
-``` shell
+``` text
 option | argument | action
 --------------------------
 -v     |          | Show version info and exit.
