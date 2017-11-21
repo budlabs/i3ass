@@ -8,7 +8,7 @@ I made a post on [/r/unixporn](https://www.reddit.com/r/unixporn/comments/6xbdtk
 
 dependencies
 ------------
-[i3get](/i3ass/i3get) | to identify and the current window
+[i3get](https://github.com/budRich/i3ass/tree/master/i3get) | to identify and the current window
 :---|:---
-[i3gw](/i3ass/i3gw) | summon ghosts
+[i3gw](https://github.com/budRich/i3ass/tree/master/i3gw) | summon ghosts
 

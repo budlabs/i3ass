@@ -10,9 +10,9 @@ a notification is shown when upload is complete and a link is put in your clipbo
 
 requirements
 ------------
-[i3get](/i3ass/i3get) | to identify and the terminal (urxvt) window
+[i3get](https://github.com/budRich/i3ass/tree/master/i3get) | to identify and the terminal (urxvt) window
 :---|:---
-[i3run](/i3ass/i3run) | to run and hide the terminal (urxvt) window
+[i3run](https://github.com/budRich/i3ass/tree/master/i3run) | to run and hide the terminal (urxvt) window
 **urxvt**  | terminal emulator
 **ffmpeg**  | commandline tool to record media
 **curl**   | commandline tool to download and upload stuff

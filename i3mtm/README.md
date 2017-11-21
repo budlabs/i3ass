@@ -16,7 +16,7 @@ you could replace your `floating toggle` binding with this:
 
 dependencies
 ------------
-[i3get](/i3ass/i3get) | to identify and the terminal the floating state of current window
+[i3get](https://github.com/budRich/i3ass/tree/master/i3get) | to identify and the terminal the floating state of current window
 :---|:---
 [dmenu](/blog/dmenu)   | tool that displays a menu
 
