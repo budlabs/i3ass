@@ -15,10 +15,12 @@ example
 this will create a ghost marked casper, you can perform any action
 you can perform on a regular container.  
 
-    i3-msg [con_mark=casper] move to workspace 2 
-    i3-msg [con_mark=casper] split v  
-    i3-msg [con_mark=casper] layout tabbed  
-    i3-msg [con_mark=casper] kill  
+``` text
+i3-msg [con_mark=casper] move to workspace 2 
+i3-msg [con_mark=casper] split v  
+i3-msg [con_mark=casper] layout tabbed  
+i3-msg [con_mark=casper] kill  
+```
 
 the last example (*kill*), destroys the container.
 
@@ -26,5 +28,5 @@ the last example (*kill*), destroys the container.
 
 In the screenshot below, the windows to the right are tiled, and a ghostwindow is tiled on the right half of the screen. The other windows are floating.
 
-[![i3gw in action](/img/awd/ss-i3gw1.png)]((/img/org/ss-i3gw1.png))
+[![i3gw in action](https://budrich.github.io/img/awd/ss-i3gw1.png)]((https://budrich.github.io/img/org/ss-i3gw1.png))
 
