@@ -9,7 +9,7 @@ I have made another script, [i3get](https://github.com/budRich/i3ass/tree/master
 
 usage
 -----
-`$NAME [OPTION CRITERIA]`
+`i3list [OPTION CRITERIA]`
 
 ``` text
 option | argument | function
