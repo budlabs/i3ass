@@ -18,7 +18,7 @@ dependencies
 ------------
 [i3get](https://github.com/budRich/i3ass/tree/master/i3get) | to identify and the terminal the floating state of current window
 :---|:---
-[dmenu](/blog/dmenu)   | tool that displays a menu
+[dmenu](https://budrich.github.io/blog/dmenu)   | tool that displays a menu
 
 links
 -----

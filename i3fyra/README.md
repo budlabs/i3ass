@@ -4,6 +4,7 @@ An advanced simple tiling layout for i3wm
 fyra is the Swedish name for "four".
 
 https://www.youtube.com/watch?v=kU8gb6WLFk8  
+ 
 In the video above I show the functionality of `i3fyra`
 
 dependencies
@@ -19,8 +20,8 @@ C D
 The internal layout of the containers doesn't matter.  
 This means that container A could be tabbed and the others split horizontally for example.
 
-A is always to the right of B and D. And always above C.
-B is always to the left of A and C. And always above D.
+`A` is always to the left of `B` and `D`. And always above `C`.
+`B` is always to the left of `A` and `C`. And always above `D`.
 
 This means that the containers will change names if their position changes.
 

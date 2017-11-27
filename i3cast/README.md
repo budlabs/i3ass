@@ -17,7 +17,7 @@ requirements
 **ffmpeg**  | commandline tool to record media
 **curl**   | commandline tool to download and upload stuff
 **mpv**    | minimal mediaplayer, used to preview recording
-[dmenu](/blog/dmenu) | tool that displays a menu
+[dmenu](https://budrich.github.io/blog/dmenu) | tool that displays a menu
 **xclip**  | tool that handles clipboard events
 **xdotool** | needed to send `q` to urxvt, to quit the recording in a proper way
 [gif-is-jif](https://github.com/markasoftware/gif-is-jif) | to save and upload gif format (**optional**)

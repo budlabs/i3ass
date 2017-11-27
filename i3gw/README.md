@@ -28,5 +28,6 @@ the last example (*kill*), destroys the container.
 
 In the screenshot below, the windows to the right are tiled, and a ghostwindow is tiled on the right half of the screen. The other windows are floating.
 
-[![i3gw in action](https://budrich.github.io/img/awd/ss-i3gw1.png)]((https://budrich.github.io/img/org/ss-i3gw1.png))
+[![](https://budrich.github.io/img/awd/ss-i3gw1.png)](https://budrich.github.io/img/org/ss-i3gw1.png)
+
 

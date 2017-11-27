@@ -16,9 +16,8 @@ If no window is found, COMMAND is ran in an urxvt instance with the same
 instance name as COMMAND. When the command exits window is cleared 
 and returned to bash. 
 
-I just made this script to keep my i3config cleaner, and to be able to set
-fixedsys as the font. Probably needs tweaking if someone other then budRich
-uses it ;)
+I just made this script to keep my i3config cleaner. It might need some 
+tweaking if someone other then budRich uses it ;)
 
 usage
 -----
@@ -48,9 +47,7 @@ do
 done
 
 termcmd=$(cat << EOF
-urxvtc -name $1 -e bash -c \
-  "printf '\e]710;%s\007' 'xft:Fixedsys Excelsior 3.01\-L2 Mono:style=Regular' \
-  && $1 && clear && bash"
+urxvtc -name $1 -e bash -c "$1 && clear && bash"
 EOF
 )
 
