@@ -21,7 +21,7 @@ The internal layout of the containers doesn't matter.
 This means that container A could be tabbed and the others split horizontally for example.
 
 `A` is always to the left of `B` and `D`. And always above `C`.
-`B` is always to the left of `A` and `C`. And always above `D`.
+`B` is always to the right of `A` and `C`. And always above `D`.
 
 This means that the containers will change names if their position changes.
 
