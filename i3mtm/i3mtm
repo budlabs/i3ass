@@ -10,7 +10,7 @@ UPDATED="2017-11-19"
 about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
-===============================
+*******************************
 When launched without options, i3mtm checks
 floating status of current window. If it is
 tiled, the window becomes floating.
@@ -23,11 +23,22 @@ Otherwise window is tiled and moved to selected mark.
 With -m option window is treaded as if it was floating
 even if it is tiled. (menu is forced)  
 
+usage
+-----
+\`\$ $NAME [OPTION]\`
+
+| option | argument | function                   |
+|:-------|:---------|:---------------------------|
+| -v     |          | show version info and exit |
+| -h     |          | show this help and exit    |
+
 examples
 --------
 you could replace your floating toggle binding with this:  
+\`\`\`
 bindsym Mod3+f exec --no-startup-id exec i3mtm  
 bindsym Mod3+Shift+f exec --no-startup-id exec i3mtm -m  
+\`\`\`
 
 dependencies
 ------------
@@ -42,10 +53,11 @@ $CONTACT
 while getopts :vh option
 do
   case "${option}" in
-    v) printf "$NAME - version: $VERSION\n"  && \
-       printf "updated: $UPDATED by $AUTHOR\n" \
-        && exit;;
-    h) printf "${about}\n" && exit;;
+    v) printf '%s\n' \
+         "$NAME - version: $VERSION" \
+         "updated: $UPDATED by $AUTHOR"
+       exit ;;
+    h) printf '%s\n' "${about}" && exit ;;
   esac
 done
 
@@ -56,16 +68,18 @@ DMENU_OPTIONS=
 
 
 show_menu(){
-  mrks=$(comm -3 <(printf "${IGNORE_MARKS}" | tr ',' "\n" | sort) \
+  mrks=$(comm -3 <(printf '%s' "${IGNORE_MARKS}" | tr ',' "\n" | sort) \
               <(i3-msg -t get_marks | tr -d '[]"' | tr ',' "\n" | sort) \
               | awk '{$2=$2};1' )
   [[ -z $mrks ]] && \
     i3-msg "[con_id=${cur[0]}]" floating disable, focus && exit
-  trg=$(printf "${mrks}" | dmenu ${DMENU_OPTIONS} -p "move to mark:")
-  [[ -z $trg ]] && \
-    i3-msg "[con_id=${cur[0]}]" floating disable, focus ||
-    i3-msg "[con_id=${cur[0]}]" floating disable, move to mark ${trg}
+  trg=$(printf '%s' "${mrks}" | dmenu ${DMENU_OPTIONS} -p "move to mark:")
+  if [[ -z $trg ]];then 
+    i3-msg "[con_id=${cur[0]}]" floating disable, focus 
+  else
+    i3-msg "[con_id=${cur[0]}]" floating disable, move to mark "${trg}"
     i3-msg "[con_id=${cur[0]}]" focus
+  fi
 }
 
 

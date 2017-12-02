@@ -10,28 +10,29 @@ UPDATED="2017-11-19"
 about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
-===============================
+*******************************
 search for windows in i3 tree, return desired information
 if no arguments are passed. con_id of acitve window is returned.
 
 usage
 -----
-$NAME [OPTION CRITERIA]
+\`\$ $NAME [OPTION [CRITERIA]]\`
 
-Options:
-v             show version and exit
-h             show this help
-a             currently active window (default)
-c CLASS       search for windows with the given class
-i INSTANCE    search for windows with the given instance
-t TITLE       search for windows with title.
-n CON_ID      search for windows with the given con_id
-d CON_ID      search for windows with the given window id
-m CON_MARK      search for windows with the given mark
-y             synch on. If this option is included, script will wait till
-              target window exist.
+| option | criteria | function                   |
+|:-------|:---------|:---------------------------|
+| -v     |          | show version and exit
+| -h     |          | show this help
+| -a     |          | currently active window (default)
+| -c     | CLASS    | search for windows with the given class
+| -i     | INSTANCE | search for windows with the given instance
+| -t     | TITLE    | search for windows with title.
+| -n     | CON_ID   | search for windows with the given con_id
+| -d     | CON_ID   | search for windows with the given window id
+| -m     | CON_MARK | search for windows with the given mark
+| -y     |          | synch on. If this option is included, 
+|        |          | script will wait till target window exist.
 
-r [tcidnmw]   desired return.
+-r [tcidnmw]   desired return.
                 t: title
                 c: class
                 i: instance
@@ -46,7 +47,7 @@ r [tcidnmw]   desired return.
 Examples:
 search for window with instance name sublime_text. Request
 workspace, title and floating state.
-i3get -i sublime_text -r wtf
+\`i3get -i sublime_text -r wtf\`
 
 contact
 -------
@@ -56,10 +57,11 @@ $CONTACT
 while getopts :c:i:t:n:d:r:m:ayvh option
 do
   case "${option}" in
-    v) printf "$NAME - version: $VERSION\n"  && \
-       printf "updated: $UPDATED by $AUTHOR\n" \
-        && exit;;
-    h) printf "${about}\n" && exit;;
+    v) printf '%s\n' \
+         "$NAME - version: $VERSION" \
+         "updated: $UPDATED by $AUTHOR"
+       exit ;;
+    h) printf '%s\n' "${about}" && exit ;;
     i) crit="\"instance\"" srch="${OPTARG}";;
     c) crit="\"class\"" srch="${OPTARG}";;
     t) crit="\"title\"" srch="${OPTARG}";;
@@ -116,4 +118,4 @@ getwindow(){
 result=$(getwindow)
 [ $synk = 1 ] && \
   while [ -z "$result" ]; do sleep 0.1; result=$(getwindow); done
-[ -n "$result" ] && printf "${result}\n"
+[ -n "$result" ] && printf '%s\n' "${result}"

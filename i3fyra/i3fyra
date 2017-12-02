@@ -10,7 +10,7 @@ UPDATED="2017-11-19"
 about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
-===============================
+*******************************
 An advanced simple tiling layout for i3wm. 
 The layout consists of four containers:
 
@@ -19,8 +19,8 @@ The layout consists of four containers:
 
 The internal layout of the containers doesn't matter.
 
-A is always to the right of B and D. And always above C.
-B is always to the left of A and C. And always above D.
+A is always to the left of B and D. And always above C.
+B is always to the right of A and C. And always above D.
 
 This means that the containers will change names if their position changes.
 
@@ -50,8 +50,9 @@ A becomes B and C becomes D:
 
 usage
 -----
-$NAME [OPTTION] [ARGUMENT]
+\`\$ $NAME [OPTTION] [ARGUMENT]\`
 
+\`\`\` text
 option | argument | action
 --------------------------
 -v     |          | Show version info and exit.
@@ -99,7 +100,7 @@ option | argument | action
                        the bottom if it is negative.
                     The whole argument needs to be quoted. Example:
                     fyra -l 'AB=-300 BD=420'
-
+\`\`\` text
 dependencies
 ------------
 
@@ -161,6 +162,7 @@ initglobals(){
   gla[FBD]=${alst[41]}  #  Family AC memory (mark i34FBD_*)
   gla[SDW]=${alst[42]}  #  Width of current workspace
   gla[SDH]=${alst[43]}  #  Height of curent workspace
+  gla[WSF]=${alst[44]}  #  Workspace number whith i3fyra layout
 
   gla[ALL]=ABCD # all containers sorted by appearance
 
@@ -261,22 +263,20 @@ windowfocus(){
     return
   fi
 
-  echo ${gla[AWP]}
-
   # normal movement if:
   while :;do
     [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = m ]] && [[ $shd =~ [lr] ]] \
-      && normove=1 && echo k1 && break
+      && normove=1 && break
     [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = b ]] && [[ $shd = r ]]  \
-      && normove=1 && echo k2 && break
+      && normove=1 && break
     [[ ${gla[AWL]} = h ]] && [[ ${gla[AWP]} = e ]] && [[ $shd = l ]]  \
-      && normove=1 && echo k3 && break
+      && normove=1 && break
     [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = m ]] && [[ $shd =~ u|d ]] \
-      && normove=1 && echo k4 && break
+      && normove=1 && break
     [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = b ]] && [[ $shd = d ]]  \
-      && normove=1 && echo k5 && break
+      && normove=1 && break
     [[ ${gla[AWL]} = v ]] && [[ ${gla[AWP]} = e ]] && [[ $shd = u ]]  \
-      && normove=1 && echo k6 && break
+      && normove=1 && break
 
     break
   done
@@ -331,13 +331,17 @@ windowfocus(){
 windowmove(){
 
   local cur dir wall trg sib twin cous i xofam
-  local tfam ofam ntrg trg i34W lstcnts exst tfammem
+  local tfam ofam ntrg trg i34W lstcnts exst tfammemr
   local shd normove
   cur=${gla[AWC]}
   dir=$1
   normove=0
 
   if [[ $dir =~ A|B|C|D ]]; then
+    if [[ ! ${gla[WSF]} =~ X|"${gla[AWW]}" ]]; then
+      # gla[AWW]=${gla[WSF]} 
+      i3-msg -q workspace "${gla[WSF]}"
+    fi
     if [[ $dir =~ [${gla[VIS]}${gla[HID]}] ]]; then
       containershow $dir
       i3-msg -q "[con_id=${gla[AWI]}]" floating disable, move to mark i34${dir}
@@ -368,6 +372,8 @@ windowmove(){
     break
   done
 
+  [[ ${gla[AWW]} != "${gla[WSF]}" ]] && normove=1
+
   # if window isn't handled by i34, move it normaly
   if [[ $cur = X ]] || [[ $normove = 1 ]]; then
     [[ ! ${dir:0:1} =~ l|r|u|d ]] && return
@@ -380,7 +386,7 @@ windowmove(){
       esac
     fi
 
-    # speed can be set with -p option
+    # set speed with -p flag
     speed=${speed:-10}
     i3-msg -q "[con_id=${gla[AWI]}]" move $dir $speed
 
@@ -436,7 +442,6 @@ windowmove(){
           if [[ ${gla[AWP]} != o ]]; then
             containerrename $cur $sib
             containershow $cur
-            echo "case 4"
           else
             # get number of existing ofams:
             for (( i = 0; i < 2; i++ )); do
@@ -469,8 +474,6 @@ windowmove(){
               containerhide $twin
               containershow $twin
               trg=$cous cur=$twin
-              echo "case 3"
-            
             fi
           fi
         fi
@@ -496,7 +499,7 @@ windowmove(){
           # show last opfam
           for (( i = 0; i < ${#tfammem}; i++ )); do
             [[ ${tfammem:$i:1} =~ [${gla[HID]}] ]] \
-              && containershow ${tfammem:$i:1} && i34W+=${tfammem:$i:1} && echo prio1
+              && containershow ${tfammem:$i:1} && i34W+=${tfammem:$i:1}
           done
         fi
 
@@ -504,7 +507,7 @@ windowmove(){
           # show hidden opfam not in last
           for (( i = 0; i < 2; i++ )); do
             [[ ${ofam:$i:1} =~ [${gla[HID]}] ]] \
-              && containershow ${ofam:$i:1} && i34W+=${ofam:$i:1} && echo prio2
+              && containershow ${ofam:$i:1} && i34W+=${ofam:$i:1}
           done
         fi
 
@@ -513,16 +516,12 @@ windowmove(){
           containerrename $sib ${ofam:0:1}
           [[ ${ofam:0:1} =~ [${gla[VIS]}] ]] && containerhide ${ofam:0:1}
           containershow ${ofam:0:1}
-          echo "renaming $sib -> ${ofam:0:1}"
-          echo prio3
         elif [[ -z ${i34W} ]]; then
           # rename cur ${ofam:0:1} hide and show, create cur from act
           containerrename $cur ${ofam:0:1}
           containershow $cur
-          echo prio4
         fi
 
-        echo "$dir nc:$ncur %:$((ncur%2))"
         # swapcheck
         [[ $dir = r ]] && [[ $((ncur%2)) -eq 1 ]] \
           && swapmeet "i34X${tfam}" "i34X${ofam}" 
@@ -543,7 +542,6 @@ familyhide(){
   for (( i = 0; i < 2; i++ )); do
     trg=${tfam:$i:1}
     if [[ ${trg} =~ [${gla[VIS]}] ]]; then
-      echo "$((${gla[SDH]}))"
       i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
         move absolute position 0 px 0 px, \
         resize set "$((${gla[SDW]}/2))" px "$((${gla[SDH]}/2))" px, \
@@ -554,7 +552,6 @@ familyhide(){
       gla[VIS]=${gla[VIS]:-X}
       famchk+=${trg}
     fi
-    echo "hiding fam $trg --- $tfam"
   done
   # get infomark
 
@@ -807,7 +804,6 @@ swapmeet(){
   if [[ $m1 =~ X ]]; then
     tspl=${gla[SAB]} tdim=${gla[SDW]} sdir=width tmrk=i34XAC
     exc=${gla[VIS]}${gla[HID]}
-    echo "family swapfest, remarking $exc"
     for (( i = 0; i < ${#exc}; i++ )); do
       cur=${exc:$i:1}
       case $cur in
@@ -820,7 +816,6 @@ swapmeet(){
     done
     for k in ${!acn[@]}; do
       i3-msg -q "[con_mark=i34tmp${k}]" mark i34${acn[$k]}
-      echo "remarking $k -> ${acn[$k]}"
     done
   else
     [[ $tfam = AC ]] && tspl=${gla[SAC]} || tspl=${gla[SBD]}
@@ -837,7 +832,6 @@ swapmeet(){
       if(tperc==50){sperc=50}
       print sperc " " sdir
     }'))
-    echo "sss ${sajz[@]} $sdir $tmrk"
     [[ ${sajz[0]} != 50 ]] && i3-msg "[con_mark=$tmrk]" \
       resize ${sajz[1]} $sdir ${sajz[0]%.*} px or ${sajz[0]%.*} ppt
   fi
@@ -864,6 +858,10 @@ togglefloat(){
   # get floting state of current window
   if [[ ${gla[AWP]} = g ]]; then
     # it floats
+    if [[ ! ${gla[WSF]} =~ X|"${gla[AWW]}" ]]; then
+      i3-msg -q "[con_id=${gla[AWI]}]" floating disable
+      return
+    fi
     # make current tiled and put it in first found visible container
     # if no visible container, first found hidden container
     # if none exist create A
@@ -885,7 +883,7 @@ togglefloat(){
       containershow $trg
     fi
   else
-    # window is tiled, make it float
+    # if the window is tiled, make it float
     i3-msg -q "[con_id=${gla[AWI]}]" floating enable
   fi
 }

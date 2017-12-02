@@ -4,13 +4,17 @@ An advanced simple tiling layout for i3wm
 fyra is the Swedish name for "four".
 
 https://www.youtube.com/watch?v=kU8gb6WLFk8  
+.  
+https://www.youtube.com/watch?v=t4Tve-xpwus  
  
-In the video above I show the functionality of `i3fyra`
+In the first video above I show the functionality of `i3fyra`. The second video is a longer and more thorough walkthrough on how to use `i3fyra`
 
 dependencies
 ------------
-* [i3list](https://github.com/budRich/i3ass/tree/master/i3list)
-* [i3gw](https://github.com/budRich/i3ass/tree/master/i3gw)
+* [i3list](https://github.com/budRich//tree/masteri3ass/i3list)
+* [i3gw](https://github.com/budRich//tree/masteri3ass/i3gw)
+
+------
 
 The layout consists of four containers:
 ``` shell
@@ -49,6 +53,11 @@ A becomes B and C becomes D:
 A B
 A D
 ```
+
+workspace lock
+--------------
+The layout is active on one workspace only. This means that all other workspaces will work as expected with *vanilla* **i3** . The workspace where the layout is first invoked will be the `i3fyra` workspace.
+
 usage
 -----
 `i3fyra [OPTTION] [ARGUMENT]`

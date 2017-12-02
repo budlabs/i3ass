@@ -10,7 +10,7 @@ UPDATED="2017-11-19"
 about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
-===============================
+*******************************
 This is a run or raise or hide script for i3wm.
 It looks for a window matching a given criteria.
 
@@ -29,17 +29,16 @@ This might not be desired behaviour for some workflows, but htat's how it works.
 
 usage
 -----
-$NAME -h|v|i|c|t [CRITERIA] [-e COMMAND] 
+\`\$ $NAME -h|v|i|c|t [CRITERIA] [-e COMMAND]\`
 
-option | argument | function
-----------------------------
-
--v     |           | Show version and exit.
--h     |           | Show this info and exit. 
--c     | CLASS     | Search for windows with the given CLASS
--i     | INSTANCE  | Search for windows with the given INSTANCE
--t     | TITLE     | Search for windows with the given TITLE
--e     | COMMAND   | Command to run if no window is found.
+| option | criteria | function                   |
+|:-------|:---------|:---------------------------|
+| -v     |          | show version info and exit |
+| -h     |          | show this help and exit    |
+| -c     | CLASS    | Search for windows with the given CLASS
+| -i     | INSTANCE | Search for windows with the given INSTANCE
+| -t     | TITLE    | Search for windows with the given TITLE
+| -e     | COMMAND  | Command to run if no window is found.
 
 it is important that -e COMMAND is last of the options.
 -e is optional, if no COMMAND is passed and no window is found, nothing happens.
@@ -48,7 +47,6 @@ otherwise the script will get stuck in a loop waiting for the window to appear.
 
 dependencies
 ------------
-
 * i3list
 * i3get 
   since i3get is slightly faster and have sync option, 
@@ -59,18 +57,23 @@ contact
 $CONTACT
 "
 
-while getopts :c:i:t:e:l:vh option; do
+while getopts :c:i:t:e:l:gsvh option; do
   case "${option}" in
-    v) printf "$NAME - version: $VERSION\n"  && \
-       printf "updated: $UPDATED by $AUTHOR\n" \
-        && exit;;
-    h) printf "${about}\n" && exit;;
+        v) printf '%s\n' \
+         "$NAME - version: $VERSION" \
+         "updated: $UPDATED by $AUTHOR"
+       exit ;;
+    h) printf '%s\n' "${about}" && exit ;;
     i) acri=("-i" "${OPTARG}") ;;
     c) acri=("-c" "${OPTARG}") ;;
     t) acri=("-t" "${OPTARG}") ;;
     e) command="${OPTARG}"     ;;
+    g) summon=0                ;;
+    s) summon=1                ;;
   esac
 done
+
+summon=${summon:-0}
 
 declare -A gla
 
@@ -91,8 +94,7 @@ gla[TWC]=${alst[14]}  #  Target window container (A|B|C|D|X)
 gla[TWW]=${alst[15]}  #  Target window workspace
 gla[TWI]=${alst[16]}  #  Target window id (con_id)
 gla[TWM]=${alst[17]}  #  Target window mark
-
-# 94301996421552|1|X|aug|
+gla[WSF]=${alst[44]}  #  Workspace number whith i3fyra layout
 
 # if window doesn't exist, launch the command.
 if [[ ${gla[TWI]} = X ]]; then
@@ -103,17 +105,18 @@ fi
 
 # if target window is active (current), send it to the scratchpad.
 # else focus target window.
-if [[ ${gla[AWI]} = ${gla[TWI]} ]]; then
+if [[ ${gla[AWI]} = "${gla[TWI]}" ]]; then
   if [[ ${gla[TWC]} = X ]]; then
     [[ ${gla[TWP]} != 'g' ]] && fs=t || fs=f
-    i3-msg "[con_id=${gla[TWI]}]" \
+    i3-msg -q "[con_id=${gla[TWI]}]" \
     mark "$fs-${gla[TWI]}", \
-    move scratchpad > /dev/null 2>&1
+    move scratchpad
   fi
 else
+  # window is not handled by i3fyra and not active
   if [[ ${gla[TWC]} = X ]]; then
 
-    if [[ ${gla[AWW]} != ${gla[TWW]} ]]; then
+    if [[ ${gla[AWW]} != "${gla[TWW]}" ]]; then
 
       if [[ -n ${gla[TWM]} ]]; then
         ofs=${gla[TWM]%%'-'*}
@@ -124,12 +127,36 @@ else
           && fs=enable || fs=disable
       fi
       
-      i3-msg "[con_id=${gla[TWI]}]" \
-        move to workspace ${gla[AWW]}, \
-        floating $fs > /dev/null 2>&1
+      if [[ ${gla[AWW]} = "-1" ]] || [[ $summon = 1 ]]; then
+        i3-msg -q "[con_id=${gla[TWI]}]" \
+          move to workspace "${gla[AWW]}", \
+          floating $fs
+      else
+        i3-msg -q workspace "${gla[TWW]}"
+      fi
+      
     fi
   else
-    [[ ${gla[TWC]} =~ [${gla[HID]}] ]] && i3fyra -s ${gla[TWC]}
+    # window is handled by i3fyra and not active
+    if [[ ${gla[AWW]} != "${gla[TWW]}" ]]; then
+      # window is not on current ws
+      if [[ ${gla[WSF]} =~ "X"|"${aws[AWW]}" ]]; then
+        # current ws is i3fyra WS
+        [[ ${gla[TWC]} =~ [${gla[HID]}] ]] && echo "ollon" && i3fyra -s "${gla[TWC]}"
+      else
+        # current ws is not i3fyra WS
+        if [[ ${gla[AWW]} = "-1" ]] || [[ $summon = 1 ]]; then
+          echo "apa"
+          i3-msg -q "[con_id=${gla[TWI]}]" move to workspace "${gla[AWW]}"
+        else
+          echo "rapa"
+          i3-msg -q workspace "${gla[TWW]}"
+        fi
+      fi
+    fi
   fi
-  i3-msg [con_id=${gla[TWI]}] focus > /dev/null 2>&1
+  i3-msg "[con_id=${gla[TWI]}]" focus > /dev/null 2>&1
 fi
+
+echo "${gla[TWI]}"
+echo "TWW - ${gla[TWW]} AWW - ${gla[AWW]} TWC ${gla[TWC]} WSF ${gla[WSF]}"

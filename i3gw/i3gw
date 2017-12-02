@@ -10,7 +10,7 @@ UPDATED="2017-11-19"
 about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
-===============================
+*******************************
 A Ghost window wrapper for i3wm.
 
 i3-msg has an undocumented function (open) that creates
@@ -24,24 +24,27 @@ get its con_id and mark it.
 
 usage
 -----
-$NAME [-h|-v] MARK
+\`\$ $NAME [-h|-v] MARK\`
 
 example:
-i3gw casper
+\`i3gw casper\`
 
 this will create a ghost marked casper, you can perform any action
 you can perform on a regular container.
 
 example:
+\`\`\`
 i3-msg [con_mark=casper] move to workspace 2
 i3-msg [con_mark=casper] split v
 i3-msg [con_mark=casper] layout tabbed
 i3-msg [con_mark=casper] kill
-
+\`\`\`
 the last example (kill), destroys the container.
 
-If -h is passed as an option this help will be shown.
-If -v is passed as an option version info is displayed.
+| option | argument | function                   |
+|:-------|:---------|:---------------------------|
+| -v     |          | show version info and exit |
+| -h     |          | show this help and exit    |
 
 contact
 -------
@@ -51,16 +54,17 @@ $CONTACT
 while getopts :vh option
 do
   case "${option}" in
-    v) printf "$NAME - version: $VERSION\n"  && \
-       printf "updated: $UPDATED by $AUTHOR\n" \
-        && exit;;
-    h) printf "${about}\n" && exit;;
+    v) printf '%s\n' \
+         "$NAME - version: $VERSION" \
+         "updated: $UPDATED by $AUTHOR"
+       exit ;;
+    h) printf '%s\n' "${about}" && exit ;;
   esac
 done
 
 name=${1:?"usage: i3gw MARK, you didn't request a mark."}
 
 w=$(i3-msg open)
-i3-msg [con_id=${w:22:-2}] floating disable, mark $name
+i3-msg "[con_id=${w:22:-2}]" floating disable, mark "$name"
 
 

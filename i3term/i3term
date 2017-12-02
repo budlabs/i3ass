@@ -10,26 +10,32 @@ UPDATED="2017-11-19"
 about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
-===============================
-Uses i3run to run or raise a window with the instancename COMMAND.
-If no window is found, COMMAND is ran in an urxvt instance with the same 
-instance name as COMMAND. When the command exits window is cleared 
-and returned to bash. 
+*******************************
 
-I just made this script to keep my i3config cleaner. It might need some 
-tweaking if someone other then budRich uses it ;)
-
-usage
------
-$NAME COMMAND
-
-example:
-bindsym Mod3+o exec --no-startup-id exec termrun htop
+Launch a command in a new urxvt window
+======================================
+Uses [i3run](/i3ass/i3run) to run or raise a window with the instancename: 
+\`COMMAND\`. If no window is found, \`COMMAND\` is ran in a urxvt window 
+with the same instance name as \`COMMAND\`. When the command exits 
+window is cleared and returned to bash.
 
 dependencies
 ------------
+- urxvt
+- [i3run](/i3ass/i3run)
 
-* urxvt
+usage
+-----
+\`i3term COMMAND\`
+
+| option | argument | function                  
+|:-------|:---------|:--------------------------
+| -v     |          | show version info and exit
+| -h     |          | show this help and exit   
+
+
+**example:**  
+\`bindsym Mod3+o exec --no-startup-id exec termrun htop\`
 
 contact
 -------
@@ -39,16 +45,18 @@ $CONTACT
 while getopts :vh option
 do
   case "${option}" in
-    v) printf "$NAME - version: $VERSION\n"  && \
-       printf "updated: $UPDATED by $AUTHOR\n" \
-        && exit;;
-    h) printf "${about}\n" && exit;;
+    v) printf '%s\n' \
+         "$NAME - version: $VERSION" \
+         "updated: $UPDATED by $AUTHOR"
+       exit ;;
+    h) printf '%s\n' "${about}" && exit ;;
   esac
 done
 
 termcmd=$(cat << EOF
-urxvtc -name $1 -e bash -c "$1 && clear && bash"
+urxvtc -name $1 -e bash -c \
+'echo -ne "\e]0;'$1'\007" && $1 && clear && bash'
 EOF
 )
 
-i3run -i $1 -e "$termcmd"
+i3run -i "$1" -e "${termcmd}"

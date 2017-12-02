@@ -10,12 +10,17 @@ UPDATED="2017-11-19"
 about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
-===============================
-create and upload screen recordings
+*******************************
+Create and upload screen recordings
 
 usage
 -----
-$NAME
+\$ $NAME [OPTION]
+
+| option | argument | function                   |
+|:-------|:---------|:---------------------------|
+| -v     |          | show version info and exit |
+| -h     |          | show this help and exit    |
 
 Just run the script to start the recording  
 run it again to stop and preview the recording  
@@ -27,11 +32,10 @@ A notification is shown when upload is complete and
 a link is put in your clipboard.  
 
 protip:
-bindsym --release Mod3+Pint exec --no-startup-id i3cast
+\`bindsym --release Mod3+Pint exec --no-startup-id i3cast\`
 
 dependencies
 ------------
-
 * i3get
 * i3run
 * urxvt
@@ -44,8 +48,7 @@ dependencies
 * DEPENDENCY
 
 optional 
-* gif-is-jif  https://github.com/markasoftware/gif-is-jif
-to upload as animated gif to gifycat.
+* [gif-is-jif](https://github.com/markasoftware/gif-is-jif) to upload as animated gif to gifycat.
 
 contact
 -------
@@ -55,20 +58,13 @@ $CONTACT
 while getopts :vh option
 do
   case "${option}" in
-    v) printf "$NAME - version: $VERSION\n"  && \
-       printf "updated: $UPDATED by $AUTHOR\n" \
-        && exit;;
-    h) printf "${about}\n" && exit;;
+    v) printf '%s\n' \
+         "$NAME - version: $VERSION" \
+         "updated: $UPDATED by $AUTHOR"
+       exit ;;
+    h) printf '%s\n' "${about}" && exit ;;
   esac
 done
-
-
-
-# ### discussion ###
-# https://redd.it/6xlibu
-#
-# **********************************************
-
 
 # other players might work, change var PLAYER if you for some
 # reason don't want to use mpv.

@@ -10,11 +10,11 @@ UPDATED="2017-11-19"
 about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
-===============================
+*******************************
 This script is vital for i3fyra to work. But it can be used on it's own
 or with other scripts. i3list is also used by i3run. i3list parses the
 output of the command:
-i3-msg -t get_tree 
+\`i3-msg -t get_tree\`
 and returns a long string with 43 values separated by spaces. This strange 
 output format is made to make it possible to pipe the output to other scripts. 
 A lot of the information is specific to i3fyra, but if i3list doesn't find a 
@@ -32,32 +32,32 @@ choose which information you want in the output. It is slightly faster (5ms).
 
 usage
 -----
-$NAME [OPTION CRITERIA]
+\`\$ $NAME [OPTION [CRITERIA]]\`
 
-option | argument | function
-----------------------------
-
--v     |           | Show version and exit.
--h     |           | Show this info and exit. 
--c     | CLASS     | Search for windows with the given CLASS
--i     | INSTANCE  | Search for windows with the given INSTANCE
--t     | TITLE     | Search for windows with the given TITLE
--n     | CON_ID    | Search for windows with the given CON_ID
--d     | WINDOW_ID | Search for windows with the given WINDOW ID
--m     | CON_MARK  | Search for windows with the given MARK
+| option | criteria  | function                   |
+|:-------|:----------|:---------------------------|
+| -v     |           | show version info and exit |
+| -h     |           | show this help and exit    |
+| -c     | CLASS     | Search for windows with the given CLASS
+| -i     | INSTANCE  | Search for windows with the given INSTANCE
+| -t     | TITLE     | Search for windows with the given TITLE
+| -n     | CON_ID    | Search for windows with the given CON_ID
+| -d     | WINDOW_ID | Search for windows with the given WINDOW ID
+| -m     | CON_MARK  | Search for windows with the given MARK
 
 If no option is passed, active window will be target.
 
 example output:
+\`\`\`
 \$ i3list
   1 ABD C ABDC g u a X 1 94834554562528 f-94834554562528 g u a X 1 \
   94834554562528 f-94834554562528 t 94834555596640 94834555347456 \
   94834555596640 t 94834555517248 94834555517248 94834555517248 t \
   94834555385280 94834555385280 94834555385280 t 94834555516528 \
   94834555556800 94834555556800 1069 585 234 1056 900 234 A BD 1600 900
-
+\`\`\`
 Below is a cipher for the output:
-
+\`\`\`
 field: 0   - AWW -  current workspace
 field: 1   - VIS -  visible containers
 field: 2   - HID -  hidden containers
@@ -102,6 +102,7 @@ field: 40  - FAC -  Family AC memory (mark i34FAC_*)
 field: 41  - FBD -  Family AC memory (mark i34FBD_*)
 field: 42  - SDW -  Width of current workspace
 field: 43  - SDH -  Height of curent workspace
+field: 44  - WSF -  Workspace number whith i3fyra layout
 
 position (b|e|m|g|i)
 b - beginning  first child in container
@@ -122,16 +123,18 @@ status (f|a|n)
 f - focused (visible window in a tabbed container)
 a - active window
 n = neither active or focused
-
+\`\`\`
 The best way to handle the output is to put it in an array.
+
 Example:
-\$ list_array=\$(i3list)
+\`\`\`
+\$ list_array=(\$(i3list))
 \$ echo \${list_array[42]}
   1600 # width of current workspace
+\`\`\`
 
 dependencies
 ------------
-
 * i3wm
 
 contact
@@ -150,10 +153,11 @@ do
     m) crit="\"marks\"" srch="${OPTARG}";;
     a) crit="\"focused\"" && srch="true";;
     y) synk=1;;
-    v) printf "$NAME - version: $VERSION\n"  && \
-       printf "updated: $UPDATED by $AUTHOR\n" \
-        && exit;;
-    h) printf "${about}\n" && exit;;
+    v) printf '%s\n' \
+         "$NAME - version: $VERSION" \
+         "updated: $UPDATED by $AUTHOR"
+       exit ;;
+    h) printf '%s\n' "${about}" && exit ;;
   esac
 done
 
@@ -172,7 +176,7 @@ containerlist(){
         split(chkl,alst," ",seps)
         
         SDW="X";SDH="X";CWS="X"
-        FAC="X";FBD="X"
+        FAC="X";FBD="X";WSF="X"
 
         SAB="X";SAC="X";SBD="X"
         CAB="X";CAC="X";CBD="X"
@@ -199,7 +203,7 @@ containerlist(){
       $1=="\"type\"" && $2=="\"workspace\"" {wsdchk="1"}
       wsdchk=="1" && $1=="\"width\""  {dim["w"]=$2}
       wsdchk=="1" && $1=="\"height\"" {gsub("}","",$2);dim["h"]=$2;wsdchk="2"}
-      $1=="\"num\"" {curws=$2}
+      $1=="\"num\"" {curws=$2;if(WSF=="chk"){WSF=$2}}
       wsdchk=="2" && $1=="\"num\"" {
         dim[$2]["w"]=dim["w"]
         dim[$2]["h"]=dim["h"]
@@ -273,6 +277,11 @@ containerlist(){
         }
 
         cmrk=$2
+
+        if($2~"i34XAB"){
+          WSF=curws
+          if(curws=="-1"){WSF="chk"}
+        }
 
         if($2~"i34SAB"){
           split($2,asplt,"_")
@@ -352,8 +361,8 @@ containerlist(){
         for (c in conta) {
           if(c~/^A$|^B$|^C$|^D$/){
 
-            if(conta[c]["ws"]==AWW){gsub("X","",VIS);VIS=VIS c}
-            if(conta[c]["ws"]!=AWW){gsub("X","",HID);HID=HID c}
+            if(conta[c]["ws"]==WSF){gsub("X","",VIS);VIS=VIS c}
+            if(conta[c]["ws"]=="-1"){gsub("X","",HID);HID=HID c}
 
             if(c=="A"){
               LOA=conta[c]["layout"]
@@ -395,7 +404,8 @@ containerlist(){
           SAB " " SAC " " SBD " " \
           CAB " " CAC " " CBD " " \
           FAC " " FBD " " \
-          dim[AWW]["w"] " " dim[AWW]["h"]
+          dim[AWW]["w"] " " dim[AWW]["h"] " " \
+          WSF
       }
     '
 }

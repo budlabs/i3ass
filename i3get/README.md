@@ -42,7 +42,7 @@ example
 
 $ i3get -i sublime_text -r wtf
   1
-  "~/tmp/kortisarhttps://github.com/budRich/i3ass/tree/master/doc/i3gw.md (i3ass) - Sublime Text"
+  "~/tmp/kortisar/i3ass/doc/i3gw.md (i3ass) - Sublime Text"
   "user_off"
 ```
 
