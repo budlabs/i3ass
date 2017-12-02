@@ -8,20 +8,22 @@ usage
 ``` text
 i3get [OPTION CRITERIA]
 
-Options:
-v             show version and exit
-h             show this help
-a             currently active window (default)
-c CLASS       search for windows with the given class
-i INSTANCE    search for windows with the given instance
-t TITLE       search for windows with title.
-n CON_ID      search for windows with the given con_id
-d CON_ID      search for windows with the given window id
-m CON_MARK    search for windows with the given mark
-y             sync on. If this option is included, script will wait till
-              target window exist.
+| option | criteria | function                   |
+|:-------|:---------|:---------------------------|
+| -v     |          | show version and exit
+| -h     |          | show this help
+| -a     |          | currently active window (default)
+| -c     | CLASS    | search for windows with the given class
+| -i     | INSTANCE | search for windows with the given instance
+| -t     | TITLE    | search for windows with title.
+| -n     | CON_ID   | search for windows with the given con_id
+| -d     | CON_ID   | search for windows with the given window id
+| -m     | CON_MARK | search for windows with the given mark
+| -o     | TTL_FRMT | search for windows with the given titleformat
+| -y     |          | synch on. If this option is included, 
+|        |          | script will wait till target window exist.
 
-r [tcidnmw]   desired return.
+-r [tcidnmw]   desired return.
                 t: title
                 c: class
                 i: instance
@@ -31,6 +33,7 @@ r [tcidnmw]   desired return.
                 w: workspace
                 a: is active
                 f: floating state
+                o: title format
                 v: visible state
 ```
 
