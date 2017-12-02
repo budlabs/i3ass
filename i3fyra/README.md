@@ -11,8 +11,8 @@ In the first video above I show the functionality of `i3fyra`. The second video 
 
 dependencies
 ------------
-* [i3list](https://github.com/budRich//tree/masteri3ass/i3list)
-* [i3gw](https://github.com/budRich//tree/masteri3ass/i3gw)
+* [i3list](https://github.com/budRich/i3ass/tree/master/i3list)
+* [i3gw](https://github.com/budRich/i3ass/tree/master/i3gw)
 
 ------
 

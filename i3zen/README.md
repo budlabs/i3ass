@@ -21,6 +21,6 @@ usage
 
 dependencies
 ------------
-* [i3get](https://github.com/budRich//tree/masteri3ass/i3get)
-* [i3gw](https://github.com/budRich//tree/masteri3ass/i3gw)
+* [i3get](https://github.com/budRich/i3ass/tree/master/i3get)
+* [i3gw](https://github.com/budRich/i3ass/tree/master/i3gw)
 

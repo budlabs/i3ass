@@ -10,14 +10,14 @@ a notification is shown when upload is complete and a link is put in your clipbo
 
 requirements
 ------------
-[i3get](https://github.com/budRich//tree/masteri3ass/i3get) | to identify and the terminal (urxvt) window
+[i3get](https://github.com/budRich/i3ass/tree/master/i3get) | to identify and the terminal (urxvt) window
 :---|:---
-[i3run](https://github.com/budRich//tree/masteri3ass/i3run) | to run and hide the terminal (urxvt) window
+[i3run](https://github.com/budRich/i3ass/tree/master/i3run) | to run and hide the terminal (urxvt) window
 **urxvt**  | terminal emulator
 **ffmpeg**  | commandline tool to record media
 **curl**   | commandline tool to download and upload stuff
 **mpv**    | minimal mediaplayer, used to preview recording
-[dmenu](https://github.com/budRich//tree/masterblog/dmenu) | tool that displays a menu
+[dmenu](https://budrich.github.io/blog/dmenu) | tool that displays a menu
 **xclip**  | tool that handles clipboard events
 **xdotool** | needed to send `q` to urxvt, to quit the recording in a proper way
 [gif-is-jif](https://github.com/markasoftware/gif-is-jif) | to save and upload gif format (**optional**)

@@ -4,15 +4,15 @@ i3ass - i3 assistance scripts
 
 |**script**              |**function**|
 |:-----------------------|:-----------|
-|[i3fyra](https://github.com/budRich//tree/masteri3ass/i3fyra) |An advanced simple layout         |
-|[i3run](https://github.com/budRich//tree/masteri3ass/i3run)   |Run, Raise or hide a window       |
-|[i3get](https://github.com/budRich//tree/masteri3ass/i3get)   |Get information about i3          |
-|[i3cast](https://github.com/budRich//tree/masteri3ass/i3cast) |Create and upload screenrecordings|
-|[i3list](https://github.com/budRich//tree/masteri3ass/i3list) |Get lots of information about i3  |
-|[i3gw](https://github.com/budRich//tree/masteri3ass/i3gw)     |Ghost window wrapper script       |
-|[i3mtm](https://github.com/budRich//tree/masteri3ass/i3mtm)   |Move window to a chosen mark      |
-|[i3term](https://github.com/budRich//tree/masteri3ass/i3term) |Launch a program inside a terminal|
-|[i3zen](https://github.com/budRich//tree/masteri3ass/i3zen)   |Move a window to the zenter       |
+|[i3fyra](https://github.com/budRich/i3ass/tree/master/i3fyra) |An advanced simple layout         |
+|[i3run](https://github.com/budRich/i3ass/tree/master/i3run)   |Run, Raise or hide a window       |
+|[i3get](https://github.com/budRich/i3ass/tree/master/i3get)   |Get information about i3          |
+|[i3cast](https://github.com/budRich/i3ass/tree/master/i3cast) |Create and upload screenrecordings|
+|[i3list](https://github.com/budRich/i3ass/tree/master/i3list) |Get lots of information about i3  |
+|[i3gw](https://github.com/budRich/i3ass/tree/master/i3gw)     |Ghost window wrapper script       |
+|[i3mtm](https://github.com/budRich/i3ass/tree/master/i3mtm)   |Move window to a chosen mark      |
+|[i3term](https://github.com/budRich/i3ass/tree/master/i3term) |Launch a program inside a terminal|
+|[i3zen](https://github.com/budRich/i3ass/tree/master/i3zen)   |Move a window to the zenter       |
 
 license
 -------

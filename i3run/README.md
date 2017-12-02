@@ -21,7 +21,7 @@ this example will look for a window with the instance `sublime_text` and focus i
 
 dependencies
 ------------
-[i3get](https://github.com/budRich//tree/masteri3ass/i3get) | to identify and the terminal the floating state of current window
+[i3get](https://github.com/budRich/i3ass/tree/master/i3get) | to identify and the terminal the floating state of current window
 :---|:---
 
 links
