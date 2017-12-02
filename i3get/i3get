@@ -29,6 +29,7 @@ usage
 | -n     | CON_ID   | search for windows with the given con_id
 | -d     | CON_ID   | search for windows with the given window id
 | -m     | CON_MARK | search for windows with the given mark
+| -o     | TTL_FRMT | search for windows with the given titleformat
 | -y     |          | synch on. If this option is included, 
 |        |          | script will wait till target window exist.
 
@@ -42,6 +43,7 @@ usage
                 w: workspace
                 a: is active
                 f: floating state
+                o: title format
                 v: visible state
 
 Examples:
@@ -54,7 +56,7 @@ contact
 $CONTACT
 "
 
-while getopts :c:i:t:n:d:r:m:ayvh option
+while getopts :c:i:t:n:d:r:m:o:ayvh option
 do
   case "${option}" in
     v) printf '%s\n' \
@@ -68,6 +70,7 @@ do
     n) crit="\"id\"" srch="${OPTARG}";;
     d) crit="\"window\"" srch="${OPTARG}";;
     m) crit="\"marks\"" srch="${OPTARG}";;
+    o) crit="\"title_format\"" srch="${OPTARG}";;
     a) crit="\"focused\"" && srch="true";;
     r) sret="${OPTARG}" ;;
     y) synk=1;;
@@ -92,6 +95,7 @@ getwindow(){
       stop!=1 && sret ~ d && $1=="\"window\"" {r["d"]=$2}
       stop!=1 && sret ~ m && $1=="\"marks\"" {r["m"]=$2}
       stop!=1 && sret ~ a && $1=="\"focused\"" {r["a"]=$2}
+      stop!=1 && sret ~ o && $1=="\"title_format\"" {r["o"]=$2}
       stop!=1 && sret ~ f && $1=="\"floating\"" {r["f"]=$2;if(hit == "1")stop=1}
       stop!=1 && sret ~ w && $1=="\"num\"" {r["w"]=$2}
       sret ~ l && $1=="\"focus\"" {r["v"]=r["v"] $2" "}
