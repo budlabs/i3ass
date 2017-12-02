@@ -1,7 +1,7 @@
 #!/bin/sh
 
 NAME="i3get"
-VERSION="0.271"
+VERSION="0.291"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-03-08"
@@ -87,37 +87,28 @@ getwindow(){
   i3-msg -t get_tree \
   | awk -v RS=',' -F':' -v crit="${crit}" -v srch="${srch}" -v sret="${sret}" \
     'BEGIN{hit="0"}
-      stop!=1 && $1~"{\"id\"" {if(sret ~ n)r["n"]=$2;if(sret ~ v)cid=$2}
-      stop!=1 && $2~"\"id\"" {if(sret ~ n)r["n"]=$3;if(sret ~ v)cid=$3}
-      stop!=1 && $1==crit && $2 ~ srch  {hit=1;fid=cid}
-      stop!=1 && $2 ~ crit && $3 ~ srch {hit=1;fid=cid}
-      stop!=1 && sret ~ t && $1=="\"title\"" {r["t"]=$2}
-      stop!=1 && sret ~ c && $2 ~ "\"class\"" {r["c"]=$3}
-      stop!=1 && sret ~ i && $1=="\"instance\"" {r["i"]=$2}
-      stop!=1 && sret ~ d && $1=="\"window\"" {r["d"]=$2}
-      stop!=1 && sret ~ m && $1=="\"marks\"" {r["m"]=$2}
-      stop!=1 && sret ~ a && $1=="\"focused\"" {r["a"]=$2}
-      stop!=1 && sret ~ o && $1=="\"title_format\"" {r["o"]=$2}
-      stop!=1 && sret ~ f && $1=="\"floating\"" {r["f"]=$2;if(hit == "1")stop=1}
-      stop!=1 && sret ~ w && $1=="\"num\"" {r["w"]=$2}
-      sret ~ l && $1=="\"focus\"" {r["v"]=r["v"] $2" "}
+      $1~"{\"id\"" {if(sret ~ n)r["n"]=$2;if(sret ~ v)cid=$2}
+      $2~"\"id\"" {if(sret ~ n)r["n"]=$3;if(sret ~ v)cid=$3}
+      $1==crit && $2 ~ srch  {hit=1;fid=cid}
+      $2 ~ crit && $3 ~ srch {hit=1;fid=cid}
+      sret ~ t && $1=="\"title\"" {r["t"]=$2}
+      sret ~ c && $2 ~ "\"class\"" {r["c"]=$3}
+      sret ~ i && $1=="\"instance\"" {r["i"]=$2}
+      sret ~ d && $1=="\"window\"" {r["d"]=$2}
+      sret ~ m && $1=="\"marks\"" {r["m"]=$2}
+      sret ~ a && $1=="\"focused\"" {r["a"]=$2}
+      sret ~ o && $1=="\"title_format\"" {r["o"]=$2}
+      sret ~ f && $1=="\"floating\"" {r["f"]=$2;if(hit == "1")exit}
+      sret ~ w && $1=="\"num\"" {r["w"]=$2}
+      
     END{
       if(hit == "0") exit
       split(sret, aret, "")
       for (i=1; i <= length(sret); i++) {
-        if(aret[i]=="v") {
-          gsub("[[]|[]]","",r[aret[i]])
-          split(r[aret[i]],focar," ",seps)
-          vis="hidden"
-          for (f in focar) {
-            if(focar[f] == fid){vis="visible"}
-          }
-          r[aret[i]]=vis
-        }
-        if(r[aret[i]]!="")
-          op=r[aret[i]]
-          gsub("[\"]","",op)
-          printf("%s\n", op)
+        op=r[aret[i]]
+        gsub("[\"]","",op)
+        if(op!="")
+        printf("%s\n", op)
       }
     }
     '
