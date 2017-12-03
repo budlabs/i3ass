@@ -98,8 +98,8 @@ getwindow(){
       sret ~ m && $1=="\"marks\"" {r["m"]=$2}
       sret ~ a && $1=="\"focused\"" {r["a"]=$2}
       sret ~ o && $1=="\"title_format\"" {r["o"]=$2}
-      sret ~ f && $1=="\"floating\"" {r["f"]=$2;if(hit == "1")exit}
       sret ~ w && $1=="\"num\"" {r["w"]=$2}
+      sret ~ f && $1=="\"floating\"" {r["f"]=$2;if(hit == "1")exit}
       
     END{
       if(hit == "0") exit
