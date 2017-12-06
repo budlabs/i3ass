@@ -17,11 +17,10 @@ original workspace. If the window is not in zen but
 another window is, both of them will be zen in a tabbed
 container.
 
-usage
------
+**usage**  
 \`\$ $NAME [OPTION] ARGUMENT\`
 
-| option | argument | function                   |
+| **option** | **argument** | **function**     
 |:-------|:---------|:---------------------------|
 | -v     |          | show version info and exit |
 | -h     |          | show this help and exit    |

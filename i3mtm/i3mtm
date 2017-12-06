@@ -23,19 +23,17 @@ Otherwise window is tiled and moved to selected mark.
 With -m option window is treaded as if it was floating
 even if it is tiled. (menu is forced)  
 
-usage
------
+**usage**  
 \`\$ $NAME [OPTION]\`
 
-| option | argument | function                   |
+| **option** | **argument** | **function**                   |
 |:-------|:---------|:---------------------------|
 | -v     |          | show version info and exit |
 | -h     |          | show this help and exit    |
 
-examples
---------
+**examples**  
 you could replace your floating toggle binding with this:  
-\`\`\`
+\`\`\` text
 bindsym Mod3+f exec --no-startup-id exec i3mtm  
 bindsym Mod3+Shift+f exec --no-startup-id exec i3mtm -m  
 \`\`\`

@@ -1,14 +1,13 @@
 
-Get information about a window
-==============================
-Search for windows in i3 tree and print requested information. If no arguments are passed. `con_id` of active window is returned.
+*******************************
+Search for windows in i3 tree, return desired information
+if no arguments are passed. con_id of acitve window is returned.
 
 usage
 -----
-``` text
-i3get [OPTION CRITERIA]
+`$ i3get [OPTION [CRITERIA]]`
 
-| option | criteria | function                   |
+| **option** | **criteria** | **function**                   |
 |:-------|:---------|:---------------------------|
 | -v     |          | show version and exit
 | -h     |          | show this help
@@ -22,30 +21,29 @@ i3get [OPTION CRITERIA]
 | -o     | TTL_FRMT | search for windows with the given titleformat
 | -y     |          | synch on. If this option is included, 
 |        |          | script will wait till target window exist.
+  
+.  
 
+``` text
 -r [tcidnmw]   desired return.
-                t: title
-                c: class
-                i: instance
-                d: Window ID
-                n: Con_Id (default)
-                m: mark
-                w: workspace
-                a: is active
-                f: floating state
-                o: title format
-                v: visible state
-```
+               t: title
+               c: class
+               i: instance
+               d: Window ID
+               n: Con_Id (default)
+               m: mark
+               w: workspace
+               a: is active
+               f: floating state
+               o: title format
+               v: visible state
+```               
 
-example
----------
-``` shell
-# Search for window with instance name sublime_text. 
-# Request workspace, title and floating state.
+Examples:
+search for window with instance name sublime_text. Request
+workspace, title and floating state.
+`i3get -i sublime_text -r wtf`
 
-$ i3get -i sublime_text -r wtf
-  1
-  "~/tmp/kortisar/i3ass/doc/i3gw.md (i3ass) - Sublime Text"
-  "user_off"
-```
+Title and tile_format output is always surrounded
+with doublequotes.
 

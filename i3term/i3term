@@ -24,17 +24,16 @@ dependencies
 - urxvt
 - [i3run](/i3ass/i3run)
 
-usage
------
+**usage**  
 \`i3term COMMAND\`
 
-| option | argument | function                  
+| **option** | **argument** | **function**                  
 |:-------|:---------|:--------------------------
 | -v     |          | show version info and exit
 | -h     |          | show this help and exit   
 
 
-**example:**  
+**example**  
 \`bindsym Mod3+o exec --no-startup-id exec termrun htop\`
 
 contact

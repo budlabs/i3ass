@@ -11,14 +11,14 @@ about="
 $NAME - $VERSION - $UPDATED
 created: $CREATED by $AUTHOR
 *******************************
-search for windows in i3 tree, return desired information
+Search for windows in i3 tree, return desired information
 if no arguments are passed. con_id of acitve window is returned.
 
 usage
 -----
 \`\$ $NAME [OPTION [CRITERIA]]\`
 
-| option | criteria | function                   |
+| **option** | **criteria** | **function**                   |
 |:-------|:---------|:---------------------------|
 | -v     |          | show version and exit
 | -h     |          | show this help
@@ -32,24 +32,31 @@ usage
 | -o     | TTL_FRMT | search for windows with the given titleformat
 | -y     |          | synch on. If this option is included, 
 |        |          | script will wait till target window exist.
+  
+.  
 
+\`\`\` text
 -r [tcidnmw]   desired return.
-                t: title
-                c: class
-                i: instance
-                d: Window ID
-                n: Con_Id (default)
-                m: mark
-                w: workspace
-                a: is active
-                f: floating state
-                o: title format
-                v: visible state
+               t: title
+               c: class
+               i: instance
+               d: Window ID
+               n: Con_Id (default)
+               m: mark
+               w: workspace
+               a: is active
+               f: floating state
+               o: title format
+               v: visible state
+\`\`\`               
 
 Examples:
 search for window with instance name sublime_text. Request
 workspace, title and floating state.
 \`i3get -i sublime_text -r wtf\`
+
+Title and tile_format output is always surrounded
+with doublequotes.
 
 contact
 -------
@@ -106,7 +113,7 @@ getwindow(){
       split(sret, aret, "")
       for (i=1; i <= length(sret); i++) {
         op=r[aret[i]]
-        gsub("[\"]","",op)
+        if(aret[i]!~/t|o/){gsub("[\"]","",op)}
         if(op!="")
         printf("%s\n", op)
       }

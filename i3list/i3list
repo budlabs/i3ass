@@ -34,8 +34,8 @@ usage
 -----
 \`\$ $NAME [OPTION [CRITERIA]]\`
 
-| option | criteria  | function                   |
-|:-------|:----------|:---------------------------|
+| **option** | **criteria**  | **function**                   |
+|:-------|:---------:|:---------------------------|
 | -v     |           | show version info and exit |
 | -h     |           | show this help and exit    |
 | -c     | CLASS     | Search for windows with the given CLASS
@@ -47,17 +47,17 @@ usage
 
 If no option is passed, active window will be target.
 
-example output:
-\`\`\`
+**example output**
+\`\`\` text
 \$ i3list
-  1 ABD C ABDC g u a X 1 94834554562528 f-94834554562528 g u a X 1 \
-  94834554562528 f-94834554562528 t 94834555596640 94834555347456 \
-  94834555596640 t 94834555517248 94834555517248 94834555517248 t \
-  94834555385280 94834555385280 94834555385280 t 94834555516528 \
+  1 ABD C ABDC g u a X 1 94834554562528 f-94834554562528 g u a X 1 \\
+  94834554562528 f-94834554562528 t 94834555596640 94834555347456 \\
+  94834555596640 t 94834555517248 94834555517248 94834555517248 t \\
+  94834555385280 94834555385280 94834555385280 t 94834555516528 \\
   94834555556800 94834555556800 1069 585 234 1056 900 234 A BD 1600 900
 \`\`\`
-Below is a cipher for the output:
-\`\`\`
+**Below is a cipher for the output**
+\`\`\` text
 field: 0   - AWW -  current workspace
 field: 1   - VIS -  visible containers
 field: 2   - HID -  hidden containers
@@ -127,15 +127,11 @@ n = neither active or focused
 The best way to handle the output is to put it in an array.
 
 Example:
-\`\`\`
+\`\`\` text
 \$ list_array=(\$(i3list))
 \$ echo \${list_array[42]}
   1600 # width of current workspace
 \`\`\`
-
-dependencies
-------------
-* i3wm
 
 contact
 -------

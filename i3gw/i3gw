@@ -26,25 +26,25 @@ usage
 -----
 \`\$ $NAME [-h|-v] MARK\`
 
-example:
+| **option** | **argument** | **function**                   |
+|:-------|:---------|:---------------------------|
+| -v     |          | show version info and exit |
+| -h     |          | show this help and exit    |
+
+example:  
 \`i3gw casper\`
 
 this will create a ghost marked casper, you can perform any action
 you can perform on a regular container.
 
 example:
-\`\`\`
+\`\`\` text
 i3-msg [con_mark=casper] move to workspace 2
 i3-msg [con_mark=casper] split v
 i3-msg [con_mark=casper] layout tabbed
 i3-msg [con_mark=casper] kill
 \`\`\`
 the last example (kill), destroys the container.
-
-| option | argument | function                   |
-|:-------|:---------|:---------------------------|
-| -v     |          | show version info and exit |
-| -h     |          | show this help and exit    |
 
 contact
 -------

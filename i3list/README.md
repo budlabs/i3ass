@@ -1,34 +1,44 @@
 
-This script is vital for [i3fyra](https://github.com/budRich/i3ass/tree/master/i3fyra) to work. But it can be used on it's own or with other scripts. `i3list` is also used by [i3run](https://github.com/budRich/i3ass/tree/master/i3run). **i3list** parses the output of the command:  
-`i3-msg -t get_tree`   
-and returns a long string with 43 values separated by spaces. This strange output format is made to make it possible to pipe the output to other scripts. A lot of the information is specific to [i3fyra](https://github.com/budRich/i3ass/tree/master/i3fyra), but if i3list doesn't find a value an X will be placed in it's place in the output.  
 
-The idea, is to use this script once, and get all the info about i3's current state in one big chunk. So one doesn't have to make more requests for tree output. It have sped up my own scripts a lot. And it also makes many listener scripts unnecessary. The parsing is done with awk, and it is very fast, about 25ms on my average computer (i5, 4GB). Same operation with pure bash would take at least a whole second (x40).
+*******************************
+This script is vital for i3fyra to work. But it can be used on it's own
+or with other scripts. i3list is also used by i3run. i3list parses the
+output of the command:
+`i3-msg -t get_tree`
+and returns a long string with 43 values separated by spaces. This strange 
+output format is made to make it possible to pipe the output to other scripts. 
+A lot of the information is specific to i3fyra, but if i3list doesn't find a 
+value an X will be placed in it's place in the output.
 
-I have made another script, [i3get](https://github.com/budRich/i3ass/tree/master/i3get), that works in a similar way but where you choose which information you want in the output. It is slightly faster (-5ms).  
+The idea, is to use this script once, and get all the info about i3's current
+state in one big chunk. So one doesn't have to make more requests for 
+tree output. It have speeded up my own scripts a lot. And it also makes many
+listener scripts unnecessary. The parsing is done with awk, and it is very
+fast, about 25ms on my average computer (i5, 4GB). Same operation with pure
+bash would take at least a whole second (x40).
+
+I have made another script, i3get, that works in a similar way but where you
+choose which information you want in the output. It is slightly faster (5ms).
 
 usage
 -----
-`i3list [OPTION CRITERIA]`
+`$ i3list [OPTION [CRITERIA]]`
 
-``` text
-option | argument | function
-----------------------------
-
--v     |           | Show version and exit.
--h     |           | Show this info and exit. 
--c     | CLASS     | Search for windows with the given CLASS
--i     | INSTANCE  | Search for windows with the given INSTANCE
--t     | TITLE     | Search for windows with the given TITLE
--n     | CON_ID    | Search for windows with the given CON_ID
--d     | WINDOW_ID | Search for windows with the given WINDOW ID
--m     | CON_MARK  | Search for windows with the given MARK
-```
+| **option** | **criteria**  | **function**                   |
+|:-------|:---------:|:---------------------------|
+| -v     |           | show version info and exit |
+| -h     |           | show this help and exit    |
+| -c     | CLASS     | Search for windows with the given CLASS
+| -i     | INSTANCE  | Search for windows with the given INSTANCE
+| -t     | TITLE     | Search for windows with the given TITLE
+| -n     | CON_ID    | Search for windows with the given CON_ID
+| -d     | WINDOW_ID | Search for windows with the given WINDOW ID
+| -m     | CON_MARK  | Search for windows with the given MARK
 
 If no option is passed, active window will be target.
 
-example output:
-``` shell
+**example output**
+``` text
 $ i3list
   1 ABD C ABDC g u a X 1 94834554562528 f-94834554562528 g u a X 1 \
   94834554562528 f-94834554562528 t 94834555596640 94834555347456 \
@@ -36,8 +46,7 @@ $ i3list
   94834555385280 94834555385280 94834555385280 t 94834555516528 \
   94834555556800 94834555556800 1069 585 234 1056 900 234 A BD 1600 900
 ```
-
-Below is a cipher for the output:
+**Below is a cipher for the output**
 ``` text
 field: 0   - AWW -  current workspace
 field: 1   - VIS -  visible containers
@@ -105,15 +114,12 @@ f - focused (visible window in a tabbed container)
 a - active window
 n = neither active or focused
 ```
-
 The best way to handle the output is to put it in an array.
-Example (bash/terminal):
-``` shell
+
+Example:
+``` text
 $ list_array=($(i3list))
 $ echo ${list_array[42]}
   1600 # width of current workspace
 ```
-
-
-
 

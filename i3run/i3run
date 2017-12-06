@@ -16,22 +16,24 @@ It looks for a window matching a given criteria.
 
 These are the actions taken depending on the state of the found window:
 
-If found window is active and not handled by i3fyra - mark and hide
-If found window is active and handled by i3fyra     - do nothing
-If found window is handled by i3fyra and hidden     - show container, activate
-If found window is not handled by i3fyra and hidden - show window, activate
-If no window is found                               - run command
+| **target window state**          | **action**
+|:---------------------------------|:-----------------
+| Active and not handled by i3fyra | mark and hide
+| Active and handled by i3fyra     | do nothing
+| Handled by i3fyra and hidden     | show container, activate
+| Not handled by i3fyra and hidden | show window, activate
+| Not on current workspace         | goto workspace
+| Not found                        | run command
 
-Hidden in this context, means, not on the current workspace.
+Hidden in this context, means that window is on scratchpad/
 Show in this context means, move window to current workspace.
 
-This might not be desired behaviour for some workflows, but htat's how it works.
 
-usage
------
+
+**usage**  
 \`\$ $NAME -h|v|i|c|t [CRITERIA] [-e COMMAND]\`
 
-| option | criteria | function                   |
+| **option** | **criteria** | **function**                   |
 |:-------|:---------|:---------------------------|
 | -v     |          | show version info and exit |
 | -h     |          | show this help and exit    |
@@ -39,18 +41,18 @@ usage
 | -i     | INSTANCE | Search for windows with the given INSTANCE
 | -t     | TITLE    | Search for windows with the given TITLE
 | -e     | COMMAND  | Command to run if no window is found.
+| -s     |          | Instead of switching workspace,
+|        |          | summon window to current workspace
 
-it is important that -e COMMAND is last of the options.
+it is important that \`-e COMMAND\` is last of the options.
 -e is optional, if no COMMAND is passed and no window is found, nothing happens.
 It is also important that COMMAND will spawn a window matching the criteria,
 otherwise the script will get stuck in a loop waiting for the window to appear.
 
 dependencies
 ------------
-* i3list
-* i3get 
-  since i3get is slightly faster and have sync option, 
-  it is used to wait for a window to appear after COMMAND is executed.
+* [i3list](/i3ass/i3list)
+* [i3get](/i3ass/i3get) 
 
 contact
 -------
@@ -77,7 +79,7 @@ summon=${summon:-0}
 
 declare -A gla
 
-alst=($(i3list ${acri[@]}))
+alst=($(i3list "${acri[@]}"))
 
 gla[AWW]=${alst[0]}   #  current workspace
 gla[VIS]=${alst[1]}   #  visible containers
@@ -99,7 +101,7 @@ gla[WSF]=${alst[44]}  #  Workspace number whith i3fyra layout
 # if window doesn't exist, launch the command.
 if [[ ${gla[TWI]} = X ]]; then
   eval "${command}" > /dev/null 2>&1 & 
-  i3get -y ${acri[@]} 
+  i3get -y ${acri[@]}
   exit
 fi
 

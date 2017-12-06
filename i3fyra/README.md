@@ -1,6 +1,5 @@
 
-An advanced simple tiling layout for i3wm
-=========================================
+
 fyra is the Swedish name for "four".
 
 https://www.youtube.com/watch?v=kU8gb6WLFk8  
@@ -9,23 +8,19 @@ https://www.youtube.com/watch?v=t4Tve-xpwus
  
 In the first video above I show the functionality of `i3fyra`. The second video is a longer and more thorough walkthrough on how to use `i3fyra`
 
-dependencies
-------------
-* [i3list](https://github.com/budRich/i3ass/tree/master/i3list)
-* [i3gw](https://github.com/budRich/i3ass/tree/master/i3gw)
-
-------
+*******************************
+An advanced simple tiling layout for i3wm. 
+------------------------------------------
 
 The layout consists of four containers:
-``` shell
-A B
-C D
+``` text
+  A B
+  C D
 ```
-The internal layout of the containers doesn't matter.  
-This means that container A could be tabbed and the others split horizontally for example.
+The internal layout of the containers doesn't matter.
 
-`A` is always to the left of `B` and `D`. And always above `C`.
-`B` is always to the right of `A` and `C`. And always above `D`.
+A is always to the left of B and D. And always above C.
+B is always to the right of A and C. And always above D.
 
 This means that the containers will change names if their position changes.
 
@@ -33,34 +28,29 @@ The size of the containers are defined by the three splits: AB, AC and BD.
 Container A and C are siblings and container B and D are siblings. 
 
 If ABC are visible but D is hidden or none existent, layout becomes:
-``` shell
-A B
-C B
+``` text
+  A B
+  C B
 ```
 If action: *move up* (-m u) would be called when B container is active 
 and D is hidden. Container D would be shown. If action would have been:
 *move down* (-m d), D would be shown and B and D would swap position and name.
 If action would have been *move left* (-m l) the active window in B would be
 moved to container A. If action was: *move right* (-m r) A and C would be hidden:
-``` shell
-B B
-B B
+``` text
+  B B
+  B B
 ```
 If we now call action: *move left* (-m l) A and C would be shown again but
 to the right of B, the containers would also change names, so B becomes A, 
 A becomes B and C becomes D:
-``` shell
-A B
-A D
+``` text
+  A B
+  A D
 ```
-
-workspace lock
---------------
-The layout is active on one workspace only. This means that all other workspaces will work as expected with *vanilla* **i3** . The workspace where the layout is first invoked will be the `i3fyra` workspace.
-
 usage
 -----
-`i3fyra [OPTTION] [ARGUMENT]`
+`$ i3fyra [OPTTION] [ARGUMENT]`
 
 ``` text
 option | argument | action
@@ -110,5 +100,10 @@ option | argument | action
                        the bottom if it is negative.
                     The whole argument needs to be quoted. Example:
                     fyra -l 'AB=-300 BD=420'
-
 ```
+
+dependencies
+------------
+* i3list
+* i3gw
+
