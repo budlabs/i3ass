@@ -42,9 +42,11 @@ dependencies
 * ffmpeg
 * curl
 * mpv
-* dmenu
-* xclip
+* rofi
+* xsel
 * xdotool
+* dunst
+* dunstify
 * [gif-is-jif](https://github.com/markasoftware/gif-is-jif) to upload as animated gif to gifycat.
 *(optional)*
 
@@ -69,11 +71,7 @@ done
 PLAYER=mpv
 
 # Folder to store saved and uploaded videos localy.
-FOLDER=$HOME/vid/bud/
-
-# Customize the DMENU to your liking
-# DMENU_OPTIONS=
-# DMENU_OPTIONS="-h 16"
+FOLDER=$HOME/vid/bud
 
 # to add gfycat as an host, enter path to gif-is-jif
 # GIF_IS_JIF=
@@ -89,15 +87,12 @@ TMP_FILE=/tmp/cast/tmpcast.mkv
 # Command used for recording, it works well for my screen,
 # but you might want to change at least -s 1366x768 to match
 # your resolution.
-COMMAND="ffmpeg -y -f x11grab -s $(xdpyinfo | grep dimensions | awk '{print $2;}') -i :0.0 -f alsa -i default -c:v libx264 -c:a flac /tmp/cast/tmpcast.mkv"
-termcmd="urxvtc -name castterm -e bash -c '${COMMAND}'"
 
-[[ -n $GIF_IS_JIF ]] && HOSTS+="\ngfycat"
+[[ ! -x $GIF_IS_JIF ]] && HOSTS+="\ngfycat"
 
 play(){
-  ${PLAYER} $TMP_FILE
-  sel1="play\nupload\nsave"
-  choice=$(echo -e "${sel1}" | dmenu ${DMENU_OPTIONS} -p "action:")
+  ${PLAYER} "$TMP_FILE"
+  choice=$(printf '%s\n' "play" "upload" "save" | rofi -dmenu -p "action: ")
   if [[ -z $choice ]]; then
     rm $TMP_FILE 
     exit
@@ -112,44 +107,79 @@ play(){
 
 upload(){
   save
-  choice=$(echo -e "${HOSTS}" | dmenu ${DMENU_OPTIONS} -p "select host:")
+  choice=$(echo -e "${HOSTS}" | rofi -dmenu -p "select host: ")
   [[ -z $choice ]] && exit 
   case $choice in
     'ptpb.pw' ) 
       pst=$(curl --form "c=@${SAVED}" https://ptpb.pw/)
-      pst=$(printf "${pst}" | awk -F':' '$1=="url"{$1="";print $2 ":" $3}')
+      pst=$(printf '%s' "${pst}" | awk -F':' '$1=="url"{$1="";print $2 ":" $3}')
     ;;
 
     gfycat    ) 
-      pst=$(${GIF_IS_JIF} ${SAVED})
-      printf "${pst}" | awk '$NF ~ "http"{print $NF}'
-      pst=$(printf "${pst}" | awk '$NF ~ "http"{print $NF}')
+      pst=$(${GIF_IS_JIF} "${SAVED}")
+      pst=$(printf '%s' "${pst}" | awk '$NF ~ "http"{print $NF}')
     ;;
   esac
   
-  echo ${pst} | xclip -selection 'clipboard'
+  echo -n "${pst}" | xsel -ib
+  echo -n "${pst}" | xsel -ip
   notify-send "Upload complete: $pst"
 }
 
 save(){
-  choice=$(echo "" | dmenu ${DMENU_OPTIONS} -p "name:")
+  choice=$(rofi -dmenu -p "name: ")
   if [[ -z $choice ]]; then
     rm $TMP_FILE
     exit
   fi
-  SAVED=$FOLDER$choice.mkv
-  mkdir -p $FOLDER
-  mv $TMP_FILE $SAVED
+  ext=$(printf '%s\n' "mkv" "gif" | rofi -dmenu -p "output as: ")
+  SAVED="$FOLDER/${choice}.${ext}"
+  mkdir -p "$FOLDER"
+
+  if [[ $ext = gif ]]; then
+    prog=0
+    bar=$(seq -s "─" $((prog / 5)) | sed 's/[0-9]//g')
+    # Send the notification
+    rm -rf /tmp/frames
+    mkdir -p /tmp/frames
+    ffmpeg -i "$TMP_FILE" -r 10 /tmp/frames/ffout%03d.png
+    rm -rf "$TMP_FILE"
+    gifski -o "$SAVED" --quality 80 -W 600 --fast /tmp/frames/*.png
+    rm -rf /tmp/frames
+    notify-send "$SAVED saved"
+  else
+    mv "$TMP_FILE" "$SAVED"
+  fi
+  notify-send "file saved $SAVED"
+  if [[ $choice = play ]]; then
+    echo -n "${SAVED}" | xsel -ib
+    echo -n "${SAVED}" | xsel -ip
+  fi
+
 }
 
+newcast(){
+  size=$(printf '%s\n' "full" "select" | rofi -dmenu -p 'new cast: ')
+  [[ $size = full ]] \
+    && size="$(xdpyinfo | grep dimensions | awk '{print $2;}')" && pos="0.0"
+  [[ $size = select ]] && asel=($(slop -f '%wx%h %x,%y')) \
+    && size="${asel[0]}" && pos="${asel[1]}"
+  [[ -z $size ]] && exit
+  COMMAND="ffmpeg -y -f x11grab -s $size -i :0.0+$pos "
+  COMMAND+="-f alsa -i default -c:v libx264 -preset ultrafast "
+  COMMAND+="-crf 0 -c:a flac $TMP_FILE"
+  termcmd="urxvtc -name castterm -e bash -c '${COMMAND}'"
+}
+# :0.0+100,200
 cid=$(i3get -i castterm -r d)
 
 if [[ -z $cid ]]; then
+  newcast
+  echo "$termcmd"
   mkdir -p ${TMP_FILE%/*}
-  rm -f $TMP_FILE
+  rm -f "$TMP_FILE"
   # start recording
   i3run -i castterm -e "$termcmd"
-  echo hhh
   # send it to scratchpad
   i3-msg "[instance=castterm]" move scratchpad
 else

@@ -5,8 +5,12 @@ i3ass - i3 assistance scripts
 This is a collection of scripts I have made to
 assist the usage of the windowmanager known as i3.  
 
+
 installation
 ------------
+
+[![](https://budrich.github.io/img/awd/assinstafina.gif)](https://budrich.github.io/img/org/assinstafina.gif)
+
 **clone the repository**  
 `git clone https://github.com/budRich/i3ass.git`  
 
