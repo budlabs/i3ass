@@ -1,13 +1,11 @@
 
-i3ass - i3 assistance scripts 
-=============================
+# i3ass - i3 assistance scripts 
 
 This is a collection of scripts I have made to
 assist the usage of the windowmanager known as i3.  
 
 
-installation
-------------
+## installation
 
 [![](https://budrich.github.io/img/awd/assinstafina.gif)](https://budrich.github.io/img/org/assinstafina.gif)
 
@@ -18,13 +16,16 @@ installation
 *(for further instructions: `./install.sh -h`)*  
 `./install.sh`   
 
-usage
------  
+## usage
+
 Execute a script with the `-h` flag for help.
 
-**examples:**  
+## examples
+
 `i3get -h` display [i3get](https://github.com/budRich/i3ass/tree/master/i3get) help  
 `i3get -v` display [i3get](https://github.com/budRich/i3ass/tree/master/i3get) version  
+
+*I have some more or less useful example scripts using **i3ass** in the [i3add](https://github.com/budRich/i3add/) repository.*
 
 
 |**script**              |**function**|
@@ -35,10 +36,6 @@ Execute a script with the `-h` flag for help.
 |[i3get](https://github.com/budRich/i3ass/tree/master/i3get)   |Get information about i3          |
 |[i3list](https://github.com/budRich/i3ass/tree/master/i3list) |Get lots of information about i3  |
 |[i3gw](https://github.com/budRich/i3ass/tree/master/i3gw)     |Ghost window wrapper script       |
-|[i3cast](https://github.com/budRich/i3ass/tree/master/i3cast) |Create and upload screenrecordings|
-|[i3mtm](https://github.com/budRich/i3ass/tree/master/i3mtm)   |Move window to a chosen mark      |
-|[i3term](https://github.com/budRich/i3ass/tree/master/i3term) |Launch a program inside a terminal|
-|[i3zen](https://github.com/budRich/i3ass/tree/master/i3zen)   |Move a window to the zenter       |
 
 license
 -------

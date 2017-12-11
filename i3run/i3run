@@ -100,7 +100,8 @@ gla[WSF]=${alst[44]}  #  Workspace number whith i3fyra layout
 
 # if window doesn't exist, launch the command.
 if [[ ${gla[TWI]} = X ]]; then
-  eval "${command}" > /dev/null 2>&1 & 
+  eval "${command}" & 
+  # eval "${command}" > /dev/null 2>&1 & 
   i3get -y ${acri[@]}
   exit
 fi
