@@ -1,0 +1,56 @@
+.TH I3FLIP 1 2018\-01\-03 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3flip\fR \- Tabswitching done right
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3flip\fR [\fB\fC\-v\fR|\fB\fC\-h\fR] [n|next|p|prev]
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3flip\fR switch containers without leaving the parent.
+Perfect for tabbed or stacked layout, but works on all
+layouts. If direction is \fB\fCnext\fR (or \fB\fCn\fR) and the active
+container is the last, the first container will be activated.
+
+.SH OPTIONS
+.PP
+\fB\fC\-v\fR
+  Show version and exit.
+
+.PP
+\fB\fC\-h\fR
+  Show help and exit.
+
+.SH EXAMPLE
+.PP
+Put these keybinding definitions in the i3 config.
+
+.PP
+\fB\fC\~/.config/i3/config\fR:
+
+.PP
+.RS
+
+.nf
+bindsym Mod4+Tab         exec \-\-no\-startup\-id i3flip n
+bindsym Mod4+Shift+Tab   exec \-\-no\-startup\-id i3flip p
+
+.fi
+.RE
+
+.PP
+Mod4/Super/Windows+Tab will switch to the next tab.
+
+.SH AUTHOR
+.PP
+budRich 
+\[la]robstenklippa@gmail.com\[ra]
+
+\[la]https://budrich.github.io\[ra]
+
+.SH SEE ALSO
+.PP
+bar(1), foo(5), xyzzy(1), Linux Man Page Howto
+\[la]http://www.schweikhardt.net/man_page_howto.html\[ra]

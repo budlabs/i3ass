@@ -1,0 +1,66 @@
+.TH I3GW 1 2017\-01\-11 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3gw\fR \- A Ghost window wrapper for i3wm.
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3gw\fR [\fB\fC\-v\fR|\fB\fC\-h\fR] \fIMARK\fP
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3\-msg\fR has an undocumented function: \fIopen\fP,
+it creates empty containers, or as I call them: ghosts.
+Since these empty containers doesn't contain any windows
+there is no instance/class/title to identify them, making
+it difficult to control them. They do however have a \fB\fCcon\_id\fR and
+I found the easiest way to keep track of the ghosts is to
+mark them. That is what this script does, it creates a ghost,
+get its \fB\fCcon\_id\fR and marks it.
+
+.SH OPTIONS
+.PP
+\fB\fC\-v\fR
+  Show version and exit.
+
+.PP
+\fB\fC\-h\fR
+  Show help and exit.
+
+.SH EXAMPLES
+.PP
+\fB\fCi3gw casper\fR
+
+.PP
+this will create a ghost marked casper, you can perform any action
+you can perform on a regular container.
+
+.PP
+.RS
+
+.nf
+i3\-msg [con\_mark=casper] move to workspace 2
+i3\-msg [con\_mark=casper] split v
+i3\-msg [con\_mark=casper] layout tabbed
+i3\-msg [con\_mark=casper] kill
+
+.fi
+.RE
+
+.PP
+the last example (\fB\fCkill\fR), destroys the container.
+
+.SH DEPENDENCIES
+.PP
+i3wm
+
+.SH AUTHOR
+.PP
+budRich 
+\[la]robstenklippa@gmail.com\[ra]
+
+\[la]https://budrich.github.io\[ra]
+
+.SH SEE ALSO
+.PP
+i3(1)

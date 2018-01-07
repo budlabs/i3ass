@@ -1,70 +1,141 @@
-#!/bin/bash
+#!/bin/sh
 
 NAME="i3gw"
-VERSION="0.1"
+VERSION="0.12"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-01-11"
-UPDATED="2017-11-19"
+UPDATED="2017-12-17"
 
-about="
-$NAME - $VERSION - $UPDATED
-created: $CREATED by $AUTHOR
-*******************************
-A Ghost window wrapper for i3wm.
+main(){
+  while getopts :vh option
+  do
+    case "${option}" in
+      v) printf '%s\n' \
+           "$NAME - version: $VERSION" \
+           "updated: $UPDATED by $AUTHOR"
+         exit ;;
+      h|*) printinfo && exit ;;
+    esac
+  done
 
-i3-msg has an undocumented function (open) that creates
-empty containers, or as I call them: ghosts.
-Since these empty containers doesn't contain any windows
+  name=${1:?"usage: i3gw MARK, you didn't request a mark."}
+
+  w=$(i3-msg open | awk -F':' '{gsub("[}]]","",$3);print $3}')
+  i3-msg -q "[con_id=${w}]" floating disable, mark "$name"
+}
+
+printinfo(){
+  case "$1" in
+    m ) printf '%s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
+
+bouthead="
+${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3(1)
+"
+
+about='
+`i3gw` - A Ghost window wrapper for i3wm.
+
+SYNOPSIS
+--------
+
+`i3gw` [`-v`|`-h`] *MARK*
+
+DESCRIPTION
+-----------
+
+`i3-msg` has an undocumented function: *open*, 
+it creates empty containers, or as I call them: ghosts.
+Since these empty containers doesn'"'"'t contain any windows
 there is no instance/class/title to identify them, making
-it difficult to control them. They do however have a con_id and
+it difficult to control them. They do however have a `con_id` and
 I found the easiest way to keep track of the ghosts is to
-mark them. That is what this script does, it creates a ghost
-get its con_id and mark it.
+mark them. That is what this script does, it creates a ghost,
+get its `con_id` and marks it.
 
-usage
------
-\`\$ $NAME [-h|-v] MARK\`
 
-| **option** | **argument** | **function**                   |
-|:-------|:---------|:---------------------------|
-| -v     |          | show version info and exit |
-| -h     |          | show this help and exit    |
+OPTIONS
+-------
 
-example:  
-\`i3gw casper\`
+`-v`
+  Show version and exit.
+
+`-h`
+  Show help and exit.
+
+
+EXAMPLES
+--------
+
+`i3gw casper`  
 
 this will create a ghost marked casper, you can perform any action
 you can perform on a regular container.
 
-example:
-\`\`\` text
+``` text
 i3-msg [con_mark=casper] move to workspace 2
 i3-msg [con_mark=casper] split v
 i3-msg [con_mark=casper] layout tabbed
 i3-msg [con_mark=casper] kill
-\`\`\`
-the last example (kill), destroys the container.
+```
 
-contact
--------
-$CONTACT
-"
+the last example (`kill`), destroys the container.
 
-while getopts :vh option
-do
-  case "${option}" in
-    v) printf '%s\n' \
-         "$NAME - version: $VERSION" \
-         "updated: $UPDATED by $AUTHOR"
-       exit ;;
-    h) printf '%s\n' "${about}" && exit ;;
-  esac
-done
+DEPENDENCIES
+------------
 
-name=${1:?"usage: i3gw MARK, you didn't request a mark."}
+i3wm
+'
 
-w=$(i3-msg open)
-i3-msg "[con_id=${w:22:-2}]" floating disable, mark "$name"
+if [ "$1" = "md" ]; then
+  printinfo m
+  exit
+elif [ "$1" = "man" ]; then
+  printinfo f
+  exit
+else
+  main "${@}"
+fi
 
 

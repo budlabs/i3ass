@@ -1,0 +1,53 @@
+.TH I3VAR 1 2017\-12\-22 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3var\fR \- Set or get a i3 variable
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3var\fR [\fB\fC\-v\fR|\fB\fC\-h\fR] [\fB\fCset\fR \fIVARNAME\fP [\fIVALUE\fP]]|[\fB\fCget\fR \fIVARNAME\fP]
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3var\fR is used to get or set a "variable" that is
+bound to the current i3wm session. The variable is
+actually the mark of a "ghost window" on the scratch
+pad.
+
+.SH OPTIONS
+.PP
+\fB\fC\-v\fR
+  Show version and exit.
+
+.PP
+\fB\fC\-h\fR
+  Show help and exit.
+
+.PP
+\fB\fCset\fR
+  if there is no variable with \fIVARNAME\fP an new
+  window and mark will be created. If \fIVARNAME\fP
+  exists it's value will be change. If \fIVALUE\fP
+  is not defined, \fIVARNAME\fP will get unset
+  (window will get killed).
+
+.PP
+\fB\fCget\fR
+  if \fIVARNAME\fP exists, its value will be returned
+  window and mark will be created. If \fIVARNAME\fP
+  exists it's value will be changed.
+
+.SH DEPENDENCIES
+.PP
+i3gw
+
+.SH AUTHOR
+.PP
+budRich 
+\[la]robstenklippa@gmail.com\[ra]
+
+\[la]https://budrich.github.io\[ra]
+
+.SH SEE ALSO
+.PP
+i3gw(1)

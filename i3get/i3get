@@ -1,94 +1,11 @@
 #!/bin/sh
 
 NAME="i3get"
-VERSION="0.291"
+VERSION="0.295"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-03-08"
-UPDATED="2017-11-19"
-
-about="
-$NAME - $VERSION - $UPDATED
-created: $CREATED by $AUTHOR
-*******************************
-Search for windows in i3 tree, return desired information
-if no arguments are passed. con_id of acitve window is returned.
-
-usage
------
-\`\$ $NAME [OPTION [CRITERIA]]\`
-
-| **option** | **criteria** | **function**                   |
-|:-------|:---------|:---------------------------|
-| -v     |          | show version and exit
-| -h     |          | show this help
-| -a     |          | currently active window (default)
-| -c     | CLASS    | search for windows with the given class
-| -i     | INSTANCE | search for windows with the given instance
-| -t     | TITLE    | search for windows with title.
-| -n     | CON_ID   | search for windows with the given con_id
-| -d     | CON_ID   | search for windows with the given window id
-| -m     | CON_MARK | search for windows with the given mark
-| -o     | TTL_FRMT | search for windows with the given titleformat
-| -y     |          | synch on. If this option is included, 
-|        |          | script will wait till target window exist.
-  
-.  
-
-\`\`\` text
--r [tcidnmw]   desired return.
-               t: title
-               c: class
-               i: instance
-               d: Window ID
-               n: Con_Id (default)
-               m: mark
-               w: workspace
-               a: is active
-               f: floating state
-               o: title format
-               v: visible state
-\`\`\`               
-
-Examples:
-search for window with instance name sublime_text. Request
-workspace, title and floating state.
-\`i3get -i sublime_text -r wtf\`
-
-Title and tile_format output is always surrounded
-with doublequotes.
-
-contact
--------
-$CONTACT
-"
-
-synk=0
-sret=n
-crit="\"focused\""
-srch=true
-
-while getopts :c:i:t:n:d:r:m:o:ayvh option
-do
-  case "${option}" in
-    v) printf '%s\n' \
-         "$NAME - version: $VERSION" \
-         "updated: $UPDATED by $AUTHOR"
-       exit ;;
-    h) printf '%s\n' "${about}" && exit ;;
-    i) crit="\"instance\"" srch="${OPTARG}";;
-    c) crit="\"class\"" srch="${OPTARG}";;
-    t) crit="\"title\"" srch="${OPTARG}";;
-    n) crit="\"id\"" srch="${OPTARG}";;
-    d) crit="\"window\"" srch="${OPTARG}";;
-    m) crit="\"marks\"" srch="${OPTARG}";;
-    o) crit="\"title_format\"" srch="${OPTARG}";;
-    a) crit="\"focused\"" && srch="true";;
-    r) sret="${OPTARG}" ;;
-    y) synk=1;;
-  esac
-done
-
+UPDATED="2017-12-17"
 
 getwindow(){
   i3-msg -t get_tree \
@@ -96,7 +13,7 @@ getwindow(){
     'BEGIN{hit="0"}
       $1~"{\"id\"" {if(sret ~ n)r["n"]=$2;if(sret ~ v)cid=$2}
       $2~"\"id\"" {if(sret ~ n)r["n"]=$3;if(sret ~ v)cid=$3}
-      $1==crit && $2 ~ srch  {hit=1;fid=cid}
+      $1 ~ crit && $2 ~ srch  {hit=1;fid=cid}
       $2 ~ crit && $3 ~ srch {hit=1;fid=cid}
       sret ~ t && $1=="\"title\"" {r["t"]=$2}
       sret ~ c && $2 ~ "\"class\"" {r["c"]=$3}
@@ -121,7 +38,181 @@ getwindow(){
     '
 }
 
-result=$(getwindow)
-[ $synk = 1 ] && \
-  while [ -z "$result" ]; do sleep 0.1; result=$(getwindow); done
-[ -n "$result" ] && printf '%s\n' "${result}"
+main(){
+  synk=0
+  sret=n
+  crit="\"focused\""
+  srch=true
+
+  while getopts :c:i:t:n:d:r:m:o:ayvh option
+  do
+    case "${option}" in
+      v) printf '%s\n' \
+           "$NAME - version: $VERSION" \
+           "updated: $UPDATED by $AUTHOR"
+         exit ;;
+      i) crit="\"instance\"" srch="${OPTARG}";;
+      c) crit="\"class\"" srch="${OPTARG}";;
+      t) crit="\"title\"" srch="${OPTARG}";;
+      n) crit="\"id\"" srch="${OPTARG}";;
+      d) crit="\"window\"" srch="${OPTARG}";;
+      m) crit="\"marks\"" srch="${OPTARG}";;
+      o) crit="\"title_format\"" srch="${OPTARG}";;
+      a) crit="\"focused\"" && srch="true";;
+      r) sret="${OPTARG}" ;;
+      y) synk=1;;
+      h|*) printinfo && exit ;;
+    esac
+  done
+
+  result=$(getwindow)
+  [ $synk = 1 ] && \
+    while [ -z "$result" ]; do sleep 0.1; result=$(getwindow); done
+  [ -n "$result" ] && printf '%s\n' "${result}"
+}
+
+printinfo(){
+  case "$1" in
+    m ) printf '%s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
+
+bouthead="
+${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3(1)
+"
+
+about='
+`i3get` - Return information about i3wm.
+
+SYNOPSIS
+--------
+
+`i3get` [`-h`|`-v`] [`OPTION` [*CRITERIA*]] [`-r` [tcidnmwafov]] [`-y`]
+
+DESCRIPTION
+-----------
+
+Search for `CRITERIA` in the output of `i3-msg -t get_tree`, 
+return desired information. If no arguments are passed. 
+`con_id` of acitve window is returned.
+
+OPTIONS
+-------
+
+`-v`  
+  Show version and exit
+
+`-h`  
+  Show this help
+
+`-a`  
+  Currently active window (default)
+
+`-c` *CLASS*  
+  Search for windows with the given class
+
+`-i` *INSTANCE*  
+  Search for windows with the given instance
+
+`-t` *TITLE*  
+  Search for windows with title.
+
+`-n` *CON_ID*  
+  Search for windows with the given con_id
+
+`-d` *CON_ID*  
+  Search for windows with the given window id
+
+`-m` *CON_MARK*  
+  Search for windows with the given mark
+
+`-o` *TTL_FRMT*  
+  Search for windows with the given titleformat
+
+`-y`  
+  Synch on. If this option is included, 
+  script will wait till target window exist.
+
+`-r` [*OUTPUT*]  
+  *OUTPUT* can be one or more of the following 
+  characters:   
+
+  `t`: title  
+  `c`: class  
+  `i`: instance  
+  `d`: Window ID  
+  `n`: Con_Id (default)  
+  `m`: mark  
+  `w`: workspace  
+  `a`: is active  
+  `f`: floating state  
+  `o`: title format  
+  `v`: visible state  
+
+EXAMPLES
+--------
+search for window with instance name sublime_text. Request
+workspace, title and floating state.  
+`i3get -i sublime_text -r wtf`  
+
+Title and tile_format output is always surrounded
+with doublequotes.
+
+DEPENDENCIES
+------------
+
+i3wm
+'
+
+if [ "$1" = "md" ]; then
+  printinfo m
+  exit
+elif [ "$1" = "man" ]; then
+  printinfo f
+  exit
+else
+  main "${@}"
+fi
+
+
+
+

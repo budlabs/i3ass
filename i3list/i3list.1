@@ -1,0 +1,208 @@
+.TH I3LIST 1 2017\-10\-06 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3list\fR \- List attributes of i3wm
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3list\fR [\fB\fCOPTION\fR [\fICRITERIA\fP]]
+
+.SH DESCRIPTION
+.PP
+This script is vital for i3fyra to work. But it can be used on it's own
+or with other scripts. \fB\fCi3list\fR is also used by i3run. \fB\fCi3list\fR parses the
+output of the command:
+.br
+\fB\fCi3\-msg \-t get\_tree\fR
+
+.PP
+and returns a long string with 43 values separated by spaces. This strange
+output format is made to make it possible to pipe the output to other scripts.
+A lot of the information is specific to i3fyra, but if \fB\fCi3list\fR doesn't find a
+value an X will be placed in it's place in the output.
+
+.PP
+The idea, is to use this script once, and get all the info about i3's current
+state in one big chunk. So one doesn't have to make more requests for
+tree output. It have speeded up my own scripts a lot. And it also makes many
+listener scripts unnecessary. The parsing is done with awk, and it is very
+fast, about 25ms on my average computer (i5, 4GB). Same operation with pure
+bash would take at least a whole second (x40).
+
+.PP
+I have made another script, \fB\fCi3get\fR, that works in a similar way but where you
+choose which information you want in the output. \fB\fCi3get\fR is slightly faster (5ms),
+but \fB\fCi3list\fR outputs more information and is meant to replace multiple \fB\fCi3get\fR requests.
+
+.SH OPTIONS
+.PP
+\fB\fC\-v\fR
+  Show version info and exit
+
+.PP
+\fB\fC\-h\fR
+  Show this help and exit
+
+.PP
+\fB\fC\-c\fR \fICLASS\fP
+  Search for windows with the given \fICLASS\fP
+
+.PP
+\fB\fC\-i\fR \fIINSTANCE\fP
+  Search for windows with the given \fIINSTANCE\fP
+
+.PP
+\fB\fC\-t\fR \fITITLE\fP
+  Search for windows with the given \fITITLE\fP
+
+.PP
+\fB\fC\-n\fR \fICON\_ID\fP
+  Search for windows with the given \fICON\_ID\fP
+
+.PP
+\fB\fC\-d\fR \fIWINDOW\_ID\fP
+  Search for windows with the given \fIWINDOW ID\fP
+
+.PP
+\fB\fC\-m\fR \fICON\_MARK\fP
+  Search for windows with the given \fICON\_MARK\fP
+
+.PP
+If no option is passed, active window will be target.
+
+.PP
+\fBexample output\fP
+
+.PP
+.RS
+
+.nf
+$ i3list
+  1 ABD C ABDC g u a X 1 94834554562528 f\-94834554562528 g u a X 1 \\\\
+  94834554562528 f\-94834554562528 t 94834555596640 94834555347456 \\\\
+  94834555596640 t 94834555517248 94834555517248 94834555517248 t \\\\
+  94834555385280 94834555385280 94834555385280 t 94834555516528 \\\\
+  94834555556800 94834555556800 1069 585 234 1056 900 234 A BD 1600 900
+
+.fi
+.RE
+
+.PP
+\fBBelow is a cipher for the output\fP
+
+.PP
+.RS
+
+.nf
+field: 0   \- AWW \-  current workspace
+field: 1   \- VIS \-  visible containers
+field: 2   \- HID \-  hidden containers
+field: 3   \- EXS \-  existing containers (VIS+HID)
+field: 4   \- AWP \-  Active window position (b|e|m|o|g|i)
+field: 5   \- AWL \-  Active window layout (t|v|h|s|u)
+field: 6   \- AWS \-  Active window status (f|a|n)
+field: 7   \- AWC \-  Active window container (A|B|C|D|X)
+field: 8   \- AWW \-  Active window workspace
+field: 9   \- AWI \-  Active container id (con\_id)
+field: 10  \- AWM \-  Active window mark
+field: 11  \- TWP \-  Target window position (b|e|m|o|g|i)
+field: 12  \- TWL \-  Target window layout (t|v|h|s|u)
+field: 13  \- TWS \-  Target window status (f|a|n)
+field: 14  \- TWC \-  Target window container (A|B|C|D|X)
+field: 15  \- TWW \-  Target window workspace
+field: 16  \- TWI \-  Target container id (con\_id)
+field: 17  \- TWM \-  Target window mark
+field: 18  \- LOA \-  Container A layout
+field: 19  \- FCA \-  Container A first child (con\_id)
+field: 20  \- LCA \-  Container A last child (con\_id)
+field: 21  \- ACA \-  Container A focused child (con\_id)
+field: 22  \- LOB \-  Container B layout
+field: 23  \- FCB \-  Container B first child (con\_id)
+field: 24  \- LCB \-  Container B last child (con\_id)
+field: 25  \- ACB \-  Container B focused child (con\_id)
+field: 26  \- LOC \-  Container C layout
+field: 27  \- FCC \-  Container C first child (con\_id)
+field: 28  \- LCC \-  Container C last child (con\_id)
+field: 29  \- ACC \-  Container C focused child (con\_id)
+field: 30  \- LOD \-  Container D layout
+field: 31  \- FCD \-  Container D first child (con\_id)
+field: 32  \- LCD \-  Container D last child (con\_id)
+field: 33  \- ACD \-  Container D focused child (con\_id)
+field: 34  \- SAB \-  Stored AB split (mark i34SAB\_*)
+field: 35  \- SAC \-  Stored AC split (mark i34SAC\_*)
+field: 36  \- SBD \-  Stored BD split (mark i34SBD\_*)
+field: 37  \- CAB \-  Current AB split (width of i34XAC)
+field: 38  \- CAC \-  Current AC split (height of i34A)
+field: 39  \- CBD \-  Current BD split (height of i34B)
+field: 40  \- FAC \-  Family AC memory (mark i34FAC\_*)
+field: 41  \- FBD \-  Family AC memory (mark i34FBD\_*)
+field: 42  \- SDW \-  Width of current workspace
+field: 43  \- SDH \-  Height of curent workspace
+field: 44  \- WSF \-  Workspace number whith i3fyra layout
+field: 45  \- AWX \-  Active window X pos
+field: 46  \- AWY \-  Active window Y pos
+field: 47  \- AWD \-  Active window Width
+field: 48  \- AWH \-  Active window Height
+field: 49  \- TWX \-  Target window X pos
+field: 50  \- TWY \-  Target window Y pos
+field: 51  \- TWD \-  Target window Width
+field: 52  \- TWH \-  Target window Height
+field: 53  \- AID \-  Active window window ID
+field: 54  \- TID \-  Target window window ID
+field: 55  \- AWB \-  Active window titlebar height
+field: 56  \- TWB \-  Target window titlebar height
+
+position (b|e|m|g|i)
+b \- beginning  first child in container
+e \- end        last child in container
+m \- middle     neither first or last
+o \- only       only child in container
+g \- floating   not handled by i3fyra
+i \- tiled      not handled by i3fyra
+
+layout (t|v|h|s|u)
+t \- tabbed
+v \- vertical
+h \- horizontal
+s \- stacked
+u \- unknown (not handled by i3fyra)
+
+status (f|a|n)
+f \- focused (visible window in a tabbed container)
+a \- active window
+n \- neither active or focused
+
+.fi
+.RE
+
+.PP
+The best way to handle the output is to put it in an array.
+
+.PP
+Example:
+
+.PP
+.RS
+
+.nf
+$ list\_array=($(i3list))
+$ echo ${list\_array[42]}
+  1600 # width of current workspace
+
+.fi
+.RE
+
+.SH DEPENDENCIES
+.PP
+i3wm
+
+.SH AUTHOR
+.PP
+budRich 
+\[la]robstenklippa@gmail.com\[ra]
+
+\[la]https://budrich.github.io\[ra]
+
+.SH SEE ALSO
+.PP
+i3(1)

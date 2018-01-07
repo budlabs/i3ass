@@ -1,0 +1,146 @@
+#!/bin/bash
+
+NAME="i3var"
+VERSION="0.001"
+AUTHOR="budRich"
+CONTACT='robstenklippa@gmail.com'
+CREATED="2017-12-22"
+UPDATED="2017-12-22"
+
+main(){
+  while getopts :vh option; do
+    case "${option}" in
+      v) printf '%s\n' \
+           "$NAME - version: $VERSION" \
+           "updated: $UPDATED by $AUTHOR"
+         exit ;;
+      h|*) printinfo && exit ;;
+    esac
+  done
+
+  action="$1"
+  trgnam="$2"
+  trgval="$3"
+  trgsts=$(i3-msg -t get_marks | awk -v trg="$trgnam" -F',' '{
+    gsub("[[]|\"|[]]","",$0)
+    for(i=1;i<NF+1;i++){
+      if($i~trg){print $i;exit}
+  }}')
+
+  if [[ $action = set ]]; then
+    if [[ -n $trgval ]]; then
+      if [[ -z $trgsts ]]; then
+        i3gw "${trgnam}=${trgval}" 
+        i3-msg -q "[con_mark=${trgnam}=${trgval}]" move scratchpad
+      else
+        i3-msg -q "[con_mark=${trgnam}]" mark "${trgnam}=${trgval}"
+      fi
+    else
+      i3-msg -q "[con_mark=${trgnam}]" kill
+    fi
+  else
+    echo "${trgsts#*=}"
+  fi
+}
+
+printinfo(){
+  case "$1" in
+    m ) printf '%s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
+
+bouthead="
+${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3gw(1)
+"
+
+about='
+`i3var` - Set or get a i3 variable
+
+SYNOPSIS
+--------
+
+`i3var` [`-v`|`-h`] [`set` *VARNAME* [*VALUE*]]|[`get` *VARNAME*] 
+
+DESCRIPTION
+-----------
+
+`i3var` is used to get or set a "variable" that is 
+bound to the current i3wm session. The variable is
+actually the mark of a "ghost window" on the scratch 
+pad. 
+
+OPTIONS
+-------
+
+`-v`
+  Show version and exit.
+
+`-h`
+  Show help and exit.
+
+`set` 
+  if there is no variable with *VARNAME* an new 
+  window and mark will be created. If *VARNAME* 
+  exists it'"'"'s value will be change. If *VALUE*
+  is not defined, *VARNAME* will get unset 
+  (window will get killed).
+
+`get` 
+  if *VARNAME* exists, its value will be returned 
+  window and mark will be created. If *VARNAME* 
+  exists it'"'"'s value will be changed.
+
+DEPENDENCIES
+------------
+
+i3gw
+'
+
+if [ "$1" = "md" ]; then
+  printinfo m
+  exit
+elif [ "$1" = "man" ]; then
+  printinfo f
+  exit
+else
+  main "${@}"
+fi

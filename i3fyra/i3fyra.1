@@ -1,0 +1,200 @@
+.TH I3FYRA 1 2017\-01\-14 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3fyra\fR \- An advanced simple gridbased tiling layout for i3wm.
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3fyra\fR [\fB\fCOPTTION\fR] [\fB\fCARGUMENT\fR]
+
+.SH DESCRIPTION
+.PP
+The layout consists of four containers:
+
+.PP
+.RS
+
+.nf
+  A B
+  C D
+
+.fi
+.RE
+
+.PP
+The internal layout of the containers doesn't matter.
+
+.PP
+A is always to the left of B and D. And always above C.
+.br
+B is always to the right of A and C. And always above D.
+
+.PP
+This means that the containers will change names if their position changes.
+
+.PP
+The size of the containers are defined by the three splits: AB, AC and BD.
+.br
+Container A and C are siblings and container B and D are siblings.
+
+.PP
+If ABC are visible but D is hidden or none existent, layout becomes:
+
+.PP
+.RS
+
+.nf
+  A B
+  C B
+
+.fi
+.RE
+
+.PP
+If action: \fImove up\fP (\fB\fC\-m u\fR) would be called when B container is active
+and D is hidden. Container D would be shown. If action would have been:
+\fImove down\fP (\fB\fC\-m d\fR), D would be shown and B and D would swap position and name.
+If action would have been \fImove left\fP (\fB\fC\-m l\fR) the active window in B would be
+moved to container A. If action was: \fImove right\fP (\fB\fC\-m r\fR) A and C would be hidden:
+
+.PP
+.RS
+
+.nf
+  B B
+  B B
+
+.fi
+.RE
+
+.PP
+If we now call action: \fImove left\fP (\fB\fC\-m l\fR) A and C would be shown again but
+to the right of B, the containers would also change names, so B becomes A,
+A becomes B and C becomes D:
+
+.PP
+.RS
+
+.nf
+  A B
+  A D
+
+.fi
+.RE
+
+.SH OPTIONS
+.PP
+\fB\fC\-v\fR
+  Show version info and exit.
+
+.PP
+\fB\fC\-h\fR
+  Help, shows this info.
+
+.PP
+\fB\fC\-a\fR
+  Autolayout. If current window is tiled: floating
+.br
+  enabled If window is floating, it will be put in
+.br
+  a visible container. If there is no visible
+.br
+  containers. The window will be placed in a
+.br
+  hidden container. If no containers exist,
+.br
+  container 'A'will be created and
+.br
+  the window will be put there.
+
+.PP
+\fB\fC\-s\fR \fIA|B|C|D\fP
+.br
+  Show target container. If it doesn't exist, it
+.br
+  will be created and current window will be put
+.br
+  in it. If it is visible, nothing happens.
+
+.PP
+\fB\fC\-w\fR \fIi3list\fP
+.br
+  Use target i3list instead of getting a new list.
+
+.PP
+\fB\fC\-m\fR \fIA|B|C|D|u|d|l|r\fP
+.br
+  Moves current window to target container, either
+  defined by it's name or it's position relative
+  to the current container with a direction:
+  [\fB\fCl\fR|\fB\fCleft\fR][\fB\fCr\fR|\fB\fCright\fR][\fB\fCu\fR|\fB\fCup\fR][\fB\fCd\fR|\fB\fCdown\fR]
+  If the container doesnt exist it is created.
+  If argument is a direction and there is no
+  container in that direction, Connected
+  container(s) visibility is toggled. If current
+  window is floating or not inside ABCD, normal
+  movement is performed. Distance for moving
+  floating windows with this action can be defined
+  with the \fB\fC\-p\fR option.
+.br
+  Example: \fB\fCi3fyra \-p 30 \-m r\fR
+.br
+  Will move current window 30 pixels to the right,
+  if it is floating.
+
+.PP
+\fB\fC\-z\fR \fI[ABCD]\fP
+  Hide target containers if visible.
+
+.PP
+\fB\fC\-f\fR \fIu|d|l|r\fP
+  Move focus in target direction.
+
+.PP
+\fB\fC\-p\fR \fIINT\fP
+  Distance in pixels to move a floating window.
+  Defaults to 30.
+
+.PP
+\fB\fC\-l\fR \fI[AB=INT] [AC=INT] [BD=INT]\fP
+  alter splits Changes the given splits. INT is a
+  distance in pixels. AB is on X axis from the
+  left side if INT is positive, from the right
+  side if it is negative. AC and BD is on Y axis
+  from the top if INT is positive, from the bottom
+  if it is negative. The whole argument needs to
+  be quoted. Example: \fB\fCfyra \-l 'AB=\-300 BD=420'\fR
+
+.SH ENVIRONMENT
+.PP
+\fB\fCI3FYRA\_WS\fR \fIINT\fP
+  Workspace to use for i3fyra. If not set, the firs
+  workspace that request to create the layout will
+  be used.
+
+.PP
+\fB\fCI3FYRA\_MAIN\_CONTAINER\fR \fI[A|B|C|D]\fP
+  This container will be the chosen when a container
+  is requested but not given. When using the command
+  autolayout (\fB\fC\-a\fR) for example, if the window is floating
+  it will be sent to the main container, if no other
+  containers exist. Defaults to A.
+
+.SH DEPENDENCIES
+.PP
+i3wm
+.br
+i3list
+.br
+i3gw
+
+.SH AUTHOR
+.PP
+budRich 
+\[la]robstenklippa@gmail.com\[ra]
+
+\[la]https://budrich.github.io\[ra]
+
+.SH SEE ALSO
+.PP
+i3(1), i3list(1), i3gw(1)

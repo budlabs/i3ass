@@ -7,6 +7,9 @@ CONTACT='robstenklippa@gmail.com'
 CREATED="2017-01-14"
 UPDATED="2017-11-19"
 
+I3FYRA_WS=${I3FYRA_WS:-X}
+I3FYRA_MAIN_CONTAINER=${I3FYRA_MAIN_CONTAINER:-A}
+
 initglobals(){
 
   local z
@@ -58,6 +61,7 @@ initglobals(){
   gla[SDW]=${alst[42]}  #  Width of current workspace
   gla[SDH]=${alst[43]}  #  Height of curent workspace
   gla[WSF]=${alst[44]}  #  Workspace number whith i3fyra layout
+
 
   gla[ALL]=ABCD # all containers sorted by appearance
 
@@ -210,34 +214,6 @@ applysplits(){
   done
 }
 
-tabswitch(){
-  local dir ldir
-
-  [[ ${gla[AWC]} = X ]] || [[ ${gla[AWP]} = o ]] && return
-
-  dir=${1:-r}
-  dir=${dir:0:1}
-
-  [[ ${gla[AWL]} =~ v|s ]] && dir=${dir/l/u} dir=${dir/r/d}
-
-  case $dir in
-    l ) ldir=left  ;;
-    r ) ldir=right ;;
-    u ) ldir=up    ;;
-    d ) ldir=down  ;;
-  esac
-
-  if [[ ${gla[AWP]} = e ]] && [[ $dir =~ r|d ]]; then
-    i3-msg -q "[con_id=${gla[FC${gla[AWC]}]}]" focus
-    #statements
-  elif [[ ${gla[AWP]} = b ]] && [[ $dir =~ l|u ]]; then
-    i3-msg -q "[con_id=${gla[LC${gla[AWC]}]}]" focus
-    #statements
-  else
-    i3-msg -q focus $ldir
-  fi
-}
-
 windowfocus(){
   
   local cur dir trg sib twin cous ldir
@@ -340,7 +316,7 @@ windowmove(){
   normove=0
 
   if [[ $dir =~ A|B|C|D ]]; then
-    if [[ ! ${gla[WSF]} =~ X|"${gla[AWW]}" ]]; then
+    if [[ ${gla[AWW]} != ${I3FYRA_WS} ]]; then
       # gla[AWW]=${gla[WSF]} 
       i3-msg -q workspace "${gla[WSF]}"
     fi
@@ -374,7 +350,7 @@ windowmove(){
     break
   done
 
-  [[ ${gla[AWW]} != "${gla[WSF]}" ]] && normove=1
+  [[ ${gla[AWW]} != ${I3FYRA_WS} ]] && normove=1
 
   # if window isn't handled by i34, move it normaly
   if [[ $cur = X ]] || [[ $normove = 1 ]]; then
@@ -714,8 +690,7 @@ containercreate(){
   trg=$1
 
   if [[ ${gla[TWI]} = X ]]; then
-    eval "${command}" > /dev/null 2>&1 & 
-    gla[TWI]=$(i3get ${crit} -y)
+    exit
   fi
 
   i3gw gurra  > /dev/null 2>&1
@@ -739,12 +714,37 @@ containercreate(){
   containershow $trg
 }
 
+multihide(){
+  local trg real i
+
+  trg="$1"
+  echo "trg $trg" 
+  for (( i = 0; i < ${#trg}; i++ )); do
+    [[ ${trg:$i:1} =~ [${gla[VIS]}] ]] && real+=${trg:$i:1}
+  done
+
+  [[ -z $real ]] && return
+  [[ ${#real} -eq 1 ]] && containerhide "$real" && return
+  
+  [[ "A" =~ [$real] ]] && [[ "C" =~ [$real] ]] \
+    && real=${real/A/} real=${real/C/} && familyhide AC
+    # && real=${real/[AC]/} && familyhide "AC"
+  [[ "B" =~ [$real] ]] && [[ "D" =~ [$real] ]] \
+    && real=${real/B/} real=${real/D/} && familyhide BD
+
+  for (( i = 0; i < ${#real}; i++ )); do
+    containerhide "${real:$i:1}"
+  done
+}
+
 containerhide(){
   local trg tfam famchk tfammem
   
   trg=$1
 
-  [[ $trg =~ A|C ]] && tfam=AC tfammem=$FAC || tfam=BD tfammem=$FBD
+  [[ ${#trg} -gt 1 ]] && multihide "$trg" && return
+
+  [[ $trg =~ A|C ]] && tfam=AC tfammem=${gla[FAC]} || tfam=BD tfammem=${gla[FBD]}
 
   i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
     move absolute position 0 px 0 px, \
@@ -860,8 +860,10 @@ togglefloat(){
   # get floting state of current window
   if [[ ${gla[AWP]} = g ]]; then
     # it floats
-    if [[ ! ${gla[WSF]} =~ X|"${gla[AWW]}" ]]; then
+
+    if [[ ${gla[AWW]} != ${I3FYRA_WS} ]]; then
       i3-msg -q "[con_id=${gla[AWI]}]" floating disable
+      echo "${gla[WSF]} -- ${I3FYRA_WS} ${gla[AWW]}"
       return
     fi
     # make current tiled and put it in first found visible container
@@ -873,7 +875,7 @@ togglefloat(){
     elif [[ ${gla[HID]} != X ]]; then
       trg=${gla[HID]:0:1}
     else
-      trg=A
+      trg="$I3FYRA_MAIN_CONTAINER"
     fi
 
     # if $trg doesn't exist, create it.
@@ -926,31 +928,217 @@ dothelo(){
   fi
 }
 
-while getopts :vhas:c:l:w:z:m:p:f:t: option; do
-  case "${option}" in
-    v) printf '%s\n%s\n' "$NAME - version: $VERSION" \
-                         "updated: $UPDATED by $AUTHOR" && exit;;
-    h) printf '%s\n' "${about}" && exit;;
-    a) cmd=togglefloat && break;;
-    s) target=${OPTARG} cmd=containershow ;;
-    c) crit=${OPTARG} ;;
-    w) windowlist="${OPTARG}" ;;
-    m) target=${OPTARG} cmd=windowmove ;;
-    z) cmd=containerhide target=${OPTARG} ;;
-    f) cmd=windowfocus target=${OPTARG} ;;
-    t) cmd=tabswitch target=${OPTARG} ;;
-    l) cmd=applysplits target="${OPTARG}" ;;
-    p) speed=${OPTARG} ;;
-  esac
-done
+main(){
+  while getopts :vhas:c:l:w:z:m:p:f:t: option; do
+    case "${option}" in
+      v) printf '%s\n%s\n' "$NAME - version: $VERSION" \
+                           "updated: $UPDATED by $AUTHOR" && exit;;
+      a) cmd=togglefloat && break;;
+      s) target=${OPTARG} cmd=containershow ;;
+      c) crit=${OPTARG} ;;
+      w) windowlist="${OPTARG}" ;;
+      m) target=${OPTARG} cmd=windowmove ;;
+      z) cmd=containerhide target=${OPTARG} ;;
+      f) cmd=windowfocus target=${OPTARG} ;;
+      l) cmd=applysplits target="${OPTARG}" ;;
+      p) speed=${OPTARG} ;;
+      h|*) printinfo && exit ;;
+    esac
+  done
 
-alst=(${windowlist:=$(i3list)})
-declare -A gla # globals array
-declare -a def # default container positions array
-declare -a loa # actual container positions array
+  alst=(${windowlist:=$(i3list)})
+  declare -A gla # globals array
+  declare -a def # default container positions array
+  declare -a loa # actual container positions array
 
-initglobals
+  initglobals
 
-dothelo # setup actual layout array: loa
+  dothelo # setup actual layout array: loa
 
-${cmd} "${target}" # run command
+  ${cmd} "${target}" # run command
+}
+
+printinfo(){
+  if [[ ! $1 =~ m|f ]];then
+    echo -e "${about}" | awk '
+       BEGIN{ind=0}
+       $0~/^```/{
+         if(ind!="1"){ind="1"}
+         else{ind="0"}
+         print ""
+       }
+       $0!~/^```/{
+         gsub("[`*]","",$0)
+         if(ind=="1"){$0="   " $0}
+         print $0
+       }
+     '
+  else
+    [[ $1 = f ]] && echo -e "${bouthead}"
+    echo -e "${about}"
+    [[ $1 = f ]] && echo -e "${boutfoot}"
+  fi
+}
+
+bouthead="
+${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3(1), i3list(1), i3gw(1)
+"
+
+about='
+`i3fyra` - An advanced simple gridbased tiling layout for i3wm. 
+
+SYNOPSIS
+--------
+`i3fyra` [`OPTTION`] [`ARGUMENT`]
+
+DESCRIPTION
+-----------
+
+The layout consists of four containers:  
+``` text
+  A B
+  C D
+```
+The internal layout of the containers doesn'"'"'t matter.  
+
+A is always to the left of B and D. And always above C.  
+B is always to the right of A and C. And always above D.  
+
+This means that the containers will change names if their position changes.  
+
+The size of the containers are defined by the three splits: AB, AC and BD.  
+Container A and C are siblings and container B and D are siblings.  
+
+If ABC are visible but D is hidden or none existent, layout becomes:  
+``` text
+  A B
+  C B
+```
+If action: *move up* (`-m u`) would be called when B container is active 
+and D is hidden. Container D would be shown. If action would have been:
+*move down* (`-m d`), D would be shown and B and D would swap position and name.
+If action would have been *move left* (`-m l`) the active window in B would be
+moved to container A. If action was: *move right* (`-m r`) A and C would be hidden:
+``` text
+  B B
+  B B
+```
+If we now call action: *move left* (`-m l`) A and C would be shown again but
+to the right of B, the containers would also change names, so B becomes A, 
+A becomes B and C becomes D:
+``` text
+  A B
+  A D
+```
+
+OPTIONS
+-------
+
+`-v`
+  Show version info and exit.
+
+`-h`
+  Help, shows this info.
+
+`-a`
+  Autolayout. If current window is tiled: floating  
+  enabled If window is floating, it will be put in  
+  a visible container. If there is no visible  
+  containers. The window will be placed in a  
+  hidden container. If no containers exist,  
+  container '"'"'A'"'"'will be created and  
+  the window will be put there.  
+
+`-s` *A|B|C|D*  
+  Show target container. If it doesn'"'"'t exist, it  
+  will be created and current window will be put  
+  in it. If it is visible, nothing happens.  
+
+`-w` *i3list*  
+  Use target i3list instead of getting a new list.
+
+`-m` *A|B|C|D|u|d|l|r*  
+  Moves current window to target container, either 
+  defined by it'"'"'s name or it'"'"'s position relative 
+  to the current container with a direction: 
+  [`l`|`left`][`r`|`right`][`u`|`up`][`d`|`down`] 
+  If the container doesnt exist it is created. 
+  If argument is a direction and there is no 
+  container in that direction, Connected 
+  container(s) visibility is toggled. If current 
+  window is floating or not inside ABCD, normal 
+  movement is performed. Distance for moving 
+  floating windows with this action can be defined 
+  with the `-p` option.  
+  Example: `i3fyra -p 30 -m r`  
+  Will move current window 30 pixels to the right, 
+  if it is floating.
+         
+`-z` *[ABCD]* 
+  Hide target containers if visible. 
+
+`-f` *u|d|l|r*
+  Move focus in target direction. 
+
+`-p` *INT*
+  Distance in pixels to move a floating window. 
+  Defaults to 30.
+
+`-l` *[AB=INT] [AC=INT] [BD=INT]*
+  alter splits Changes the given splits. INT is a 
+  distance in pixels. AB is on X axis from the 
+  left side if INT is positive, from the right 
+  side if it is negative. AC and BD is on Y axis 
+  from the top if INT is positive, from the bottom 
+  if it is negative. The whole argument needs to 
+  be quoted. Example: `fyra -l '"'"'AB=-300 BD=420'"'"'`
+
+ENVIRONMENT
+-----------
+
+`I3FYRA_WS` *INT*
+  Workspace to use for i3fyra. If not set, the firs
+  workspace that request to create the layout will
+  be used.
+
+`I3FYRA_MAIN_CONTAINER` *[A|B|C|D]*
+  This container will be the chosen when a container
+  is requested but not given. When using the command
+  autolayout (`-a`) for example, if the window is floating
+  it will be sent to the main container, if no other
+  containers exist. Defaults to A.
+
+DEPENDENCIES
+------------
+
+i3wm  
+i3list  
+i3gw
+'
+
+if [[ $1 = md ]]; then
+  printinfo m
+  exit
+elif [[ $1 = man ]]; then
+  printinfo f
+  exit
+else
+  main "${@}"
+fi

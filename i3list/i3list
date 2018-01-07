@@ -5,160 +5,10 @@ VERSION="0.123"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-10-06"
-UPDATED="2017-11-19"
+UPDATED="2017-12-17"
 
-about="
-$NAME - $VERSION - $UPDATED
-created: $CREATED by $AUTHOR
-*******************************
-This script is vital for i3fyra to work. But it can be used on it's own
-or with other scripts. i3list is also used by i3run. i3list parses the
-output of the command:
-\`i3-msg -t get_tree\`
-and returns a long string with 43 values separated by spaces. This strange 
-output format is made to make it possible to pipe the output to other scripts. 
-A lot of the information is specific to i3fyra, but if i3list doesn't find a 
-value an X will be placed in it's place in the output.
 
-The idea, is to use this script once, and get all the info about i3's current
-state in one big chunk. So one doesn't have to make more requests for 
-tree output. It have speeded up my own scripts a lot. And it also makes many
-listener scripts unnecessary. The parsing is done with awk, and it is very
-fast, about 25ms on my average computer (i5, 4GB). Same operation with pure
-bash would take at least a whole second (x40).
 
-I have made another script, i3get, that works in a similar way but where you
-choose which information you want in the output. It is slightly faster (5ms).
-
-usage
------
-\`\$ $NAME [OPTION [CRITERIA]]\`
-
-| **option** | **criteria**  | **function**                   |
-|:-------|:---------:|:---------------------------|
-| -v     |           | show version info and exit |
-| -h     |           | show this help and exit    |
-| -c     | CLASS     | Search for windows with the given CLASS
-| -i     | INSTANCE  | Search for windows with the given INSTANCE
-| -t     | TITLE     | Search for windows with the given TITLE
-| -n     | CON_ID    | Search for windows with the given CON_ID
-| -d     | WINDOW_ID | Search for windows with the given WINDOW ID
-| -m     | CON_MARK  | Search for windows with the given MARK
-
-If no option is passed, active window will be target.
-
-**example output**
-\`\`\` text
-\$ i3list
-  1 ABD C ABDC g u a X 1 94834554562528 f-94834554562528 g u a X 1 \\
-  94834554562528 f-94834554562528 t 94834555596640 94834555347456 \\
-  94834555596640 t 94834555517248 94834555517248 94834555517248 t \\
-  94834555385280 94834555385280 94834555385280 t 94834555516528 \\
-  94834555556800 94834555556800 1069 585 234 1056 900 234 A BD 1600 900
-\`\`\`
-**Below is a cipher for the output**
-\`\`\` text
-field: 0   - AWW -  current workspace
-field: 1   - VIS -  visible containers
-field: 2   - HID -  hidden containers
-field: 3   - EXS -  existing containers (VIS+HID)
-field: 4   - AWP -  Active window position (b|e|m|o|g|i)
-field: 5   - AWL -  Active window layout (t|v|h|s|u)
-field: 6   - AWS -  Active window status (f|a|n)
-field: 7   - AWC -  Active window container (A|B|C|D|X)
-field: 8   - AWW -  Active window workspace
-field: 9   - AWI -  Active window id (con_id)
-field: 10  - AWM -  Active window mark
-field: 11  - TWP -  Target window position (b|e|m|o|g|i)
-field: 12  - TWL -  Target window layout (t|v|h|s|u)
-field: 13  - TWS -  Target window status (f|a|n)
-field: 14  - TWC -  Target window container (A|B|C|D|X)
-field: 15  - TWW -  Target window workspace
-field: 16  - TWI -  Target window id (con_id)
-field: 17  - TWM -  Target window mark
-field: 18  - LOA -  Container A layout
-field: 19  - FCA -  Container A first child (con_id)
-field: 20  - LCA -  Container A last child (con_id)
-field: 21  - ACA -  Container A focused child (con_id)
-field: 22  - LOB -  Container B layout
-field: 23  - FCB -  Container B first child (con_id)
-field: 24  - LCB -  Container B last child (con_id)
-field: 25  - ACB -  Container B focused child (con_id)
-field: 26  - LOC -  Container C layout
-field: 27  - FCC -  Container C first child (con_id)
-field: 28  - LCC -  Container C last child (con_id)
-field: 29  - ACC -  Container C focused child (con_id)
-field: 30  - LOD -  Container D layout
-field: 31  - FCD -  Container D first child (con_id)
-field: 32  - LCD -  Container D last child (con_id)
-field: 33  - ACD -  Container D focused child (con_id)
-field: 34  - SAB -  Stored AB split (mark i34SAB_*)
-field: 35  - SAC -  Stored AC split (mark i34SAC_*)
-field: 36  - SBD -  Stored BD split (mark i34SBD_*)
-field: 37  - CAB -  Current AB split (width of i34XAC)
-field: 38  - CAC -  Current AC split (height of i34A)
-field: 39  - CBD -  Current BD split (height of i34B)
-field: 40  - FAC -  Family AC memory (mark i34FAC_*)
-field: 41  - FBD -  Family AC memory (mark i34FBD_*)
-field: 42  - SDW -  Width of current workspace
-field: 43  - SDH -  Height of curent workspace
-field: 44  - WSF -  Workspace number whith i3fyra layout
-
-position (b|e|m|g|i)
-b - beginning  first child in container
-e - end        last child in container
-m - middle     neither first or last
-o - only       only child in container
-g - floating   not handled by i3fyra
-i - tiled      not handled by i3fyra
-
-layout (t|v|h|s|u)
-t - tabbed
-v - vertical
-h - horizontal
-s - stacked
-u - unknown (not handled by i3fyra)
-
-status (f|a|n)
-f - focused (visible window in a tabbed container)
-a - active window
-n = neither active or focused
-\`\`\`
-The best way to handle the output is to put it in an array.
-
-Example:
-\`\`\` text
-\$ list_array=(\$(i3list))
-\$ echo \${list_array[42]}
-  1600 # width of current workspace
-\`\`\`
-
-contact
--------
-$CONTACT
-"
-
-while getopts :c:i:t:n:d:r:m:ayvh option
-do
-  case "${option}" in
-    i) crit="\"instance\"" srch="${OPTARG}";;
-    c) crit="\"class\"" srch="${OPTARG}";;
-    t) crit="\"title\"" srch="${OPTARG}";;
-    n) crit="\"id\"" srch="${OPTARG}";;
-    d) crit="\"window\"" srch="${OPTARG}";;
-    m) crit="\"marks\"" srch="${OPTARG}";;
-    a) crit="\"focused\"" && srch="true";;
-    y) synk=1;;
-    v) printf '%s\n' \
-         "$NAME - version: $VERSION" \
-         "updated: $UPDATED by $AUTHOR"
-       exit ;;
-    h) printf '%s\n' "${about}" && exit ;;
-  esac
-done
-
-synk=${synk:=0}
-[ -z "$crit" ] && crit="\"focused\"" && srch="true"
 
 containerlist(){
  
@@ -187,6 +37,11 @@ containerlist(){
         LOB="X";FCB="X";LCB="X";ACB="X"
         LOC="X";FCC="X";LCC="X";ACC="X"
         LOD="X";FCD="X";LCD="X";ACD="X"
+
+        AWX="X";AWY="X";AWB="X";AWWIDTH="X";AWHEIGHT="X";
+        TWX="X";TWY="X";TWB="X";TWWIDTH="X";TWHEIGHT="X";
+        curx="X";cury="X";curb="X";curw="X";curh="X"      
+        AID="X";TID="X";curid="X"
       }
 
       hit!=0 && $0~"{" {hit++}
@@ -195,6 +50,25 @@ containerlist(){
         gsub("[[]|[]]","",$2)
         conta[marko]["focused"]=$2
       }
+
+      # "rect":{"x":474
+      # "y":243
+      # "width":350
+      # "height":230}
+      # "deco_rect":{"x":0
+      # "y":0
+      # "width":350
+      # "height":20}
+
+      $1=="\"rect\"" {curx=$3;rectw=1}
+      rectw==1 && $1=="\"y\""{cury=$2}
+      rectw==1 && $1=="\"width\""{curw=$2}
+      rectw==1 && $1=="\"height\""{sub("}","",$2);curh=$2;rectw=2}
+
+      $1=="\"deco_rect\"" {rectb=1}
+      rectb==1 && $1=="\"height\""{sub("}","",$2);curb=$2;rectb=2}
+
+      $1=="\"window\"" {curid=$2}
 
       $1=="\"type\"" && $2=="\"workspace\"" {wsdchk="1"}
       wsdchk=="1" && $1=="\"width\""  {dim["w"]=$2}
@@ -215,8 +89,8 @@ containerlist(){
         }
       }
       
-      trg=="0" && $1==crit && $2 ~ srch  {TWI=cid;trg="1";}
-      trg=="0" && $2 ~ crit && $3 ~ srch {trg="1";TWI=cid}
+      trg=="0" && $1==crit && $2 ~ srch  {TWI=cid;trg="1";TWW=curws}
+      trg=="0" && $2 ~ crit && $3 ~ srch {trg="1";TWI=cid;TWW=curws}
       act=="0" && $1=="\"focused\"" && $2=="true" {act="1";AWI=cid}
       numchk=="1" && $1=="\"width\""  {dim[curws]["w"]=$2}
       numchk=="1" && $1=="\"height\"" {gsub("}","",$2);dim[curws]["h"]=$2;numchk=0}
@@ -225,7 +99,7 @@ containerlist(){
       bdchk=="1" && $1=="\"height\"" {gsub("}","",$2);CBD=$2;bdchk=0}
 
       $1=="\"floating\"" {
-        if(trg!="2" || act!="2") {
+        if(act!="2") {
 
           if(cid == AWI){
             if($2~"on"){AWP="g"}
@@ -238,10 +112,18 @@ containerlist(){
               AWC=marko
               AWL=conta[marko]["layout"]
             }
-            if(cmrk!=""){AWM=cmrk}
+            # if(cmrk!=""){AWM=cmrk}
             act="2"
+            AWX=curx
+            AWY=(cury-curb)
+            AWB=curb
+            AWWIDTH=curw
+            AWHEIGHT=(curh+curb)
+            AID=curid
           }
+        }
 
+        if(trg!="2") {
           if(cid == TWI){
             if($2~"on"){TWP="g"}
             if($2!~"on"){TWP="i"}
@@ -254,8 +136,14 @@ containerlist(){
               TWC=marko
               TWL=conta[marko]["layout"]
             }
-            if(cmrk!=""){TWM=cmrk}
+            # if(cmrk!=""){TWM=cmrk}
             trg="2"
+            TWX=curx
+            TWY=(cury-curb)
+            TWB=curb
+            TWWIDTH=curw
+            TWHEIGHT=(curh+curb)
+            TID=curid
           }
        }
        cmrk=""
@@ -269,7 +157,8 @@ containerlist(){
             gsub("i34","",alst[m])
             marko=alst[m]
             conta[marko]["ws"]=curws
-            conta[marko]["layout"]="-"}
+            conta[marko]["layout"]="-"
+          }
         }
 
         cmrk=$2
@@ -354,6 +243,9 @@ containerlist(){
         if(TWI==""){
           TWC="X";TWW="X";TWP="X";TWI="X"}
 
+        if(AWI==""){
+          AWC="X";AWW="X";AWP="X";AWI="X"}
+
         for (c in conta) {
           if(c~/^A$|^B$|^C$|^D$/){
 
@@ -389,6 +281,8 @@ containerlist(){
         EXS=VIS HID
         if(EXS=="XX"){EXS="X"}
         else{gsub("X","",EXS)}
+        if(EXS==""){EXS="X"}
+        AWM="X"; TWM="X"
         
         print AWW " " VIS " " HID " " EXS " " \
           AWP " " AWL " " AWS " " AWC " " AWW " " AWI " " AWM " " \
@@ -401,9 +295,259 @@ containerlist(){
           CAB " " CAC " " CBD " " \
           FAC " " FBD " " \
           dim[AWW]["w"] " " dim[AWW]["h"] " " \
-          WSF
+          WSF " " \
+          AWX " " AWY " " AWWIDTH " " AWHEIGHT " " \
+          TWX " " TWY " " TWWIDTH " " TWHEIGHT " " \
+          AID " " TID " " \
+          AWB " " TWB
       }
     '
 }
 
-containerlist
+main(){
+
+  while getopts :c:i:t:n:d:r:m:avh option; do
+    case "${option}" in
+      i) crit="\"instance\"" srch="${OPTARG}";;
+      c) crit="\"class\"" srch="${OPTARG}";;
+      t) crit="\"title\"" srch="${OPTARG}";;
+      n) crit="\"id\"" srch="${OPTARG}";;
+      d) crit="\"window\"" srch="${OPTARG}";;
+      m) crit="\"marks\"" srch="${OPTARG}";;
+      a) crit="\"focused\"" && srch="true";;
+      v) printf '%s\n' \
+           "$NAME - version: $VERSION" \
+           "updated: $UPDATED by $AUTHOR"
+         exit ;;
+      h|*) printinfo && exit ;;
+    esac
+  done
+
+  [ -z "$crit" ] && crit="\"focused\"" && srch="true"
+
+  containerlist
+}
+
+printinfo(){
+  case "$1" in
+    m ) printf '%s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
+
+bouthead="
+${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3(1)
+"
+
+about='
+`i3list` - List attributes of i3wm
+
+SYNOPSIS
+--------
+
+`i3list` [`OPTION` [*CRITERIA*]]
+
+DESCRIPTION
+-----------
+
+This script is vital for i3fyra to work. But it can be used on it'"'"'s own
+or with other scripts. `i3list` is also used by i3run. `i3list` parses the
+output of the command:  
+`i3-msg -t get_tree`  
+
+and returns a long string with 43 values separated by spaces. This strange 
+output format is made to make it possible to pipe the output to other scripts. 
+A lot of the information is specific to i3fyra, but if `i3list` doesn'"'"'t find a 
+value an X will be placed in it'"'"'s place in the output.  
+
+The idea, is to use this script once, and get all the info about i3'"'"'s current
+state in one big chunk. So one doesn'"'"'t have to make more requests for 
+tree output. It have speeded up my own scripts a lot. And it also makes many
+listener scripts unnecessary. The parsing is done with awk, and it is very
+fast, about 25ms on my average computer (i5, 4GB). Same operation with pure
+bash would take at least a whole second (x40).  
+
+I have made another script, `i3get`, that works in a similar way but where you
+choose which information you want in the output. `i3get` is slightly faster (5ms),
+but `i3list` outputs more information and is meant to replace multiple `i3get` requests.
+
+OPTIONS
+-------
+
+`-v` 
+  Show version info and exit
+
+`-h` 
+  Show this help and exit
+
+`-c` *CLASS*
+  Search for windows with the given *CLASS*
+
+`-i` *INSTANCE*
+  Search for windows with the given *INSTANCE*
+
+`-t` *TITLE*
+  Search for windows with the given *TITLE*
+
+`-n` *CON_ID*
+  Search for windows with the given *CON_ID*
+
+`-d` *WINDOW_ID*
+  Search for windows with the given *WINDOW ID*
+
+`-m` *CON_MARK*
+  Search for windows with the given *CON_MARK*
+
+If no option is passed, active window will be target.
+
+**example output**
+``` text
+$ i3list
+  1 ABD C ABDC g u a X 1 94834554562528 f-94834554562528 g u a X 1 \\
+  94834554562528 f-94834554562528 t 94834555596640 94834555347456 \\
+  94834555596640 t 94834555517248 94834555517248 94834555517248 t \\
+  94834555385280 94834555385280 94834555385280 t 94834555516528 \\
+  94834555556800 94834555556800 1069 585 234 1056 900 234 A BD 1600 900
+```
+**Below is a cipher for the output**
+``` text
+field: 0   - AWW -  current workspace
+field: 1   - VIS -  visible containers
+field: 2   - HID -  hidden containers
+field: 3   - EXS -  existing containers (VIS+HID)
+field: 4   - AWP -  Active window position (b|e|m|o|g|i)
+field: 5   - AWL -  Active window layout (t|v|h|s|u)
+field: 6   - AWS -  Active window status (f|a|n)
+field: 7   - AWC -  Active window container (A|B|C|D|X)
+field: 8   - AWW -  Active window workspace
+field: 9   - AWI -  Active container id (con_id)
+field: 10  - AWM -  Active window mark
+field: 11  - TWP -  Target window position (b|e|m|o|g|i)
+field: 12  - TWL -  Target window layout (t|v|h|s|u)
+field: 13  - TWS -  Target window status (f|a|n)
+field: 14  - TWC -  Target window container (A|B|C|D|X)
+field: 15  - TWW -  Target window workspace
+field: 16  - TWI -  Target container id (con_id)
+field: 17  - TWM -  Target window mark
+field: 18  - LOA -  Container A layout
+field: 19  - FCA -  Container A first child (con_id)
+field: 20  - LCA -  Container A last child (con_id)
+field: 21  - ACA -  Container A focused child (con_id)
+field: 22  - LOB -  Container B layout
+field: 23  - FCB -  Container B first child (con_id)
+field: 24  - LCB -  Container B last child (con_id)
+field: 25  - ACB -  Container B focused child (con_id)
+field: 26  - LOC -  Container C layout
+field: 27  - FCC -  Container C first child (con_id)
+field: 28  - LCC -  Container C last child (con_id)
+field: 29  - ACC -  Container C focused child (con_id)
+field: 30  - LOD -  Container D layout
+field: 31  - FCD -  Container D first child (con_id)
+field: 32  - LCD -  Container D last child (con_id)
+field: 33  - ACD -  Container D focused child (con_id)
+field: 34  - SAB -  Stored AB split (mark i34SAB_*)
+field: 35  - SAC -  Stored AC split (mark i34SAC_*)
+field: 36  - SBD -  Stored BD split (mark i34SBD_*)
+field: 37  - CAB -  Current AB split (width of i34XAC)
+field: 38  - CAC -  Current AC split (height of i34A)
+field: 39  - CBD -  Current BD split (height of i34B)
+field: 40  - FAC -  Family AC memory (mark i34FAC_*)
+field: 41  - FBD -  Family AC memory (mark i34FBD_*)
+field: 42  - SDW -  Width of current workspace
+field: 43  - SDH -  Height of curent workspace
+field: 44  - WSF -  Workspace number whith i3fyra layout
+field: 45  - AWX -  Active window X pos
+field: 46  - AWY -  Active window Y pos
+field: 47  - AWD -  Active window Width
+field: 48  - AWH -  Active window Height
+field: 49  - TWX -  Target window X pos
+field: 50  - TWY -  Target window Y pos
+field: 51  - TWD -  Target window Width
+field: 52  - TWH -  Target window Height
+field: 53  - AID -  Active window window ID
+field: 54  - TID -  Target window window ID
+field: 55  - AWB -  Active window titlebar height
+field: 56  - TWB -  Target window titlebar height
+
+position (b|e|m|g|i)
+b - beginning  first child in container
+e - end        last child in container
+m - middle     neither first or last
+o - only       only child in container
+g - floating   not handled by i3fyra
+i - tiled      not handled by i3fyra
+
+layout (t|v|h|s|u)
+t - tabbed
+v - vertical
+h - horizontal
+s - stacked
+u - unknown (not handled by i3fyra)
+
+status (f|a|n)
+f - focused (visible window in a tabbed container)
+a - active window
+n - neither active or focused
+```
+The best way to handle the output is to put it in an array.
+
+Example:
+``` text
+$ list_array=($(i3list))
+$ echo ${list_array[42]}
+  1600 # width of current workspace
+```
+
+DEPENDENCIES
+------------
+
+i3wm
+'
+
+if [ "$1" = "md" ]; then
+  printinfo m
+  exit
+elif [ "$1" = "man" ]; then
+  printinfo f
+  exit
+else
+  main "${@}"
+fi

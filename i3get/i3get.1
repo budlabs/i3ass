@@ -1,0 +1,126 @@
+.TH I3GET 1 2017\-03\-08 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3get\fR \- Return information about i3wm.
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3get\fR [\fB\fC\-h\fR|\fB\fC\-v\fR] [\fB\fCOPTION\fR [\fICRITERIA\fP]] [\fB\fC\-r\fR [tcidnmwafov]] [\fB\fC\-y\fR]
+
+.SH DESCRIPTION
+.PP
+Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t get\_tree\fR,
+return desired information. If no arguments are passed.
+\fB\fCcon\_id\fR of acitve window is returned.
+
+.SH OPTIONS
+.PP
+\fB\fC\-v\fR
+.br
+  Show version and exit
+
+.PP
+\fB\fC\-h\fR
+.br
+  Show this help
+
+.PP
+\fB\fC\-a\fR
+.br
+  Currently active window (default)
+
+.PP
+\fB\fC\-c\fR \fICLASS\fP
+.br
+  Search for windows with the given class
+
+.PP
+\fB\fC\-i\fR \fIINSTANCE\fP
+.br
+  Search for windows with the given instance
+
+.PP
+\fB\fC\-t\fR \fITITLE\fP
+.br
+  Search for windows with title.
+
+.PP
+\fB\fC\-n\fR \fICON\_ID\fP
+.br
+  Search for windows with the given con\_id
+
+.PP
+\fB\fC\-d\fR \fICON\_ID\fP
+.br
+  Search for windows with the given window id
+
+.PP
+\fB\fC\-m\fR \fICON\_MARK\fP
+.br
+  Search for windows with the given mark
+
+.PP
+\fB\fC\-o\fR \fITTL\_FRMT\fP
+.br
+  Search for windows with the given titleformat
+
+.PP
+\fB\fC\-y\fR
+.br
+  Synch on. If this option is included,
+  script will wait till target window exist.
+
+.PP
+\fB\fC\-r\fR [\fIOUTPUT\fP]
+.br
+  \fIOUTPUT\fP can be one or more of the following
+  characters:
+
+.PP
+\fB\fCt\fR: title
+.br
+  \fB\fCc\fR: class
+.br
+  \fB\fCi\fR: instance
+.br
+  \fB\fCd\fR: Window ID
+.br
+  \fB\fCn\fR: Con\_Id (default)
+.br
+  \fB\fCm\fR: mark
+.br
+  \fB\fCw\fR: workspace
+.br
+  \fB\fCa\fR: is active
+.br
+  \fB\fCf\fR: floating state
+.br
+  \fB\fCo\fR: title format
+.br
+  \fB\fCv\fR: visible state
+
+.SH EXAMPLES
+.PP
+search for window with instance name sublime\_text. Request
+workspace, title and floating state.
+.br
+\fB\fCi3get \-i sublime\_text \-r wtf\fR
+
+.PP
+Title and tile\_format output is always surrounded
+with doublequotes.
+
+.SH DEPENDENCIES
+.PP
+i3wm
+
+.SH AUTHOR
+.PP
+budRich 
+\[la]robstenklippa@gmail.com\[ra]
+
+\[la]https://budrich.github.io\[ra]
+
+.SH SEE ALSO
+.PP
+i3(1)
