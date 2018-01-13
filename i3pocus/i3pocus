@@ -1,0 +1,249 @@
+#!/bin/bash
+
+NAME="i3pocus"
+VERSION="0.101"
+AUTHOR="budRich"
+CONTACT='robstenklippa@gmail.com'
+CREATED="2018-01-10"
+UPDATED="2018-01-13"
+
+main(){
+  while getopts :vh option; do
+    case "${option}" in
+      v) printf '%s\n' \
+           "$NAME - version: $VERSION" \
+           "updated: $UPDATED by $AUTHOR"
+         exit ;;
+      h|*) printinfo && exit ;;
+    esac
+  done
+
+  dir="${1:0:1}"
+
+  case $dir in
+     l ) ldir=left  ;;
+     r ) ldir=right ;;
+     d ) ldir=down  ;;
+     u ) ldir=up    ;;
+  esac
+
+  alst=($(getcurrent))
+
+  # "n"|"t
+  pos=${alst[0]%|*}
+  tot=${alst[0]#*|}
+  plo=${alst[$((tot+1))]}
+
+  if ((tot==1)); then
+    neighbor
+  elif [[ $plo =~ tabbed|stacked ]]; then
+    neighbor
+  elif [[ $dir =~ r|l ]] && [[ $plo = splitv ]]; then
+    neighbor
+  elif [[ $dir =~ u|d ]] && [[ $plo = splith ]]; then
+    neighbor
+  elif [[ $dir =~ l|u ]] && ((pos==1)); then
+    neighbor
+  elif [[ $dir =~ r|d ]] && ((pos==tot)); then
+    neighbor
+  else
+    i3-msg -q focus $ldir
+  fi
+
+}
+
+neighbor(){
+
+  [[ $plo =~ tabbed|stacked ]] && i3-msg -q focus parent
+  i3-msg -q focus $ldir
+
+  anei=($(getcurrent))
+
+  # "n"|"t
+  ntot=${anei[0]#*|}
+  nplo=${anei[$((ntot+1))]}
+
+
+  if ((ntot==1)) || [[ $nplo =~ tabbed|stacked ]]; then
+    return
+  else
+
+    case $dir in
+      l ) [[ $nplo = splith ]] \
+            && i3-msg -q "[con_id=${anei[$ntot]}]" focus
+      ;;
+      r ) [[ $nplo = splith ]] \
+            && i3-msg -q "[con_id=${anei[1]}]" focus
+
+      ;;
+      d ) [[ $nplo = splitv ]] \
+            && i3-msg -q "[con_id=${anei[1]}]" focus
+      ;;
+      u ) [[ $nplo = splitv ]] \
+            && i3-msg -q "[con_id=${anei[$ntot]}]" focus
+      ;;
+    esac
+
+  fi
+
+}
+
+getcurrent(){
+  i3-msg -t get_tree \
+  | awk -v RS=',' -F':' -v crit='"focused"' -v srch="true" \
+    'BEGIN{fid="0";nid="0";nfo="0"}
+      $1~"{\"id\"" || $2~"\"id\"" {
+        cid=$NF;aid=cid" "aid}
+      $1 ~ crit && $2 ~ srch  {fid=cid}
+      $2 ~ crit && $3 ~ srch  {fid=cid}
+
+      $1=="\"layout\"" {alo[cid]=$2}
+
+      fid!="0" && $1=="\"focus\"" && $2~fid{focs=1}
+      focs=="1" && $NF~"[]]$"{end=1}
+      focs=="1" {gsub("[]]|[[]","",$NF);afo=$NF"|"afo;nfo++}
+      end=="1" {
+        aid=aid
+        split(aid, aai, " ")
+
+        $0=$0
+        j=nfo
+        for (i in aai){
+          if(fin==1){plo=alo[aai[i]];break}
+          if(aai[i]==fid){n=j}
+          if(aai[i]~afo){ord=aai[i]" "ord;--j}
+          if(j==0){fin=1}
+        }
+        gsub("[\"]","",plo)
+        print n"|"nfo" "ord" "plo
+        exit
+      } '
+}
+
+printinfo(){
+  case "$1" in
+    m ) printf '%s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
+
+bouthead="
+${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3(1)
+"
+
+about='
+`i3pocus` - Intelligent window focusing
+
+SYNOPSIS
+--------
+
+`i3pocus` [`-v`|`-h`] [`DIRECTION`]
+
+DESCRIPTION
+-----------
+
+`i3pocus` is meant as a replacement for the default
+focusing function (`i3-msg focus`) in **i3wm**. 
+`i3pocus` moves the focus differently depending on
+the layout the current window is places in AND the
+the layout of the *receiving* container AND the 
+DIRECTION the focus is moved.   
+
+If the focus is moved horizontally (left|right) into
+a horizontally split (splith) container, either the 
+first (DIRECTION = right) or the last (DIRECTION = left)
+window will be focused. This differ from the default
+built in focus function, which always focus the window
+that was last focused inside the container.  
+
+A similar logic is applied to vertical focus/splits.  
+
+If the receiving container layout is tabbed or stacked,
+the focused (visible) container will get focus.  
+
+If the current window is in a tabbed or stacked layout,
+the parent container will be focused before moving the
+focus in DIRECTION.  
+
+OPTIONS
+-------
+
+`-v`  
+  Show version and exit.
+
+`-h`  
+  Show help and exit.
+
+`DIRECTION`  
+  Direction to move the focus, can be either:   
+  left, right, up, down OR l,r,u,d
+
+
+EXAMPLES
+--------
+
+You can replace the default focus keybindings in
+`~/.config/i3/config` with i3pocus in this fashion:  
+
+``` text
+# Default keybinding:
+bindsym $mod+Left focus left
+
+# With i3pocus:
+# this assumes `i3pocus` is an executable file in your $PATH
+bindsym $mod+Left i3pocus left
+```
+
+DEPENDENCIES
+------------
+
+i3
+'
+
+if [ "$1" = "md" ]; then
+  printinfo m
+  exit
+elif [ "$1" = "man" ]; then
+  printinfo f
+  exit
+else
+  main "${@}"
+fi
