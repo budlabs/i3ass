@@ -59,7 +59,7 @@ bindsym $mod+Left focus left
 
 # With i3pocus:
 # this assumes `i3pocus` is an executable file in your $PATH
-bindsym $mod+Left i3pocus left
+bindsym $mod+Left exec i3pocus left
 ```
 
 DEPENDENCIES
