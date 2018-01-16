@@ -33,6 +33,7 @@ main(){
   pos=${alst[0]%|*}
   tot=${alst[0]#*|}
   plo=${alst[$((tot+1))]}
+  parid=${alst[$((tot+2))]}
 
   if ((tot==1)); then
     neighbor
@@ -54,7 +55,12 @@ main(){
 
 neighbor(){
 
-  [[ $plo =~ tabbed|stacked ]] && i3-msg -q focus parent
+  i3-msg -q focus parent
+  tpei=($(getcurrent))
+  ttot=${tpei[0]#*|}
+  tplo=${tpei[$((ttot+1))]}
+  tpar=${tpei[$((ttot+2))]}
+  [[ $tplo =~ tabbed|stacked ]] && i3-msg -q focus parent
   i3-msg -q focus $ldir
 
   anei=($(getcurrent))
@@ -63,6 +69,10 @@ neighbor(){
   ntot=${anei[0]#*|}
   nplo=${anei[$((ntot+1))]}
 
+  for (( i = 1; i < ntot+1; i++ )); do
+    [[ ${anei[i]} = "${parid}" ]] && return
+    [[ ${anei[i]} = "${tpar}" ]] && return
+  done
 
   if ((ntot==1)) || [[ $nplo =~ tabbed|stacked ]]; then
     return
@@ -91,9 +101,9 @@ neighbor(){
 getcurrent(){
   i3-msg -t get_tree \
   | awk -v RS=',' -F':' -v crit='"focused"' -v srch="true" \
-    'BEGIN{fid="0";nid="0";nfo="0"}
+    'BEGIN{fid="0";nid="0";nfo="0";nwi}
       $1~"{\"id\"" || $2~"\"id\"" {
-        cid=$NF;aid=cid" "aid}
+        nwi=nwi+1;cid=$NF;aid[nwi]=cid}
       $1 ~ crit && $2 ~ srch  {fid=cid}
       $2 ~ crit && $3 ~ srch  {fid=cid}
 
@@ -103,19 +113,20 @@ getcurrent(){
       focs=="1" && $NF~"[]]$"{end=1}
       focs=="1" {gsub("[]]|[[]","",$NF);afo=$NF"|"afo;nfo++}
       end=="1" {
-        aid=aid
-        split(aid, aai, " ")
+        # split(aid, aai, " ")
 
-        $0=$0
+        # $0=$0
         j=nfo
-        for (i in aai){
-          if(fin==1){plo=alo[aai[i]];break}
-          if(aai[i]==fid){n=j}
-          if(aai[i]~afo){ord=aai[i]" "ord;--j}
+
+        for (i=nwi;i>0;i--){
+          if(fin==1){plo=alo[aid[i]];parid=aid[i];break}
+          if(aid[i]==fid){n=j}
+          if(afo ~ aid[i]){ord=aid[i]" "ord;--j}
+          
           if(j==0){fin=1}
         }
         gsub("[\"]","",plo)
-        print n"|"nfo" "ord" "plo
+        print n"|"nfo" "ord" "plo" "parid
         exit
       } '
 }

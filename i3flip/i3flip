@@ -26,18 +26,36 @@ main(){
     ''|*   ) dir=n ;;
   esac
 
-  alst=($(getwindow))
+  alst=($(getcurrent))
   # "n"|"t
   pos=${alst[0]%|*}
   tot=${alst[0]#*|}
+  plo=${alst[$((tot+1))]}
+  cur=${alst[$pos]}
 
+  tries=0
+
+  if [[ ! $plo =~ tabbed|stacked ]]; then
+    i3-msg -q focus parent
+    alst=($(getcurrent))
+    # "n"|"t
+    pos=${alst[0]%|*}
+    tot=${alst[0]#*|}
+    plo=${alst[$((tot+1))]}
+  fi
+
+  [[ ! $plo =~ tabbed|stacked ]] \
+    && i3-msg -q "[con_id=$cur]" focus \
+    && exit
   [[ $tot = 1 ]] && exit
+
+  
 
   [[ $dir = n ]] \
     && trg=$((pos==tot?1:pos+1)) \
     || trg=$((pos==1?tot:pos-1))
 
-  i3-msg -q "[con_id=${alst[$trg]}]" focus
+  i3-msg -q "[con_id=${alst[$trg]}]" focus, focus child
 }
 
 getwindow(){
@@ -61,6 +79,39 @@ getwindow(){
         }
         
         print n"|"t thelist
+        exit
+      } '
+}
+
+getcurrent(){
+  i3-msg -t get_tree \
+  | awk -v RS=',' -F':' -v crit='"focused"' -v srch="true" \
+    'BEGIN{fid="0";nid="0";nfo="0";nwi}
+      $1~"{\"id\"" || $2~"\"id\"" {
+        nwi=nwi+1;cid=$NF;aid[nwi]=cid}
+      $1 ~ crit && $2 ~ srch  {fid=cid}
+      $2 ~ crit && $3 ~ srch  {fid=cid}
+
+      $1=="\"layout\"" {alo[cid]=$2}
+
+      fid!="0" && $1=="\"focus\"" && $2~fid{focs=1}
+      focs=="1" && $NF~"[]]$"{end=1}
+      focs=="1" {gsub("[]]|[[]","",$NF);afo=$NF"|"afo;nfo++}
+      end=="1" {
+        # split(aid, aai, " ")
+
+        # $0=$0
+        j=nfo
+
+        for (i=nwi;i>0;i--){
+          if(fin==1){plo=alo[aid[i]];parid=aid[i];break}
+          if(aid[i]==fid){n=j}
+          if(afo ~ aid[i]){ord=aid[i]" "ord;--j}
+          
+          if(j==0){fin=1}
+        }
+        gsub("[\"]","",plo)
+        print n"|"nfo" "ord" "plo" "parid
         exit
       } '
 }
