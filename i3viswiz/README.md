@@ -58,3 +58,15 @@ OPTIONS
   Can be either (left|right|up|down) OR (l|r|u|d). DIRECTION needs
   to be the last argument of the command. If no DIRECTION is given,
   focus will not shift.
+
+EXAMPLE
+-------
+
+replace the normal i3 focus keybindings with viswiz like this:
+``` text
+Normal binding:
+bindsym Mod4+Shift+Left   focus left
+
+Wizzy binding:
+bindsym Mod4+Left   exec --no-startup-id i3viswiz l 
+```

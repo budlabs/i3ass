@@ -70,6 +70,23 @@ Example output:
   to be the last argument of the command. If no DIRECTION is given,
   focus will not shift.
 
+.SH EXAMPLE
+.PP
+replace the normal i3 focus keybindings with viswiz like this:
+
+.PP
+.RS
+
+.nf
+Normal binding:
+bindsym Mod4+Shift+Left   focus left
+
+Wizzy binding:
+bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz l 
+
+.fi
+.RE
+
 .SH AUTHOR
 .PP
 budRich 
