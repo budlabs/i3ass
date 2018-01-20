@@ -1,0 +1,83 @@
+.TH I3VISWIZ 1 2018\-01\-18 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3viswiz\fR \- Professional window focus for i3wm
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3viswiz\fR [\fB\fC\-v\fR|\fB\fC\-h\fR] [\fB\fC\-p\fR] [\fB\fC\-g\fR GAPSIZE] [\fIDIRECTION\fP]
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3viswiz\fR lists all visible windows with their positions (X,Y) and
+dimensions (width,height). If \fB\fC\-p\fR flag is passed, the list will be
+printed to \fB\fCstdout\fR\&. If a \fIDIRECTION\fP (left|right|up|down) is passed
+\fB\fCi3wizvis\fR will shift the focus to the window closest in the given
+DIRECTION, or warp focus if there are no windows in the given direction.
+
+.SH OPTIONS
+.PP
+\fB\fC\-v\fR
+.br
+  Show version and exit.
+
+.PP
+\fB\fC\-h\fR
+.br
+  Show help and exit.
+
+.PP
+\fB\fC\-p\fR
+.br
+  Print list of windows to \fB\fCstdout\fR\&. The first line is either
+  the \fIcon\_id\fP of the window receiving focus . The second line
+  are the x and y coordinates where receiving window is searched.
+  Remaining lines are the list. The first field is marked with a
+  \fB\fC*\fR if the line contains the active window. Second field is the
+  \fIcon\_id\fP of a visible window. Floating windows are excluded from
+  the list. If the active window is floating, the first line will
+  have the text "floating".
+
+.PP
+Example output:
+
+.PP
+.RS
+
+.nf
+  $ i3paint \-p \-g 20 down
+    94369749033328
+    tx: 319.5 ty: 227
+    \- 94369749098704  x: 1349  y: 243  w: 125  h: 656  
+    * 94369748807120  x: 0     y: 0    w: 639  h: 207  
+    \- 94369749033328  x: 0     y: 208  w: 1222 h: 691  
+    \- 94369748768416  x: 1223  y: 0    w: 376  h: 242  
+    \- 94369749326096  x: 640   y: 0    w: 582  h: 207  
+    \- 94369749166496  x: 1475  y: 243  w: 124  h: 656  
+    \- 94369749106512  x: 1223  y: 243  w: 125  h: 656
+
+.fi
+.RE
+
+.PP
+\fB\fC\-g\fR GAPSIZE
+  Set GAPSIZE (defaults to 5). GAPSIZE is the distance in pixels
+  from the current window where new focus will be searched.
+
+.PP
+\fIDIRECTION\fP
+  Can be either (left|right|up|down) OR (l|r|u|d). DIRECTION needs
+  to be the last argument of the command. If no DIRECTION is given,
+  focus will not shift.
+
+.SH AUTHOR
+.PP
+budRich 
+\[la]robstenklippa@gmail.com\[ra]
+
+\[la]https://budrich.github.io\[ra]
+
+.SH SEE ALSO
+.PP
+bar(1), foo(5), xyzzy(1), Linux Man Page Howto
+\[la]http://www.schweikhardt.net/man_page_howto.html\[ra]

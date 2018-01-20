@@ -51,15 +51,6 @@ containerlist(){
         conta[marko]["focused"]=$2
       }
 
-      # "rect":{"x":474
-      # "y":243
-      # "width":350
-      # "height":230}
-      # "deco_rect":{"x":0
-      # "y":0
-      # "width":350
-      # "height":20}
-
       $1=="\"rect\"" {curx=$3;rectw=1}
       rectw==1 && $1=="\"y\""{cury=$2}
       rectw==1 && $1=="\"width\""{curw=$2}
