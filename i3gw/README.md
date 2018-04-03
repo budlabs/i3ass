@@ -4,6 +4,8 @@ In the screenshot below, the windows to the right are tiled, and a ghostwindow i
 
 This might seems like a novel and unusable feature, but it is actually crucial for many of my script ([i3fyra](https://budrich.github.io/i3ass/i3fyra), [i3var](https://budrich.github.io/i3ass/i3var)) to work.
 
+* * *
+
 `i3gw` - A Ghost window wrapper for i3wm.
 
 SYNOPSIS

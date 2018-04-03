@@ -1,5 +1,3 @@
-
-
 `i3get` - Return information about i3wm.
 
 SYNOPSIS

@@ -1,11 +1,11 @@
-#!/bin/sh
+#!/bin/bash
 
 NAME="i3list"
-VERSION="0.123"
+VERSION="0.126"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-10-06"
-UPDATED="2017-12-17"
+UPDATED="2018-04-02"
 
 
 

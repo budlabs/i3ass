@@ -1,11 +1,11 @@
 #!/bin/bash
 
 NAME="i3var"
-VERSION="0.001"
+VERSION="0.004"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-12-22"
-UPDATED="2017-12-22"
+UPDATED="2018-04-02"
 
 main(){
   while getopts :vh option; do
@@ -33,7 +33,7 @@ main(){
         i3gw "${trgnam}=${trgval}" 
         i3-msg -q "[con_mark=${trgnam}=${trgval}]" move scratchpad
       else
-        i3-msg -q "[con_mark=${trgnam}]" mark "${trgnam}=${trgval}"
+        i3-msg -q "[con_mark=${trgnam}]" move scratchpad, mark "${trgnam}=${trgval}"
       fi
     else
       i3-msg -q "[con_mark=${trgnam}]" kill

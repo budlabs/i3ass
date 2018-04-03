@@ -1,11 +1,11 @@
 #!/bin/bash
 
 NAME="i3viswiz"
-VERSION="0.011"
+VERSION="0.013"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2018-01-18"
-UPDATED="2018-01-20"
+UPDATED="2018-04-02"
 
 main(){
   while getopts :vhg:p option; do
@@ -149,8 +149,6 @@ listvisible(){
       curb=$2
       rectb=2
     }
-
-    # if(curws=="-1"){WSF="chk"}
 
     $1=="\"floating\"" && $2~"_on" {
       if(cid==act){actfloat="floating"}

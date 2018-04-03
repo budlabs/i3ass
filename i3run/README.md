@@ -1,7 +1,8 @@
-
 ## 18/01/03 - new position to mouse
 
 Floating windows now appears centered to the mouse position, but never outside the screen. Screen borders (gaps) can be fine tuned with environment variables. `xdotool` is a dependency now, it's needed to get the position of the mousecursor. All windows are now hidden if targeted while they are active, if not the new `-g` option is set. Using [i3var](https://budrich.github.io/i3ass/i3var) instead of marks.
+
+* * *
 
 `i3run` - Run, Raise or hide windows in i3wm
 

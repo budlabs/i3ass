@@ -1,11 +1,11 @@
 #!/bin/bash
 
 NAME="i3flip"
-VERSION="0.001"
+VERSION="0.004"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2018-01-03"
-UPDATED="2018-01-03"
+UPDATED="2018-04-02"
 
 main(){
   while getopts :vh option; do

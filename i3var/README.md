@@ -1,5 +1,7 @@
 I found that marking windows is both clunky and it can have a negative impact on the workflow for users who use marks for other things. So i made i3var, it creates a ghostwindow on the scratchpad and use it to hold a variable. This can also be used for things that are not window related. I can for example keep track of my current wallpaper, but i have made some other crazy experiments with this and it works really well, much better then marks. Be aware that if you are using a listener script of some kind, it can get confused by the windows, but there are workarounds.
 
+* * *
+
 `i3var` - Set or get a i3 variable
 
 SYNOPSIS

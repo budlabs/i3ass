@@ -1,11 +1,11 @@
 #!/bin/bash
 
 NAME="i3fyra"
-VERSION="0.420"
+VERSION="0.425"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-01-14"
-UPDATED="2017-11-19"
+UPDATED="2018-04-02"
 
 I3FYRA_WS=${I3FYRA_WS:-X}
 I3FYRA_MAIN_CONTAINER=${I3FYRA_MAIN_CONTAINER:-A}
@@ -572,6 +572,7 @@ familycreate(){
 
   [[ $trg =~ A|C ]] && tfam=AC || tfam=BD
 
+
   i3-msg -q "[con_mark=i34X${tfam}]" unmark
   i3gw gurra  > /dev/null 2>&1
   i3-msg -q "[con_mark=gurra]" move to mark i34XAB, split v, layout tabbed
@@ -583,8 +584,9 @@ familycreate(){
   i3-msg -q mark i34X${tfam}
   i3-msg -q "[con_mark=gurra]" layout default, split v
   i3-msg -q "[con_mark=gurra]" kill
-  i3-msg -q "[con_mark=i34X${tfam}]" layout splitv, split v
+  # i3-msg -q "[con_mark=i34X${tfam}]" layout splitv, split v
   i3-msg -q "[con_mark=i34XAB]" layout splith, split h
+
 }
 
 layoutcreate(){
@@ -632,6 +634,7 @@ containershow(){
 
       # ocnt=container currently occupying tpos
       ocnt=${loa[$tpos]}
+
       # if ocnt is family, move trg to famcont
       # tdest= target destination
       [[ $ocnt =~ [$tfam] ]] && tdest=i34X${tfam} || tdest=i34XAB
@@ -655,7 +658,6 @@ containershow(){
         [[ $swap != 0 ]] \
           && i3-msg -q "[con_mark=i34${swap[0]}]" \
              swap container with mark i34${swap[1]}
-
 
         # resizing
         if [[ $tdest = i34XAB ]]; then

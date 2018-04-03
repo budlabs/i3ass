@@ -1,18 +1,23 @@
 #!/bin/sh
 
 NAME="i3get"
-VERSION="0.295"
+VERSION="0.297"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-03-08"
-UPDATED="2017-12-17"
+UPDATED="2018-04-02"
 
 getwindow(){
   i3-msg -t get_tree \
   | awk -v RS=',' -F':' -v crit="${crit}" -v srch="${srch}" -v sret="${sret}" \
     'BEGIN{hit="0"}
-      $1~"{\"id\"" {if(sret ~ n)r["n"]=$2;if(sret ~ v)cid=$2}
-      $2~"\"id\"" {if(sret ~ n)r["n"]=$3;if(sret ~ v)cid=$3}
+      $1~"{\"id\"" || $2~"\"id\"" {
+        cid=$NF
+        for(k in r){if(k!="w"){r[k]=""}}
+        if(sret ~ n)
+          r["n"]=cid
+        if(hit==1){exit}
+      }
       $1 ~ crit && $2 ~ srch  {hit=1;fid=cid}
       $2 ~ crit && $3 ~ srch {hit=1;fid=cid}
       sret ~ t && $1=="\"title\"" {r["t"]=$2}

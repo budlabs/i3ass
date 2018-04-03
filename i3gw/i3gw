@@ -1,11 +1,11 @@
 #!/bin/sh
 
 NAME="i3gw"
-VERSION="0.12"
+VERSION="0.125"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-01-11"
-UPDATED="2017-12-17"
+UPDATED="2018-04-02"
 
 main(){
   while getopts :vh option

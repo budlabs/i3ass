@@ -1,4 +1,3 @@
-
 # Fyra is the Swedish name for "four" (4).
 
 https://www.youtube.com/watch?v=kU8gb6WLFk8  
@@ -48,7 +47,10 @@ $ i3fyra -z $(i3list | awk \
     '{all="ABCD";sub($8,"",all);print all}')
 ```
 
-The last example is a *monocle mode* enabler.
+The last example is a *monocle mode* enabler.  
+See also [i3monocle](https://budrich.github.io/scripts/i3add/i3monocle) and [i3minimize](https://budrich.github.io/scripts/i3add/i3minimize).
+
+* * *
 
 `i3fyra` - An advanced simple gridbased tiling layout for i3wm. 
 
@@ -179,4 +181,3 @@ DEPENDENCIES
 i3wm  
 i3list  
 i3gw
-

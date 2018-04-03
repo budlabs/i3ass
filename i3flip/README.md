@@ -1,4 +1,6 @@
-I extracted and improved the tabswitching function from [i3fyra](https://budrich.github.io/i3ass/i3fyra) and it now works independently, 
+I extracted and improved the tabswitching function from [i3fyra](https://budrich.github.io/i3ass/i3fyra) and it now works independently, with or without **i3fyra**.
+
+* * *
 
 `i3flip` - Tabswitching done right
 
@@ -37,4 +39,3 @@ bindsym Mod4+Shift+Tab   exec --no-startup-id i3flip p
 ```
 
 Mod4/Super/Windows+Tab will switch to the next tab.
-

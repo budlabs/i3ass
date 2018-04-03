@@ -1,11 +1,11 @@
 #!/bin/bash
 
 NAME="i3run"
-VERSION="0.001"
+VERSION="0.004"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-04-20"
-UPDATED="2017-11-19"
+UPDATED="2018-04-02"
 
 I3FYRA_WS=${I3FYRA_WS:-X}
 
