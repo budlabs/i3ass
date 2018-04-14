@@ -27,16 +27,35 @@ DIRECTION, or warp focus if there are no windows in the given direction.
   Show help and exit.
 
 .PP
-\fB\fC\-p\fR
+\fB\fC\-p\fR [t|c|i|n|o|d]
 .br
   Print list of windows to \fB\fCstdout\fR\&. The first line is either
   the \fIcon\_id\fP of the window receiving focus . The second line
   are the x and y coordinates where receiving window is searched.
   Remaining lines are the list. The first field is marked with a
-  \fB\fC*\fR if the line contains the active window. Second field is the
-  \fIcon\_id\fP of a visible window. Floating windows are excluded from
-  the list. If the active window is floating, the first line will
-  have the text "floating".
+  \fB\fC*\fR if the line contains the active window.
+
+.PP
+Depending on the argument the second field contains
+  different information about the window.
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCargument\fR	\fB\fCinformation\fR
+\fB\fCt\fR	title
+\fB\fCc\fR	class
+\fB\fCi\fR	instance
+\fB\fCo\fR	title\_format
+\fB\fCn\fR	con\_id
+\fB\fCd\fR	window\_id
+.TE
+
+.PP
+Floating windows are excluded from the list.
+  If the active window is floating, the first line
+  will have the text "floating".
 
 .PP
 Example output:
@@ -45,7 +64,7 @@ Example output:
 .RS
 
 .nf
-  $ i3paint \-p \-g 20 down
+  $ i3paint \-p n \-g 20 down
     94369749033328
     tx: 319.5 ty: 227
     \- 94369749098704  x: 1349  y: 243  w: 125  h: 656  

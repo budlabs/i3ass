@@ -23,20 +23,33 @@ OPTIONS
 `-h`  
   Show help and exit.
 
-`-p`  
+`-p` [t|c|i|n|o|d]  
   Print list of windows to `stdout`. The first line is either
   the *con_id* of the window receiving focus . The second line 
   are the x and y coordinates where receiving window is searched.
   Remaining lines are the list. The first field is marked with a 
-  `*` if the line contains the active window. Second field is the 
-  *con_id* of a visible window. Floating windows are excluded from
-  the list. If the active window is floating, the first line will 
-  have the text "floating".
+  `*` if the line contains the active window. 
+
+  Depending on the argument the second field contains
+  different information about the window.  
+
+  argument | information
+  :--------|:-----------
+  `t`      | title
+  `c`      | class
+  `i`      | instance
+  `o`      | title_format
+  `n`      | con_id
+  `d`      | window_id
+
+  Floating windows are excluded from the list. 
+  If the active window is floating, the first line 
+  will have the text "floating".
 
   Example output:  
 
 ``` text
-  $ i3paint -p -g 20 down
+  $ i3paint -p n -g 20 down
     94369749033328
     tx: 319.5 ty: 227
     - 94369749098704  x: 1349  y: 243  w: 125  h: 656  

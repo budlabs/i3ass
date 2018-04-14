@@ -1,17 +1,17 @@
 #!/bin/bash
 
 NAME="i3viswiz"
-VERSION="0.013"
+VERSION="0.014"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2018-01-18"
-UPDATED="2018-04-02"
+UPDATED="2018-04-14"
 
 main(){
-  while getopts :vhg:p option; do
+  while getopts :vhg:p: option; do
     case "${option}" in
       g) gapsz=${OPTARG} ;;
-      p) printout=1 ;;
+      p) printout=${OPTARG} ;;
       v) printf '%s\n' \
            "$NAME - version: $VERSION" \
            "updated: $UPDATED by $AUTHOR"
@@ -20,7 +20,7 @@ main(){
     esac
   done
 
-  (($#==1)) && [[ $1 = '-p' ]] && shift $((--OPTIND))
+  (($#==2)) && [[ $1 = '-p' ]] && shift $((--OPTIND))
   (($#>1)) && shift $((--OPTIND))
 
   gapsz=${gapsz:-5}
@@ -32,7 +32,7 @@ main(){
 
   trgwin="$(listvisible)"
 
-  [[ $printout = 1 ]] && echo -e "$trgwin"
+  [[ -n $printout ]] && echo -e "$trgwin"
 
   trgwin=$(echo -e "$trgwin" | head -1)
 
@@ -59,7 +59,7 @@ main(){
 
 listvisible(){
   i3-msg -t get_tree \
-           | awk -v gapsz=$gapsz -v dir=$dir -v RS=',' -F':' '
+           | awk -v opret="$printout" -v gapsz=$gapsz -v dir=$dir -v RS=',' -F':' '
 
     function listvis(id,achld,curc,c,schld,curs,s,stackh) {
       stackh=0
@@ -128,6 +128,15 @@ listvisible(){
       ac[cid]["counter"]="go"
       ac[cid]["focused"]="X"
     }
+
+
+    $1~"title_format" {ac[cid]["tf"]=$2}
+    $1~"title" {ac[cid]["ttl"]=$2}
+    $1=="\"window\"" {ac[cid]["wid"]=$2}
+    # $1~"id" {ac[cid][]=$2}
+    $1~"instance" {ac[cid]["ins"]=$2}
+    $1~"class" || $2~"class" {ac[cid]["cls"]=$NF}
+
 
     $1=="\"window\"" && $2!="null" {
       ac[cid]["x"]=curx
@@ -227,17 +236,34 @@ listvisible(){
       else
         print actfloat
 
+
+      # tf
+      # ttl
+      # wid
+      # []
+      # ins
+      # cls
+
       print "tx: " trgx " ty: " trgy
       for (w in avis) {
         if(w==act)
           printf "* "
         else
           printf "- "
-        print w "\t" \
+
+
+        if (opret=="t"){tmpop=ac[w]["ttl"]}
+        else if (opret=="c"){tmpop=ac[w]["cls"];gsub("[\"]","",tmpop)}
+        else if (opret=="i"){tmpop=ac[w]["ins"];gsub("[\"]","",tmpop)}
+        else if (opret=="o"){tmpop=ac[w]["tf"]}
+        else if (opret=="d"){tmpop=ac[w]["wid"]}
+        else {tmpop=w}
+        print \
         "x: " ac[w]["x"] "\t" \
         "y: " ac[w]["y"] "\t" \
         "w: " ac[w]["w"] "\t" \
-        "h: " ac[w]["h"] "\t" \
+        "h: " ac[w]["h"] " | " \
+        tmpop
       }
 
     }
@@ -321,20 +347,33 @@ OPTIONS
 `-h`  
   Show help and exit.
 
-`-p`  
+`-p` [t|c|i|n|o|d]  
   Print list of windows to `stdout`. The first line is either
   the *con_id* of the window receiving focus . The second line 
   are the x and y coordinates where receiving window is searched.
   Remaining lines are the list. The first field is marked with a 
-  `*` if the line contains the active window. Second field is the 
-  *con_id* of a visible window. Floating windows are excluded from
-  the list. If the active window is floating, the first line will 
-  have the text "floating".
+  `*` if the line contains the active window. 
+
+  Depending on the argument the second field contains
+  different information about the window.  
+
+  argument | information
+  :--------|:-----------
+  `t`      | title
+  `c`      | class
+  `i`      | instance
+  `o`      | title_format
+  `n`      | con_id
+  `d`      | window_id
+
+  Floating windows are excluded from the list. 
+  If the active window is floating, the first line 
+  will have the text "floating".
 
   Example output:  
 
 ``` text
-  $ i3paint -p -g 20 down
+  $ i3paint -p n -g 20 down
     94369749033328
     tx: 319.5 ty: 227
     - 94369749098704  x: 1349  y: 243  w: 125  h: 656  
