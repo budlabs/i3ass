@@ -5,15 +5,19 @@
 
 .SH SYNOPSIS
 .PP
-\fB\fCi3viswiz\fR [\fB\fC\-v\fR|\fB\fC\-h\fR] [\fB\fC\-p\fR] [\fB\fC\-g\fR GAPSIZE] [\fIDIRECTION\fP]
+\fB\fCi3viswiz\fR [\fB\fC\-v\fR|\fB\fC\-h\fR]
+\fB\fCi3viswiz\fR [\fB\fC\-p\fR \fB\fCt\fR|\fB\fCc\fR|\fB\fCi\fR|\fB\fCn\fR|\fB\fCo\fR|\fB\fCd\fR]
+\fB\fCi3viswiz\fR [\fB\fC\-g\fR \fIGAPSIZE\fP] [\fIDIRECTION\fP]
 
 .SH DESCRIPTION
 .PP
-\fB\fCi3viswiz\fR lists all visible windows with their positions (X,Y) and
-dimensions (width,height). If \fB\fC\-p\fR flag is passed, the list will be
-printed to \fB\fCstdout\fR\&. If a \fIDIRECTION\fP (left|right|up|down) is passed
-\fB\fCi3wizvis\fR will shift the focus to the window closest in the given
-DIRECTION, or warp focus if there are no windows in the given direction.
+\fB\fCi3viswiz\fR lists all visible windows with their
+positions (X,Y) and dimensions (width,height).
+If \fB\fC\-p\fR flag is passed, the list will be printed
+to \fB\fCstdout\fR\&. If a \fIDIRECTION\fP (left|right|up|down)
+is passed \fB\fCi3wizvis\fR will shift the focus to the
+window closest in the given DIRECTION, or warp
+focus if there are no windows in the given direction.
 
 .SH OPTIONS
 .PP
@@ -27,8 +31,7 @@ DIRECTION, or warp focus if there are no windows in the given direction.
   Show help and exit.
 
 .PP
-\fB\fC\-p\fR [t|c|i|n|o|d]
-.br
+\fB\fC\-p\fR \fB\fCt\fR|\fB\fCc\fR|\fB\fCi\fR|\fB\fCn\fR|\fB\fCo\fR|\fB\fCd\fR
   Print list of windows to \fB\fCstdout\fR\&. The first line is either
   the \fIcon\_id\fP of the window receiving focus . The second line
   are the x and y coordinates where receiving window is searched.
@@ -36,21 +39,16 @@ DIRECTION, or warp focus if there are no windows in the given direction.
   \fB\fC*\fR if the line contains the active window.
 
 .PP
-Depending on the argument the second field contains
+Depending on the argument the last field contains
   different information about the window.
 
-.TS
-allbox;
-l l 
-l l .
-\fB\fCargument\fR	\fB\fCinformation\fR
-\fB\fCt\fR	title
-\fB\fCc\fR	class
-\fB\fCi\fR	instance
-\fB\fCo\fR	title\_format
-\fB\fCn\fR	con\_id
-\fB\fCd\fR	window\_id
-.TE
+.PP
+\fB\fCt\fR \- title
+  \fB\fCc\fR \- class
+  \fB\fCi\fR \- instance
+  \fB\fCo\fR \- title\_format
+  \fB\fCn\fR \- con\_id
+  \fB\fCd\fR \- window\_id
 
 .PP
 Floating windows are excluded from the list.
@@ -67,13 +65,13 @@ Example output:
   $ i3paint \-p n \-g 20 down
     94369749033328
     tx: 319.5 ty: 227
-    \- 94369749098704  x: 1349  y: 243  w: 125  h: 656  
-    * 94369748807120  x: 0     y: 0    w: 639  h: 207  
-    \- 94369749033328  x: 0     y: 208  w: 1222 h: 691  
-    \- 94369748768416  x: 1223  y: 0    w: 376  h: 242  
-    \- 94369749326096  x: 640   y: 0    w: 582  h: 207  
-    \- 94369749166496  x: 1475  y: 243  w: 124  h: 656  
-    \- 94369749106512  x: 1223  y: 243  w: 125  h: 656
+    \- x: 1349  y: 243  w: 125  h: 656  94369749098704
+    * x: 0     y: 0    w: 639  h: 207  94369748807120
+    \- x: 0     y: 208  w: 1222 h: 691  94369749033328
+    \- x: 1223  y: 0    w: 376  h: 242  94369748768416
+    \- x: 640   y: 0    w: 582  h: 207  94369749326096
+    \- x: 1475  y: 243  w: 124  h: 656  94369749166496
+    \- x: 1223  y: 243  w: 125  h: 656  94369749106512
 
 .fi
 .RE
