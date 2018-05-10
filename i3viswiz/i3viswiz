@@ -8,10 +8,11 @@ CREATED="2018-01-18"
 UPDATED="2018-04-16"
 
 main(){
-  while getopts :vhg:p: option; do
+  
+  while getopts :vhg:pcito option; do
     case "${option}" in
       g) gapsz=${OPTARG} ;;
-      p) printout=${OPTARG} ;;
+      c|i|t|o|p) printwhat=$option ;;
       v) printf '%s\n' \
            "$NAME - version: $VERSION" \
            "updated: $UPDATED by $AUTHOR"
@@ -20,7 +21,7 @@ main(){
     esac
   done
 
-  (($#==2)) && [[ $1 = '-p' ]] && shift $((--OPTIND))
+  (($#==1)) && [[ $1 =~ p|c|t|i|o ]] && shift $((--OPTIND))
   (($#>1)) && shift $((--OPTIND))
 
   gapsz=${gapsz:-5}
@@ -32,7 +33,7 @@ main(){
 
   trgwin="$(listvisible)"
 
-  [[ -n $printout ]] && echo -e "$trgwin"
+  [[ -n $printwhat ]] && echo -e "$trgwin"
 
   trgwin=$(echo -e "$trgwin" | head -1)
 
@@ -59,7 +60,7 @@ main(){
 
 listvisible(){
   i3-msg -t get_tree \
-           | awk -v opret="$printout" -v gapsz=$gapsz -v dir=$dir -v RS=',' -F':' '
+           | awk -v opret="$printwhat" -v gapsz=$gapsz -v dir=$dir -v RS=',' -F':' '
 
     function listvis(id,achld,curc,c,schld,curs,s,stackh) {
       stackh=0
@@ -251,19 +252,19 @@ listvisible(){
         else
           printf "- "
 
-
-        if (opret=="t"){tmpop=ac[w]["ttl"]}
-        else if (opret=="c"){tmpop=ac[w]["cls"]}
-        else if (opret=="i"){tmpop=ac[w]["ins"]}
-        else if (opret=="o"){tmpop=ac[w]["tf"]}
-        else if (opret=="d"){tmpop=ac[w]["wid"]}
-        else {tmpop=w}
+        printf w " "
+        if (opret=="t"){tmpop="| " ac[w]["ttl"]}
+        else if (opret=="c"){tmpop="| " ac[w]["cls"]}
+        else if (opret=="i"){tmpop="| " ac[w]["ins"]}
+        else if (opret=="o"){tmpop="| " ac[w]["tf"]}
+        else if (opret=="d"){tmpop="| " ac[w]["wid"]}
+        else {tmpop=""}
 
         split("xywh",s,"")
         for (c in s)
           printf sprintf("%2s %-6s", s[c]":", ac[w][s[c]])
         gsub("[\"]","",tmpop)
-        print "| " tmpop 
+        print tmpop 
       }
 
     }
