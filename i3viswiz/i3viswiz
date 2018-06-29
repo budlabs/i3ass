@@ -33,7 +33,10 @@ main(){
 
   trgwin="$(listvisible)"
 
-  [[ -n $printwhat ]] && echo -e "$trgwin"
+  if [[ -n $printwhat ]]; then
+    echo -e "$trgwin"
+    exit
+  fi
 
   trgwin=$(echo -e "$trgwin" | head -1)
 
@@ -135,8 +138,16 @@ listvisible(){
     $1~"title" {ac[cid]["ttl"]=$2}
     $1=="\"window\"" {ac[cid]["wid"]=$2}
     # $1~"id" {ac[cid][]=$2}
-    $1~"instance" {ac[cid]["ins"]=$2}
+    $1~"instance" {ac[cid]["ins"]=$2;ac[cid]["par"]=curpar}
     $1~"class" || $2~"class" {ac[cid]["cls"]=$NF}
+
+    $1=="\"marks\"" {
+      gsub("[[]|[]]|\"","",$2);
+      if ($2 ~ /^i34.$/){
+        sub("i34","",$2)
+        curpar=$2
+      }
+    }
 
 
     $1=="\"window\"" && $2!="null" {
@@ -185,33 +196,42 @@ listvisible(){
       # # painttree(awsid)
 
       listvis(awsid)
-      
+      wall="none"
+
       if (dir=="r"){
         trgx=ac[act]["x"]+ac[act]["w"]+gapsz
         trgy=ac[act]["y"]+ac[act]["h"]/2
-        if(trgx>dim[aws]["w"])
+        if(trgx>dim[aws]["w"]){
           trgx=gapsz
+          wall="right"
+        }
       }
 
       if (dir=="l"){
         trgx=ac[act]["x"]-gapsz
         trgy=ac[act]["y"]+ac[act]["h"]/2
-        if(trgx<0)
+        if(trgx<0){
           trgx=dim[aws]["w"]-gapsz
+          wall="left"
+        }
       }
 
       if (dir=="u"){
         trgx=ac[act]["x"]+ac[act]["w"]/2
         trgy=ac[act]["y"]-gapsz
-        if(trgy<0)
+        if(trgy<0){
           trgy=dim[aws]["h"]-gapsz
+          wall="up"
+        }
       }
 
       if (dir=="d"){
         trgx=ac[act]["x"]+ac[act]["w"]/2
         trgy=ac[act]["y"]+ac[act]["h"]+gapsz
-        if(trgy>dim[aws]["h"])
+        if(trgy>dim[aws]["h"]){
           trgy=gapsz
+          wall="down"
+        }
       }
 
       trgx=int(trgx)
@@ -228,8 +248,11 @@ listvisible(){
           if(trgy>=ac[w]["y"] && trgy<=(ac[w]["y"]+ac[w]["h"]))
             {hity++;hit++}
 
-          if(hit==2)
-            {print w;break}
+          if (hit==2){
+            tcon=ac[w]["par"]
+            print "target_con_id: " w
+            break
+          }
 
           
         }
@@ -245,7 +268,8 @@ listvisible(){
       # ins
       # cls
 
-      print "tx: " trgx " ty: " trgy
+      print "tx: " trgx " ty: " trgy " wall: " wall
+      if (opret=="p"){print "parent: " tcon}
       for (w in avis) {
         if(w==act)
           printf "* "
