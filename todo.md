@@ -3,27 +3,27 @@
 - [x] clean up i3fyra code
 - [x] rewrite i3list
 - [x] add function to i3wizvis to display parent container
-- [] improve i3run
-  - [] track coordinates when hiding windows
-  - [] don't spawn at cursor by default
-  - [] add renaming option
+- [ ] improve i3run
+  - [ ] track coordinates when hiding windows
+  - [ ] don't spawn at cursor by default
+  - [ ] add renaming option
 - [x] write this todo list
-- [] fix issues reported on github
-  - [] 1
-  - [] 2
-  - [] 3
-  - [] 4
-  - [] 5
-- [] create better installation with make
-- [] improve documentation
+- [ ] fix issues reported on github
+  - [ ] 1
+  - [ ] 2
+  - [ ] 3
+  - [ ] 4
+  - [ ] 5
+- [ ] create better installation with make
+- [ ] improve documentation
   - [x] i3fyra
-  - [] i3run
-  - [] i3viswiz
-  - [] i3list
-  - [] i3flip
-  - [] i3get
-  - [] i3gw
-  - [] i3var
-  - [] README
-- [] create Arch PKG
-- [] make a update announcement video
+  - [ ] i3run
+  - [ ] i3viswiz
+  - [ ] i3list
+  - [ ] i3flip
+  - [ ] i3get
+  - [ ] i3gw
+  - [ ] i3var
+  - [ ] README
+- [ ] create Arch PKG
+- [ ] make a update announcement video
