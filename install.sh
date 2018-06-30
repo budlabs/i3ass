@@ -5,128 +5,261 @@ VERSION="0.001"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-12-06"
-UPDATED="2017-12-06"
+UPDATED="2018-06-30"
 
-about="
-$NAME - $VERSION - $UPDATED
-created: $CREATED by $AUTHOR
-*******************************
-i3ass - installation script
----------------------------
-This script prompts you for a FOLDER, if it isn't
-given as an argument. When the FOLDER is known,
-FOLDER will be created if it doesn't exist and
-all scripts in the i3ass suite will be symlinked
-to FOLDER and made executable.
+THIS_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+QUIET=0
 
-usage
------
-\`\$ $NAME [OPTION] [PATH]\`
+main(){
+  while getopts :vhq: option; do
+    case "${option}" in
+      q) QUIET=1; TARGET_DIRECTORY="${OPTARG}" ;;
+      v) printf '%s\n' \
+           "$NAME - version: $VERSION" \
+           "updated: $UPDATED by $AUTHOR"
+         exit ;;
+      h|*) printinfo && exit ;;
+    esac
+  done
 
-| option | argument | function                   |
-|:-------|:---------|:---------------------------|
-| -q     |          | quiet mode, show no output |
-|        |          | PATH must be set           |
-| -v     |          | show version info and exit |
-| -h     |          | show this help and exit    |
+  [[ ${THIS_DIR##*/} != i3ass ]] \
+    && XERR 420 "install.sh is not in i3ass folder"
 
-dependencies
-------------
-- i3ass
+  ((QUIET==1)) \
+    && link_scripts "$TARGET_DIRECTORY" \
+    || interactive_installer
+  
+}
 
-contact
--------
-$CONTACT
-"
+interactive_installer(){
+  clear
 
-FLD_THIS="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-QUIET=false
+  echo
 
-# create symlinks for all helper scripts
-function link_scripts {
-  FLD_TRG="$1"
-  FLD_TRG="${FLD_TRG/'~'/$HOME}"
-  [[ -z "$FLD_TRG" ]] \
-    && echo \
-    && echo "NO folder, NO installation." && exit 1
+  printf '%s\n' \
+    " ██  ████                           " \
+    "░░  █░░░ █                          " \
+    " ██░    ░█  ██████    ██████  ██████" \
+    "░██   ███  ░░░░░░██  ██░░░░  ██░░░░ " \
+    "░██  ░░░ █  ███████ ░░█████ ░░█████ " \
+    "░██ █   ░█ ██░░░░██  ░░░░░██ ░░░░░██" \
+    "░██░ ████ ░░████████ ██████  ██████ " \
+    "░░  ░░░░   ░░░░░░░░ ░░░░░░  ░░░░░░  " \
+    " ------- installation script ------ "
 
-  [[ ! -d "$FLD_TRG" ]] && mkdir -p "$FLD_TRG"
+  echo
 
-  for s in ${FLD_THIS}/*; do
+  OPTIONS=(
+    "Installation of scripts and man pages."
+    "Install man pages only."
+    "Link scripts to a directory."
+    "Uninstall."
+    "Cancel"
+  )
+
+  echo "What do you want to install?"
+
+  echo
+
+  for ((i==0;i<${#OPTIONS[@]};i++)); do
+    echo "$((i+1)). ${OPTIONS[$i]}"; done
+  
+  echo
+
+  read -rsn1 -p \
+    "Enter a number 1-${#OPTIONS[@]} (default:${#OPTIONS[@]}) " INT_SELECT
+
+  echo
+  echo
+
+  INT_SELECT=${INT_SELECT:-${#OPTIONS[@]}}
+
+  { ((INT_SELECT < 1)) || ((INT_SELECT > ${#OPTIONS[@]})) ;} \
+    && XERR "$INT_SELECT is not a valid selection."
+
+  echo
+  case $INT_SELECT in
+    1|2 ) # Installation of scripts and man pages.
+      echo "Specify prefix directory."
+      echo "Example: /usr/local"
+      echo "Default (leave blank): /usr"
+      read -rp 'Directory: ' TARGET_DIRECTORY
+      TARGET_DIRECTORY=${TARGET_DIRECTORY:-'/usr'}
+
+      ((INT_SELECT = 1)) && toinstall="install"
+      ((INT_SELECT = 2)) && toinstall="install-doc"
+
+      echo
+      sudo make PREFIX="${TARGET_DIRECTORY/~/$HOME}" "$toinstall"
+      echo
+    ;;
+
+    3 ) # Link scripts to a directory.
+      echo "Specify directory where you want to link the scripts."
+      echo "Example: ~/bin/i3ass"
+
+      read -rp 'Directory: ' TARGET_DIRECTORY
+
+      TARGET_DIRECTORY="${TARGET_DIRECTORY/'~'/$HOME}"
+      [[ ${TARGET_DIRECTORY:0:1} != '/' ]] \
+        && TARGET_DIRECTORY="$PWD/$TARGET_DIRECTORY"
+
+      echo
+      echo "Target directory: $TARGET_DIRECTORY"
+      read -p "Continue installation? " -n 1 -r
+      echo
+      echo
+      [[ $REPLY =~ ^[Yy]$ ]] && {
+        link_scripts "${TARGET_DIRECTORY}"
+        printf '%s\n' \
+          " " \
+          "Linking complete!" \
+          "Make sure that ${TARGET_DIRECTORY} is in the" \
+          "PATH environment variable." \
+          " "
+      } || XERR "NO approval, NO installation."
+    ;;
+
+    4 ) # Uninstall.
+      sudo make uninstall
+      echo "i3ass is unistalled from the system."
+      exit
+    ;;
+
+    5 ) clear && exit ;;
+  esac
+
+  printf '%s\n' \
+    "Thank you for installing i3ass. All commands" \
+    "can be launched with the -h flag to display" \
+    "help about the command. Example:" \
+    "$ i3get -h" \
+    " " \
+    "Happy tiling!"
+}
+
+link_scripts() {
+  TARGET_DIRECTORY="$1"
+  TARGET_DIRECTORY="${TARGET_DIRECTORY/'~'/$HOME}"
+
+  [[ -z "$TARGET_DIRECTORY" ]] \
+    && XERR 999 "NO directory, NO installation."
+
+  if [[ ! -d "$TARGET_DIRECTORY" ]]; then
+    [[ -e "$TARGET_DIRECTORY" ]] \
+      && XERR 555 "[$TARGET_DIRECTORY] exists, but is not a dir"
+    mkdir -p "$TARGET_DIRECTORY" \
+      || XERR "mkdir [$TARGET_DIRECTORY] failed"
+  fi
+
+  for s in ${THIS_DIR}/*; do
     [[ ! -d $s ]] && continue
-    FIL_TRG="$s/${s##*/}"
-    [[ ! -f "$FIL_TRG" ]] && continue
-    ln -s "$FIL_TRG" "${FLD_TRG}/${s##*/}"
-    chmod +x "${FLD_TRG}/${s##*/}"
-    [ ! $QUIET ] && echo "Link created: ${FLD_TRG}/${s##*/}"
+    FIL_NMN="${s##*/}"
+    FIL_SRC="$s/$FIL_NMN"
+    [[ ! -f "$FIL_SRC" ]] && continue
+    FIL_TRG="${TARGET_DIRECTORY}/$FIL_NMN"
+    ln -s "$FIL_SRC" "$FIL_TRG"
+    chmod +x "$FIL_TRG"
+    ((QUIET!=1)) && echo "Link created: $FIL_TRG"
   done
 }
 
+# Error functions borrowed from:
+# https://github.com/terminalforlife
+XERR(){ printf "ERROR: %s\n" "$1" 1>&2; exit 1; }
+ERR(){ printf "[L%0.4d] ERROR: %s\n" "$1" "$2" 1>&2; }
 
-while getopts :vhq option
-do
-  case "${option}" in
-    v) printf '%s\n' \
-         "$NAME - version: $VERSION" \
-         "updated: $UPDATED by $AUTHOR"
-       exit ;;
-    h) printf '%s\n' "${about}" && exit ;;
-    q) QUIET=true; link_scripts "${2}" && exit ;;
+printinfo(){
+  case "$1" in
+    m ) printf '%s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
   esac
-done
+}
 
+bouthead="
+${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+=======================================
 
-[[ ${FLD_THIS##*/} != i3ass ]] \
-  && echo "install.sh is not in i3ass folder" && exit 1
+NAME
+----
+"
 
-clear
+boutfoot="
+AUTHOR
+------
 
-echo
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
 
-printf '%s\n' \
-" ██  ████                           " \
-"░░  █░░░ █                          " \
-" ██░    ░█  ██████    ██████  ██████" \
-"░██   ███  ░░░░░░██  ██░░░░  ██░░░░ " \
-"░██  ░░░ █  ███████ ░░█████ ░░█████ " \
-"░██ █   ░█ ██░░░░██  ░░░░░██ ░░░░░██" \
-"░██░ ████ ░░████████ ██████  ██████ " \
-"░░  ░░░░   ░░░░░░░░ ░░░░░░  ░░░░░░  " \
-" ------- installation script ------ "
+SEE ALSO
+--------
 
-echo
+i3gw(1)
+"
 
-FLD_TRG="$1"
-if [[ -z "$FLD_TRG" ]]; then
-  echo "example folder: (~/i3ass)"
-  read -rp 'Specify target folder: ' FLD_TRG
-  FLD_TRG="${FLD_TRG/'~'/$HOME}"
-  [[ -z "$FLD_TRG" ]] \
-    && echo \
-    && echo "NO folder, NO installation." && exit 1
-fi
+about='
+`install.sh` - i3ass - installation script
 
-[[ ${FLD_TRG:0:1} != '/' ]] && FLD_TRG="$(pwd)/$FLD_TRG"
+SYNOPSIS
+--------
 
-echo
-echo "Target folder: $FLD_TRG"
-read -p "Continue installation? " -n 1 -r
-echo
-echo
-if [[ $REPLY =~ ^[Yy]$ ]]
-then
-  link_scripts ${FLD_TRG}
-  echo
-  printf '%s\n' \
-  "Thank you for installing i3ass. All commands" \
-  "can be launched with the -h flag to display" \
-  "help about the command. Example:" \
-  "i3get -h" \
-  " " \
-  "be sure that ${FLD_TRG} is in the" \
-  "PATH environment variable." \
-  " " \
-  "Happy tiling!"
+`install.sh` [`-v`|`-h`] 
+`i3var` [`-q`] [*TARGET_DIRECTORY*]
+
+DESCRIPTION
+-----------
+
+This script prompts you for a *TARGET_DIRECTORY*, if it isn'"'"'t
+given as an argument. When the *TARGET_DIRECTORY* is known,
+*TARGET_DIRECTORY* will be created if it doesn'"'"'t exist and
+all scripts in the i3ass suite will be symlinked
+to *TARGET_DIRECTORY* and made executable.
+
+OPTIONS
+-------
+
+`-v`  
+  Show version and exit.  
+
+`-h`  
+  Show help and exit.  
+
+`q`  
+  quiet mode, show no output. *TARGET_DIRECTORY* must be set.
+
+DEPENDENCIES
+------------
+
+- i3ass
+'
+
+if [ "$1" = "md" ]; then
+  printinfo m
+  exit
+elif [ "$1" = "man" ]; then
+  printinfo f
+  exit
 else
-  echo "NO approval, NO installation." && exit 1
+  main "${@}"
 fi

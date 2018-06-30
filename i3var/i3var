@@ -98,7 +98,9 @@ about='
 SYNOPSIS
 --------
 
-`i3var` [`-v`|`-h`] [`set` *VARNAME* [*VALUE*]]|[`get` *VARNAME*] 
+`i3var` [`-v`|`-h`] 
+`i3var` [`set` *VARNAME* [*VALUE*]]
+`i3var` [`get` *VARNAME*] 
 
 DESCRIPTION
 -----------

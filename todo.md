@@ -15,16 +15,16 @@
   - [x] i3list /bin/sh - resolved
   - [x] watsons issues
 - [x] create better installation with make
-- [ ] add changelog.md
+- [ ] rewrite install.sh
 - [ ] improve documentation
   - [x] i3fyra
   - [x] i3run
   - [x] i3viswiz
   - [x] i3list
-  - [ ] i3flip
-  - [ ] i3get
-  - [ ] i3gw
-  - [ ] i3var
+  - [x] i3flip
+  - [x] i3get
+  - [x] i3gw
+  - [x] i3var
   - [ ] README
 - [ ] create Arch PKG
 - [ ] make a update announcement video

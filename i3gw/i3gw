@@ -19,7 +19,7 @@ main(){
     esac
   done
 
-  name=${1:?"usage: i3gw MARK, you didn't request a mark."}
+  name=${1:?"usage: i3gw MARK, you didn't specify a mark."}
 
   w=$(i3-msg open | awk -F':' '{gsub("[}]]","",$3);print $3}')
   i3-msg -q "[con_id=${w}]" floating disable, mark "$name"
@@ -75,7 +75,7 @@ i3(1)
 "
 
 about='
-`i3gw` - A Ghost window wrapper for i3wm.
+`i3gw` - A ghost window wrapper for i3wm.
 
 SYNOPSIS
 --------
@@ -89,8 +89,8 @@ DESCRIPTION
 it creates empty containers, or as I call them: ghosts.
 Since these empty containers doesn'"'"'t contain any windows
 there is no instance/class/title to identify them, making
-it difficult to control them. They do however have a `con_id` and
-I found the easiest way to keep track of the ghosts is to
+it difficult to manage them. They do however have a `con_id` and
+I found that the easiest way to keep track of ghosts is to
 mark them. That is what this script does, it creates a ghost,
 get its `con_id` and marks it.
 
@@ -108,16 +108,16 @@ OPTIONS
 EXAMPLES
 --------
 
-`i3gw casper`  
+`$ i3gw casper`  
 
 this will create a ghost marked casper, you can perform any action
 you can perform on a regular container.
 
 ``` text
-i3-msg [con_mark=casper] move to workspace 2
-i3-msg [con_mark=casper] split v
-i3-msg [con_mark=casper] layout tabbed
-i3-msg [con_mark=casper] kill
+$ i3-msg [con_mark=casper] move to workspace 2
+$ i3-msg [con_mark=casper] split v
+$ i3-msg [con_mark=casper] layout tabbed
+$ i3-msg [con_mark=casper] kill
 ```
 
 the last example (`kill`), destroys the container.
