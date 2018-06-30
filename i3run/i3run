@@ -117,13 +117,13 @@ focuswindow(){
       # window is handled by i3fyra and not active
       if [[ ${i3list[WSA]} != "${i3list[WST]}" ]]; then
         # window is not on current ws
-        if [[ ${i3list[WSF]} =~ ^"${I3FYRA_WS}"$|"${i3list[WSA]}" ]]; then
+        if [[ ${i3list[WSF]} = ${i3list[WSA]} ]]; then
           # current ws is i3fyra WS
-          [[ ${i3list[TWP]} =~ [${i3list[LVI]}] ]] \
+          [[ ${i3list[TWP]} =~ [${i3list[LHI]}] ]] \
             && i3fyra -s "${i3list[TWP]}"
         else
           # current ws is not i3fyra WS
-          if [[ ${i3list[WSA]} = "-1" ]] || [[ $summon = 1 ]]; then
+          if [[ ${i3list[WST]} = "-1" ]] || [[ $summon = 1 ]]; then
             i3-msg -q "[con_id=${i3list[TWC]}]" \
               move to workspace "${i3list[WSA]}", floating $fs
               i3-msg -q "[con_id=${i3list[TWC]}]" focus
