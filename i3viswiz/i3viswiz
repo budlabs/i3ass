@@ -1,11 +1,11 @@
 #!/bin/bash
 
 NAME="i3viswiz"
-VERSION="0.015"
+VERSION="0.018"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2018-01-18"
-UPDATED="2018-04-16"
+UPDATED="2018-06-30"
 
 main(){
   

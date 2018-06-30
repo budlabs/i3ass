@@ -1,11 +1,11 @@
 #!/bin/bash
 
 NAME="i3list"
-VERSION="0.020"
+VERSION="0.042"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-10-06"
-UPDATED="2018-05-12"
+UPDATED="2018-06-30"
 
 main(){
   while getopts :c:i:n:d:vh option; do

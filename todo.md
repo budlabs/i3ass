@@ -1,5 +1,6 @@
 # todo
-
+- [x] bump version numbers
+- [ ] fix strange hiding issue, i3run?
 - [x] clean up i3fyra code
 - [x] rewrite i3list
 - [x] add function to i3wizvis to display parent container
@@ -16,7 +17,7 @@
   - [x] watsons issues
 - [x] create better installation with make
 - [x] rewrite install.sh
-- [ ] improve documentation
+- [x] improve documentation
   - [x] i3fyra
   - [x] i3run
   - [x] i3viswiz
@@ -25,7 +26,7 @@
   - [x] i3get
   - [x] i3gw
   - [x] i3var
-  - [ ] README
+  - [x] README
 - [ ] create Arch PKG
 - [ ] make a update announcement video
 - [ ] improve multimonitor support

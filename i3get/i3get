@@ -1,11 +1,11 @@
 #!/bin/sh
 
 NAME="i3get"
-VERSION="0.297"
+VERSION="0.299"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-03-08"
-UPDATED="2018-04-02"
+UPDATED="2018-06-30"
 
 getwindow(){
   i3-msg -t get_tree \

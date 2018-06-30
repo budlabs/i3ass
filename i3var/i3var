@@ -1,11 +1,11 @@
 #!/bin/bash
 
 NAME="i3var"
-VERSION="0.004"
+VERSION="0.007"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-12-22"
-UPDATED="2018-04-02"
+UPDATED="2018-06-30"
 
 main(){
   while getopts :vh option; do
