@@ -15,7 +15,7 @@
   - [x] i3list /bin/sh - resolved
   - [x] watsons issues
 - [x] create better installation with make
-- [ ] rewrite install.sh
+- [x] rewrite install.sh
 - [ ] improve documentation
   - [x] i3fyra
   - [x] i3run

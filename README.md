@@ -2,7 +2,7 @@
 # i3ass - i3 assistance scripts 
 
 This is a collection of scripts I have made to
-assist the usage of the windowmanager known as i3. 
+assist the usage of the windowmanager known as [i3](https://i3wm.org/).  
 
 ## installation
 
@@ -14,6 +14,8 @@ assist the usage of the windowmanager known as i3.
 **run the installation script**  
 *(for further instructions: `./install.sh -h`)*  
 `./install.sh`   
+
+There is also a **Makefile**
 
 ## usage
 
