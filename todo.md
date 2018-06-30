@@ -4,9 +4,9 @@
 - [x] rewrite i3list
 - [x] add function to i3wizvis to display parent container
 - [ ] improve i3run
-  - [ ] track coordinates when hiding windows
-  - [ ] don't spawn at cursor by default
-  - [ ] add renaming option
+  - [x] track coordinates when hiding windows
+  - [x] don't spawn at cursor by default
+  - [x] add renaming option
 - [x] write this todo list
 - [ ] fix issues reported on github
   - [ ] 1
