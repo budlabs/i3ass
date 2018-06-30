@@ -9,10 +9,10 @@ UPDATED="2018-04-16"
 
 main(){
   
-  while getopts :vhg:pcito option; do
+  while getopts :vhg:pcitod option; do
     case "${option}" in
       g) gapsz=${OPTARG} ;;
-      c|i|t|o|p) printwhat=$option ;;
+      c|i|t|o|p|d) printwhat=$option ;;
       v) printf '%s\n' \
            "$NAME - version: $VERSION" \
            "updated: $UPDATED by $AUTHOR"
@@ -359,11 +359,12 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-`i3viswiz` lists all visible windows with their 
-positions (X,Y) and dimensions (width,height). 
-If `-p` flag is passed, the list will be printed 
-to `stdout`. If a *DIRECTION* (left|right|up|down) 
-is passed `i3wizvis` will shift the focus to the 
+`i3viswiz` either prints a list of the currently visible
+tiled windows to `stdout` or shifts the focus depending on
+the arguments.  
+
+If a *DIRECTION* (left|right|up|down) 
+is passed, `i3wizvis` will shift the focus to the 
 window closest in the given DIRECTION, or warp 
 focus if there are no windows in the given direction.
 
@@ -376,22 +377,23 @@ OPTIONS
 `-h`  
   Show help and exit.
 
-`-p` `t`|`c`|`i`|`n`|`o`|`d` 
+`-p`|`-t`|`-c`|`-i`|`-n`|`-o`|`-d` 
   Print list of windows to `stdout`. The first line is either
   the *con_id* of the window receiving focus . The second line 
   are the x and y coordinates where receiving window is searched.
   Remaining lines are the list. The first field is marked with a 
   `*` if the line contains the active window. 
 
-  Depending on the argument the last field contains
+  Depending on the option the last field contains
   different information about the window.  
 
-  `t` - title
-  `c` - class
-  `i` - instance
-  `o` - title_format
-  `n` - con_id
-  `d` - window_id
+  `-t` - title
+  `-c` - class
+  `-i` - instance
+  `-o` - title_format
+  `-n` - con_id
+  `-d` - window_id
+  `-p` - parent container
 
   Floating windows are excluded from the list. 
   If the active window is floating, the first line 
@@ -400,16 +402,12 @@ OPTIONS
   Example output:  
 
 ``` text
-  $ i3paint -p n -g 20 down
-    94369749033328
-    tx: 319.5 ty: 227
-    - x: 1349  y: 243  w: 125  h: 656  94369749098704
-    * x: 0     y: 0    w: 639  h: 207  94369748807120
-    - x: 0     y: 208  w: 1222 h: 691  94369749033328
-    - x: 1223  y: 0    w: 376  h: 242  94369748768416
-    - x: 640   y: 0    w: 582  h: 207  94369749326096
-    - x: 1475  y: 243  w: 124  h: 656  94369749166496
-    - x: 1223  y: 243  w: 125  h: 656  94369749106512
+  $ i3viswiz -o -g 20 down
+  target_con_id: 94851559487504
+  tx: 582 ty: 470 wall: none
+  * 94851560291216 x: 0     y: 0     w: 1165  h: 450   | URxvt
+  - 94851559487504 x: 0     y: 451   w: 1165  h: 448   | sublime
+  - 94851560318768 x: 1166  y: 0     w: 433   h: 899   | bin
 ```
 
 `-g` GAPSIZE

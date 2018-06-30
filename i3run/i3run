@@ -219,7 +219,7 @@ ${AUTHOR} <${CONTACT}>
 SEE ALSO
 --------
 
-i3(1), i3list(1), i3get(1), i3var(1), i3-msg -q workspace(1), xdotool(1)
+i3(1), i3list(1), i3get(1), i3var(1), xdotool(1)
 "
 
 about='
@@ -228,26 +228,33 @@ about='
 SYNOPSIS
 --------
 
-`i3run` `-h`|`-v`|`-i`|`-c`|`-t` [*CRITERIA*] [`-g`] [`-e` *COMMAND*]
+`i3run` `-h`|`-v`
+`i3run` `-i`|`-c`|`-t` [*CRITERIA*] [`-g`] [`-m`] [`-s`] [`-x` *OLDNAME*] [`-e` *COMMAND*]
 
 DESCRIPTION
 -----------
 
-This is a run or raise or hide script for i3wm.
-It looks for a window matching a given criteria.
+By using **i3run** you can use one command for multiple
+related application related functions.  
 
-These are the actions taken depending on the state of the found window:
+Enter a search criteria for a window: 
+  - title (`-t`)
+  - instance/class-name (`-i) 
+  - class
+
+i3run will take different action depending on
+the state of the searched window:   
 
 | **target window state**          | **action**
 |:---------------------------------|:-----------------
-| Active and not handled by i3fyra | mark and hide
-| Active and handled by i3fyra     | hide if not `-g` is set
+| Active and not handled by i3fyra | hide
+| Active and handled by i3fyra     | hide container, if not `-g` is set
 | Handled by i3fyra and hidden     | show container, activate
 | Not handled by i3fyra and hidden | show window, activate
-| Not on current workspace         | goto workspace
-| Not found                        | run command
+| Not on current workspace         | goto workspace or show if `-s` is set
+| Not found                        | execute command (`-e`)
 
-Hidden in this context, means that window is on scratchpad/
+Hidden in this context, means that window is on the scratchpad.
 Show in this context means, move window to current workspace.
 
 OPTIONS
@@ -275,8 +282,17 @@ OPTIONS
   Instead of switching workspace,
   summon window to current workspace
 
-`-g`   
+`-g`    
   Don'"'"'t hide window/container if it'"'"'s active.
+
+`-m`  
+  The window will be placed on the location of the mouse
+  cursor when it is created or shown. (*needs `xdotool`*)
+
+`-x` *OLDNAME*  
+  If the search criteria is `-i` (instance), the window with
+  instance: *OLDNAME* will get a n new instance name matching
+  the criteria when it is created (*needs `xdotool`*).
 
 it is important that `-e` *COMMAND* is last of the options.
 `-e` is optional, if no *COMMAND* is passed and no window is found, nothing happens.
@@ -310,10 +326,15 @@ ENVIRONMENT
 DEPENDENCIES
 ------------
 
-i3list
-i3get
-i3var
-xdotool
+i3list  
+i3get  
+i3var  
+
+OPTIONAL
+--------  
+
+xdotool  
+i3fyra
 '
 
 if [ "$1" = "md" ]; then

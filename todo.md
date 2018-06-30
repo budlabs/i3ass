@@ -15,11 +15,12 @@
   - [x] i3list /bin/sh - resolved
   - [x] watsons issues
 - [x] create better installation with make
+- [ ] add changelog.md
 - [ ] improve documentation
   - [x] i3fyra
-  - [ ] i3run
-  - [ ] i3viswiz
-  - [ ] i3list
+  - [x] i3run
+  - [x] i3viswiz
+  - [x] i3list
   - [ ] i3flip
   - [ ] i3get
   - [ ] i3gw
