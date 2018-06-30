@@ -56,8 +56,8 @@ Added [Makefile](https://github.com/budRich/i3ass/blob/master/Makefile) and upda
 
 Complete rewrite, script is faster and output is more readable and usable (*array format*). If you have scripts relying on i3list, you need to make changes.  
 
-**i3viswiz Breaking change**  
-
+### [i3viswiz](https://github.com/budRich/i3ass/tree/master/i3viswiz)  
+**Breaking change**  
 Changed output format and added more options to output. Focusing works as before, but if you have scripts that relies on the output (`-p`), you might need to update your scripts.  
 
 **i3fyra** - Code cleanup  
