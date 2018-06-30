@@ -20,10 +20,16 @@ main(){
 
   dir="$1"
 
+  dir=${dir,,}
+  dir=${dir:0:1}
+
+  # "$dir not valid direction"
+  [[ ! $dir =~ u|r|l|d|n|p ]] \
+    && XERR "420" "$1 is not a valid direction"
+
   case "$dir" in
-    n|next ) dir=n ;;
-    p|prev ) dir=p ;;
-    ''|*   ) dir=n ;;
+    r|d ) dir=n ;;
+    l|u ) dir=p ;;
   esac
 
   alst=($(getcurrent))
@@ -143,6 +149,12 @@ printinfo(){
     ;;
   esac
 }
+
+# Error functions borrowed from:
+# https://github.com/terminalforlife
+
+XERR(){ printf "[L%0.4d] ERROR: %s\n" "$1" "$2" 1>&2; exit 1; }
+ERR(){ printf "[L%0.4d] ERROR: %s\n" "$1" "$2" 1>&2; }
 
 bouthead="
 ${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
