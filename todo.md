@@ -1,6 +1,11 @@
 # todo
+- [ ] create Arch PKG
+- [ ] make a update announcement video
+- [ ] improve multimonitor support
+  - [ ] i3viswiz
+  - [ ] i3fyra
 - [x] bump version numbers
-- [ ] fix strange hiding issue, i3run?
+- [x] fix strange hiding issue, i3run?
 - [x] clean up i3fyra code
 - [x] rewrite i3list
 - [x] add function to i3wizvis to display parent container
@@ -27,8 +32,4 @@
   - [x] i3gw
   - [x] i3var
   - [x] README
-- [ ] create Arch PKG
-- [ ] make a update announcement video
-- [ ] improve multimonitor support
-  - [ ] i3viswiz
-  - [ ] i3fyra
+
