@@ -4,7 +4,9 @@
 This is a collection of scripts I have made to
 assist the usage of the windowmanager known as [i3](https://i3wm.org/).  
 
-[latest](#updates)
+  - [updates](#updates)
+  - [usage](#usage)
+  - [examples](#examples)
 
 ## installation
 
@@ -49,32 +51,36 @@ Execute a script with the `-h` flag to display help about the command. There are
 
 ## updates
 
-**new installation scripts** 
+### new installation scripts
+
 Added [Makefile](https://github.com/budRich/i3ass/blob/master/Makefile) and updated [install.sh](https://github.com/budRich/i3ass/blob/master/install.sh) to include (*optional*) systemwide and manpage installation.
 
-**i3list Breaking change**  
+### [i3list](https://github.com/budRich/i3ass/tree/master/i3list)
 
+**Breaking change**  
 Complete rewrite, script is faster and output is more readable and usable (*array format*). If you have scripts relying on i3list, you need to make changes.  
 
 ### [i3viswiz](https://github.com/budRich/i3ass/tree/master/i3viswiz)  
 **Breaking change**  
 Changed output format and added more options to output. Focusing works as before, but if you have scripts that relies on the output (`-p`), you might need to update your scripts.  
 
-**i3fyra** - Code cleanup  
-
+### [i3fyra](https://github.com/budRich/i3ass/tree/master/i3fyra)
+**Code cleanup**  
 Made a big code cleanup and removed big chunks are now handled by i3var,i3viswiz and i3list. Added more comments to the code and made the whole thing more stable, I hope this will resolve many issues that some users have reported. No breaking changes or new features.
 
-**i3run** - improvements
+### [i3run](https://github.com/budRich/i3ass/tree/master/i3run)
 
+**improvements**  
 Adapted the script to use the new i3list which resulted in faster execution times.  
 
-Added two new options:  
+**new options**    
 
   - `-m` position floating window at cursor (*was default in previous version*)  
   - `-x OLDNAME` rename new windows when they are created.
 
-**i3flip** - direction arguments
+### [i3flip](https://github.com/budRich/i3ass/tree/master/i3flip)
 
+**direction arguments**  
 More directions then p,n,prev,next are now allowed. up, left, prev, u, l, p all do the same thing. Same with: down, right, next, d, r, n.    
 
 ## license
