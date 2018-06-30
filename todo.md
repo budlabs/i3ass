@@ -8,13 +8,13 @@
   - [x] don't spawn at cursor by default
   - [x] add renaming option
 - [x] write this todo list
-- [ ] fix issues reported on github
+- [x] review issues reported on github
   - [x] i3flip - focus function in other direction
-  - [ ] 2
-  - [ ] 3
-  - [ ] 4
-  - [ ] 5
-- [ ] create better installation with make
+  - [x] workspace bug, probably resolved
+  - [x] i3viswiz, multimonitor support, to fix
+  - [x] i3list /bin/sh - resolved
+  - [x] watsons issues
+- [x] create better installation with make
 - [ ] improve documentation
   - [x] i3fyra
   - [ ] i3run
@@ -27,3 +27,6 @@
   - [ ] README
 - [ ] create Arch PKG
 - [ ] make a update announcement video
+- [ ] improve multimonitor support
+  - [ ] i3viswiz
+  - [ ] i3fyra
