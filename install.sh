@@ -40,7 +40,7 @@ $CONTACT
 "
 
 FLD_THIS="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-QUIET=false
+QUIET=0
 
 # create symlinks for all helper scripts
 function link_scripts {
@@ -50,7 +50,10 @@ function link_scripts {
     && echo \
     && echo "NO folder, NO installation." && exit 1
 
-  [[ ! -d "$FLD_TRG" ]] && mkdir -p "$FLD_TRG"
+  if [[ ! -d "$FLD_TRG" ]]; then
+    [[ -e "$FLD_TRG" ]] && echo "[$FLD_TRG] exists, but is not a dir" && exit 1
+    mkdir -p "$FLD_TRG" || { echo "mkdir [$FLD_TRG] failed"; exit 1; }
+  fi
 
   for s in ${FLD_THIS}/*; do
     [[ ! -d $s ]] && continue
@@ -58,7 +61,7 @@ function link_scripts {
     [[ ! -f "$FIL_TRG" ]] && continue
     ln -s "$FIL_TRG" "${FLD_TRG}/${s##*/}"
     chmod +x "${FLD_TRG}/${s##*/}"
-    [ ! $QUIET ] && echo "Link created: ${FLD_TRG}/${s##*/}"
+    [[ $QUIET -ne 1 ]] && echo "Link created: ${FLD_TRG}/${s##*/}"
   done
 }
 
@@ -71,7 +74,7 @@ do
          "updated: $UPDATED by $AUTHOR"
        exit ;;
     h) printf '%s\n' "${about}" && exit ;;
-    q) QUIET=true; link_scripts "${2}" && exit ;;
+    q) QUIET=1; link_scripts "${2}" && exit ;;
   esac
 done
 
