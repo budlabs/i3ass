@@ -420,7 +420,7 @@ printinfo(){
 }
 
 bouthead="
-${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
 =======================================
 
 NAME
@@ -472,22 +472,22 @@ OPTIONS
 -------
 
 `-v`  
-  Show version and exit.  
+Show version and exit.  
 
 `-h`  
-  Show help and exit.  
+Show help and exit.  
 
 `-c` *CLASS*  
-  Search for windows with the given CLASS  
+Search for windows with the given CLASS  
 
 `-i` *INSTANCE*   
-  Search for windows with the given INSTANCE  
+Search for windows with the given INSTANCE  
 
 `-n` *CON_ID*  
-  Search for windows with the given CON_ID  
+Search for windows with the given CON_ID  
 
 `-d` *WINDOW_ID*  
-  Search for windows with the given WINDOW_ID  
+Search for windows with the given WINDOW_ID  
 
 EXAMPLES
 --------

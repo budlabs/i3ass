@@ -202,7 +202,7 @@ printinfo(){
 }
 
 bouthead="
-${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
 =======================================
 
 NAME
@@ -219,7 +219,7 @@ ${AUTHOR} <${CONTACT}>
 SEE ALSO
 --------
 
-i3(1), i3list(1), i3get(1), i3var(1), xdotool(1)
+i3(1), i3list(1), i3get(1), i3var(1), i3fyra(1) xdotool(1)
 "
 
 about='
@@ -228,21 +228,17 @@ about='
 SYNOPSIS
 --------
 
-`i3run` `-h`|`-v`
+`i3run` `-h`|`-v`  
 `i3run` `-i`|`-c`|`-t` [*CRITERIA*] [`-g`] [`-m`] [`-s`] [`-x` *OLDNAME*] [`-e` *COMMAND*]
 
 DESCRIPTION
 -----------
 
-By using **i3run** you can use one command for multiple
-related application related functions.  
+`i3run` let'"'"' you use one command for multiple
+functions related to the same window identified by a
+given criteria, (*see options below*).  
 
-Enter a search criteria for a window: 
-  - title (`-t`)
-  - instance/class-name (`-i) 
-  - class
-
-i3run will take different action depending on
+`i3run` will take different action depending on
 the state of the searched window:   
 
 | **target window state**          | **action**
@@ -261,38 +257,38 @@ OPTIONS
 -------
 
 `-v`  
-  Show version info and exit 
+Show version info and exit 
 
 `-h`  
-  Show this help and exit    
+Show this help and exit    
 
 `-c` *CLASS*  
-  Search for windows with the given CLASS
+Search for windows with the given CLASS
 
 `-i` *INSTANCE*  
-  Search for windows with the given INSTANCE
+Search for windows with the given INSTANCE
 
 `-t` *TITLE*  
-  Search for windows with the given TITLE
+Search for windows with the given TITLE
 
 `-e` *COMMAND*  
-  Command to run if no window is found.
+Command to run if no window is found.
 
 `-s`   
-  Instead of switching workspace,
-  summon window to current workspace
+Instead of switching workspace,
+summon window to current workspace
 
 `-g`    
-  Don'"'"'t hide window/container if it'"'"'s active.
+Don'"'"'t hide window/container if it'"'"'s active.
 
 `-m`  
-  The window will be placed on the location of the mouse
-  cursor when it is created or shown. (*needs `xdotool`*)
+The window will be placed on the location of the mouse
+cursor when it is created or shown. (*needs `xdotool`*)
 
 `-x` *OLDNAME*  
-  If the search criteria is `-i` (instance), the window with
-  instance: *OLDNAME* will get a n new instance name matching
-  the criteria when it is created (*needs `xdotool`*).
+If the search criteria is `-i` (instance), the window with
+instance: *OLDNAME* will get a n new instance name matching
+the criteria when it is created (*needs `xdotool`*).
 
 it is important that `-e` *COMMAND* is last of the options.
 `-e` is optional, if no *COMMAND* is passed and no window is found, nothing happens.
@@ -303,25 +299,25 @@ ENVIRONMENT
 -----------
 
 `I3RUN_BOTTOM_GAP` *INT*  
-  Distance from the bottom edge of the screen to show floating windows.
-  Defaults to 10.
+Distance from the bottom edge of the screen to show floating windows.
+Defaults to 10.
 
 `I3RUN_TOP_GAP` *INT*  
-  Distance from the top edge of the screen to show floating windows.
-  Defaults to 10.
+Distance from the top edge of the screen to show floating windows.
+Defaults to 10.
 
 `I3RUN_LEFT_GAP` *INT*  
-  Distance from the left edge of the screen to show floating windows.
-  Defaults to 10.
+Distance from the left edge of the screen to show floating windows.
+Defaults to 10.
 
 `I3RUN_RIGHT_GAP` *INT*  
-  Distance from the right edge of the screen to show 
-  floating windows. Defaults to 10.
+Distance from the right edge of the screen to show 
+floating windows. Defaults to 10.
 
 `I3FYRA_WS` *INT*  
-  Workspace to use for i3fyra. If not set, the first
-  workspace that request to create the layout will
-  be used.
+Workspace to use for i3fyra. If not set, the first
+workspace that request to create the layout will
+be used.
 
 DEPENDENCIES
 ------------

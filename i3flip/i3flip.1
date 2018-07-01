@@ -1,11 +1,15 @@
-.TH I3FLIP 1 2018\-01\-03 Linux "User Manuals"
+.TH I3FLIP 1 2018\-06\-30 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3flip\fR \- Tabswitching done right
 
 .SH SYNOPSIS
 .PP
-\fB\fCi3flip\fR [\fB\fC\-v\fR|\fB\fC\-h\fR] [n|next|p|prev]
+\fB\fCi3flip\fR [\fB\fC\-v\fR|\fB\fC\-h\fR]
+.br
+\fB\fCi3flip\fR [\fB\fC\-v\fR|\fB\fC\-h\fR] [n|r|d|next|right|down]
+.br
+\fB\fCi3flip\fR [\fB\fC\-v\fR|\fB\fC\-h\fR] [p|l|u|prev|left|up]
 
 .SH DESCRIPTION
 .PP
@@ -17,11 +21,11 @@ container is the last, the first container will be activated.
 .SH OPTIONS
 .PP
 \fB\fC\-v\fR
-  Show version and exit.
+Show version and exit.
 
 .PP
 \fB\fC\-h\fR
-  Show help and exit.
+Show help and exit.
 
 .SH EXAMPLE
 .PP
@@ -34,8 +38,8 @@ Put these keybinding definitions in the i3 config.
 .RS
 
 .nf
-bindsym Mod4+Tab         exec \-\-no\-startup\-id i3flip n
-bindsym Mod4+Shift+Tab   exec \-\-no\-startup\-id i3flip p
+bindsym Mod4+Tab         exec \-\-no\-startup\-id i3flip next
+bindsym Mod4+Shift+Tab   exec \-\-no\-startup\-id i3flip prev
 
 .fi
 .RE
@@ -52,5 +56,4 @@ budRich
 
 .SH SEE ALSO
 .PP
-bar(1), foo(5), xyzzy(1), Linux Man Page Howto
-\[la]http://www.schweikhardt.net/man_page_howto.html\[ra]
+i3(1)

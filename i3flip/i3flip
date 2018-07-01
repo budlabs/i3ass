@@ -157,7 +157,7 @@ XERR(){ printf "[L%0.4d] ERROR: %s\n" "$1" "$2" 1>&2; exit 1; }
 ERR(){ printf "[L%0.4d] ERROR: %s\n" "$1" "$2" 1>&2; }
 
 bouthead="
-${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
 =======================================
 
 NAME
@@ -174,8 +174,7 @@ ${AUTHOR} <${CONTACT}>
 SEE ALSO
 --------
 
-bar(1), foo(5), xyzzy(1), [Linux Man Page Howto](
-http://www.schweikhardt.net/man_page_howto.html)
+i3(1)
 "
 
 about='
@@ -184,9 +183,9 @@ about='
 SYNOPSIS
 --------
 
-`i3flip` [`-v`|`-h`]
-`i3flip` [`-v`|`-h`] [n|r|d|next|right|down]
-`i3flip` [`-v`|`-h`] [p|l|u|prev|left|up]
+`i3flip` [`-v`|`-h`]  
+`i3flip` [`-v`|`-h`] [n|r|d|next|right|down]  
+`i3flip` [`-v`|`-h`] [p|l|u|prev|left|up]  
 
 DESCRIPTION
 -----------
@@ -200,10 +199,10 @@ OPTIONS
 -------
 
 `-v`
-  Show version and exit.
+Show version and exit.
 
 `-h`
-  Show help and exit.
+Show help and exit.
 
 
 EXAMPLE

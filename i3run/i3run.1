@@ -1,19 +1,23 @@
-.TH I3RUN 1 2017\-04\-20 Linux "User Manuals"
+.TH I3RUN 1 2018\-06\-30 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3run\fR \- Run, Raise or hide windows in i3wm
 
 .SH SYNOPSIS
 .PP
-\fB\fCi3run\fR \fB\fC\-h\fR|\fB\fC\-v\fR|\fB\fC\-i\fR|\fB\fC\-c\fR|\fB\fC\-t\fR [\fICRITERIA\fP] [\fB\fC\-g\fR] [\fB\fC\-e\fR \fICOMMAND\fP]
+\fB\fCi3run\fR \fB\fC\-h\fR|\fB\fC\-v\fR
+.br
+\fB\fCi3run\fR \fB\fC\-i\fR|\fB\fC\-c\fR|\fB\fC\-t\fR [\fICRITERIA\fP] [\fB\fC\-g\fR] [\fB\fC\-m\fR] [\fB\fC\-s\fR] [\fB\fC\-x\fR \fIOLDNAME\fP] [\fB\fC\-e\fR \fICOMMAND\fP]
 
 .SH DESCRIPTION
 .PP
-This is a run or raise or hide script for i3wm.
-It looks for a window matching a given criteria.
+\fB\fCi3run\fR let' you use one command for multiple
+functions related to the same window identified by a
+given criteria, (\fIsee options below\fP).
 
 .PP
-These are the actions taken depending on the state of the found window:
+\fB\fCi3run\fR will take different action depending on
+the state of the searched window:
 
 .TS
 allbox;
@@ -22,63 +26,78 @@ l l .
 \fB\fC\fBtarget window state\fP\fR	\fB\fC\fBaction\fP\fR
 T{
 Active and not handled by i3fyra
-T}	mark and hide
+T}	hide
 Active and handled by i3fyra	T{
-hide if not \fB\fC\-g\fR is set
+hide container, if not \fB\fC\-g\fR is set
 T}
 Handled by i3fyra and hidden	show container, activate
 T{
 Not handled by i3fyra and hidden
 T}	show window, activate
-Not on current workspace	goto workspace
-Not found	run command
+Not on current workspace	T{
+goto workspace or show if \fB\fC\-s\fR is set
+T}
+Not found	execute command (\fB\fC\-e\fR)
 .TE
 
 .PP
-Hidden in this context, means that window is on scratchpad/
+Hidden in this context, means that window is on the scratchpad.
 Show in this context means, move window to current workspace.
 
 .SH OPTIONS
 .PP
 \fB\fC\-v\fR
 .br
-  Show version info and exit
+Show version info and exit
 
 .PP
 \fB\fC\-h\fR
 .br
-  Show this help and exit
+Show this help and exit
 
 .PP
 \fB\fC\-c\fR \fICLASS\fP
 .br
-  Search for windows with the given CLASS
+Search for windows with the given CLASS
 
 .PP
 \fB\fC\-i\fR \fIINSTANCE\fP
 .br
-  Search for windows with the given INSTANCE
+Search for windows with the given INSTANCE
 
 .PP
 \fB\fC\-t\fR \fITITLE\fP
 .br
-  Search for windows with the given TITLE
+Search for windows with the given TITLE
 
 .PP
 \fB\fC\-e\fR \fICOMMAND\fP
 .br
-  Command to run if no window is found.
+Command to run if no window is found.
 
 .PP
 \fB\fC\-s\fR
 .br
-  Instead of switching workspace,
-  summon window to current workspace
+Instead of switching workspace,
+summon window to current workspace
 
 .PP
 \fB\fC\-g\fR
 .br
-  Don't hide window/container if it's active.
+Don't hide window/container if it's active.
+
+.PP
+\fB\fC\-m\fR
+.br
+The window will be placed on the location of the mouse
+cursor when it is created or shown. (\fIneeds \fB\fCxdotool\fR\fP)
+
+.PP
+\fB\fC\-x\fR \fIOLDNAME\fP
+.br
+If the search criteria is \fB\fC\-i\fR (instance), the window with
+instance: \fIOLDNAME\fP will get a n new instance name matching
+the criteria when it is created (\fIneeds \fB\fCxdotool\fR\fP).
 
 .PP
 it is important that \fB\fC\-e\fR \fICOMMAND\fP is last of the options.
@@ -90,40 +109,47 @@ otherwise the script will get stuck in a loop waiting for the window to appear.
 .PP
 \fB\fCI3RUN\_BOTTOM\_GAP\fR \fIINT\fP
 .br
-  Distance from the bottom edge of the screen to show floating windows.
-  Defaults to 10.
+Distance from the bottom edge of the screen to show floating windows.
+Defaults to 10.
 
 .PP
 \fB\fCI3RUN\_TOP\_GAP\fR \fIINT\fP
 .br
-  Distance from the top edge of the screen to show floating windows.
-  Defaults to 10.
+Distance from the top edge of the screen to show floating windows.
+Defaults to 10.
 
 .PP
 \fB\fCI3RUN\_LEFT\_GAP\fR \fIINT\fP
 .br
-  Distance from the left edge of the screen to show floating windows.
-  Defaults to 10.
+Distance from the left edge of the screen to show floating windows.
+Defaults to 10.
 
 .PP
 \fB\fCI3RUN\_RIGHT\_GAP\fR \fIINT\fP
 .br
-  Distance from the right edge of the screen to show
-  floating windows. Defaults to 10.
+Distance from the right edge of the screen to show
+floating windows. Defaults to 10.
 
 .PP
 \fB\fCI3FYRA\_WS\fR \fIINT\fP
 .br
-  Workspace to use for i3fyra. If not set, the first
-  workspace that request to create the layout will
-  be used.
+Workspace to use for i3fyra. If not set, the first
+workspace that request to create the layout will
+be used.
 
 .SH DEPENDENCIES
 .PP
 i3list
+.br
 i3get
+.br
 i3var
+
+.SH OPTIONAL
+.PP
 xdotool
+.br
+i3fyra
 
 .SH AUTHOR
 .PP
@@ -134,4 +160,4 @@ budRich
 
 .SH SEE ALSO
 .PP
-i3(1), i3list(1), i3get(1), i3var(1), i3\-msg \-q workspace(1), xdotool(1)
+i3(1), i3list(1), i3get(1), i3var(1), i3fyra(1) xdotool(1)

@@ -54,7 +54,7 @@ printinfo(){
 }
 
 bouthead="
-${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
 =======================================
 
 NAME
@@ -80,7 +80,8 @@ about='
 SYNOPSIS
 --------
 
-`i3gw` [`-v`|`-h`] *MARK*
+`i3gw` [`-v`|`-h`]  
+`i3gw` *MARK*  
 
 DESCRIPTION
 -----------
@@ -99,10 +100,10 @@ OPTIONS
 -------
 
 `-v`
-  Show version and exit.
+Show version and exit.
 
 `-h`
-  Show help and exit.
+Show help and exit.
 
 
 EXAMPLES
@@ -120,7 +121,7 @@ $ i3-msg [con_mark=casper] layout tabbed
 $ i3-msg [con_mark=casper] kill
 ```
 
-the last example (`kill`), destroys the container.
+the last command (`kill`), destroys the container.
 
 DEPENDENCIES
 ------------

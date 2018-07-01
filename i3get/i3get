@@ -105,7 +105,7 @@ printinfo(){
 }
 
 bouthead="
-${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
 =======================================
 
 NAME
@@ -131,7 +131,8 @@ about='
 SYNOPSIS
 --------
 
-`i3get` [`-h`|`-v`] [`OPTION` [*CRITERIA*]] [`-r` [tcidnmwafov]] [`-y`]
+`i3get` [`-h`|`-v`]  
+`i3get` [`OPTION` [*CRITERIA*]] [`-r` [tcidnmwafov]] [`-y`]  
 
 DESCRIPTION
 -----------
@@ -144,60 +145,66 @@ OPTIONS
 -------
 
 `-v`  
-  Show version and exit
+Show version and exit
 
 `-h`  
-  Show this help
+Show this help
 
 `-a`  
-  Currently active window (default)
+Currently active window (default)
 
 `-c` *CLASS*  
-  Search for windows with the given class
+Search for windows with the given class
 
 `-i` *INSTANCE*  
-  Search for windows with the given instance
+Search for windows with the given instance
 
 `-t` *TITLE*  
-  Search for windows with title.
+Search for windows with title.
 
 `-n` *CON_ID*  
-  Search for windows with the given con_id
+Search for windows with the given con_id
 
 `-d` *CON_ID*  
-  Search for windows with the given window id
+Search for windows with the given window id
 
 `-m` *CON_MARK*  
-  Search for windows with the given mark
+Search for windows with the given mark
 
 `-o` *TTL_FRMT*  
-  Search for windows with the given titleformat
+Search for windows with the given titleformat
 
 `-y`  
-  Synch on. If this option is included, 
-  script will wait till target window exist.
+Synch on. If this option is included,  
+script will wait till target window exist.
 
 `-r` [*OUTPUT*]  
-  *OUTPUT* can be one or more of the following 
-  characters:   
+*OUTPUT* can be one or more of the following 
+characters:   
 
-  `t`: title  
-  `c`: class  
-  `i`: instance  
-  `d`: Window ID  
-  `n`: Con_Id (default)  
-  `m`: mark  
-  `w`: workspace  
-  `a`: is active  
-  `f`: floating state  
-  `o`: title format  
-  `v`: visible state  
+`t`: title  
+`c`: class  
+`i`: instance  
+`d`: Window ID  
+`n`: Con_Id (default)  
+`m`: mark  
+`w`: workspace  
+`a`: is active  
+`f`: floating state  
+`o`: title format  
+`v`: visible state  
 
 EXAMPLES
 --------
 search for window with instance name sublime_text. Request
 workspace, title and floating state.  
-`i3get -i sublime_text -r wtf`  
+
+``` shell
+$ i3get -i sublime_text -r wtf 
+1
+"~/src/bash/i3ass/i3get (i3ass) - Sublime Text"
+user_off
+```
 
 Title and tile_format output is always surrounded
 with doublequotes.

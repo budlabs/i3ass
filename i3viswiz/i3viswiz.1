@@ -1,4 +1,4 @@
-.TH I3VISWIZ 1 2018\-01\-18 Linux "User Manuals"
+.TH I3VISWIZ 1 2018\-06\-30 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3viswiz\fR \- Professional window focus for i3wm
@@ -6,16 +6,20 @@
 .SH SYNOPSIS
 .PP
 \fB\fCi3viswiz\fR [\fB\fC\-v\fR|\fB\fC\-h\fR]
+.br
 \fB\fCi3viswiz\fR [\fB\fC\-p\fR \fB\fCt\fR|\fB\fCc\fR|\fB\fCi\fR|\fB\fCn\fR|\fB\fCo\fR|\fB\fCd\fR]
+.br
 \fB\fCi3viswiz\fR [\fB\fC\-g\fR \fIGAPSIZE\fP] [\fIDIRECTION\fP]
 
 .SH DESCRIPTION
 .PP
-\fB\fCi3viswiz\fR lists all visible windows with their
-positions (X,Y) and dimensions (width,height).
-If \fB\fC\-p\fR flag is passed, the list will be printed
-to \fB\fCstdout\fR\&. If a \fIDIRECTION\fP (left|right|up|down)
-is passed \fB\fCi3wizvis\fR will shift the focus to the
+\fB\fCi3viswiz\fR either prints a list of the currently visible
+tiled windows to \fB\fCstdout\fR or shifts the focus depending on
+the arguments.
+
+.PP
+If a \fIDIRECTION\fP (left|right|up|down)
+is passed, \fB\fCi3wizvis\fR will shift the focus to the
 window closest in the given DIRECTION, or warp
 focus if there are no windows in the given direction.
 
@@ -23,83 +27,90 @@ focus if there are no windows in the given direction.
 .PP
 \fB\fC\-v\fR
 .br
-  Show version and exit.
+Show version and exit.
 
 .PP
 \fB\fC\-h\fR
 .br
-  Show help and exit.
+Show help and exit.
 
 .PP
-\fB\fC\-p\fR \fB\fCt\fR|\fB\fCc\fR|\fB\fCi\fR|\fB\fCn\fR|\fB\fCo\fR|\fB\fCd\fR
-  Print list of windows to \fB\fCstdout\fR\&. The first line is either
-  the \fIcon\_id\fP of the window receiving focus . The second line
-  are the x and y coordinates where receiving window is searched.
-  Remaining lines are the list. The first field is marked with a
-  \fB\fC*\fR if the line contains the active window.
+\fB\fC\-p\fR|\fB\fC\-t\fR|\fB\fC\-c\fR|\fB\fC\-i\fR|\fB\fC\-n\fR|\fB\fC\-o\fR|\fB\fC\-d\fR
+.br
+Print list of windows to \fB\fCstdout\fR\&. The first line is either
+the \fIcon\_id\fP of the window receiving focus . The second line
+are the x and y coordinates where receiving window is searched.
+Remaining lines are the list. The first field is marked with a
+\fB\fC*\fR if the line contains the active window.
 
 .PP
-Depending on the argument the last field contains
-  different information about the window.
+Depending on the option the last field of the output
+contains different information about the window.
 
 .PP
-\fB\fCt\fR \- title
-  \fB\fCc\fR \- class
-  \fB\fCi\fR \- instance
-  \fB\fCo\fR \- title\_format
-  \fB\fCn\fR \- con\_id
-  \fB\fCd\fR \- window\_id
+\fB\fC\-t\fR title
+.br
+\fB\fC\-c\fR class
+.br
+\fB\fC\-i\fR instance
+.br
+\fB\fC\-o\fR title\_format
+.br
+\fB\fC\-n\fR con\_id
+.br
+\fB\fC\-d\fR window\_id
+.br
+\fB\fC\-p\fR parent container
 
 .PP
 Floating windows are excluded from the list.
-  If the active window is floating, the first line
-  will have the text "floating".
+If the active window is floating, the first line
+will have the text "floating".
 
 .PP
-Example output:
+\fB\fC\-g\fR GAPSIZE
+.br
+Set GAPSIZE (defaults to 5). GAPSIZE is the distance in pixels
+from the current window where new focus will be searched.
+
+.PP
+\fIDIRECTION\fP
+.br
+Can be either (left|right|up|down) OR (l|r|u|d). DIRECTION needs
+to be the last argument of the command. If no DIRECTION is given,
+focus will not shift.
+
+.SH EXAMPLE
+.PP
+replace the normal i3 focus keybindings with viswiz
+like this:
 
 .PP
 .RS
 
 .nf
-  $ i3paint \-p n \-g 20 down
-    94369749033328
-    tx: 319.5 ty: 227
-    \- x: 1349  y: 243  w: 125  h: 656  94369749098704
-    * x: 0     y: 0    w: 639  h: 207  94369748807120
-    \- x: 0     y: 208  w: 1222 h: 691  94369749033328
-    \- x: 1223  y: 0    w: 376  h: 242  94369748768416
-    \- x: 640   y: 0    w: 582  h: 207  94369749326096
-    \- x: 1475  y: 243  w: 124  h: 656  94369749166496
-    \- x: 1223  y: 243  w: 125  h: 656  94369749106512
+  Normal binding:
+  bindsym Mod4+Shift+Left   focus left
+  
+  Wizzy binding:
+  bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz l 
 
 .fi
 .RE
 
 .PP
-\fB\fC\-g\fR GAPSIZE
-  Set GAPSIZE (defaults to 5). GAPSIZE is the distance in pixels
-  from the current window where new focus will be searched.
-
-.PP
-\fIDIRECTION\fP
-  Can be either (left|right|up|down) OR (l|r|u|d). DIRECTION needs
-  to be the last argument of the command. If no DIRECTION is given,
-  focus will not shift.
-
-.SH EXAMPLE
-.PP
-replace the normal i3 focus keybindings with viswiz like this:
+example output:
 
 .PP
 .RS
 
 .nf
-Normal binding:
-bindsym Mod4+Shift+Left   focus left
-
-Wizzy binding:
-bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz l 
+  $ i3viswiz \-o \-g 20 down
+  target\_con\_id: 94851559487504
+  tx: 582 ty: 470 wall: none
+  * 94851560291216 x: 0     y: 0     w: 1165  h: 450   | URxvt
+  \- 94851559487504 x: 0     y: 451   w: 1165  h: 448   | sublime
+  \- 94851560318768 x: 1166  y: 0     w: 433   h: 899   | bin
 
 .fi
 .RE
@@ -113,5 +124,4 @@ budRich
 
 .SH SEE ALSO
 .PP
-bar(1), foo(5), xyzzy(1), Linux Man Page Howto
-\[la]http://www.schweikhardt.net/man_page_howto.html\[ra]
+i3(1)
