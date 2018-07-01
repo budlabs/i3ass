@@ -1,169 +1,117 @@
-## 18/01/03 - window geometry
-
-Added some new output values (45-55) to return the window geometry.
-Also AWM/TWM (mark) is deprecated, since spaces in marks caused trouble.
-
-* * *
-
-`i3list` - List attributes of i3wm
+# `i3list` - Prints information about the current i3 session to `stdout`.
 
 SYNOPSIS
 --------
 
-`i3list` [`OPTION` [*CRITERIA*]]
+`i3list` [`-v`|`-h`]  
+
+`i3list`  
+`i3list` [`-c` *CLASS*]  
+`i3list` [`-i` *INSTANCE*]  
+`i3list` [`-n` *CON_ID*]  
+`i3list` [`-d` *WINDOW_ID*]  
 
 DESCRIPTION
 -----------
 
-This script is vital for i3fyra to work. But it can be used on it's own
-or with other scripts. `i3list` is also used by i3run. `i3list` parses the
-output of the command:  
-`i3-msg -t get_tree`  
+`i3list` prints a list in a *array* formatted list. 
+If a search criteria is given (`-c`|`-i`|`-n`|`-d`) 
+information about the first window matching the criteria
+is displayed. Information about the active window is always
+displayed. If no search criteria is given, the active window
+will also be the target window.  
 
-and returns a long string with 43 values separated by spaces. This strange 
-output format is made to make it possible to pipe the output to other scripts. 
-A lot of the information is specific to i3fyra, but if `i3list` doesn't find a 
-value an X will be placed in it's place in the output.  
-
-The idea, is to use this script once, and get all the info about i3's current
-state in one big chunk. So one doesn't have to make more requests for 
-tree output. It have speeded up my own scripts a lot. And it also makes many
-listener scripts unnecessary. The parsing is done with awk, and it is very
-fast, about 25ms on my average computer (i5, 4GB). Same operation with pure
-bash would take at least a whole second (x40).  
-
-I have made another script, `i3get`, that works in a similar way but where you
-choose which information you want in the output. `i3get` is slightly faster (5ms),
-but `i3list` outputs more information and is meant to replace multiple `i3get` requests.
+By using eval, the output can be used as an array in bash 
+scripts, but the array needs to be declared first.
 
 OPTIONS
 -------
 
-`-v` 
-  Show version info and exit
+`-v`  
+Show version and exit.  
 
-`-h` 
-  Show this help and exit
+`-h`  
+Show help and exit.  
 
-`-c` *CLASS*
-  Search for windows with the given *CLASS*
+`-c` *CLASS*  
+Search for windows with the given CLASS  
 
-`-i` *INSTANCE*
-  Search for windows with the given *INSTANCE*
+`-i` *INSTANCE*   
+Search for windows with the given INSTANCE  
 
-`-t` *TITLE*
-  Search for windows with the given *TITLE*
+`-n` *CON_ID*  
+Search for windows with the given CON_ID  
 
-`-n` *CON_ID*
-  Search for windows with the given *CON_ID*
+`-d` *WINDOW_ID*  
+Search for windows with the given WINDOW_ID  
 
-`-d` *WINDOW_ID*
-  Search for windows with the given *WINDOW ID*
+EXAMPLES
+--------
 
-`-m` *CON_MARK*
-  Search for windows with the given *CON_MARK*
-
-If no option is passed, active window will be target.
-
-**example output**
-``` text
+``` shell
 $ i3list
-  1 ABD C ABDC g u a X 1 94834554562528 f-94834554562528 g u a X 1 \
-  94834554562528 f-94834554562528 t 94834555596640 94834555347456 \
-  94834555596640 t 94834555517248 94834555517248 94834555517248 t \
-  94834555385280 94834555385280 94834555385280 t 94834555516528 \
-  94834555556800 94834555556800 1069 585 234 1056 900 234 A BD 1600 900
+i3list[AWF]=0                # active window floating
+i3list[AWH]=451              # Active window height
+i3list[AWI]=2097161          # active window id
+i3list[AWW]=1166             # Active window width
+i3list[AFO]=BD               # active window relatives
+i3list[AWX]=0                # Active window x position
+i3list[AFC]=D                # active window cousin
+i3list[AWY]=0                # Active window y position
+i3list[AFF]=AC               # active window family
+i3list[AFS]=C                # active window sibling
+i3list[AWB]=20               # Active window titlebar height
+i3list[AFT]=B                # active window twin
+i3list[AWP]=A                # active window parent
+i3list[AWC]=94851560291216   # active window con_id
+i3list[TWB]=20               # Target window titlebar height
+i3list[TFS]=C                # target window sibling
+i3list[TFF]=AC               # target window family
+i3list[TWP]=A                # target window parent
+i3list[TFT]=B                # target window twin
+i3list[TWC]=94851560291216   # target window con_id
+i3list[TWF]=0                # target window floating
+i3list[TWH]=451              # Target window height
+i3list[TWI]=2097161          # target window id
+i3list[TWW]=1166             # Target window width
+i3list[TWX]=0                # Target window x position
+i3list[TFO]=BD               # target window relatives
+i3list[TWY]=0                # Target window y position
+i3list[TFC]=D                # target window cousin
+i3list[CAF]=94851560291216   # container A focused container id
+i3list[CCF]=94851559487504   # container C focused container id
+i3list[CDF]=94851560318768   # container D focused container id
+i3list[CAW]=1                # container A workspace
+i3list[CCW]=1                # container C workspace
+i3list[CAL]="tabbed"         # container A layout
+i3list[CDW]=1                # container D workspace
+i3list[CCL]="tabbed"         # container C layout
+i3list[CDL]="tabbed"         # container D layout
+i3list[SAB]=1166             # current split: AB
+i3list[SAC]=451              # current split: AC
+i3list[MAB]=-370             # stored split: AB
+i3list[MAC]=130              # stored split: AC
+i3list[MBD]=250              # stored split: BD
+i3list[LAL]=ACBD             # all containers in family order
+i3list[LEX]=DCA              # existing containers (LVI+LHI)
+i3list[LHI]=                 # hidden i3fyra containers
+i3list[LVI]=DCA              # visible i3fyra containers
+i3list[WAH]=900              # Active workspace height
+i3list[WAW]=1600             # Active workspace width
+i3list[WSF]=1                # workspace i3fyra number
+i3list[WST]=1                # workspace number target
+i3list[WSH]=900              # workspace i3fyra height
+i3list[WSW]=1600             # workspace i3fyra width
+i3list[WSA]=1                # workspace number active
+
+$ declare -A i3list # declares associative array
+$ eval "$(i3list)"
+$ echo ${i3list[WAW]}
+1600
 ```
-**Below is a cipher for the output**
-``` text
-field: 0   - AWW -  current workspace
-field: 1   - VIS -  visible containers
-field: 2   - HID -  hidden containers
-field: 3   - EXS -  existing containers (VIS+HID)
-field: 4   - AWP -  Active window position (b|e|m|o|g|i)
-field: 5   - AWL -  Active window layout (t|v|h|s|u)
-field: 6   - AWS -  Active window status (f|a|n)
-field: 7   - AWC -  Active window container (A|B|C|D|X)
-field: 8   - AWW -  Active window workspace
-field: 9   - AWI -  Active container id (con_id)
-field: 10  - AWM -  Active window mark
-field: 11  - TWP -  Target window position (b|e|m|o|g|i)
-field: 12  - TWL -  Target window layout (t|v|h|s|u)
-field: 13  - TWS -  Target window status (f|a|n)
-field: 14  - TWC -  Target window container (A|B|C|D|X)
-field: 15  - TWW -  Target window workspace
-field: 16  - TWI -  Target container id (con_id)
-field: 17  - TWM -  Target window mark
-field: 18  - LOA -  Container A layout
-field: 19  - FCA -  Container A first child (con_id)
-field: 20  - LCA -  Container A last child (con_id)
-field: 21  - ACA -  Container A focused child (con_id)
-field: 22  - LOB -  Container B layout
-field: 23  - FCB -  Container B first child (con_id)
-field: 24  - LCB -  Container B last child (con_id)
-field: 25  - ACB -  Container B focused child (con_id)
-field: 26  - LOC -  Container C layout
-field: 27  - FCC -  Container C first child (con_id)
-field: 28  - LCC -  Container C last child (con_id)
-field: 29  - ACC -  Container C focused child (con_id)
-field: 30  - LOD -  Container D layout
-field: 31  - FCD -  Container D first child (con_id)
-field: 32  - LCD -  Container D last child (con_id)
-field: 33  - ACD -  Container D focused child (con_id)
-field: 34  - SAB -  Stored AB split (mark i34SAB_*)
-field: 35  - SAC -  Stored AC split (mark i34SAC_*)
-field: 36  - SBD -  Stored BD split (mark i34SBD_*)
-field: 37  - CAB -  Current AB split (width of i34XAC)
-field: 38  - CAC -  Current AC split (height of i34A)
-field: 39  - CBD -  Current BD split (height of i34B)
-field: 40  - FAC -  Family AC memory (mark i34FAC_*)
-field: 41  - FBD -  Family AC memory (mark i34FBD_*)
-field: 42  - SDW -  Width of current workspace
-field: 43  - SDH -  Height of curent workspace
-field: 44  - WSF -  Workspace number whith i3fyra layout
-field: 45  - AWX -  Active window X pos
-field: 46  - AWY -  Active window Y pos
-field: 47  - AWD -  Active window Width
-field: 48  - AWH -  Active window Height
-field: 49  - TWX -  Target window X pos
-field: 50  - TWY -  Target window Y pos
-field: 51  - TWD -  Target window Width
-field: 52  - TWH -  Target window Height
-field: 53  - AID -  Active window window ID
-field: 54  - TID -  Target window window ID
-field: 55  - AWB -  Active window titlebar height
-field: 56  - TWB -  Target window titlebar height
 
-position (b|e|m|g|i)
-b - beginning  first child in container
-e - end        last child in container
-m - middle     neither first or last
-o - only       only child in container
-g - floating   not handled by i3fyra
-i - tiled      not handled by i3fyra
-
-layout (t|v|h|s|u)
-t - tabbed
-v - vertical
-h - horizontal
-s - stacked
-u - unknown (not handled by i3fyra)
-
-status (f|a|n)
-f - focused (visible window in a tabbed container)
-a - active window
-n - neither active or focused
-```
-The best way to handle the output is to put it in an array.
-
-Example:
-``` text
-$ list_array=($(i3list))
-$ echo ${list_array[42]}
-  1600 # width of current workspace
-```
 
 DEPENDENCIES
 ------------
 
-i3wm
+i3

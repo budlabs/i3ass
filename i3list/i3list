@@ -441,8 +441,7 @@ i3fyra(1), i3(5)
 "
 
 about='
-`i3list` - Prints information about the current i3 
-session to `stdout`.
+`i3list` - Prints information about the current i3 session to `stdout`.
 
 SYNOPSIS
 --------
