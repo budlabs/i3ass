@@ -10,6 +10,10 @@ assist the usage of the windowmanager known as [i3](https://i3wm.org/).
 
 ## installation
 
+If you are using **Arch linux**, you can install the i3ass package from [AUR](https://aur.archlinux.org/packages/i3ass/).  
+
+Or follow the instructions below to install from github:  
+
 [![](https://budrich.github.io/img/awd/assinstafina.gif)](https://budrich.github.io/img/org/assinstafina.gif)
 
 **clone the repository**  
