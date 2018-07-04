@@ -63,11 +63,11 @@ launchcommand(){
   i3list[TWC]=$(i3get -y "${acri[@]}")
   
   ((i3list[TWF] == 1)) && ((followmouse == 1)) && {
-    sleep .2
     eval "$(i3list "${acri[@]}")"
     sendtomouse
   }
 
+  sleep .2
   i3-msg -q "[con_id=${i3list[TWC]}]" focus
   echo "${i3list[TWC]}"
 }
