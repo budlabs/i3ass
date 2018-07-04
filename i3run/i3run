@@ -5,7 +5,7 @@ VERSION="0.007"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-04-20"
-UPDATED="2018-06-30"
+UPDATED="2018-07-04"
 
 main(){
 
