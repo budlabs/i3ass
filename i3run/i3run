@@ -47,6 +47,7 @@ main(){
 }
 
 launchcommand(){
+  # notify-send "$command"
   eval "${command}" > /dev/null 2>&1 & 
 
   [[ -n $oldname ]] && {
@@ -103,13 +104,13 @@ focuswindow(){
       if [[ ${i3list[WSA]} != "${i3list[WST]}" ]]; then
         if [[ ${i3list[WST]} = "-1" ]] || [[ $summon = 1 ]]; then
           i3-msg -q "[con_id=${i3list[TWC]}]" \
-            move to workspace "${i3list[WSA]}", \
+            move to workspace "${i3list[WAN]}", \
             floating $fs
             i3-msg -q "[con_id=${i3list[TWC]}]" focus
             ((i3list[TWF] == 1)) && ((followmouse == 1)) \
               && sendtomouse
         else
-          i3-msg -q workspace "${i3list[WST]}"
+          i3-msg -q workspace "${i3list[WTN]}"
         fi
         
       fi
@@ -125,12 +126,12 @@ focuswindow(){
           # current ws is not i3fyra WS
           if [[ ${i3list[WST]} = "-1" ]] || [[ $summon = 1 ]]; then
             i3-msg -q "[con_id=${i3list[TWC]}]" \
-              move to workspace "${i3list[WSA]}", floating $fs
+              move to workspace "${i3list[WAN]}", floating $fs
               i3-msg -q "[con_id=${i3list[TWC]}]" focus
               ((i3list[TWF] == 1)) && ((followmouse == 1)) \
                 && sendtomouse
           else
-            i3-msg -q workspace "${i3list[WST]}"
+            i3-msg -q workspace "${i3list[WTN]}"
           fi
         fi
       fi
