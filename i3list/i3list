@@ -102,6 +102,8 @@ printlist(){
       desc["TWB"]="Target window titlebar height"
       desc["WAW"]="Active workspace width"
       desc["WAH"]="Active workspace height"
+      desc["WAN"]="Active workspace name"
+      desc["WAN"]="Target workspace name"
 
 
       defaults["LD1"]="A"
@@ -118,9 +120,11 @@ printlist(){
     }
 
     $1=="\"window\"" {curwid=$2}
+    $1=="\"name\"" {curnam=$2}
 
     $1=="\"num\"" {
       curws=$2
+      curwsnam=curnam
       if(workspace["WSF"]=="chk"){
         workspace["WSF"]=curws}
       if (wsdchk=="2") {
@@ -150,12 +154,14 @@ printlist(){
     trg==0 && $(NF-1) ~ crit && $NF ~ srch {
       target["TWC"]=curcid
       workspace["WST"]=curws
+      workspace["WTN"]=curwsnam
       trg=1
     }
 
     act==0 && $1=="\"focused\"" && $2=="true" {
       active["AWC"]=curcid
       workspace["WSA"]=curws
+      workspace["WAN"]=curwsnam
       workspace["WAW"]=dim[curws]["w"]
       workspace["WAH"]=dim[curws]["h"]
       act=1

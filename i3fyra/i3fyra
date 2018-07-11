@@ -39,6 +39,7 @@ main(){
   i3list[CMA]=${I3FYRA_MAIN_CONTAINER:-A}
 
   ${cmd} "${target}" # run command
+
 }
 
 familycreate(){
