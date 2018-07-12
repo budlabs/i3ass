@@ -236,11 +236,9 @@ applysplits(){
       || par=${i3list[WSH]} dir=height mrk=i34${tsn:0:1}
 
     ((tsv<0)) && tsv=$((tsv*-1)) tsv=$((par-tsv))
-    # dirthack to make sure target split is not 50%
-    # tsv=$((par/2==tsv?tsv-1:tsv))
 
     eval "$(echo "$tsv" "$par" "$osv" "$dir" "$mrk" | awk '{
-      tsp=($1)/$2*100
+      tsp=$1/$2*100
       osp=$3/$2*100
 
       if (tsp!=osp) {
