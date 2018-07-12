@@ -7,6 +7,9 @@ CONTACT='robstenklippa@gmail.com'
 CREATED="2017-01-14"
 UPDATED="2018-06-30"
 
+# trap 'dunstify "# $BASH_COMMAND -- f ${FUNCNAME[0]}"' DEBUG
+# set -x
+
 main(){
   local cmd target
   while getopts :vhas:l:w:z:m:p: option; do
@@ -39,6 +42,9 @@ main(){
   i3list[CMA]=${I3FYRA_MAIN_CONTAINER:-A}
 
   ${cmd} "${target}" # run command
+
+  [[ $cmd = windowmove ]] \
+    && i3-msg -q "[con_id=${i3list[AWC]}]" focus
 
 }
 
@@ -233,9 +239,11 @@ applysplits(){
       || par=${i3list[WSH]} dir=height mrk=i34${tsn:0:1}
 
     ((tsv<0)) && tsv=$((tsv*-1)) tsv=$((par-tsv))
+    # dirthack to make sure target split is not 50%
+    # tsv=$((par/2==tsv?tsv-1:tsv))
 
     eval "$(echo "$tsv" "$par" "$osv" "$dir" "$mrk" | awk '{
-      tsp=$1/$2*100
+      tsp=($1-1)/$2*100
       osp=$3/$2*100
 
       if (tsp!=osp) {
@@ -598,27 +606,6 @@ familyhide(){
 }
 
 printinfo(){
-  if [[ ! $1 =~ m|f ]];then
-    echo -e "${about}" | awk '
-       BEGIN{ind=0}
-       $0~/^```/{
-         if(ind!="1"){ind="1"}
-         else{ind="0"}
-         print ""
-       }
-       $0!~/^```/{
-         gsub("[`*]","",$0)
-         if(ind=="1"){$0="   " $0}
-         print $0
-       }
-     '
-  else
-    [[ $1 = f ]] && echo -e "${bouthead}"
-    echo -e "${about}"
-    [[ $1 = f ]] && echo -e "${boutfoot}"
-  fi
-}
-
 bouthead="
 ${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
 =======================================
@@ -824,6 +811,28 @@ i3gw
 i3var  
 i3viswiz   
 '
+  if [[ ! $1 =~ m|f ]];then
+    echo -e "${about}" | awk '
+       BEGIN{ind=0}
+       $0~/^```/{
+         if(ind!="1"){ind="1"}
+         else{ind="0"}
+         print ""
+       }
+       $0!~/^```/{
+         gsub("[`*]","",$0)
+         if(ind=="1"){$0="   " $0}
+         print $0
+       }
+     '
+  else
+    [[ $1 = f ]] && echo -e "${bouthead}"
+    echo -e "${about}"
+    [[ $1 = f ]] && echo -e "${boutfoot}"
+  fi
+}
+
+
 if [[ $1 = md ]]; then
   printinfo m
   exit
