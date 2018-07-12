@@ -40,6 +40,9 @@ main(){
 
   ${cmd} "${target}" # run command
 
+  [[ $cmd = windowmove ]] \
+    && i3-msg -q "[con_id=${i3list[AWC]}]" focus
+
 }
 
 familycreate(){
@@ -315,16 +318,23 @@ containerhide(){
     && i3var set "i34F${tfam}" "$trg"
 
   # note splits
-  [[ -n ${i3list[SAB]} ]] && ((i3list[SAB] != i3list[WSW])) \
-    && ((i3list[SAB] != i3list[WSW]/2)) \
-    && i3var set "i34SAB" "${i3list[SAB]}" \
-    && i3list[MAB]=${i3list[SAB]}
+  [[ -n ${i3list[SAB]} ]] && ((i3list[SAB] != i3list[WSW])) && {
+    ((${i3list[S${tfam}]} != i3list[WSW]/2)) \
+      && $((${i3list[S${tfam}]}-=1))
 
-  [[ -n ${i3list[S${tfam}]} ]] \
-    && ((${i3list[S${tfam}]} != i3list[WSH])) \
-    && ((${i3list[S${tfam}]} != i3list[WSH]/2)) \
-    && i3var set "i34S${tfam}" "${i3list[S${tfam}]}" \
-    && i3list[M${tfam}]=${i3list[S${tfam}]}
+    i3var set "i34SAB" "${i3list[SAB]}"
+    i3list[MAB]=${i3list[SAB]}
+  }
+
+  
+
+  [[ -n ${i3list[S${tfam}]} ]] && ((${i3list[S${tfam}]} != i3list[WSH])) && {
+    ((${i3list[S${tfam}]} != i3list[WSH]/2)) \
+      && $((${i3list[S${tfam}]}-=1))
+
+    i3var set "i34S${tfam}" "${i3list[S${tfam}]}" 
+    i3list[M${tfam}]=${i3list[S${tfam}]}
+  }
 
 }
 
@@ -598,27 +608,6 @@ familyhide(){
 }
 
 printinfo(){
-  if [[ ! $1 =~ m|f ]];then
-    echo -e "${about}" | awk '
-       BEGIN{ind=0}
-       $0~/^```/{
-         if(ind!="1"){ind="1"}
-         else{ind="0"}
-         print ""
-       }
-       $0!~/^```/{
-         gsub("[`*]","",$0)
-         if(ind=="1"){$0="   " $0}
-         print $0
-       }
-     '
-  else
-    [[ $1 = f ]] && echo -e "${bouthead}"
-    echo -e "${about}"
-    [[ $1 = f ]] && echo -e "${boutfoot}"
-  fi
-}
-
 bouthead="
 ${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
 =======================================
@@ -824,6 +813,28 @@ i3gw
 i3var  
 i3viswiz   
 '
+  if [[ ! $1 =~ m|f ]];then
+    echo -e "${about}" | awk '
+       BEGIN{ind=0}
+       $0~/^```/{
+         if(ind!="1"){ind="1"}
+         else{ind="0"}
+         print ""
+       }
+       $0!~/^```/{
+         gsub("[`*]","",$0)
+         if(ind=="1"){$0="   " $0}
+         print $0
+       }
+     '
+  else
+    [[ $1 = f ]] && echo -e "${bouthead}"
+    echo -e "${about}"
+    [[ $1 = f ]] && echo -e "${boutfoot}"
+  fi
+}
+
+
 if [[ $1 = md ]]; then
   printinfo m
   exit
