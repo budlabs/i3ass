@@ -7,9 +7,6 @@ CONTACT='robstenklippa@gmail.com'
 CREATED="2017-01-14"
 UPDATED="2018-06-30"
 
-# trap 'dunstify "# $BASH_COMMAND -- f ${FUNCNAME[0]}"' DEBUG
-# set -x
-
 main(){
   local cmd target
   while getopts :vhas:l:w:z:m:p: option; do
