@@ -243,7 +243,7 @@ applysplits(){
     # tsv=$((par/2==tsv?tsv-1:tsv))
 
     eval "$(echo "$tsv" "$par" "$osv" "$dir" "$mrk" | awk '{
-      tsp=($1-1)/$2*100
+      tsp=($1)/$2*100
       osp=$3/$2*100
 
       if (tsp!=osp) {
@@ -323,16 +323,23 @@ containerhide(){
     && i3var set "i34F${tfam}" "$trg"
 
   # note splits
-  [[ -n ${i3list[SAB]} ]] && ((i3list[SAB] != i3list[WSW])) \
-    && ((i3list[SAB] != i3list[WSW]/2)) \
-    && i3var set "i34SAB" "${i3list[SAB]}" \
-    && i3list[MAB]=${i3list[SAB]}
+  [[ -n ${i3list[SAB]} ]] && ((i3list[SAB] != i3list[WSW])) && {
+    ((${i3list[S${tfam}]} != i3list[WSW]/2)) \
+      && $((${i3list[S${tfam}]}-=1))
 
-  [[ -n ${i3list[S${tfam}]} ]] \
-    && ((${i3list[S${tfam}]} != i3list[WSH])) \
-    && ((${i3list[S${tfam}]} != i3list[WSH]/2)) \
-    && i3var set "i34S${tfam}" "${i3list[S${tfam}]}" \
-    && i3list[M${tfam}]=${i3list[S${tfam}]}
+    i3var set "i34SAB" "${i3list[SAB]}"
+    i3list[MAB]=${i3list[SAB]}
+  }
+
+  
+
+  [[ -n ${i3list[S${tfam}]} ]] && ((${i3list[S${tfam}]} != i3list[WSH])) && {
+    ((${i3list[S${tfam}]} != i3list[WSH]/2)) \
+      && $((${i3list[S${tfam}]}-=1))
+
+    i3var set "i34S${tfam}" "${i3list[S${tfam}]}" 
+    i3list[M${tfam}]=${i3list[S${tfam}]}
+  }
 
 }
 
