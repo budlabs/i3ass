@@ -52,11 +52,12 @@ main(){
     i3-msg -q focus $dir
 
   else
+    trgwin="${trgwin#* }"
     [[ ! $trgwin =~ ^[0-9]*$ ]] && [[ -n $dir ]] \
       && ((gapsz+=75)) && trgwin="$(listvisible | head -1)"
 
     [[ $trgwin =~ ^[0-9]*$ ]] && [[ -n $dir ]] \
-      && i3-msg "[con_id=$trgwin]" focus
+      && i3-msg -q "[con_id=$trgwin]" focus
   fi
   
 }
@@ -279,6 +280,7 @@ listvisible(){
         printf w " "
         if (opret=="t"){tmpop="| " ac[w]["ttl"]}
         else if (opret=="c"){tmpop="| " ac[w]["cls"]}
+        else if (opret=="p"){tmpop="| " ac[w]["par"]}
         else if (opret=="i"){tmpop="| " ac[w]["ins"]}
         else if (opret=="o"){tmpop="| " ac[w]["tf"]}
         else if (opret=="d"){tmpop="| " ac[w]["wid"]}
@@ -297,54 +299,6 @@ listvisible(){
 
 
 printinfo(){
-  case "$1" in
-    m ) printf '%s' "${about}" ;;
-    
-    f ) 
-      printf '%s' "${bouthead}"
-      printf '%s' "${about}"
-      printf '%s' "${boutfoot}"
-    ;;
-
-    ''|* ) 
-      printf '%s' "${about}" | awk '
-         BEGIN{ind=0}
-         $0~/^```/{
-           if(ind!="1"){ind="1"}
-           else{ind="0"}
-           print ""
-         }
-         $0!~/^```/{
-           gsub("[`*]","",$0)
-           if(ind=="1"){$0="   " $0}
-           print $0
-         }
-       '
-    ;;
-  esac
-}
-
-bouthead="
-${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
-=======================================
-
-NAME
-----
-"
-
-boutfoot="
-AUTHOR
-------
-
-${AUTHOR} <${CONTACT}>
-<https://budrich.github.io>
-
-SEE ALSO
---------
-
-i3(1)
-"
-
 about='
 `i3viswiz` - Professional window focus for i3wm
 
@@ -430,6 +384,54 @@ example output:
   - 94851560318768 x: 1166  y: 0     w: 433   h: 899   | bin
 ```
 '
+
+bouthead="
+${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3(1)
+"
+
+  case "$1" in
+    m ) printf '%s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
 
 if [ "$1" = "md" ]; then
   printinfo m

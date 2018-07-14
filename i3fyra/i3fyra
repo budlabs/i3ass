@@ -9,7 +9,7 @@ UPDATED="2018-06-30"
 
 main(){
   local cmd target
-  while getopts :vhas:l:w:z:m:p: option; do
+  while getopts :vhas:l:w:z:m:p:t: option; do
     case "${option}" in
       
       s) cmd=containershow target=${OPTARG}   ;;
@@ -18,6 +18,7 @@ main(){
       l) cmd=applysplits   target="${OPTARG}" ;;
       m) cmd=windowmove    target=${OPTARG}   ;;
       p) speed=${OPTARG}                      ;;
+      t) listtarget=(${OPTARG})               ;;
 
       v) printf '%s\n%s\n' \
           "$NAME - version: $VERSION" \
@@ -31,7 +32,7 @@ main(){
   [[ -z $1 ]] && printinfo && exit
 
   declare -A i3list # globals array
-  eval "$(i3list)"
+  eval "$(i3list ${listtarget[@]})"
 
   [[ -z ${i3list[WSF]} ]] \
     && i3list[WSF]=${I3FYRA_WS:-${i3list[WSA]}}
@@ -134,7 +135,6 @@ containershow(){
 
   trg=$1
 
-  echo ${i3list[LAL]}
   # trg is not legal
   [[ ! $trg =~ [${i3list[LAL]}] ]] && exit 1
 
@@ -203,6 +203,7 @@ containershow(){
         if [[ -n $tspl ]] || [[ $tspl != "$tdim" ]]; then
           eval "$(echo "$tspl" "$tdim" "$sdir" "$tmrk" | awk '{
              sdir=$3; tmrk=$4
+             if ($1<0) {$1=$1+$2}
              tperc=$1/$2*100
              if (tperc>50) {sperc=tperc-50;movement="grow"}
              if (tperc<50) {sperc=50-tperc;movement="shrink"}
@@ -352,7 +353,7 @@ windowmove(){
     containershow "$dir"
 
     [[ $newcont -ne 1 ]] \
-      && i3-msg "[con_id=${i3list[TWC]}]" \
+      && i3-msg -q "[con_id=${i3list[TWC]}]" \
            focus, floating disable, \
            move to mark "i34${dir}"
 
@@ -608,41 +609,13 @@ familyhide(){
 }
 
 printinfo(){
-bouthead="
-${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
-=======================================
-
-NAME
-----
-"
-
-boutfoot="
-AUTHOR
-------
-
-${AUTHOR} <${CONTACT}>
-<https://budrich.github.io>  
-<https://youtu.be/kU8gb6WLFk8>  
-
-If you have any issues or stumbe across bugs, please
-report them on github:  
-
-<https://github.com/budRich/i3ass/issues>  
-
-SEE ALSO
---------
-
-i3(1), i3list(1), i3gw(1), i3var(1), i3viswiz(1), i3flip(1)
-"
-
-about='
-`i3fyra` - An advanced simple gridbased tiling layout for i3wm. 
+about='`i3fyra` - An advanced simple gridbased tiling layout for i3wm.
 
 SYNOPSIS
 --------
 `i3fyra` [`OPTTION`] [`ARGUMENT`]  
 
-`i3fyra` `-m` A|B|C|D|u|r|d|l [`-p` INT]  
+`i3fyra` `-m` A|B|C|D|u|r|d|l [`-p` INT] [`-t` CRITERIA] 
 `i3fyra` `-s` A|B|C|D  
 `i3fyra` `-z` [ABCD]  
 `i3fyra` `-a`  
@@ -756,7 +729,7 @@ Show target container. If it doesn'"'"'t exist, it
 will be created and current window will be put  
 in it. If it is visible, nothing happens.  
 
-`-m` A|B|C|D|u|r|d|l [`-p` INT]  
+`-m` A|B|C|D|u|r|d|l [`-p` INT] [`-t` CRITERIA]   
 Moves current window to target container, either 
 defined by it'"'"'s name or it'"'"'s position relative 
 to the current container with a direction: 
@@ -772,6 +745,16 @@ with the `-p` option.
 Example: `i3fyra -p 30 -m r`  
 Will move current window 30 pixels to the right, 
 if it is floating.
+
+`-t` CRITERIA
+Criteria is a string passed to i3list to use a 
+different target then active window.
+
+Example:
+`$ i3fyra -m B -t "-i sublime_text"`  
+this will target the first found window with the 
+instance name *sublime_text*. See i3list(1), for
+all available options.  
 
 `-p` *INT*  
 Distance in pixels to move a floating window. 
@@ -813,6 +796,32 @@ i3gw
 i3var  
 i3viswiz   
 '
+bouthead="
+${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>  
+<https://youtu.be/kU8gb6WLFk8>  
+
+If you have any issues or stumbe across bugs, please
+report them on github:  
+
+<https://github.com/budRich/i3ass/issues>  
+
+SEE ALSO
+--------
+
+i3(1), i3list(1), i3gw(1), i3var(1), i3viswiz(1), i3flip(1)
+"
   if [[ ! $1 =~ m|f ]];then
     echo -e "${about}" | awk '
        BEGIN{ind=0}
@@ -836,6 +845,7 @@ i3viswiz
 
 
 if [[ $1 = md ]]; then
+  echo -n "# "
   printinfo m
   exit
 elif [[ $1 = man ]]; then

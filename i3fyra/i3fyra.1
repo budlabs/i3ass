@@ -8,8 +8,7 @@
 \fB\fCi3fyra\fR [\fB\fCOPTTION\fR] [\fB\fCARGUMENT\fR]
 
 .PP
-\fB\fCi3fyra\fR \fB\fC\-m\fR A|B|C|D|u|r|d|l [\fB\fC\-p\fR INT]
-.br
+\fB\fCi3fyra\fR \fB\fC\-m\fR A|B|C|D|u|r|d|l [\fB\fC\-p\fR INT] [\fB\fC\-t\fR CRITERIA]
 \fB\fCi3fyra\fR \fB\fC\-s\fR A|B|C|D
 .br
 \fB\fCi3fyra\fR \fB\fC\-z\fR [ABCD]
@@ -174,7 +173,7 @@ will be created and current window will be put
 in it. If it is visible, nothing happens.
 
 .PP
-\fB\fC\-m\fR A|B|C|D|u|r|d|l [\fB\fC\-p\fR INT]
+\fB\fC\-m\fR A|B|C|D|u|r|d|l [\fB\fC\-p\fR INT] [\fB\fC\-t\fR CRITERIA]
 .br
 Moves current window to target container, either
 defined by it's name or it's position relative
@@ -193,6 +192,19 @@ Example: \fB\fCi3fyra \-p 30 \-m r\fR
 .br
 Will move current window 30 pixels to the right,
 if it is floating.
+
+.PP
+\fB\fC\-t\fR CRITERIA
+Criteria is a string passed to i3list to use a
+different target then active window.
+
+.PP
+Example:
+\fB\fC$ i3fyra \-m B \-t "\-i sublime\_text"\fR
+.br
+this will target the first found window with the
+instance name \fIsublime\_text\fP\&. See i3list(1), for
+all available options.
 
 .PP
 \fB\fC\-p\fR \fIINT\fP

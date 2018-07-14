@@ -1,10 +1,10 @@
-# `i3fyra` - An advanced simple gridbased tiling layout for i3wm. 
+# `i3fyra` - An advanced simple gridbased tiling layout for i3wm.
 
 SYNOPSIS
 --------
 `i3fyra` [`OPTTION`] [`ARGUMENT`]  
 
-`i3fyra` `-m` A|B|C|D|u|r|d|l [`-p` INT]  
+`i3fyra` `-m` A|B|C|D|u|r|d|l [`-p` INT] [`-t` CRITERIA] 
 `i3fyra` `-s` A|B|C|D  
 `i3fyra` `-z` [ABCD]  
 `i3fyra` `-a`  
@@ -118,7 +118,7 @@ Show target container. If it doesn't exist, it
 will be created and current window will be put  
 in it. If it is visible, nothing happens.  
 
-`-m` A|B|C|D|u|r|d|l [`-p` INT]  
+`-m` A|B|C|D|u|r|d|l [`-p` INT] [`-t` CRITERIA]   
 Moves current window to target container, either 
 defined by it's name or it's position relative 
 to the current container with a direction: 
@@ -134,6 +134,16 @@ with the `-p` option.
 Example: `i3fyra -p 30 -m r`  
 Will move current window 30 pixels to the right, 
 if it is floating.
+
+`-t` CRITERIA
+Criteria is a string passed to i3list to use a 
+different target then active window.
+
+Example:
+`$ i3fyra -m B -t "-i sublime_text"`  
+this will target the first found window with the 
+instance name *sublime_text*. See i3list(1), for
+all available options.  
 
 `-p` *INT*  
 Distance in pixels to move a floating window. 
