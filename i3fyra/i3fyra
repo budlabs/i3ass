@@ -609,8 +609,7 @@ familyhide(){
 }
 
 printinfo(){
-about='
-`i3fyra` - An advanced simple gridbased tiling layout for i3wm. 
+about='`i3fyra` - An advanced simple gridbased tiling layout for i3wm.
 
 SYNOPSIS
 --------
@@ -752,7 +751,7 @@ Criteria is a string passed to i3list to use a
 different target then active window.
 
 Example:
-`$ i3fyra -m B -t '-i sublime_text'`  
+`$ i3fyra -m B -t "-i sublime_text"`  
 this will target the first found window with the 
 instance name *sublime_text*. See i3list(1), for
 all available options.  
@@ -846,6 +845,7 @@ i3(1), i3list(1), i3gw(1), i3var(1), i3viswiz(1), i3flip(1)
 
 
 if [[ $1 = md ]]; then
+  echo -n "# "
   printinfo m
   exit
 elif [[ $1 = man ]]; then
