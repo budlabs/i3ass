@@ -52,11 +52,12 @@ main(){
     i3-msg -q focus $dir
 
   else
+    trgwin="${trgwin#* }"
     [[ ! $trgwin =~ ^[0-9]*$ ]] && [[ -n $dir ]] \
       && ((gapsz+=75)) && trgwin="$(listvisible | head -1)"
 
     [[ $trgwin =~ ^[0-9]*$ ]] && [[ -n $dir ]] \
-      && i3-msg "[con_id=$trgwin]" focus
+      && i3-msg -q "[con_id=$trgwin]" focus
   fi
   
 }
