@@ -55,6 +55,10 @@ Execute a script with the `-h` flag to display help about the command. There are
 
 ## updates
 
+### v.0.1.66
+
+Added error message to install.sh, if the command is not valid.
+
 ### v.0.1.65 - new stuff
 
 Workspace name is added to the [i3list](https://github.com/budRich/i3ass/tree/master/i3list) output (i3list[WAN] and i3list[TAN]), these are used in i3run when a window is summoned. Summoning to a number created an new workspace if it had a name.  
