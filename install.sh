@@ -18,12 +18,13 @@ main(){
            "$NAME - version: $VERSION" \
            "updated: $UPDATED by $AUTHOR"
          exit ;;
-      h|*) printinfo && exit ;;
+      h) printinfo && exit ;;
+      *) printinfo && ERX "Not a valid command: $0 $@" ;;
     esac
   done
 
   [[ ${THIS_DIR##*/} != i3ass ]] \
-    && XERR 420 "install.sh is not in i3ass folder"
+    && ERX "install.sh is not in i3ass folder"
 
   ((QUIET==1)) \
     && link_scripts "$TARGET_DIRECTORY" \
@@ -75,7 +76,7 @@ interactive_installer(){
   INT_SELECT=${INT_SELECT:-${#OPTIONS[@]}}
 
   { ((INT_SELECT < 1)) || ((INT_SELECT > ${#OPTIONS[@]})) ;} \
-    && XERR "$INT_SELECT is not a valid selection."
+    && ERX "$INT_SELECT is not a valid selection."
 
   echo
   case $INT_SELECT in
@@ -117,7 +118,7 @@ interactive_installer(){
           "Make sure that ${TARGET_DIRECTORY} is in the" \
           "PATH environment variable." \
           " "
-      } || XERR "NO approval, NO installation."
+      } || ERX "NO approval, NO installation."
     ;;
 
     4 ) # Uninstall.
@@ -143,13 +144,13 @@ link_scripts() {
   TARGET_DIRECTORY="${TARGET_DIRECTORY/'~'/$HOME}"
 
   [[ -z "$TARGET_DIRECTORY" ]] \
-    && XERR 999 "NO directory, NO installation."
+    && ERX "NO directory, NO installation."
 
   if [[ ! -d "$TARGET_DIRECTORY" ]]; then
     [[ -e "$TARGET_DIRECTORY" ]] \
-      && XERR 555 "[$TARGET_DIRECTORY] exists, but is not a dir"
+      && ERX "[$TARGET_DIRECTORY] exists, but is not a dir"
     mkdir -p "$TARGET_DIRECTORY" \
-      || XERR "mkdir [$TARGET_DIRECTORY] failed"
+      || ERX "mkdir [$TARGET_DIRECTORY] failed"
   fi
 
   for s in ${THIS_DIR}/*; do
@@ -164,60 +165,7 @@ link_scripts() {
   done
 }
 
-# Error functions borrowed from:
-# https://github.com/terminalforlife
-XERR(){ printf "ERROR: %s\n" "$1" 1>&2; exit 1; }
-ERR(){ printf "[L%0.4d] ERROR: %s\n" "$1" "$2" 1>&2; }
-
 printinfo(){
-  case "$1" in
-    m ) printf '%s' "${about}" ;;
-    
-    f ) 
-      printf '%s' "${bouthead}"
-      printf '%s' "${about}"
-      printf '%s' "${boutfoot}"
-    ;;
-
-    ''|* ) 
-      printf '%s' "${about}" | awk '
-         BEGIN{ind=0}
-         $0~/^```/{
-           if(ind!="1"){ind="1"}
-           else{ind="0"}
-           print ""
-         }
-         $0!~/^```/{
-           gsub("[`*]","",$0)
-           if(ind=="1"){$0="   " $0}
-           print $0
-         }
-       '
-    ;;
-  esac
-}
-
-bouthead="
-${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
-=======================================
-
-NAME
-----
-"
-
-boutfoot="
-AUTHOR
-------
-
-${AUTHOR} <${CONTACT}>
-<https://budrich.github.io>
-
-SEE ALSO
---------
-
-i3gw(1)
-"
-
 about='
 `install.sh` - i3ass - installation script
 
@@ -253,6 +201,56 @@ DEPENDENCIES
 
 - i3ass
 '
+bouthead="
+${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3gw(1)
+"
+
+  case "$1" in
+    m ) printf '%s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
+
+ERR(){ >&2 echo "[WARNING]" $@ ; }
+ERX(){ >&2 echo "[ERROR]" $@ && exit 1 ; }
 
 if [ "$1" = "md" ]; then
   printinfo m
