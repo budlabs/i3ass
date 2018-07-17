@@ -55,6 +55,8 @@ Execute a script with the `-h` flag to display help about the command. There are
 
 ## updates
 
+changed output of i3visiz again, control variables are now all on the first line. Also added workspace dimensions for better (not yet perfect) multimonitor support, modified i3fyra 'move' command to work with the new changes.
+
 ### v.0.1.66
 
 Added error message to install.sh, if the command is not valid.
