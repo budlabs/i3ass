@@ -8,7 +8,7 @@ CREATED="2017-01-11"
 UPDATED="2018-06-30"
 
 main(){
-  while getopts :vh option
+  while getopts vh option
   do
     case "${option}" in
       v) printf '%s\n' \
@@ -19,8 +19,6 @@ main(){
       *) printinfo && ERX "not a valid command $0 $*" ;;
     esac
   done
-
-  [[ -z $1 ]] && XER "ERROR: usage: i3gw MARK"
 
   w=$(i3-msg open | sed 's/[^0-9]//g')
   i3-msg -q "[con_id=$w]" floating disable, mark "$1"
