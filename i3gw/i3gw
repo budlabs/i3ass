@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 NAME="i3gw"
 VERSION="0.142"
@@ -20,7 +20,10 @@ main(){
     esac
   done
 
-  w=$(i3-msg open | sed 's/[^0-9]//g')
+  # w=$(i3-msg open | sed 's/[^0-9]//g')
+  w="$(i3-msg open)"
+  w="${w//[^0-9]/}"
+
   i3-msg -q "[con_id=$w]" floating disable, mark "$1"
 }
 
