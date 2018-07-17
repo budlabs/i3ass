@@ -319,23 +319,19 @@ containerhide(){
     && i3var set "i34F${tfam}" "$trg"
 
   # note splits
-  [[ -n ${i3list[SAB]} ]] && ((i3list[SAB] != i3list[WSW])) && {
-    ((${i3list[S${tfam}]} != i3list[WSW]/2)) \
-      && $((${i3list[S${tfam}]}-=1))
+  [[ -n ${i3list[SAB]} ]] \
+    && ((i3list[SAB] != i3list[WSW])) \
+    && ((${i3list[SAB]} != i3list[WSW]/2)) && {
+        i3var set "i34SAB" "${i3list[SAB]}"
+        i3list[MAB]=${i3list[SAB]}
+      }
 
-    i3var set "i34SAB" "${i3list[SAB]}"
-    i3list[MAB]=${i3list[SAB]}
-  }
-
-  
-
-  [[ -n ${i3list[S${tfam}]} ]] && ((${i3list[S${tfam}]} != i3list[WSH])) && {
-    ((${i3list[S${tfam}]} != i3list[WSH]/2)) \
-      && $((${i3list[S${tfam}]}-=1))
-
-    i3var set "i34S${tfam}" "${i3list[S${tfam}]}" 
-    i3list[M${tfam}]=${i3list[S${tfam}]}
-  }
+  [[ -n ${i3list[S${tfam}]} ]] \
+    && ((${i3list[S${tfam}]} != i3list[WSH])) \
+    && ((${i3list[S${tfam}]} != i3list[WSH]/2)) && {
+        i3var set "i34S${tfam}" "${i3list[S${tfam}]}" 
+        i3list[M${tfam}]=${i3list[S${tfam}]}
+      }
 
 }
 
@@ -388,11 +384,9 @@ windowmove(){
   # get visible info from i3viswiz
   # trgcon is the container currently at target pos
   # trgpar is the parent of trgcon (A|B|C|D)
-  eval "$(i3viswiz -p "$dir" | awk '
-    NR==1 {print "trgcon="$NF}
-    NR==2 {print "wall="$NF}
-    NR==3 {print "trgpar="$NF}
-  ')"
+
+  i3viswiz -p "$dir" | head -1
+  eval "$(i3viswiz -p "$dir" | head -1)"
 
   if [[ $wall != none ]]; then
 
@@ -431,6 +425,7 @@ windowmove(){
   else
     # trgpar is visible, if layout is tabbed just move it
     if [[ ${i3list[C${trgpar}L]} =~ tabbed|stacked ]]; then
+      
       i3-msg -q "[con_id=${i3list[TWC]}]" \
         focus, floating disable, \
         move to mark "i34${trgpar}", focus

@@ -38,9 +38,9 @@ main(){
     exit
   fi
 
-  trgwin=$(echo -e "$trgwin" | head -1)
+  eval "$(echo -e "$trgwin" | head -1)"
 
-  if [[ $trgwin = floating ]] && [[ -n $dir ]]; then
+  if [[ $trgcon = floating ]] && [[ -n $dir ]]; then
 
     case $dir in
       l ) dir=left   ;;
@@ -52,12 +52,11 @@ main(){
     i3-msg -q focus $dir
 
   else
-    trgwin="${trgwin#* }"
-    [[ ! $trgwin =~ ^[0-9]*$ ]] && [[ -n $dir ]] \
-      && ((gapsz+=75)) && trgwin="$(listvisible | head -1)"
+    [[ -z $trgcon ]] && [[ -n $dir ]] \
+      && ((gapsz+=75)) && eval "$(listvisible | head -1)"
 
-    [[ $trgwin =~ ^[0-9]*$ ]] && [[ -n $dir ]] \
-      && i3-msg -q "[con_id=$trgwin]" focus
+    [[ -n $trgcon ]] && [[ -n $dir ]] \
+      && i3-msg -q "[con_id=$trgcon]" focus
   fi
   
 }
@@ -113,9 +112,15 @@ listvisible(){
     $1=="\"type\"" && $2=="\"workspace\"" {wsdchk="1"}
     wsdchk=="1" && $1=="\"width\""  {dim["w"]=$2}
     wsdchk=="1" && $1=="\"height\"" {gsub("}","",$2);dim["h"]=$2;wsdchk="2"}
+
+    wsdchk=="1" && $(NF-1) ~ /"x"/ {dim["x"]=$NF}
+    wsdchk=="1" && $(NF-1) ~ /"y"/ {dim["y"]=$NF}
+
     wsdchk=="2" && $1=="\"num\"" {
       dim[$2]["w"]=dim["w"]
       dim[$2]["h"]=dim["h"]
+      dim[$2]["x"]=dim["x"]
+      dim[$2]["y"]=dim["y"]
       wsdchk="0"
     }
 
@@ -199,10 +204,16 @@ listvisible(){
       listvis(awsid)
       wall="none"
 
+      wsh=int(dim[aws]["h"])
+      wsw=int(dim[aws]["w"])
+      wsx=int(dim[aws]["x"])
+      wsy=int(dim[aws]["y"])
+
       if (dir=="r"){
         trgx=ac[act]["x"]+ac[act]["w"]+gapsz
         trgy=ac[act]["y"]+ac[act]["h"]/2
-        if(trgx>dim[aws]["w"]){
+
+        if(trgx>(wsw+wsx)){
           trgx=gapsz
           wall="right"
         }
@@ -211,7 +222,7 @@ listvisible(){
       if (dir=="l"){
         trgx=ac[act]["x"]-gapsz
         trgy=ac[act]["y"]+ac[act]["h"]/2
-        if(trgx<0){
+        if(trgx<wsx){
           trgx=dim[aws]["w"]-gapsz
           wall="left"
         }
@@ -220,7 +231,7 @@ listvisible(){
       if (dir=="u"){
         trgx=ac[act]["x"]+ac[act]["w"]/2
         trgy=ac[act]["y"]-gapsz
-        if(trgy<0){
+        if(trgy<wsy){
           trgy=dim[aws]["h"]-gapsz
           wall="up"
         }
@@ -229,7 +240,8 @@ listvisible(){
       if (dir=="d"){
         trgx=ac[act]["x"]+ac[act]["w"]/2
         trgy=ac[act]["y"]+ac[act]["h"]+gapsz
-        if(trgy>dim[aws]["h"]){
+        
+        if(trgy>(wsh+wsy)){
           trgy=gapsz
           wall="down"
         }
@@ -250,8 +262,8 @@ listvisible(){
             {hity++;hit++}
 
           if (hit==2){
-            tcon=ac[w]["par"]
-            print "target_con_id: " w
+            tpar=ac[w]["par"]
+            tcon=w
             break
           }
 
@@ -259,18 +271,15 @@ listvisible(){
         }
       } 
       else
-        print actfloat
+        tpar="floating"
 
-
-      # tf
-      # ttl
-      # wid
-      # []
-      # ins
-      # cls
-
-      print "tx: " trgx " ty: " trgy " wall: " wall
-      if (opret=="p"){print "parent: " tcon}
+      print \
+        "trgcon=" tcon, "trgx=" trgx, "trgy=" trgy, \
+        "wall=" wall, "trgpar=" tpar, \
+        "sx=" dim[aws]["x"], \
+        "sy=" dim[aws]["y"], \
+        "sw=" dim[aws]["w"], \
+        "sh=" dim[aws]["h"] 
       for (w in avis) {
         if(w==act)
           printf "* "
@@ -292,7 +301,6 @@ listvisible(){
         gsub("[\"]","",tmpop)
         print tmpop 
       }
-
     }
   '
 }
