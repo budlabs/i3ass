@@ -42,6 +42,8 @@ printlist(){
       desc["WSF"]="workspace i3fyra number"
       desc["WSW"]="workspace i3fyra width"
       desc["WSH"]="workspace i3fyra height"
+      desc["WSX"]="workspace i3fyra x position"
+      desc["WSY"]="workspace i3fyra y position"
       desc["WSA"]="workspace number active"
       desc["AWF"]="active window floating"
       desc["AWP"]="active window parent"
@@ -102,8 +104,10 @@ printlist(){
       desc["TWB"]="Target window titlebar height"
       desc["WAW"]="Active workspace width"
       desc["WAH"]="Active workspace height"
+      desc["WAX"]="Active workspace x position"
+      desc["WAY"]="Active workspace y position"
       desc["WAN"]="Active workspace name"
-      desc["WAN"]="Target workspace name"
+      desc["WTN"]="Target workspace name"
 
 
       defaults["LD1"]="A"
@@ -130,6 +134,8 @@ printlist(){
       if (wsdchk=="2") {
         dim[curws]["w"]=dim["w"]
         dim[curws]["h"]=dim["h"]
+        dim[curws]["x"]=dim["x"]
+        dim[curws]["y"]=dim["y"]
         wsdchk="0"
       }
     }
@@ -164,6 +170,8 @@ printlist(){
       workspace["WAN"]=curwsnam
       workspace["WAW"]=dim[curws]["w"]
       workspace["WAH"]=dim[curws]["h"]
+      workspace["WAX"]=dim[curws]["x"]
+      workspace["WAY"]=dim[curws]["y"]
       act=1
     }
 
@@ -176,7 +184,8 @@ printlist(){
     $1=="\"type\"" && $2=="\"workspace\"" {wsdchk="1"}
     wsdchk=="1" && $1=="\"width\""  {dim["w"]=$2}
     wsdchk=="1" && $1=="\"height\"" {gsub("}","",$2);dim["h"]=$2;wsdchk="2"}
-
+    wsdchk=="1" && $(NF-1) ~ /"x"/ {dim["x"]=$NF}
+    wsdchk=="1" && $(NF-1) ~ /"y"/ {dim["y"]=$NF}
     $1=="\"floating\"" {
       if(curcid == active["AWC"] && act != 2){
         active["AWF"]=0
@@ -353,6 +362,8 @@ printlist(){
       if (workspace["WSF"]){
         workspace["WSW"]=dim[workspace["WSF"]]["w"]
         workspace["WSH"]=dim[workspace["WSF"]]["h"]
+        workspace["WSX"]=dim[workspace["WSF"]]["x"]
+        workspace["WSY"]=dim[workspace["WSF"]]["y"]
 
         for(k in container){
           printf(stringformat, k, container[k], desc[k])

@@ -30,16 +30,18 @@ main(){
   if [[ $action = set ]]; then
     if [[ -n $trgval ]]; then
       if [[ -z $trgsts ]]; then
-        i3gw "${trgnam}=${trgval}" 
-        i3-msg -q "[con_mark=${trgnam}=${trgval}]" move scratchpad
+        i3gw "${trgnam}=${trgval}"
+        i3-msg -q "[con_mark=${trgnam}]" move scratchpad
       else
-        i3-msg -q "[con_mark=${trgnam}]" move scratchpad, mark "${trgnam}=${trgval}"
+        i3-msg -q "[con_mark=${trgnam}]", mark "${trgnam}=${trgval}"
       fi
     else
       i3-msg -q "[con_mark=${trgnam}]" kill
     fi
   else
-    echo "${trgsts#*=}"
+    [[ -n $trgsts ]] \
+      && echo "${trgsts#*=}" \
+      || exit 1
   fi
 }
 
