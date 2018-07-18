@@ -375,8 +375,9 @@ windowmove(){
   # if window is floating, move normally
   ((i3list[AWF]==1)) && {
 
-    i3-msg -q "[con_id=${i3list[TWC]}]" \
-      move "$ldir" "${speed:-10}" px
+    # i3-msg -q "[con_id=${i3list[TWC]}]" \
+    #   move "$ldir" "${speed:-10}" px
+    i3Kornhe m $ldir
 
     exit
   }

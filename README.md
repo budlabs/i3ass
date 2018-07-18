@@ -51,9 +51,18 @@ Execute a script with the `-h` flag to display help about the command. There are
 |[i3flip](https://github.com/budRich/i3ass/tree/master/i3flip)   |Tabswitching done right
 |[i3viswiz](https://github.com/budRich/i3ass/tree/master/i3viswiz)   |Focus switching and visible-window-info
 |[i3var](https://github.com/budRich/i3ass/tree/master/i3var)    |Set or get a i3 variable
+|[i3Kornhe](https://github.com/budRich/i3ass/tree/master/i3Kornhe)    |move and resize windows gracefully
 
 
 ## updates
+
+### v.0.1.7
+
+Added [i3Kornhe](https://github.com/budRich/i3ass/tree/master/i3Kornhe) 
+
+changed output of i3visiz again, control variables are now all on the first line. Also added workspace dimensions for better (not yet perfect) multimonitor support, modified i3fyra 'move' command to work with the new changes.
+
+Added workspace position to i3list output.
 
 ### v.0.1.66
 

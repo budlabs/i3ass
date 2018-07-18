@@ -1,81 +1,37 @@
-#!/bin/sh
+#!/bin/bash
 
 NAME="i3gw"
-VERSION="0.128"
+VERSION="0.142"
 AUTHOR="budRich"
 CONTACT='robstenklippa@gmail.com'
 CREATED="2017-01-11"
 UPDATED="2018-06-30"
 
 main(){
-  while getopts :vh option
+  while getopts vh option
   do
     case "${option}" in
       v) printf '%s\n' \
            "$NAME - version: $VERSION" \
            "updated: $UPDATED by $AUTHOR"
          exit ;;
-      h|*) printinfo && exit ;;
+      h) printinfo && exit ;;
+      *) printinfo && ERX "not a valid command $0 $*" ;;
     esac
   done
 
-  name=${1:?"usage: i3gw MARK, you didn't specify a mark."}
+  # w=$(i3-msg open | sed 's/[^0-9]//g')
+  w="$(i3-msg open)"
+  w="${w//[^0-9]/}"
 
-  w=$(i3-msg open | awk -F':' '{gsub("[}]]","",$3);print $3}')
-  i3-msg -q "[con_id=${w}]" floating disable, mark "$name"
+  i3-msg -q "[con_id=$w]" floating disable, mark "$1"
 }
+
+ERX(){ >&2 echo $@ && exit 1 ;}
 
 printinfo(){
-  case "$1" in
-    m ) printf '%s' "${about}" ;;
-    
-    f ) 
-      printf '%s' "${bouthead}"
-      printf '%s' "${about}"
-      printf '%s' "${boutfoot}"
-    ;;
-
-    ''|* ) 
-      printf '%s' "${about}" | awk '
-         BEGIN{ind=0}
-         $0~/^```/{
-           if(ind!="1"){ind="1"}
-           else{ind="0"}
-           print ""
-         }
-         $0!~/^```/{
-           gsub("[`*]","",$0)
-           if(ind=="1"){$0="   " $0}
-           print $0
-         }
-       '
-    ;;
-  esac
-}
-
-bouthead="
-${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
-=======================================
-
-NAME
-----
-"
-
-boutfoot="
-AUTHOR
-------
-
-${AUTHOR} <${CONTACT}>
-<https://budrich.github.io>
-
-SEE ALSO
---------
-
-i3(1)
-"
-
-about='
-`i3gw` - A ghost window wrapper for i3wm.
+about=\
+'`i3gw` - A ghost window wrapper for i3wm.
 
 SYNOPSIS
 --------
@@ -128,6 +84,53 @@ DEPENDENCIES
 
 i3wm
 '
+
+bouthead="
+${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${AUTHOR} <${CONTACT}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3(1)
+"
+  case "$1" in
+    m ) printf '# %s' "${about}" ;;
+    
+    f ) 
+      printf '%s' "${bouthead}"
+      printf '%s' "${about}"
+      printf '%s' "${boutfoot}"
+    ;;
+
+    ''|* ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
 
 if [ "$1" = "md" ]; then
   printinfo m
