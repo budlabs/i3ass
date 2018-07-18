@@ -232,13 +232,6 @@ bindsym Mod4+Down      exec --no-startup-id i3Kornhe move -p 0 down
 bindsym Mod4+Up        exec --no-startup-id i3Kornhe move -p 0 up
 bindsym Mod4+Right     exec --no-startup-id i3Kornhe move -p 0 right
 
-# group C
-# use the instead of group B when using i3fyra
-# bindsym Mod4+Left    exec --no-startup-id i3fyra -m l 
-# bindsym Mod4+Right   exec --no-startup-id i3fyra -m r 
-# bindsym Mod4+Down    exec --no-startup-id i3fyra -m d 
-# bindsym Mod4+Up      exec --no-startup-id i3fyra -m u 
-
 ...
 
 mode "sizemode" {
@@ -281,7 +274,9 @@ mode "sizemode" {
 
 As you can see there are a lot of keybinding definitions,
 but keep in mind, without `i3Kornhe` you would need,
-one modes for every direction and action (at least 8).
+one mode for every direction and action (at least 8).
+And one reason i made this script was unclutter and
+shrink my own config file.
 
 A tip is also to use variables in the i3config:  
 ``` text
@@ -298,8 +293,8 @@ $super+Right $i3Kornhe m -p 0 r
 ```
 
 *Notice that the first character of the mode/direction
-is enough. This shorter way when the commands are
-referenced in the rest of this documentation.*
+is enough. This shorter way will be used when the 
+commands are referenced in the rest of this documentation.*
 
 Let us go through the processes that will happen
 when the different actions are executed.
@@ -307,7 +302,9 @@ when the different actions are executed.
 *group B:*  
 `$super+Left $i3Kornhe m -p 0 l` 
 
-This will make i3Kornhe to enter move mode.
+This will make i3Kornhe to enter **move mode**. (*it
+will actually activate the i3 mode sizemode, move is
+a pseudo mode that only i3Korhne knows*)
 First thing i3Kornhe does is to store the current
 title_format of the window (by using `i3var set`).
 
