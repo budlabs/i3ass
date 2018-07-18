@@ -8,13 +8,14 @@ CREATED="2017-10-06"
 UPDATED="2018-06-30"
 
 main(){
-  while getopts :c:i:n:d:vh option; do
+  while getopts :c:i:n:d:vhm: option; do
     case "${option}" in
 
       i) crit="\"instance\"" srch="${OPTARG}" ;;
       c) crit="\"class\""    srch="${OPTARG}" ;;
       n) crit="\"id\""       srch="${OPTARG}" ;;
       d) crit="\"window\""   srch="${OPTARG}" ;;
+      m) crit="\"marks\""    srch="${OPTARG}" ;;
 
       v) printf '%s\n' \
            "$NAME - version: $VERSION" \
