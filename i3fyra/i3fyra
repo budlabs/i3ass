@@ -239,7 +239,6 @@ applysplits(){
       }
     }')"
 
-    # i3var set "i34S${tsn}" "${tsv}"
     i3list[S${tsn}]=${tsv}
     
   done

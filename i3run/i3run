@@ -48,7 +48,7 @@ main(){
 }
 
 launchcommand(){
-  # notify-send "$command"
+
   eval "${command}" > /dev/null 2>&1 & 
 
   [[ -n $oldname ]] && {
@@ -65,7 +65,6 @@ launchcommand(){
   i3list[TWC]=$(i3get -y "${acri[@]}")
   
   ((i3list[TWF] == 1)) && ((followmouse == 1)) && {
-    dunstify -u critical "run: ${acri[@]}"
     eval "$(i3list "${acri[@]}")"
     sendtomouse
   }
