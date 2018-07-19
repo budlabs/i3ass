@@ -32,16 +32,21 @@ main(){
       if [[ -z $trgsts ]]; then
         i3gw "${trgnam}=${trgval}"
         i3-msg -q "[con_mark=${trgnam}]" move scratchpad
+      elif [[ $trgval = X ]]; then
+        i3-msg -q "[con_mark=${trgnam}]" kill
       else
         i3-msg -q "[con_mark=${trgnam}]", mark "${trgnam}=${trgval}"
       fi
     else
-      i3-msg -q "[con_mark=${trgnam}]" kill
+      i3-msg -q "[con_mark=${trgnam}]", mark "${trgnam}=X"
     fi
   else
-    [[ -n $trgsts ]] \
-      && echo "${trgsts#*=}" \
-      || exit 1
+    trgsts="${trgsts#*=}"
+    if [[ -z $trgsts ]] || [[ $trgsts = X ]]; then
+      exit 1
+    else
+      echo "${trgsts}"
+    fi
   fi
 }
 

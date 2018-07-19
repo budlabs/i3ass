@@ -71,9 +71,19 @@ main(){
   done
 
   result=$(getwindow)
-  [ $synk = 1 ] && \
-    while [ -z "$result" ]; do sleep 0.1; result=$(getwindow); done
-  [ -n "$result" ] && printf '%s\n' "${result}"
+
+  [ $synk = 1 ] && {
+    # timeout after 10 seconds
+    for ((i=0;i<100;i++)); do 
+      sleep 0.1
+      result=$(getwindow)
+      [ -n "$result" ] && break
+    done
+  }
+
+  [ -n "$result" ] \
+    && printf '%s\n' "${result}" \
+    || exit 1
 }
 
 printinfo(){

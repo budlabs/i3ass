@@ -18,11 +18,12 @@ main(){
 
   summon=0
 
-  while getopts :c:i:t:e:l:gsvhmx: option; do
+  while getopts :c:i:t:e:l:gsvhmx:n:t: option; do
     case "${option}" in
       i) acri=("-i" "${OPTARG}") ;;
       c) acri=("-c" "${OPTARG}") ;;
       t) acri=("-t" "${OPTARG}") ;;
+      n) acri=("-n" "${OPTARG}") ;;
       e) command="${OPTARG}"     ;;
       g) donthide=1              ;;
       s) summon=1                ;;
@@ -47,7 +48,7 @@ main(){
 }
 
 launchcommand(){
-  # notify-send "$command"
+
   eval "${command}" > /dev/null 2>&1 & 
 
   [[ -n $oldname ]] && {

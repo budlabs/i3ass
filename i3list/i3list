@@ -8,13 +8,16 @@ CREATED="2017-10-06"
 UPDATED="2018-06-30"
 
 main(){
-  while getopts :c:i:n:d:vh option; do
+  while getopts :c:i:n:d:vhm:t:n: option; do
     case "${option}" in
 
       i) crit="\"instance\"" srch="${OPTARG}" ;;
       c) crit="\"class\""    srch="${OPTARG}" ;;
       n) crit="\"id\""       srch="${OPTARG}" ;;
       d) crit="\"window\""   srch="${OPTARG}" ;;
+      m) crit="\"marks\""    srch="${OPTARG}" ;;
+      t) crit="\"title\""    srch="${OPTARG}" ;;
+      n) crit="\"id\""       srch="${OPTARG}" ;;
 
       v) printf '%s\n' \
            "$NAME - version: $VERSION" \
@@ -311,15 +314,15 @@ printlist(){
         workspace["WSF"]="chk"
       }
 
-      if($2~"i34SAB"){
+      if($2~"i34MAB"){
         split($2,asplt,"=")
         splits["MAB"]=asplt[2]
       }
-      if($2~"i34SAC"){
+      if($2~"i34MAC"){
         split($2,asplt,"=")
         splits["MAC"]=asplt[2]
       }
-      if($2~"i34SBD"){
+      if($2~"i34MBD"){
         split($2,asplt,"=")
         splits["MBD"]=asplt[2]
       }
