@@ -176,45 +176,33 @@ containershow(){
         fi
 
         # swap - what to swap
-        swap[0]=0
+        swap=()
         [[ $tdest = i34XAB ]] && [[ $sib =~ A|C ]] \
           && swap=("X$tfam" "X${i3list[LAL]/$tfam/}")
 
         [[ $tdest = i34X${tfam} ]] && [[ $sib =~ C|D ]] \
           && swap=("$trg" "${tfam/$trg/}")
 
-        [[ ${swap[0]} != 0 ]] \
-          && i3-msg -q "[con_mark=i34${swap[0]}]" \
-             swap container with mark i34${swap[1]}
-
-
         if [[ $tdest = i34XAB ]]; then
           tspl=${i3list[MAB]}  # stored split
           tdim=${i3list[WSW]}  # workspace width
-          sdir=width           # resize how
-          tmrk=i34XAC          # container to resize
+          tmrk=AB
         else
-          tspl=${i3list[M${tfam}]} 
+          tspl=${i3list[M${tfam}]}
           tdim=${i3list[WSH]}      
-          sdir=height              
-          tmrk=i34${tfam:0:1}      
+          tmrk=$tfam 
         fi
 
-        if [[ -n $tspl ]] || [[ $tspl != "$tdim" ]]; then
-          eval "$(echo "$tspl" "$tdim" "$sdir" "$tmrk" | awk '{
-             sdir=$3; tmrk=$4
-             if ($1<0) {$1=$1+$2}
-             tperc=$1/$2*100
-             if (tperc>50) {sperc=tperc-50;movement="grow"}
-             if (tperc<50) {sperc=50-tperc;movement="shrink"}
-             if (tperc != 50){
-               printf "i3-msg -q \"[con_mark=" tmrk "]\" "
-               printf "resize " movement " " sdir " "
-               printf "%d px or %d ppt", sperc, sperc 
-             }
-            
-          }')"
-        fi
+        [[ ${#swap[@]} -gt 0 ]] && {
+          i3-msg -q "[con_mark=i34${swap[0]}]" \
+            swap container with mark i34${swap[1]}
+        }
+
+        [[ -n $tspl ]] && {
+          i3list[S${tmrk}]=$((tdim/2))
+          eval "applysplits \"$tmrk=$tspl\""
+        }
+       
       fi
 
       i3list[LVI]+=$trg
@@ -236,12 +224,12 @@ applysplits(){
       && par=${i3list[WSW]} dir=width mrk=i34XAC \
       || par=${i3list[WSH]} dir=height mrk=i34${tsn:0:1}
 
-    ((tsv<0)) && tsv=$((tsv*-1)) tsv=$((par-tsv))
+    ((tsv<0)) && tsv=$((par-(tsv*-1)))
 
-    eval "$(echo "$tsv" "$par" "$osv" "$dir" "$mrk" | awk '{
+    ((tsv!=par)) && eval "$(echo "$tsv" "$par" "$osv" "$dir" "$mrk" | awk '{
       tsp=$1/$2*100
       osp=$3/$2*100
-
+      
       if (tsp!=osp) {
         if (tsp>osp) {dirv="grow"; csp=tsp-osp}
         else         {dirv="shrink"; csp=osp-tsp}
@@ -251,7 +239,8 @@ applysplits(){
       }
     }')"
 
-    i3var set "i34S${tsn}" "${tsv}"
+    # i3var set "i34S${tsn}" "${tsv}"
+    i3list[S${tsn}]=${tsv}
     
   done
 }
@@ -294,14 +283,13 @@ togglefloat(){
 }
 
 containerhide(){
-  local trg tfam famchk tfammem
+  local trg tfam famchk
 
   trg=$1
 
   [[ ${#trg} -gt 1 ]] && multihide "$trg" && return
 
   [[ $trg =~ A|C ]] && tfam=AC || tfam=BD
-  tfammem=${i3list[M$tfam]}
 
   i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
     move absolute position 0 px 0 px, \
@@ -313,25 +301,19 @@ containerhide(){
   i3list[LVI]=${i3list[LVI]:-X}
 
   # if trg is last of it's fam, note it.
-  famchk=${tfam/$trg/}
-
-  [[ ! $famchk =~ [${i3list[LVI]}] ]] \
+  [[ ! ${tfam/$trg/} =~ [${i3list[LVI]}] ]] \
     && i3var set "i34F${tfam}" "$trg"
 
   # note splits
-  [[ -n ${i3list[SAB]} ]] \
-    && ((i3list[SAB] != i3list[WSW])) \
-    && ((${i3list[SAB]} != i3list[WSW]/2)) && {
-        i3var set "i34SAB" "${i3list[SAB]}"
-        i3list[MAB]=${i3list[SAB]}
-      }
+  [[ -n ${i3list[SAB]} ]] && ((i3list[SAB]!=i3list[WSW])) && {
+    i3var set "i34MAB" "${i3list[SAB]}"
+    i3list[MAB]=${i3list[SAB]}
+  }
 
-  [[ -n ${i3list[S${tfam}]} ]] \
-    && ((${i3list[S${tfam}]} != i3list[WSH])) \
-    && ((${i3list[S${tfam}]} != i3list[WSH]/2)) && {
-        i3var set "i34S${tfam}" "${i3list[S${tfam}]}" 
-        i3list[M${tfam}]=${i3list[S${tfam}]}
-      }
+  [[ -n ${i3list[S${tfam}]} ]] && ((i3list[S${tfam}]!=i3list[WSH])) && {
+    i3var set "i34M${tfam}" "${i3list[S${tfam}]}" 
+    i3list[M${tfam}]=${i3list[S${tfam}]}
+  }
 
 }
 
@@ -386,7 +368,6 @@ windowmove(){
   # trgcon is the container currently at target pos
   # trgpar is the parent of trgcon (A|B|C|D)
 
-  i3viswiz -p "$dir" | head -1
   eval "$(i3viswiz -p "$dir" | head -1)"
 
   if [[ $wall != none ]]; then
@@ -408,15 +389,16 @@ windowmove(){
     # family toggling
     elif [[ $dir =~ l|r ]]; then
       # if relatives is visible, hide 'em
-      [[ ${i3list[LVI]} =~ [${i3list[AFO]}] ]] \
-        && familyhide "${i3list[AFO]}" || {
+      if [[ ${i3list[LVI]} =~ [${i3list[AFO]}] ]]; then
+        familyhide "${i3list[AFO]}"
+      else
           # else show container, add to swap
           familyshow "${i3list[AFO]}"
           {
             { [[ $dir = l ]] && [[ ${i3list[AFO]} = AC ]] ; } || \
             { [[ $dir = r ]] && [[ ${i3list[AFO]} = BD ]] ; }
           } && toswap=("i34X${i3list[AFO]}" "i34X${i3list[AFF]}")
-        }
+      fi
     fi
     
     [[ -n ${toswap[1]} ]] \
@@ -481,35 +463,19 @@ swapmeet(){
   # if targets are families, remark all containers 
   # with their twins
   if [[ $m1 =~ X ]]; then
-    tspl="${i3list[MAB]}" tdim="${i3list[WSW]}"
-    sdir=width tmrk=i34XAC
+    tspl="${i3list[SAB]}" tdim="${i3list[WSW]}"
+    tmrk=AB
   else
-    [[ ${i3list[AFF]} = AC ]] \
-      && tspl="${i3list[MAC]}" \
-      || tspl="${i3list[MBD]}"
-    tdim=${i3list[WSH]} sdir=height tmrk=i34${i3list[AFF]:0:1}
+    tmrk="${i3list[AFF]}"
+    tspl="${i3list[S${tmrk}]}"
+    tdim="${i3list[WSH]}"
   fi
 
-  # invert split
-  if [[ -n $tspl ]] || ((tspl != tdim)); then
+  { [[ -n $tspl ]] || ((tspl != tdim)) ;} && {
+    # invert split
     tspl=$((tdim-tspl))
-
-    eval "$(echo "$tspl" "$tdim" "$tmrk" "$sdir" | awk '{
-      tperc=$1/$2*100
-      tmrk=$3
-      movement=$4
-      if (tperc>50)  {sperc=(tperc-50)*2;sdir="grow"}
-      if (tperc<50)  {sperc=(50-tperc)*2;sdir="shrink"}
-      if (tperc==50) {sperc=50}
-
-      if (sperc != 50) {
-        printf "i3-msg -q \"[con_mark=" tmrk "]\" "
-        printf "resize %s %s ", sdir, movement
-        printf "%d px or %d ppt", sperc, sperc
-      }
-
-    }')"
-  fi
+    eval "applysplits '$tmrk=$tspl'"
+  }
 
   # family swap, rename all existing containers with their twins
   if [[ $m1 =~ X ]]; then 
@@ -526,6 +492,8 @@ swapmeet(){
     for k in "${!acn[@]}"; do
       i3-msg -q "[con_mark=i34tmp${k}]" mark "i34${acn[$k]}"
     done
+    i3var set i3MAC ${i3list[MBD]}
+    i3var set i3MBD ${i3list[MAC]}
   else # swap within family, rename siblings
     for (( i = 0; i < ${#i3list[AFF]}; i++ )); do
       cur=${i3list[AFF]:$i:1}
@@ -541,6 +509,7 @@ swapmeet(){
       i3-msg -q "[con_mark=i34tmp${k}]" mark "i34${acn[$k]}"
     done
   fi
+
 }
 
 multihide(){
@@ -588,20 +557,9 @@ familyhide(){
   done
 
   i3var set "i34F${tfam}" "${famchk}"
+  i3var set "i34MAB" "${i3list[SAB]}"
+  i3var set "i34M${tfam}" "${i3list[S${tfam}]}"
 
-  [[ -n ${i3list[SAB]} ]] && \
-  ((i3list[SAB] != i3list[WSW])) && \
-  ((i3list[SAB] != i3list[WSW]/2)) && {
-    i3var set i34SAB "${i3list[SAB]}"
-    i3list[MAB]=${i3list[SAB]}
-  }
-
-  [[ -n ${i3list[S${tfam}]} ]] && \
-  ((${i3list[S${tfam}]} != i3list[WSH])) && \
-  ((${i3list[S${tfam}]} != i3list[WSH]/2)) && {
-    i3var set "i34S${tfam}" "${i3list[S${tfam}]}"
-    i3list[M${tfam}]=${i3list[S${tfam}]}
-  }
 }
 
 printinfo(){

@@ -18,7 +18,7 @@ main(){
 
   summon=0
 
-  while getopts :c:i:t:e:l:gsvhmx:n: option; do
+  while getopts :c:i:t:e:l:gsvhmx:n:t: option; do
     case "${option}" in
       i) acri=("-i" "${OPTARG}") ;;
       c) acri=("-c" "${OPTARG}") ;;
@@ -65,6 +65,7 @@ launchcommand(){
   i3list[TWC]=$(i3get -y "${acri[@]}")
   
   ((i3list[TWF] == 1)) && ((followmouse == 1)) && {
+    dunstify -u critical "run: ${acri[@]}"
     eval "$(i3list "${acri[@]}")"
     sendtomouse
   }
