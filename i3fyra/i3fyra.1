@@ -9,6 +9,7 @@
 
 .PP
 \fB\fCi3fyra\fR \fB\fC\-m\fR A|B|C|D|u|r|d|l [\fB\fC\-p\fR INT] [\fB\fC\-t\fR CRITERIA]
+.br
 \fB\fCi3fyra\fR \fB\fC\-s\fR A|B|C|D
 .br
 \fB\fCi3fyra\fR \fB\fC\-z\fR [ABCD]
@@ -150,26 +151,18 @@ Help, shows this info.
 \fB\fC\-a\fR
 .br
 Autolayout. If current window is tiled: floating
-.br
 enabled If window is floating, it will be put in
-.br
 a visible container. If there is no visible
-.br
 containers. The window will be placed in a
-.br
 hidden container. If no containers exist,
-.br
 container 'A'will be created and
-.br
 the window will be put there.
 
 .PP
 \fB\fC\-s\fR A|B|C|D
 .br
 Show target container. If it doesn't exist, it
-.br
 will be created and current window will be put
-.br
 in it. If it is visible, nothing happens.
 
 .PP
@@ -186,20 +179,22 @@ container(s) visibility is toggled. If current
 window is floating or not inside ABCD, normal
 movement is performed. Distance for moving
 floating windows with this action can be defined
-with the \fB\fC\-p\fR option.
+with the \fB\fC\-p\fR option. Example:
 .br
-Example: \fB\fCi3fyra \-p 30 \-m r\fR
+\fB\fC$ i3fyra \-p 30 \-m r\fR
 .br
 Will move current window 30 pixels to the right,
 if it is floating.
 
 .PP
 \fB\fC\-t\fR CRITERIA
+.br
 Criteria is a string passed to i3list to use a
 different target then active window.
 
 .PP
 Example:
+.br
 \fB\fC$ i3fyra \-m B \-t "\-i sublime\_text"\fR
 .br
 this will target the first found window with the
@@ -226,7 +221,9 @@ left side if INT is positive, from the right
 side if it is negative. AC and BD is on Y axis
 from the top if INT is positive, from the bottom
 if it is negative. The whole argument needs to
-be quoted. Example: \fB\fCfyra \-l 'AB=\-300 BD=420'\fR
+be quoted. Example:
+.br
+\fB\fC$ i3fyra \-l 'AB=\-300 BD=420'\fR
 
 .SH ENVIRONMENT
 .PP
