@@ -568,11 +568,11 @@ SYNOPSIS
 --------
 `i3fyra` [`OPTTION`] [`ARGUMENT`]  
 
-`i3fyra` `-m` A|B|C|D|u|r|d|l [`-p` INT] [`-t` CRITERIA] 
-`i3fyra` `-s` A|B|C|D  
+`i3fyra` `-m` A|B|C|D|u|r|d|l [`-p` INT] [`-t` CRITERIA]   
+`i3fyra` `-s` A|B|C|D   
 `i3fyra` `-z` [ABCD]  
 `i3fyra` `-a`  
-`i3fyra` `-l` LAYOUTSTRING
+`i3fyra` `-l` LAYOUTSTRING  
 
 DESCRIPTION
 -----------
@@ -669,20 +669,20 @@ Show version info and exit.
 Help, shows this info.
 
 `-a`  
-Autolayout. If current window is tiled: floating  
-enabled If window is floating, it will be put in  
-a visible container. If there is no visible  
-containers. The window will be placed in a  
-hidden container. If no containers exist,  
-container '"'"'A'"'"'will be created and  
+Autolayout. If current window is tiled: floating 
+enabled If window is floating, it will be put in 
+a visible container. If there is no visible 
+containers. The window will be placed in a 
+hidden container. If no containers exist, 
+container '"'"'A'"'"'will be created and 
 the window will be put there.  
 
 `-s` A|B|C|D  
-Show target container. If it doesn'"'"'t exist, it  
-will be created and current window will be put  
+Show target container. If it doesn'"'"'t exist, it 
+will be created and current window will be put 
 in it. If it is visible, nothing happens.  
 
-`-m` A|B|C|D|u|r|d|l [`-p` INT] [`-t` CRITERIA]   
+`-m` A|B|C|D|u|r|d|l [`-p` INT] [`-t` CRITERIA]  
 Moves current window to target container, either 
 defined by it'"'"'s name or it'"'"'s position relative 
 to the current container with a direction: 
@@ -694,27 +694,27 @@ container(s) visibility is toggled. If current
 window is floating or not inside ABCD, normal 
 movement is performed. Distance for moving 
 floating windows with this action can be defined 
-with the `-p` option.  
-Example: `i3fyra -p 30 -m r`  
+with the `-p` option. Example:  
+`$ i3fyra -p 30 -m r`  
 Will move current window 30 pixels to the right, 
-if it is floating.
+if it is floating.  
 
-`-t` CRITERIA
+`-t` CRITERIA  
 Criteria is a string passed to i3list to use a 
-different target then active window.
+different target then active window.  
 
-Example:
+Example:  
 `$ i3fyra -m B -t "-i sublime_text"`  
 this will target the first found window with the 
-instance name *sublime_text*. See i3list(1), for
+instance name *sublime_text*. See i3list(1), for 
 all available options.  
 
 `-p` *INT*  
 Distance in pixels to move a floating window. 
-Defaults to 30.
+Defaults to 30.  
          
 `-z` *[ABCD]*   
-Hide target containers if visible. 
+Hide target containers if visible.   
 
 `-l` *[AB=INT] [AC=INT] [BD=INT]*  
 alter splits Changes the given splits. INT is a 
@@ -723,22 +723,23 @@ left side if INT is positive, from the right
 side if it is negative. AC and BD is on Y axis 
 from the top if INT is positive, from the bottom 
 if it is negative. The whole argument needs to 
-be quoted. Example: `fyra -l '"'"'AB=-300 BD=420'"'"'`
+be quoted. Example:  
+`$ i3fyra -l '"'"'AB=-300 BD=420'"'"'`  
 
 ENVIRONMENT
 -----------
 
 `I3FYRA_WS` *INT*  
-Workspace to use for i3fyra. If not set, the firs
-workspace that request to create the layout will
-be used.
+Workspace to use for i3fyra. If not set, the firs 
+workspace that request to create the layout will 
+be used.  
 
 `I3FYRA_MAIN_CONTAINER` *[A|B|C|D]*  
-This container will be the chosen when a container
-is requested but not given. When using the command
-autolayout (`-a`) for example, if the window is floating
-it will be sent to the main container, if no other
-containers exist. Defaults to A.
+This container will be the chosen when a container 
+is requested but not given. When using the command 
+autolayout (`-a`) for example, if the window is floating 
+it will be sent to the main container, if no other 
+containers exist. Defaults to A.  
 
 DEPENDENCIES
 ------------
