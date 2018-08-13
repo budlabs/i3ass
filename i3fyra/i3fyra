@@ -41,8 +41,11 @@ main(){
 
   ${cmd} "${target}" # run command
 
-  [[ $cmd = windowmove ]] \
-    && i3-msg -q "[con_id=${i3list[AWC]}]" focus
+  [[ $cmd = windowmove ]] && [[ -z ${i3list[SIBFOC]} ]] \
+      && i3-msg -q "[con_id=${i3list[AWC]}]" focus
+
+  [[ -n ${i3list[SIBFOC]} ]] \
+    && i3-msg "[con_mark=i34${i3list[SIBFOC]}]" focus child
 
 }
 
@@ -83,7 +86,6 @@ layoutcreate(){
     split v, layout tabbed, focus parent
   i3-msg -q mark i34X${fam}, focus parent
   i3-msg -q mark i34XAB
-
 
   i3-msg -q "[con_mark=i34${trg}]" \
     move to workspace "${i3list[WSA]}", \
@@ -198,9 +200,10 @@ containershow(){
             swap container with mark i34${swap[1]}
         }
 
-        [[ -n $tspl ]] && {
-          i3list[S${tmrk}]=$((tdim/2))
-          eval "applysplits \"$tmrk=$tspl\""
+        [[ -n $tspl ]] \
+          && { ((tdim==i3list[WSH])) || ((famact!=1)) ;} && {
+            i3list[S${tmrk}]=$((tdim/2))
+            eval "applysplits $tmrk=$tspl"
         }
        
       fi
@@ -227,19 +230,30 @@ applysplits(){
     ((tsv<0)) && tsv=$((par-(tsv*-1)))
 
     ((tsv!=par)) && eval "$(echo "$tsv" "$par" "$osv" "$dir" "$mrk" | awk '{
-      tsp=$1/$2*100
-      osp=$3/$2*100
-      
-      if (tsp!=osp) {
-        if (tsp>osp) {dirv="grow"; csp=tsp-osp}
-        else         {dirv="shrink"; csp=osp-tsp}
+      tsp=$1/$2
+      osp=$3/$2
 
+      if (tsp!=osp) {
+        if (tsp>=osp) {dirv="grow"; csp=tsp-osp}
+        else          {dirv="shrink"; csp=osp-tsp}
+        csp=csp*100
         printf "i3-msg -q \"[con_mark=" $5 "]\" "
         printf "resize %s %s %d px or %d ppt\n", dirv, $4, csp, csp
       }
     }')"
 
     i3list[S${tsn}]=${tsv}
+
+    # if [[ $tsn = AB ]]; then
+    #   # i3var set "i34MAB" ${tsv}
+    #   i3list[SAB]=$tsv
+    #   # i3list[MAB]=$tsv
+    # else
+    #   # i3var set "i34M${tsn}" ${tsv}
+    #   i3list[S${tsn}]=$tsv
+    #   # i3list[M${tsn}]=$tsv
+    # fi
+
     
   done
 }
@@ -300,8 +314,10 @@ containerhide(){
   i3list[LVI]=${i3list[LVI]:-X}
 
   # if trg is last of it's fam, note it.
+  # else focus sib
   [[ ! ${tfam/$trg/} =~ [${i3list[LVI]}] ]] \
-    && i3var set "i34F${tfam}" "$trg"
+    && i3var set "i34F${tfam}" "$trg" \
+    || i3list[SIBFOC]=${tfam/$trg/}
 
   # note splits
   [[ -n ${i3list[SAB]} ]] && ((i3list[SAB]!=i3list[WSW])) && {
@@ -440,10 +456,15 @@ familyshow(){
   local tfammem="${i3list[F${fam}]}"
   # F${fam} - family memory
 
+  famact=1
   for (( i = 0; i < ${#tfammem}; i++ )); do
     [[ ${tfammem:$i:1} =~ [${i3list[LHI]}] ]] \
       && containershow "${tfammem:$i:1}"
   done
+
+
+  i3list[SAB]=$((i3list[WSW]/2))
+  applysplits "AB=${i3list[MAB]}"
 
 }
 
