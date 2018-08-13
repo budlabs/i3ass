@@ -211,7 +211,7 @@ listvisible(){
 
       if (dir=="r"){
         trgx=ac[act]["x"]+ac[act]["w"]+gapsz
-        trgy=ac[act]["y"]+ac[act]["h"]/2
+        trgy=(gapsz+ac[act]["y"])+ac[act]["h"]/2
 
         if(trgx>(wsw+wsx)){
           trgx=gapsz
@@ -221,7 +221,7 @@ listvisible(){
 
       if (dir=="l"){
         trgx=ac[act]["x"]-gapsz
-        trgy=ac[act]["y"]+ac[act]["h"]/2
+        trgy=(gapsz+ac[act]["y"])+ac[act]["h"]/2
         if(trgx<wsx){
           trgx=dim[aws]["w"]-gapsz
           wall="left"
@@ -229,7 +229,7 @@ listvisible(){
       }
 
       if (dir=="u"){
-        trgx=ac[act]["x"]+ac[act]["w"]/2
+        trgx=(gapsz+ac[act]["x"])+ac[act]["w"]/2
         trgy=ac[act]["y"]-gapsz
         if(trgy<wsy){
           trgy=dim[aws]["h"]-gapsz
@@ -238,7 +238,7 @@ listvisible(){
       }
 
       if (dir=="d"){
-        trgx=ac[act]["x"]+ac[act]["w"]/2
+        trgx=(gapsz+ac[act]["x"])+ac[act]["w"]/2
         trgy=ac[act]["y"]+ac[act]["h"]+gapsz
         
         if(trgy>(wsh+wsy)){

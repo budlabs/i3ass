@@ -70,8 +70,9 @@ main(){
     i3var set sizemode
     curmo=""
     i3var get sizetits || i3var set sizetits "$(i3get -r o)"
-  elif [[ $mode = m ]] && ((i3list[AWF]!=1)) \
-    && ((i3list[WSA]==i3list[WSF])); then i3fyra -m $dir && exit
+  elif [[ $mode = m ]] && ((i3list[AWF]!=1)) && ((i3list[WSA]==i3list[WSF])); then 
+    i3fyra -m $dir
+    exit
   else
     curmo="$(i3var get sizemode)"
   fi
