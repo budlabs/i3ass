@@ -221,12 +221,12 @@ applysplits(){
   for i in ${1}; do
     tsn="${i%\=*}" # target name of split
     tsv="${i#*\=}" # target value of split
-    osv="${i3list[S${tsn}]}"  # current value of split
 
     [[ $tsn = AB ]] \
-      && par=${i3list[WSW]} dir=width mrk=i34XAC \
-      || par=${i3list[WSH]} dir=height mrk=i34${tsn:0:1}
+      && par=${i3list[WSW]:-"${i3list[WAW]}"} dir=width mrk=i34XAC \
+      || par=${i3list[WSH]:-"${i3list[WAH]}"} dir=height mrk=i34${tsn:0:1}
 
+    osv="${i3list[S${tsn}]:-$par}"  # current value of split
     ((tsv<0)) && tsv=$((par-(tsv*-1)))
 
     ((tsv!=par)) && eval "$(echo "$tsv" "$par" "$osv" "$dir" "$mrk" | awk '{
@@ -244,15 +244,11 @@ applysplits(){
 
     i3list[S${tsn}]=${tsv}
 
-    # if [[ $tsn = AB ]]; then
-    #   # i3var set "i34MAB" ${tsv}
-    #   i3list[SAB]=$tsv
-    #   # i3list[MAB]=$tsv
-    # else
-    #   # i3var set "i34M${tsn}" ${tsv}
-    #   i3list[S${tsn}]=$tsv
-    #   # i3list[M${tsn}]=$tsv
-    # fi
+    if [[ $tsn = AB ]]; then
+      i3var set "i34MAB" ${tsv}
+    else
+      i3var set "i34M${tsn}" ${tsv}
+    fi
 
     
   done
