@@ -1,98 +1,89 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
-NAME="i3flip"
-VERSION="0.007"
-AUTHOR="budRich"
-CONTACT='robstenklippa@gmail.com'
-CREATED="2018-01-03"
-UPDATED="2018-06-30"
+__name="i3flip"
+__version="0.009"
+__author="budRich"
+__contact='robstenklippa@gmail.com'
+__created="2018-01-03"
+__updated="2018-09-01"
 
 main(){
-  while getopts :vh option; do
-    case "${option}" in
-      v) printf '%s\n' \
-           "$NAME - version: $VERSION" \
-           "updated: $UPDATED by $AUTHOR"
-         exit ;;
-      h|*) printinfo && exit ;;
+
+  eval set -- "$(getopt --name "$__name" \
+    --options vh:: \
+    --longoptions version,help::,debug: \
+    -- "$@"
+  )"
+
+  while true; do
+    case "$1" in
+      -v | --version ) printinfo version  ; exit ;;
+      -h | --help    ) printinfo "${2:-}" ; exit ;;
+      -- ) shift ; break ;;
+      *  ) break ;;
     esac
   done
 
-  dir="$1"
+  __dir="$1"
 
-  dir=${dir,,}
-  dir=${dir:0:1}
+  __dir=${__dir,,}
+  __dir=${__dir:0:1}
 
-  # "$dir not valid direction"
-  [[ ! $dir =~ u|r|l|d|n|p ]] \
-    && XERR "420" "$1 is not a valid direction"
+  # "$__dir not valid direction"
+  [[ ! $__dir =~ u|r|l|d|n|p ]] \
+    && ERX "$1 is not a valid direction"
 
-  case "$dir" in
-    r|d ) dir=n ;;
-    l|u ) dir=p ;;
+  case "$__dir" in
+    r|d ) __dir=n ;;
+    l|u ) __dir=p ;;
   esac
 
-  alst=($(getcurrent))
-  # "n"|"t
-  pos=${alst[0]%|*}
-  tot=${alst[0]#*|}
-  plo=${alst[$((tot+1))]}
-  cur=${alst[$pos]}
+  declare -A __acur
 
-  tries=0
-
-  if [[ ! $plo =~ tabbed|stacked ]]; then
-    i3-msg -q focus parent
-    alst=($(getcurrent))
-    # "n"|"t
-    pos=${alst[0]%|*}
-    tot=${alst[0]#*|}
-    plo=${alst[$((tot+1))]}
-  fi
-
-  [[ ! $plo =~ tabbed|stacked ]] \
-    && i3-msg -q "[con_id=$cur]" focus \
-    && exit
-  [[ $tot = 1 ]] && exit
-
+  eval "$(getcurrent)"
   
+  __orgtrg="$(gettarget)"
 
-  [[ $dir = n ]] \
-    && trg=$((pos==tot?1:pos+1)) \
-    || trg=$((pos==1?tot:pos-1))
+  [[ ! ${__acur[layout]:-} =~ tabbed|stacked ]] && {
 
-  i3-msg -q "[con_id=${alst[$trg]}]" focus, focus child
+    i3-msg -q focus parent
+    eval "$(getcurrent)"
+
+    [[ ! ${__acur[layout]:-} =~ tabbed|stacked ]] && {
+      i3-msg -q "[con_id=$__orgtrg]" focus
+      exit
+    }
+
+    __orgtrg="$(gettarget)"
+  }
+
+  ((__acur[total]==1)) && exit
+
+  i3-msg -q "[con_id=$__orgtrg]" focus, focus child
 }
 
-getwindow(){
-  i3-msg -t get_tree \
-  | awk -v RS=',' -F':' -v crit='"focused"' -v srch="true" \
-    'BEGIN{fid="0";nid="0";nfo="0"}
-      $1~"{\"id\"" {cid=$2;nid=nid+1;aid[nid]=cid}
-      $2~"\"id\"" {cid=$3;nid=nid+1;aid[nid]=cid}
-      $1 ~ crit && $2 ~ srch  {fid=cid}
-      $2 ~ crit && $3 ~ srch  {fid=cid}
-      fid!="0" && $1=="\"focus\"" && $2~fid{focs=1}
-      focs=="1" {nfo=nfo+1}
-      focs=="1" && $NF~"[]]$" {
-        j=0
-        t=((nid)-(nid-nfo))
-        n=1
-        for (i=nid-nfo+1; i <= nid; i++){
-          j++
-          if(t>1 && fid==aid[i]){n=j}
-          thelist=thelist" "aid[i]
-        }
-        
-        print n"|"t thelist
-        exit
-      } '
+gettarget(){
+  local trg
+
+  [[ $__dir = n ]] \
+    && trg=$((__acur[position]==__acur[total]
+              ? 1
+              : __acur[position]+1
+            )) \
+    || trg=$((__acur[position]==1
+              ? __acur[total]
+              : __acur[position]-1
+            ))
+
+  aord=(${__acur[order]:-})
+  echo "${aord[$((trg-1))]}"
 }
 
 getcurrent(){
   i3-msg -t get_tree \
-  | awk -v RS=',' -F':' -v crit='"focused"' -v srch="true" \
-    'BEGIN{fid="0";nid="0";nfo="0";nwi}
+  | awk -v RS=',' -F':' -v crit='"focused"' -v srch="true" '
+      BEGIN{fid="0";nid="0";nfo="0";nwi}
+
       $1~"{\"id\"" || $2~"\"id\"" {
         nwi=nwi+1;cid=$NF;aid[nwi]=cid}
       $1 ~ crit && $2 ~ srch  {fid=cid}
@@ -100,13 +91,10 @@ getcurrent(){
 
       $1=="\"layout\"" {alo[cid]=$2}
 
-      fid!="0" && $1=="\"focus\"" && $2~fid{focs=1}
+      fid!="0" && $1=="\"focus\"" && $2~fid {focs=1}
       focs=="1" && $NF~"[]]$"{end=1}
       focs=="1" {gsub("[]]|[[]","",$NF);afo=$NF"|"afo;nfo++}
       end=="1" {
-        # split(aid, aai, " ")
-
-        # $0=$0
         j=nfo
 
         for (i=nwi;i>0;i--){
@@ -117,22 +105,113 @@ getcurrent(){
           if(j==0){fin=1}
         }
         gsub("[\"]","",plo)
-        print n"|"nfo" "ord" "plo" "parid
+
+        print "__acur[position]=" n
+        print "__acur[total]="    nfo
+        print "__acur[layout]="   plo
+        sub(/[[:space:]]*$/,"",ord)
+        print "__acur[order]=\""  ord "\""
+        print "__acur[parent]="   parid
+        print "__acur[focused]="  fid
+
         exit
-      } '
+      } 
+    '
 }
 
+
+
 printinfo(){
+  local about bouthead boutfoot
+
+about=\
+'`i3flip` - Tabswitching done right
+
+SYNOPSIS
+--------
+
+`i3flip` `-v`|`-h`    
+`i3flip` n|r|d|next|right|down   
+`i3flip` p|l|u|prev|left|up   
+
+DESCRIPTION
+-----------
+
+`i3flip` switch containers without leaving the
+parent. Perfect for tabbed or stacked layout, but
+works on all layouts. If direction is `next` (or
+`n`) and the active container is the last, the
+first container will be activated.  
+
+OPTIONS
+-------
+
+`-v`|`--version`  
+Show version and exit.  
+
+`-h`|`--help`  
+Show help and exit.  
+
+
+EXAMPLE
+-------
+
+Put these keybinding definitions in the i3 config.  
+
+`~/.config/i3/config`:  
+``` text
+bindsym Mod4+Tab         exec --no-startup-id i3flip next
+bindsym Mod4+Shift+Tab   exec --no-startup-id i3flip prev
+```
+
+Mod4/Super/Windows+Tab will switch to the next tab.
+
+'
+bouthead="
+${__name^^} 1 ${__updated} Linux \"User Manuals\"
+=======================================
+
+NAME
+----
+"
+
+boutfoot="
+AUTHOR
+------
+
+${__author} <${__contact}>
+<https://budrich.github.io>
+
+SEE ALSO
+--------
+
+i3(1)
+"
+
+
+
   case "$1" in
-    m ) printf '%s' "${about}" ;;
+    # print version info to stdout
+    version )
+      printf '%s\n' \
+        "$__name - version: $__version" \
+        "updated: $__updated by $__author"
+      exit
+      ;;
+    # print help in markdown format to stdout
+    md ) printf '%s' "# ${about}" ;;
+
+    # print help in markdown format to README.md
+    mdg ) printf '%s' "# ${about}" > "${__dir}/README.md" ;;
     
-    f ) 
-      printf '%s' "${bouthead}"
-      printf '%s' "${about}"
-      printf '%s' "${boutfoot}"
+    # print help in troff format to __dir/__name.1
+    man ) 
+      printf '%s' "${bouthead}" "${about}" "${boutfoot}" \
+      | go-md2man > "${__dir}/${__name}.1"
     ;;
 
-    ''|* ) 
+    # print help to stdout
+    * ) 
       printf '%s' "${about}" | awk '
          BEGIN{ind=0}
          $0~/^```/{
@@ -150,82 +229,22 @@ printinfo(){
   esac
 }
 
-# Error functions borrowed from:
-# https://github.com/terminalforlife
+ERR(){ >&2 echo "[WARNING]" "$*"; }
+ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
 
-XERR(){ printf "[L%0.4d] ERROR: %s\n" "$1" "$2" 1>&2; exit 1; }
-ERR(){ printf "[L%0.4d] ERROR: %s\n" "$1" "$2" 1>&2; }
+init(){
+  set -o errexit
+  set -o pipefail
+  set -o nounset
+  # set -o xtrace
 
-bouthead="
-${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
-=======================================
+  __source="$(readlink -f "${BASH_SOURCE[0]}")"
+  __dir="$(cd "$(dirname "${__source}")" && pwd)"
+  __file="${__dir}/$(basename "${__source}")"
+  __base="$(basename ${__file} .sh)"
+  __root="$(cd "$(dirname "${__dir}")" && pwd)" # <-- change this as it depends on your app
+}
 
-NAME
-----
-"
-
-boutfoot="
-AUTHOR
-------
-
-${AUTHOR} <${CONTACT}>
-<https://budrich.github.io>
-
-SEE ALSO
---------
-
-i3(1)
-"
-
-about='
-`i3flip` - Tabswitching done right
-
-SYNOPSIS
---------
-
-`i3flip` [`-v`|`-h`]  
-`i3flip` [`-v`|`-h`] [n|r|d|next|right|down]  
-`i3flip` [`-v`|`-h`] [p|l|u|prev|left|up]  
-
-DESCRIPTION
------------
-
-`i3flip` switch containers without leaving the parent.
-Perfect for tabbed or stacked layout, but works on all
-layouts. If direction is `next` (or `n`) and the active
-container is the last, the first container will be activated.
-
-OPTIONS
--------
-
-`-v`
-Show version and exit.
-
-`-h`
-Show help and exit.
-
-
-EXAMPLE
--------
-
-Put these keybinding definitions in the i3 config.  
-
-`~/.config/i3/config`:  
-``` text
-bindsym Mod4+Tab         exec --no-startup-id i3flip next
-bindsym Mod4+Shift+Tab   exec --no-startup-id i3flip prev
-```
-
-Mod4/Super/Windows+Tab will switch to the next tab.
-
-'
-
-if [ "$1" = "md" ]; then
-  printinfo m
-  exit
-elif [ "$1" = "man" ]; then
-  printinfo f
-  exit
-else
-  main "${@}"
-fi
+init
+eval __lastarg="\${$#}"
+main "${@}"

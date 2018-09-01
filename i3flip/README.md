@@ -3,26 +3,27 @@
 SYNOPSIS
 --------
 
-`i3flip` [`-v`|`-h`]  
-`i3flip` [`-v`|`-h`] [n|r|d|next|right|down]  
-`i3flip` [`-v`|`-h`] [p|l|u|prev|left|up]  
+`i3flip` `-v`|`-h`    
+`i3flip` n|r|d|next|right|down   
+`i3flip` p|l|u|prev|left|up   
 
 DESCRIPTION
 -----------
 
-`i3flip` switch containers without leaving the parent.
-Perfect for tabbed or stacked layout, but works on all
-layouts. If direction is `next` (or `n`) and the active
-container is the last, the first container will be activated.
+`i3flip` switch containers without leaving the
+parent. Perfect for tabbed or stacked layout, but
+works on all layouts. If direction is `next` (or
+`n`) and the active container is the last, the
+first container will be activated.  
 
 OPTIONS
 -------
 
-`-v`
-Show version and exit.
+`-v`|`--version`  
+Show version and exit.  
 
-`-h`
-Show help and exit.
+`-h`|`--help`  
+Show help and exit.  
 
 
 EXAMPLE
