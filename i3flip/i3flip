@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 __name="i3flip"
-__version="0.008"
+__version="0.009"
 __author="budRich"
 __contact='robstenklippa@gmail.com'
 __created="2018-01-03"
@@ -31,7 +31,7 @@ main(){
 
   # "$__dir not valid direction"
   [[ ! $__dir =~ u|r|l|d|n|p ]] \
-    && XERR "420" "$1 is not a valid direction"
+    && ERX "$1 is not a valid direction"
 
   case "$__dir" in
     r|d ) __dir=n ;;
