@@ -20,7 +20,7 @@ getwindow(){
       }
       $1 ~ crit && $2 ~ srch  {hit=1;fid=cid}
       $2 ~ crit && $3 ~ srch {hit=1;fid=cid}
-      sret ~ t && $1=="\"title\"" {r["t"]=$2}
+      sret ~ t && $1=="\"title\"" {sub($1":","");r["t"]=$0}
       sret ~ c && $2 ~ "\"class\"" {r["c"]=$3}
       sret ~ i && $1=="\"instance\"" {r["i"]=$2}
       sret ~ d && $1=="\"window\"" {r["d"]=$2}

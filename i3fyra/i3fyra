@@ -133,7 +133,7 @@ containershow(){
   # show target ($1/trg) container (A|B|C|D)
   # if it already is visible, do nothing.
   # if it doesn't exist, create it 
-  local trg sts tfam sib tdest sdir tmrk tspl tdim
+  local trg sts tfam sib tdest famshow tmrk tspl tdim
 
   # trg = target container
   # sts = status (none|visible|hidden)
@@ -153,13 +153,11 @@ containershow(){
     hidden  )
       
       # sib = sibling, tfam = family
-      case $trg in
-        A ) sib=C tfam=AC ;;
-        B ) sib=D tfam=BD ;;
-        C ) sib=A tfam=AC ;;
-        D ) sib=B tfam=BD ;;
-      esac
+      [[ $trg =~ [AC] ]] \
+        && tfam=AC \
+        || tfam=BD
 
+      sib=${tfam/$trg/}
       # if sibling is visible, tdest (destination)
       # otherwise XAB, main container
       [[ ${sib} =~ [${i3list[LVI]}] ]] \
@@ -173,6 +171,7 @@ containershow(){
         # if tdest is XAB, trg is first in family
         if [[ $tdest = i34XAB ]]; then
           familycreate "$trg"
+          famshow=1
         else
           # WSA = active workspace
           i3-msg -q "[con_mark=i34${trg}]" \
@@ -214,6 +213,9 @@ containershow(){
       i3list[LVI]+=$trg
       i3list[LHI]=${i3list[LHI]/$trg/}
 
+      # bring the whole family
+      [[ $famshow = 1 ]] && [[ $sib =~ [${i3list[LHI]}] ]] \
+        && containershow "$sib"
     ;;
   esac
 }
