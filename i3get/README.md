@@ -9,48 +9,50 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-Search for `CRITERIA` in the output of `i3-msg -t get_tree`, 
-return desired information. If no arguments are passed. 
-`con_id` of acitve window is returned.
+Search for `CRITERIA` in the output of `i3-msg -t
+get_tree`,  return desired information. If no
+arguments are passed.  `con_id` of acitve window
+is returned. If there is more then one criterion,
+all of them must be true to get results.
 
 OPTIONS
 -------
 
-`-v`  
+`-v`|`--version`  
 Show version and exit
 
-`-h`  
+`-h`|`--help`  
 Show this help
 
-`-a`  
+`-a`|`--active`  
 Currently active window (default)
 
-`-c` *CLASS*  
+`-c`|`--class` *CLASS*  
 Search for windows with the given class
 
-`-i` *INSTANCE*  
+`-i`|`--instance` *INSTANCE*  
 Search for windows with the given instance
 
-`-t` *TITLE*  
+`-t`|`--title` *TITLE*  
 Search for windows with title.
 
-`-n` *CON_ID*  
+`-n`|`--conid` *CON_ID*  
 Search for windows with the given con_id
 
-`-d` *CON_ID*  
+`-d`|`--winid` *CON_ID*  
 Search for windows with the given window id
 
-`-m` *CON_MARK*  
+`-m`|`--mark` *CON_MARK*  
 Search for windows with the given mark
 
-`-o` *TTL_FRMT*  
+`-o`|`--titleformat` *TTL_FRMT*  
 Search for windows with the given titleformat
 
-`-y`  
+`-y`|`--sync`  
 Synch on. If this option is included,  
 script will wait till target window exist.
 
-`-r` [*OUTPUT*]  
+`-r`|`--ret` [*OUTPUT*]  
 *OUTPUT* can be one or more of the following 
 characters:   
 
