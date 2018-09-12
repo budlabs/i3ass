@@ -1,4 +1,3 @@
-
 # i3ass - i3 assistance scripts 
 
 This is a collection of scripts I have made to
@@ -17,7 +16,7 @@ Or follow the instructions below to install from github:
 [![](https://budrich.github.io/img/awd/assinstafina.gif)](https://budrich.github.io/img/org/assinstafina.gif)
 
 **clone the repository**  
-`git clone https://github.com/budRich/i3ass.git`  
+`git clone https://github.com/budlabs/i3ass.git`  
 
 **run the installation script**  
 *(for further instructions: `./install.sh -h`)*  
@@ -36,8 +35,6 @@ Execute a script with the `-h` flag to display help about the command. There are
 `i3get -h` display [i3get] help  
 `i3get -v` display [i3get] version  
 
-*I have some more or less useful example scripts using **i3ass** in the [i3add] repository.*
-
 
 |**file** |     **function**          |
 |:--------|:--------------------------|
@@ -50,11 +47,24 @@ Execute a script with the `-h` flag to display help about the command. There are
 [i3viswiz]|Focus switching and visible-window-info
 [i3var]   |Set or get a i3 variable
 [i3Kornhe]|move and resize windows gracefully
+[focusvisible]|Focus a visible window
+[getvisibel]|Print the id of a visible window
 [install.sh]|Installation script
 [Makefile]| -
 
 
 ## updates
+
+### 2018.09.12.0
+
+Added [focusvisible] and [getvisible].  
+[i3get] now allows multiple search criterion and longoptions:  
+
+```shell
+i3get --class Thunar --instance thunar --ret wtf
+```
+
+The command above will print **w**orkspace, **t**itle and **f**loatstate of the first found window that have **both** the class *Thunar* and instance *thunar*.  
 
 ### v.0.1.77
 
@@ -128,6 +138,8 @@ More directions then p,n,prev,next are now allowed. up, left, prev, u, l, p all 
 
 All **i3ass** scripts are licensed with the **MIT license**
 
+[focusvisible]: https://github.com/budRich/i3ass/tree/master/focusvisible
+[getvisible]: https://github.com/budRich/i3ass/tree/master/getvisible
 [i3flip]: https://github.com/budRich/i3ass/tree/master/i3flip
 [i3fyra]: https://github.com/budRich/i3ass/tree/master/i3fyra
 [i3get]: https://github.com/budRich/i3ass/tree/master/i3get
