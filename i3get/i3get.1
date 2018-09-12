@@ -1,4 +1,4 @@
-.TH I3GET 1 2018\-06\-30 Linux "User Manuals"
+.TH I3GET 1 2017\-03\-08 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3get\fR \- Return information about i3wm.
@@ -11,70 +11,72 @@
 
 .SH DESCRIPTION
 .PP
-Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t get\_tree\fR,
-return desired information. If no arguments are passed.
-\fB\fCcon\_id\fR of acitve window is returned.
+Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t
+get\_tree\fR,  return desired information. If no
+arguments are passed.  \fB\fCcon\_id\fR of acitve window
+is returned. If there is more then one criterion,
+all of them must be true to get results.
 
 .SH OPTIONS
 .PP
-\fB\fC\-v\fR
+\fB\fC\-v\fR|\fB\fC\-\-version\fR
 .br
 Show version and exit
 
 .PP
-\fB\fC\-h\fR
+\fB\fC\-h\fR|\fB\fC\-\-help\fR
 .br
 Show this help
 
 .PP
-\fB\fC\-a\fR
+\fB\fC\-a\fR|\fB\fC\-\-active\fR
 .br
 Currently active window (default)
 
 .PP
-\fB\fC\-c\fR \fICLASS\fP
+\fB\fC\-c\fR|\fB\fC\-\-class\fR \fICLASS\fP
 .br
 Search for windows with the given class
 
 .PP
-\fB\fC\-i\fR \fIINSTANCE\fP
+\fB\fC\-i\fR|\fB\fC\-\-instance\fR \fIINSTANCE\fP
 .br
 Search for windows with the given instance
 
 .PP
-\fB\fC\-t\fR \fITITLE\fP
+\fB\fC\-t\fR|\fB\fC\-\-title\fR \fITITLE\fP
 .br
 Search for windows with title.
 
 .PP
-\fB\fC\-n\fR \fICON\_ID\fP
+\fB\fC\-n\fR|\fB\fC\-\-conid\fR \fICON\_ID\fP
 .br
 Search for windows with the given con\_id
 
 .PP
-\fB\fC\-d\fR \fICON\_ID\fP
+\fB\fC\-d\fR|\fB\fC\-\-winid\fR \fICON\_ID\fP
 .br
 Search for windows with the given window id
 
 .PP
-\fB\fC\-m\fR \fICON\_MARK\fP
+\fB\fC\-m\fR|\fB\fC\-\-mark\fR \fICON\_MARK\fP
 .br
 Search for windows with the given mark
 
 .PP
-\fB\fC\-o\fR \fITTL\_FRMT\fP
+\fB\fC\-o\fR|\fB\fC\-\-titleformat\fR \fITTL\_FRMT\fP
 .br
 Search for windows with the given titleformat
 
 .PP
-\fB\fC\-y\fR
+\fB\fC\-y\fR|\fB\fC\-\-sync\fR
 .br
 Synch on. If this option is included,
 .br
 script will wait till target window exist.
 
 .PP
-\fB\fC\-r\fR [\fIOUTPUT\fP]
+\fB\fC\-r\fR|\fB\fC\-\-ret\fR [\fIOUTPUT\fP]
 .br
 \fIOUTPUT\fP can be one or more of the following
 characters:

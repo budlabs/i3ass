@@ -1,78 +1,105 @@
-#!/bin/sh
+#!/bin/env bash
 
-NAME="i3get"
-VERSION="0.299"
-AUTHOR="budRich"
-CONTACT='robstenklippa@gmail.com'
-CREATED="2017-03-08"
-UPDATED="2018-06-30"
-
-getwindow(){
-  i3-msg -t get_tree \
-  | awk -v RS=',' -F':' -v crit="${crit}" -v srch="${srch}" -v sret="${sret}" \
-    'BEGIN{hit="0"}
-      $1~"{\"id\"" || $2~"\"id\"" {
-        cid=$NF
-        for(k in r){if(k!="w"){r[k]=""}}
-        if(sret ~ n)
-          r["n"]=cid
-        if(hit==1){exit}
-      }
-      $1 ~ crit && $2 ~ srch  {hit=1;fid=cid}
-      $2 ~ crit && $3 ~ srch {hit=1;fid=cid}
-      sret ~ t && $1=="\"title\"" {sub($1":","");r["t"]=$0}
-      sret ~ c && $2 ~ "\"class\"" {r["c"]=$3}
-      sret ~ i && $1=="\"instance\"" {r["i"]=$2}
-      sret ~ d && $1=="\"window\"" {r["d"]=$2}
-      sret ~ m && $1=="\"marks\"" {r["m"]=$2}
-      sret ~ a && $1=="\"focused\"" {r["a"]=$2}
-      sret ~ o && $1=="\"title_format\"" {r["o"]=$2}
-      sret ~ w && $1=="\"num\"" {r["w"]=$2}
-      sret ~ f && $1=="\"floating\"" {r["f"]=$2;if(hit == "1")exit}
-      
-    END{
-      if(hit == "0") exit
-      split(sret, aret, "")
-      for (i=1; i <= length(sret); i++) {
-        op=r[aret[i]]
-        if(aret[i]!~/t|o/){gsub("[\"]","",op)}
-        if(op!="")
-        printf("%s\n", op)
-      }
-    }
-    '
-}
+__name="i3get"
+__version="0.3"
+__author="budRich"
+__contact='robstenklippa@gmail.com'
+__created="2017-03-08"
+__updated="2018-09-12"
 
 main(){
-  synk=0
-  sret=n
-  crit="\"focused\""
-  srch=true
+  local option optarg kol lopt sopt o synk
 
-  while getopts :c:i:t:n:d:r:m:o:ayvh option
-  do
-    case "${option}" in
-      v) printf '%s\n' \
-           "$NAME - version: $VERSION" \
-           "updated: $UPDATED by $AUTHOR"
-         exit ;;
-      i) crit="\"instance\"" srch="${OPTARG}";;
-      c) crit="\"class\"" srch="${OPTARG}";;
-      t) crit="\"title\"" srch="${OPTARG}";;
-      n) crit="\"id\"" srch="${OPTARG}";;
-      d) crit="\"window\"" srch="${OPTARG}";;
-      m) crit="\"marks\"" srch="${OPTARG}";;
-      o) crit="\"title_format\"" srch="${OPTARG}";;
-      a) crit="\"focused\"" && srch="true";;
-      r) sret="${OPTARG}" ;;
-      y) synk=1;;
-      h|*) printinfo && exit ;;
-    esac
+  synk=0
+
+  # default search for active window, return con_id
+  __sret=n
+
+  declare -A __crit
+  declare -A options
+
+  options[version]=v
+  options[help]=h::
+  options[class]=c:
+  options[instance]=i:
+  options[title]=t:
+  options[conid]=n:
+  options[winid]=d:
+  options[ret]=r:
+  options[mark]=m:
+  options[titleformat]=o:
+  options[active]=a
+  options[sync]=y
+
+  for o in "${!options[@]}"; do
+    [[ ${options[$o]} =~ ([:]*)$ ]] \
+      && kol="${BASH_REMATCH[1]:-}"
+    lopt+="$o$kol,"
+    sopt+="${options[$o]}"
   done
 
-  result=$(getwindow)
+  eval set -- "$(getopt --name "$__name" \
+    --options "$sopt" \
+    --longoptions "$lopt" \
+    -- "$@"
+  )"
 
-  [ $synk = 1 ] && {
+  while true; do
+    [[ $1 = -- ]] && option="$1" || {
+      option="${1##--}" 
+      option="${option##-}"
+      optarg="${2:-}" 
+    }
+
+    case "$option" in
+      v | version ) printinfo version     ; exit ;;
+      h | help    ) printinfo "${optarg}" ; exit ;;
+
+      i|instance) 
+        __crit[instance]="${optarg}" && shift
+      ;;
+
+      c|class) 
+        __crit[class]="${optarg}" && shift
+      ;;
+
+      t|title) 
+        __crit[title]="${optarg}" && shift
+      ;;
+
+      n|conid) 
+        __crit[id]="${optarg}" && shift
+      ;;
+
+      d|winid) 
+        __crit[window]="${optarg}" && shift
+      ;;
+
+      m|mark) 
+        __crit[marks]="${optarg}" && shift
+      ;;
+
+      o|titleformat) 
+        __crit[title_format]="${optarg}" && shift
+      ;;
+
+      a | active) __crit[focused]="true" ;;
+      r | ret   ) __sret="${optarg}" && shift ;;
+      y | sync  ) synk=1;;
+
+      -- ) shift ; break ;;
+      *  ) break ;;
+
+    esac
+    shift
+  done
+
+  # if no search is given, search for active window
+  [[ ${#__crit[@]} -eq 0 ]] && __crit[focused]=true
+
+  result="$(getwindow)"
+
+  ((synk==1)) && {
     # timeout after 10 seconds
     for ((i=0;i<100;i++)); do 
       sleep 0.1
@@ -83,60 +110,75 @@ main(){
 
   [ -n "$result" ] \
     && printf '%s\n' "${result}" \
-    || exit 1
+    || ERX "no matching window."
+}
+
+getwindow(){
+  {
+    for c in "${!__crit[@]}"; do
+      echo -n "$c:${__crit[$c]},"
+    done
+
+    echo -n "__START__,"
+
+    i3-msg -t get_tree
+  } | awk -v RS=',' -F':' -v sret="${__sret}" '
+    BEGIN {hit=0;start=0;trg=0}
+
+      # set crit array
+      start==0 && $0 !~ "__START__" && /./ {
+        crit[$1]=$2
+        trg++
+      }
+
+      start==1 && hit!=trg {
+        for (c in crit) {
+          if ($(NF-1) ~ "\"" c "\"" && $NF ~ crit[c]) {
+            if (fid==cid) {hit++}
+            else {hit=1;fid=cid}
+          }
+        }
+      }
+
+      # reset return array
+      $1~"{\"id\"" || $2~"\"id\"" {
+        cid=$NF
+        hit=0
+        for(k in r){if(k!="w"){r[k]=""}}
+        if(sret ~ n)
+          r["n"]=cid
+        if(hit==trg){exit}
+      }
+
+      
+      sret ~ t && $1=="\"title\"" {sub($1":","");r["t"]=$0}
+      sret ~ c && $2 ~ "\"class\"" {r["c"]=$3}
+      sret ~ i && $1=="\"instance\"" {r["i"]=$2}
+      sret ~ d && $1=="\"window\"" {r["d"]=$2}
+      sret ~ m && $1=="\"marks\"" {r["m"]=$2}
+      sret ~ a && $1=="\"focused\"" {r["a"]=$2}
+      sret ~ o && $1=="\"title_format\"" {r["o"]=$2}
+      sret ~ w && $1=="\"num\"" {r["w"]=$2}
+      sret ~ f && $1=="\"floating\"" {r["f"]=$2;if (hit == trg)exit}
+      
+      /__START__/ {start=1}
+
+    END{
+      if (hit==0) exit
+      split(sret, aret, "")
+      for (i=1; i <= length(sret); i++) {
+        op=r[aret[i]]
+        if(aret[i]!~/t|o/){gsub("[\"]","",op)}
+        if(op!="")
+          printf("%s\n", op)
+      }
+    }
+    '
 }
 
 printinfo(){
-  case "$1" in
-    m ) printf '%s' "${about}" ;;
-    
-    f ) 
-      printf '%s' "${bouthead}"
-      printf '%s' "${about}"
-      printf '%s' "${boutfoot}"
-    ;;
-
-    ''|* ) 
-      printf '%s' "${about}" | awk '
-         BEGIN{ind=0}
-         $0~/^```/{
-           if(ind!="1"){ind="1"}
-           else{ind="0"}
-           print ""
-         }
-         $0!~/^```/{
-           gsub("[`*]","",$0)
-           if(ind=="1"){$0="   " $0}
-           print $0
-         }
-       '
-    ;;
-  esac
-}
-
-bouthead="
-${NAME^^} 1 ${UPDATED} Linux \"User Manuals\"
-=======================================
-
-NAME
-----
-"
-
-boutfoot="
-AUTHOR
-------
-
-${AUTHOR} <${CONTACT}>
-<https://budrich.github.io>
-
-SEE ALSO
---------
-
-i3(1)
-"
-
-about='
-`i3get` - Return information about i3wm.
+about=\
+'`i3get` - Return information about i3wm.
 
 SYNOPSIS
 --------
@@ -147,48 +189,50 @@ SYNOPSIS
 DESCRIPTION
 -----------
 
-Search for `CRITERIA` in the output of `i3-msg -t get_tree`, 
-return desired information. If no arguments are passed. 
-`con_id` of acitve window is returned.
+Search for `CRITERIA` in the output of `i3-msg -t
+get_tree`,  return desired information. If no
+arguments are passed.  `con_id` of acitve window
+is returned. If there is more then one criterion,
+all of them must be true to get results.
 
 OPTIONS
 -------
 
-`-v`  
+`-v`|`--version`  
 Show version and exit
 
-`-h`  
+`-h`|`--help`  
 Show this help
 
-`-a`  
+`-a`|`--active`  
 Currently active window (default)
 
-`-c` *CLASS*  
+`-c`|`--class` *CLASS*  
 Search for windows with the given class
 
-`-i` *INSTANCE*  
+`-i`|`--instance` *INSTANCE*  
 Search for windows with the given instance
 
-`-t` *TITLE*  
+`-t`|`--title` *TITLE*  
 Search for windows with title.
 
-`-n` *CON_ID*  
+`-n`|`--conid` *CON_ID*  
 Search for windows with the given con_id
 
-`-d` *CON_ID*  
+`-d`|`--winid` *CON_ID*  
 Search for windows with the given window id
 
-`-m` *CON_MARK*  
+`-m`|`--mark` *CON_MARK*  
 Search for windows with the given mark
 
-`-o` *TTL_FRMT*  
+`-o`|`--titleformat` *TTL_FRMT*  
 Search for windows with the given titleformat
 
-`-y`  
+`-y`|`--sync`  
 Synch on. If this option is included,  
 script will wait till target window exist.
 
-`-r` [*OUTPUT*]  
+`-r`|`--ret` [*OUTPUT*]  
 *OUTPUT* can be one or more of the following 
 characters:   
 
@@ -225,16 +269,79 @@ DEPENDENCIES
 i3wm
 '
 
-if [ "$1" = "md" ]; then
-  printinfo m
-  exit
-elif [ "$1" = "man" ]; then
-  printinfo f
-  exit
-else
-  main "${@}"
-fi
+bouthead="
+${__name^^} 1 ${__created} Linux \"User Manuals\"
+=======================================
 
+NAME
+----
+"
 
+boutfoot="
+AUTHOR
+------
 
+${__author} <${__contact}>
+<https://budrich.github.io>
 
+SEE ALSO
+--------
+
+i3(1)
+"
+
+  case "$1" in
+    # print version info to stdout
+    version )
+      printf '%s\n' \
+        "$__name - version: $__version" \
+        "updated: $__updated by $__author"
+      exit
+      ;;
+    # print help in markdown format to stdout
+    md ) printf '%s' "# ${about}" ;;
+
+    # print help in markdown format to README.md
+    mdg ) printf '%s' "# ${about}" > "${__dir}/README.md" ;;
+    
+    # print help in troff format to __dir/__name.1
+    man ) 
+      printf '%s' "${bouthead}" "${about}" "${boutfoot}" \
+      | go-md2man > "${__dir}/${__name}.1"
+    ;;
+
+    # print help to stdout
+    * ) 
+      printf '%s' "${about}" | awk '
+         BEGIN{ind=0}
+         $0~/^```/{
+           if(ind!="1"){ind="1"}
+           else{ind="0"}
+           print ""
+         }
+         $0!~/^```/{
+           gsub("[`*]","",$0)
+           if(ind=="1"){$0="   " $0}
+           print $0
+         }
+       '
+    ;;
+  esac
+}
+
+ERR(){ >&2 echo "[WARNING]" "$*"; }
+ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
+
+init(){
+  set -o errexit
+  set -o pipefail
+  # set -o nounset
+  # set -o xtrace
+
+  __source="$(readlink -f "${BASH_SOURCE[0]}")"
+  __dir="$(cd "$(dirname "${__source}")" && pwd)"
+}
+
+init
+eval __lastarg="\${$#}"
+main "${@}"
