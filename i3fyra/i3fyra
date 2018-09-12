@@ -7,7 +7,6 @@ CONTACT='robstenklippa@gmail.com'
 CREATED="2017-01-14"
 UPDATED="2018-06-30"
 
-[[ $hello = hell ]]
 main(){
   local cmd target
   while getopts :vhas:l:w:z:m:p:t: option; do
