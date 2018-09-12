@@ -48,7 +48,7 @@ Execute a script with the `-h` flag to display help about the command. There are
 [i3var]   |Set or get a i3 variable
 [i3Kornhe]|move and resize windows gracefully
 [focusvisible]|Focus a visible window
-[getvisibel]|Print the id of a visible window
+[getvisible]|Print the id of a visible window
 [install.sh]|Installation script
 [Makefile]| -
 
