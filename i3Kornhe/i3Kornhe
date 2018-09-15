@@ -1,194 +1,278 @@
-#!/bin/bash
+#!/bin/env bash
 
-NAME="i3Kornhe"
-VERSION="0.017"
-AUTHOR="budRich"
-CONTACT='robstenklippa@gmail.com'
-CREATED="2017-12-12"
-UPDATED="2018-07-18"
+__name="i3Kornhe"
+__version="0.018"
+__author="budRich"
+__contact='robstenklippa@gmail.com'
+__created="2017-12-12"
+__updated="2018-09-15"
 
 main(){
-  eval LASTARG="\${$#}"
+  local option optarg kol lopt sopt o
 
-  while getopts vhp: option; do
-    case "${option}" in
-      v) printf '%s\n' \
-           "$NAME - version: $VERSION" \
-           "updated: $UPDATED by $AUTHOR"
-         exit ;;
-      h) printinfo && exit ;;
-      p) speed="${OPTARG}" ;;
-      *) printinfo && exit ;;
-    esac
+  # globals for absolute positioning
+  __border_top=25 __border_bot=5
+  __border_left=5 __border_right=5
+
+  declare -A options
+
+  options[version]=v
+  options[help]=h::
+  options[speed]=p:
+
+  for o in "${!options[@]}"; do
+    [[ ${options[$o]} =~ ([:]*)$ ]] \
+      && kol="${BASH_REMATCH[1]:-}"
+    lopt+="$o$kol,"
+    sopt+="${options[$o]}"
   done
 
-  [[ $1 = x ]] && {
-    i3var set sizemode
-    i3-msg -q mode "default"
-    tits="$(i3var get sizetits)"
-    sizecon="$(i3var get sizecon)"
-    i3var set sizetits
-    i3var set sizecon
-    i3-msg -q "[con_id=$sizecon]" title_format "${tits//\\}"
-    exit
-  }
+  eval set -- "$(getopt --name "$__name" \
+    --options "$sopt" \
+    --longoptions "$lopt" \
+    -- "$@"
+  )"
+
+  while true; do
+    [[ $1 = -- ]] && option="$1" || {
+      option="${1##--}" 
+      option="${option##-}"
+      optarg="${2:-}" 
+    }
+
+    case "$option" in
+      p | speed   ) __speed="${optarg}"   ; shift ;;
+      v | version ) printinfo version     ; exit  ;;
+      h | help    ) printinfo "${optarg}" ; exit  ;;
+      -- ) shift ; break ;;
+      *  ) break ;;
+    esac
+    shift
+  done
+
+  __lastarg="${!#:-}"
+
+  
+
+  [[ $1 = x ]] && exit_mode
 
   declare -A i3list
+
   eval "$(i3list)"
 
-  [[ $LASTARG =~ ^[1-9]$ ]] && ((i3list[AWF]==1)) && {
-    
-    dir=$LASTARG
-    border_top=25 border_bot=5
-    border_left=5 border_right=5
+  [[ $__lastarg =~ ^[1-9]$ ]] && ((i3list[AWF]==1)) \
+    && move_absolute 
 
-    ypos=$((
-      dir<4 ? i3list[WAY]+border_top :
-      dir<7 ? i3list[WAY]+(i3list[WAH]/2)-(i3list[AWH]/2) 
-            : i3list[WAY]+(i3list[WAH]-(i3list[AWH]+border_bot))
-    ))
-    
-    xpos=$((
-      (dir==1||dir==4||dir==7) ? i3list[WAX]+border_left :         
-      (dir==2||dir==5||dir==8) ? i3list[WAX]+(i3list[WAW]/2-(i3list[AWW]/2))
-      : i3list[WAX]+(i3list[WAW]-(i3list[AWW]+border_right))         
-    ))
+  __mode="${1:0:1}"
 
-    i3-msg -q "[con_id=${i3list[AWC]}]" move absolute position $xpos $ypos
-    exit
-  }
+  __speed=${__speed:-10}
+  __speed="$__speed px or $__speed ppt"
 
-  mode="${1:0:1}"
+  __dir=${__lastarg,,}
+  __dir=${__dir:0:1}
 
-  speed=${speed:-10}
-  speed="$speed px or $speed ppt"
-
-  dir=${LASTARG,,}
-  dir=${dir:0:1}
-
-  if [[ $mode =~ s|m ]] && ((i3list[AWF]==1)); then
+  if [[ $__mode =~ s|m ]] && ((i3list[AWF]==1)); then
+    # new mode, clear old
     i3var set sizemode
     curmo=""
-    i3var get sizetits || i3var set sizetits "$(i3get -r o)"
-  elif [[ $mode = m ]] && ((i3list[AWF]!=1)) && ((i3list[WSA]==i3list[WSF])); then 
-    i3fyra -m $dir
+    i3var get sizetits || current_tf
+  elif [[ $__mode = m ]] && ((i3list[AWF]!=1)) && ((i3list[WSA]==i3list[WSF])); then 
+    # if window is tiled and workspace is i3fyra
+    i3fyra -m "$__dir"
     exit
   else
     curmo="$(i3var get sizemode)"
   fi
 
-  case "$dir" in
+  case "$__dir" in
 
     l  ) 
-      varmode="topleft"
+      __varmode="topleft"
       tilesize="shrink width"
     ;;
 
     r ) 
-      varmode="bottomright"
+      __varmode="bottomright"
       tilesize="grow width"
     ;;
 
     u    ) 
-      varmode="topright"
+      __varmode="topright"
       tilesize="grow height" 
     ;;
 
     d  ) 
-      varmode="bottomleft"
+      __varmode="bottomleft"
       tilesize="shrink height" 
     ;;
 
   esac
 
   if ((i3list[AWF]!=1)); then
-    i3-msg -q resize "$tilesize" ${speed}
+    # resize tiled
+    i3-msg -q resize "$tilesize" "${__speed}"
   else
-    action=resize
-    title="SIZE:${curmo:-$varmode}"
 
-    [[ $mode = m ]] && {
-      varmode=move
-      action=move
-      title="MOVE"
-    } 
+    if [[ $__mode = m ]]; then
+      __varmode=move
+      __title="MOVE"
+    else
+      __title="SIZE:${curmo:-$__varmode}"
+    fi
 
-    [[ -z $curmo ]] && { 
-      i3var set sizemode $varmode
-      i3var get sizetits || i3var set sizetits "$(i3get -r o)"
-      i3var set sizecon "${i3list[AWC]}"
-      i3-msg -q "[con_id=${i3list[AWC]}]" title_format \
-        "$title"\
-        "w:${i3list[AWW]} h:${i3list[AWH]}"\
-        "x:${i3list[AWX]} y:${i3list[AWY]}"
-      i3-msg -q mode sizemode
-      exit
-    }
-
-    case "$curmo" in
-
-      topleft )
-        case "$dir" in
-          u ) floatsize="grow up"      ;;
-          d ) floatsize="shrink up"    ;;
-          l ) floatsize="grow left"    ;;
-          r ) floatsize="shrink left"  ;;
-        esac
-      ;;
-
-      topright )
-        case "$dir" in
-          u ) floatsize="grow up"      ;;
-          d ) floatsize="shrink up"    ;;
-          l ) floatsize="shrink right" ;;
-          r ) floatsize="grow right"   ;;
-        esac
-      ;;
-
-      bottomleft )
-        case "$dir" in
-          u ) floatsize="shrink down"   ;;
-          d ) floatsize="grow down"     ;;
-          l ) floatsize="grow left"     ;;
-          r ) floatsize="shrink left"   ;;
-        esac
-      ;;
-
-      bottomright )
-        case "$dir" in
-          u ) floatsize="shrink down"   ;;
-          d ) floatsize="grow down"     ;;
-          l ) floatsize="shrink right"  ;;
-          r ) floatsize="grow right"    ;;
-        esac
-      ;;
-
-      move )
-        case "$dir" in
-          u ) floatsize="up"       ;;
-          d ) floatsize="down"     ;;
-          l ) floatsize="left"     ;;
-          r ) floatsize="right"    ;;
-            
-        esac
-        action=move
-        title=MOVE
-      ;;
-
-    esac
-
-    i3-msg -q $action ${floatsize} ${speed}
-    i3-msg -q "[con_id=${i3list[AWC]}]" title_format \
-      "$title "\
-      "w:${i3list[AWW]} h:${i3list[AWH]}"\
-      "x:${i3list[AWX]} y:${i3list[AWY]}"
-
+    if [[ -z $curmo ]]; then 
+      enter_mode
+    else
+      apply_action "$curmo"
+    fi
   fi
 }
 
+move_absolute(){
+  local dir xpos ypos
+  dir=$__lastarg
 
-ERR(){ >&2 echo "[WARNING]" $@; }
-ERX(){ >&2 echo "[ERROR]" $@ && exit 1 ; }
+  ypos=$((
+    dir<4 ? i3list[WAY]+__border_top :
+    dir<7 ? i3list[WAY]+(i3list[WAH]/2)-(i3list[AWH]/2) 
+          : i3list[WAY]+(i3list[WAH]-(i3list[AWH]+__border_bot))
+  ))
+  
+  xpos=$((
+    (dir==1||dir==4||dir==7) ? i3list[WAX]+__border_left :         
+    (dir==2||dir==5||dir==8) ? i3list[WAX]+(i3list[WAW]/2-(i3list[AWW]/2))
+    : i3list[WAX]+(i3list[WAW]-(i3list[AWW]+__border_right))         
+  ))
+
+  i3-msg -q "[con_id=${i3list[AWC]}]" move absolute position $xpos $ypos
+  __title="MOVE"
+  set_tf
+  exit
+}
+
+apply_action(){
+  local curmo action floatsize
+
+  curmo="$1"
+  action=resize
+
+  case "$curmo" in
+    topleft )
+      case "$__dir" in
+        u ) floatsize="grow up"      ;;
+        d ) floatsize="shrink up"    ;;
+        l ) floatsize="grow left"    ;;
+        r ) floatsize="shrink left"  ;;
+      esac
+    ;;
+
+    topright )
+      case "$__dir" in
+        u ) floatsize="grow up"      ;;
+        d ) floatsize="shrink up"    ;;
+        l ) floatsize="shrink right" ;;
+        r ) floatsize="grow right"   ;;
+      esac
+    ;;
+
+    bottomleft )
+      case "$__dir" in
+        u ) floatsize="shrink down"   ;;
+        d ) floatsize="grow down"     ;;
+        l ) floatsize="grow left"     ;;
+        r ) floatsize="shrink left"   ;;
+      esac
+    ;;
+
+    bottomright )
+      case "$__dir" in
+        u ) floatsize="shrink down"   ;;
+        d ) floatsize="grow down"     ;;
+        l ) floatsize="shrink right"  ;;
+        r ) floatsize="grow right"    ;;
+      esac
+    ;;
+
+    move )
+
+      case "$__dir" in
+        u ) floatsize="up"       ;;
+        d ) floatsize="down"     ;;
+        l ) floatsize="left"     ;;
+        r ) floatsize="right"    ;;
+      esac
+
+      action=move
+      __title=MOVE
+    ;;
+
+  esac
+
+  i3-msg -q $action ${floatsize} "${__speed}"
+  set_tf
+}
+
+
+set_tf(){
+  local tf
+
+  eval "$(i3list)"
+
+  tf="$(
+    printf '%s w:%s h:%s x:%s y:%s' \
+      "$__title" "${i3list[AWW]}" "${i3list[AWH]}" \
+      "${i3list[AWX]}" "${i3list[AWY]}"
+  )"
+
+  i3-msg -q "[con_id=${i3list[AWC]}]" title_format "${tf}"
+}
+
+current_tf(){
+  local curtf
+
+  curtf="$(i3get -r o)"
+  [[ ! ${curtf:-} =~ ^\"*(MOVE|SIZE) ]] && {
+    i3var set sizetits "$curtf"
+  }
+}
+
+enter_mode(){ 
+
+  i3var set sizemode $__varmode
+  i3var get sizetits || current_tf
+
+  i3var set sizecon "${i3list[AWC]}"
+
+  set_tf
+  i3-msg -q mode sizemode
+
+  exit
+}
+
+exit_mode(){
+  local tits
+
+  i3var set sizemode
+  i3-msg -q mode "default"
+  tits="$(i3var get sizetits)"
+
+
+
+  [[ -n ${tits:-} ]] \
+    && tits="${tits//\\}" \
+    || tits='%title'
+
+  sizecon="$(i3var get sizecon)"
+
+  i3var set sizetits
+  i3var set sizecon
+
+  i3-msg -q "[con_id=$sizecon]" title_format "${tits}"
+  exit
+}
+
+ERR(){ >&2 echo "[WARNING]" "$*" ;}
+ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ;}
 
 printinfo(){
 about=\
@@ -397,7 +481,7 @@ i3var
 '
 
 bouthead="
-${NAME^^} 1 ${CREATED} Linux \"User Manuals\"
+${__name^^} 1 ${__created} Linux \"User Manuals\"
 =======================================
 
 NAME
@@ -408,25 +492,38 @@ boutfoot="
 AUTHOR
 ------
 
-${AUTHOR} <${CONTACT}>
+${__author} <${__contact}>
 <https://budrich.github.io>
 
 SEE ALSO
 --------
 
-i3(1), i3list(1), i3fyra(1), i3var(1), 
-https://i3wm.org/docs/userguide.html#binding_modes
+i3list(1), i3var(1)
 "
+
+
   case "$1" in
-    m ) printf '%s' "# ${about}" ;;
+    # print version info to stdout
+    version )
+      printf '%s\n' \
+        "$__name - version: $__version" \
+        "updated: $__updated by $__author"
+      exit
+      ;;
+    # print help in markdown format to stdout
+    md ) printf '%s' "# ${about}" ;;
+
+    # print help in markdown format to README.md
+    mdg ) printf '%s' "# ${about}" > "${__dir}/README.md" ;;
     
-    f ) 
-      printf '%s' "${bouthead}"
-      printf '%s' "${about}"
-      printf '%s' "${boutfoot}"
+    # print help in troff format to __dir/__name.1
+    man ) 
+      printf '%s' "${bouthead}" "${about}" "${boutfoot}" \
+      | go-md2man > "${__dir}/${__name}.1"
     ;;
 
-    ''|* ) 
+    # print help to stdout
+    * ) 
       printf '%s' "${about}" | awk '
          BEGIN{ind=0}
          $0~/^```/{
@@ -444,13 +541,22 @@ https://i3wm.org/docs/userguide.html#binding_modes
   esac
 }
 
-if [ "$1" = "md" ]; then
-  printinfo m
-  exit
-elif [ "$1" = "man" ]; then
-  printinfo f
-  exit
-else
-  main "${@}"
-fi
+ERR(){ >&2 echo "[WARNING]" "$*"; }
+ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
+
+init(){
+  # set -o errexit
+  set -o pipefail
+  set -o nounset
+  # set -o xtrace
+
+  __source="$(readlink -f "${BASH_SOURCE[0]}")"
+  __dir="$(cd "$(dirname "${__source}")" && pwd)"
+}
+
+init
+
+
+
+main "${@}"
 

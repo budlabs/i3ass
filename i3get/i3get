@@ -1,11 +1,11 @@
 #!/bin/env bash
 
 __name="i3get"
-__version="0.3"
+__version="0.301"
 __author="budRich"
 __contact='robstenklippa@gmail.com'
 __created="2017-03-08"
-__updated="2018-09-12"
+__updated="2018-09-13"
 
 main(){
   local option optarg kol lopt sopt o synk
@@ -131,15 +131,6 @@ getwindow(){
         trg++
       }
 
-      start==1 && hit!=trg {
-        for (c in crit) {
-          if ($(NF-1) ~ "\"" c "\"" && $NF ~ crit[c]) {
-            if (fid==cid) {hit++}
-            else {hit=1;fid=cid}
-          }
-        }
-      }
-
       # reset return array
       $1~"{\"id\"" || $2~"\"id\"" {
         cid=$NF
@@ -150,7 +141,15 @@ getwindow(){
         if(hit==trg){exit}
       }
 
-      
+      start==1 && hit!=trg {
+        for (c in crit) {
+          if ($(NF-1) ~ "\"" c "\"" && $NF ~ crit[c]) {
+            if (fid==cid) {hit++}
+            else {hit=1;fid=cid}
+          }
+        }
+      }
+
       sret ~ t && $1=="\"title\"" {sub($1":","");r["t"]=$0}
       sret ~ c && $2 ~ "\"class\"" {r["c"]=$3}
       sret ~ i && $1=="\"instance\"" {r["i"]=$2}

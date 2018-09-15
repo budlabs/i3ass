@@ -6,6 +6,7 @@ assist the usage of the windowmanager known as [i3wm].
   - [updates](#updates)
   - [usage](#usage)
   - [examples](#examples)
+  - [known issues](#known issues)
 
 ## installation
 
@@ -54,6 +55,13 @@ Execute a script with the `-h` flag to display help about the command. There are
 
 
 ## updates
+
+### 2018.09.15.0
+
+[i3Kornhe]
+- refactored code
+- fixed issue with title format not reseting
+- add longoption support (`--speed`)
 
 ### 2018.09.12.0
 
@@ -133,6 +141,10 @@ Adapted the script to use the new [i3list] which resulted in faster execution ti
 
 **direction arguments**  
 More directions then p,n,prev,next are now allowed. up, left, prev, u, l, p all do the same thing. Same with: down, right, next, d, r, n.    
+
+## known issues
+
+`i3-msg restart` breaks [i3fyra], try to use `i3-msg reload` instead (*it's faster and usually works just as good as restart*).
 
 ## license
 
