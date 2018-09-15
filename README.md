@@ -6,7 +6,7 @@ assist the usage of the windowmanager known as [i3wm].
   - [updates](#updates)
   - [usage](#usage)
   - [examples](#examples)
-  - [known issues](#known issues)
+  - [known issues](#known-issues)
 
 ## installation
 
