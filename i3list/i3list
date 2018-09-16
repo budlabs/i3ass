@@ -100,6 +100,8 @@ printlist(){
       desc["AWX"]="Active window x position"
       desc["AWY"]="Active window y position"
       desc["AWB"]="Active window titlebar height"
+      desc["ATX"]="Active window tab x postion"
+      desc["ATW"]="Active window tab width"
       desc["TWW"]="Target window width"
       desc["TWH"]="Target window height"
       desc["TWX"]="Target window x position"
@@ -147,7 +149,8 @@ printlist(){
     rectw==1 && $1=="\"y\""{cury=$2}
     rectw==1 && $1=="\"width\""{curw=$2}
     rectw==1 && $1=="\"height\""{sub("}","",$2);curh=$2;rectw=2}
-    $1=="\"deco_rect\"" {rectb=1}
+    $1=="\"deco_rect\"" {curtx=$NF;rectb=1}
+    rectb==1 && $1=="\"width\""{curtw=$NF}
     rectb==1 && $1=="\"height\""{sub("}","",$2);curb=$2;rectb=2}
 
     $1~"{\"id\"" || $2~"\"id\"" {
@@ -200,6 +203,8 @@ printlist(){
         active["AWB"]=curb
         active["AWW"]=curw
         active["AWH"]=(curh+curb)
+        active["ATX"]=curtx
+        active["ATW"]=curtw
 
         if(curcid == conta[curcon]["id"]){
           active["AWP"]=curcon
