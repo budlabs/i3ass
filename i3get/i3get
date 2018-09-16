@@ -1,11 +1,11 @@
 #!/bin/env bash
 
 __name="i3get"
-__version="0.301"
+__version="0.302"
 __author="budRich"
 __contact='robstenklippa@gmail.com'
 __created="2017-03-08"
-__updated="2018-09-13"
+__updated="2018-09-16"
 
 main(){
   local option optarg kol lopt sopt o synk
@@ -167,7 +167,7 @@ getwindow(){
       split(sret, aret, "")
       for (i=1; i <= length(sret); i++) {
         op=r[aret[i]]
-        if(aret[i]!~/t|o/){gsub("[\"]","",op)}
+        gsub(/^["]|["]$/,"",op)
         if(op!="")
           printf("%s\n", op)
       }
