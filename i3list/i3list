@@ -46,7 +46,6 @@ printlist(){
       desc["WSH"]="workspace i3fyra height"
       desc["WSX"]="workspace i3fyra x position"
       desc["WSY"]="workspace i3fyra y position"
-      desc["WSA"]="workspace number active"
       desc["AWF"]="active window floating"
       desc["AWP"]="active window parent"
       desc["AWC"]="active window con_id"
@@ -111,6 +110,7 @@ printlist(){
       desc["WAX"]="Active workspace x position"
       desc["WAY"]="Active workspace y position"
       desc["WAN"]="Active workspace name"
+      desc["WSA"]="workspace number active"
       desc["WTN"]="Target workspace name"
 
 
@@ -122,17 +122,28 @@ printlist(){
 
     hit!=0 && $0~"{" {hit++}
     hit!=0 && $0~"}" {hit--}
-    hit!=0 && $1=="\"focus\"" {
-      gsub("[[]|[]]","",$2)
-      container["C"curcon"F"]=$2
+
+    $1=="\"focus\"" {
+      if (hit!=0) {
+        gsub("[[]|[]]","",$2)
+        container["C"curcon"F"]=$2
+      } else {
+        for (w in aws) {
+          if ($NF ~ w) {
+            workspace["WAN"]=aws[w]["name"]
+            workspace["WSA"]=aws[w]["num"]
+          }
+        }
+      }
     }
+
 
     $1=="\"window\"" {curwid=$2}
     $1=="\"name\"" {curnam=$2}
 
     $1=="\"num\"" {
-      curws=$2
-      curwsnam=curnam
+      aws[curid]["num"]=curws=$2
+      aws[curid]["name"]=curwsnam=curnam
       if(workspace["WSF"]=="chk"){
         workspace["WSF"]=curws}
       if (wsdchk=="2") {
