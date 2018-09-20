@@ -94,8 +94,10 @@ main(){
     shift
   done
 
+
   # if no search is given, search for active window
   [[ ${#__crit[@]} -eq 0 ]] && __crit[focused]=true
+
 
   result="$(getwindow)"
 
@@ -132,13 +134,14 @@ getwindow(){
       }
 
       # reset return array
-      $1~"{\"id\"" || $2~"\"id\"" {
+      $(NF-1) ~ /"id"$/ {
+        if (hit == trg) exit
         cid=$NF
         hit=0
         for(k in r){if(k!="w"){r[k]=""}}
         if(sret ~ n)
           r["n"]=cid
-        if(hit==trg){exit}
+        
       }
 
       start==1 && hit!=trg {
@@ -150,15 +153,16 @@ getwindow(){
         }
       }
 
-      sret ~ t && $1=="\"title\"" {sub($1":","");r["t"]=$0}
-      sret ~ c && $2 ~ "\"class\"" {r["c"]=$3}
-      sret ~ i && $1=="\"instance\"" {r["i"]=$2}
-      sret ~ d && $1=="\"window\"" {r["d"]=$2}
-      sret ~ m && $1=="\"marks\"" {r["m"]=$2}
-      sret ~ a && $1=="\"focused\"" {r["a"]=$2}
-      sret ~ o && $1=="\"title_format\"" {r["o"]=$2}
-      sret ~ w && $1=="\"num\"" {r["w"]=$2}
-      sret ~ f && $1=="\"floating\"" {r["f"]=$2;if (hit == trg)exit}
+
+      sret ~ "t" && $1=="\"title\"" {sub($1":","");r["t"]=$0}
+      sret ~ "c" && $(NF-1) ~ "\"class\"" {r["c"]=$NF}
+      sret ~ "i" && $1=="\"instance\"" {r["i"]=$2}
+      sret ~ "d" && $1=="\"window\"" {r["d"]=$2}
+      sret ~ "m" && $1=="\"marks\"" {r["m"]=$2}
+      sret ~ "a" && $1=="\"focused\"" {r["a"]=$2}
+      sret ~ "o" && $1=="\"title_format\"" {r["o"]=$2}
+      sret ~ "w" && $1=="\"num\"" {r["w"]=$2}
+      sret ~ "f" && $1=="\"floating\"" {r["f"]=$2}
       
       /__START__/ {start=1}
 
