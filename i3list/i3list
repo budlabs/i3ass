@@ -17,7 +17,6 @@ main(){
       d) crit="\"window\""   srch="${OPTARG}" ;;
       m) crit="\"marks\""    srch="${OPTARG}" ;;
       t) crit="\"title\""    srch="${OPTARG}" ;;
-      n) crit="\"id\""       srch="${OPTARG}" ;;
 
       v) printf '%s\n' \
            "$NAME - version: $VERSION" \
