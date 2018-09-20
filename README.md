@@ -56,6 +56,14 @@ Execute a script with the `-h` flag to display help about the command. There are
 
 ## updates
 
+### 2018.09.20.0
+
+# [i3get] BREAKING CHANGE
+leading and trailing doublequotes are now trimmed from all output (affecting title and titleformat), this might break script which include the quotes in f.i. regex searched.  
+
+[i3list]
+fixed issue #32 related to getting workspace name and number of the active workspace if it is empty.
+
 ### 2018.09.15.0
 
 [i3Kornhe]

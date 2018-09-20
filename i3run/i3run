@@ -101,7 +101,6 @@ focuswindow(){
     fi
     # window is not handled by i3fyra and not active
     if [[ -z ${i3list[TWP]} ]]; then
-
       if [[ ${i3list[WSA]} != "${i3list[WST]}" ]]; then
         if [[ ${i3list[WST]} = "-1" ]] || [[ $summon = 1 ]]; then
           i3-msg -q "[con_id=${i3list[TWC]}]" \

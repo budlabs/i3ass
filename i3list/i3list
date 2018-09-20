@@ -17,7 +17,6 @@ main(){
       d) crit="\"window\""   srch="${OPTARG}" ;;
       m) crit="\"marks\""    srch="${OPTARG}" ;;
       t) crit="\"title\""    srch="${OPTARG}" ;;
-      n) crit="\"id\""       srch="${OPTARG}" ;;
 
       v) printf '%s\n' \
            "$NAME - version: $VERSION" \
@@ -47,7 +46,6 @@ printlist(){
       desc["WSH"]="workspace i3fyra height"
       desc["WSX"]="workspace i3fyra x position"
       desc["WSY"]="workspace i3fyra y position"
-      desc["WSA"]="workspace number active"
       desc["AWF"]="active window floating"
       desc["AWP"]="active window parent"
       desc["AWC"]="active window con_id"
@@ -100,6 +98,8 @@ printlist(){
       desc["AWX"]="Active window x position"
       desc["AWY"]="Active window y position"
       desc["AWB"]="Active window titlebar height"
+      desc["ATX"]="Active window tab x postion"
+      desc["ATW"]="Active window tab width"
       desc["TWW"]="Target window width"
       desc["TWH"]="Target window height"
       desc["TWX"]="Target window x position"
@@ -110,6 +110,7 @@ printlist(){
       desc["WAX"]="Active workspace x position"
       desc["WAY"]="Active workspace y position"
       desc["WAN"]="Active workspace name"
+      desc["WSA"]="workspace number active"
       desc["WTN"]="Target workspace name"
 
 
@@ -121,17 +122,28 @@ printlist(){
 
     hit!=0 && $0~"{" {hit++}
     hit!=0 && $0~"}" {hit--}
-    hit!=0 && $1=="\"focus\"" {
-      gsub("[[]|[]]","",$2)
-      container["C"curcon"F"]=$2
+
+    $1=="\"focus\"" {
+      if (hit!=0) {
+        gsub("[[]|[]]","",$2)
+        container["C"curcon"F"]=$2
+      } else {
+        for (w in aws) {
+          if ($NF ~ w) {
+            workspace["WAN"]=aws[w]["name"]
+            workspace["WSA"]=aws[w]["num"]
+          }
+        }
+      }
     }
+
 
     $1=="\"window\"" {curwid=$2}
     $1=="\"name\"" {curnam=$2}
 
     $1=="\"num\"" {
-      curws=$2
-      curwsnam=curnam
+      aws[curid]["num"]=curws=$2
+      aws[curid]["name"]=curwsnam=curnam
       if(workspace["WSF"]=="chk"){
         workspace["WSF"]=curws}
       if (wsdchk=="2") {
@@ -147,7 +159,8 @@ printlist(){
     rectw==1 && $1=="\"y\""{cury=$2}
     rectw==1 && $1=="\"width\""{curw=$2}
     rectw==1 && $1=="\"height\""{sub("}","",$2);curh=$2;rectw=2}
-    $1=="\"deco_rect\"" {rectb=1}
+    $1=="\"deco_rect\"" {curtx=$NF;rectb=1}
+    rectb==1 && $1=="\"width\""{curtw=$NF}
     rectb==1 && $1=="\"height\""{sub("}","",$2);curb=$2;rectb=2}
 
     $1~"{\"id\"" || $2~"\"id\"" {
@@ -200,6 +213,8 @@ printlist(){
         active["AWB"]=curb
         active["AWW"]=curw
         active["AWH"]=(curh+curb)
+        active["ATX"]=curtx
+        active["ATW"]=curtw
 
         if(curcid == conta[curcon]["id"]){
           active["AWP"]=curcon
@@ -388,6 +403,16 @@ printlist(){
         layout["LEX"]=layout["LVI"] layout["LHI"]
         
 
+        if (layout["LVI"] ~ /[AC]/) {
+          if (layout["LVI"] !~ /[BD]/) {splits["SAB"]=0}
+          if (layout["LHI"] ~ /[AC]/) {splits["SAC"]=0}
+        }
+
+        if (layout["LVI"] ~ /[BD]/) {
+          if (layout["LVI"] !~ /[AC]/) {splits["SAB"]=0}
+          if (layout["LHI"] ~ /[BD]/) {splits["SBD"]=0}
+        }
+      
         for(k in splits){
           printf(stringformat, k, splits[k], desc[k])
         }

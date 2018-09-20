@@ -326,7 +326,7 @@ containerhide(){
     i3list[MAB]=${i3list[SAB]}
   }
 
-  [[ -n ${i3list[S${tfam}]} ]] && ((i3list[S${tfam}]!=i3list[WSH])) && {
+  [[ -n ${i3list[S${tfam}]} ]] && ((${i3list[S${tfam}]}!=i3list[WSH])) && {
     i3var set "i34M${tfam}" "${i3list[S${tfam}]}" 
     i3list[M${tfam}]=${i3list[S${tfam}]}
   }
