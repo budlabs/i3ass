@@ -393,6 +393,16 @@ printlist(){
         layout["LEX"]=layout["LVI"] layout["LHI"]
         
 
+        if (layout["LVI"] ~ /[AC]/) {
+          if (layout["LVI"] !~ /[BD]/) {splits["SAB"]=0}
+          if (layout["LHI"] ~ /[AC]/) {splits["SAC"]=0}
+        }
+
+        if (layout["LVI"] ~ /[BD]/) {
+          if (layout["LVI"] !~ /[AC]/) {splits["SAB"]=0}
+          if (layout["LHI"] ~ /[BD]/) {splits["SBD"]=0}
+        }
+      
         for(k in splits){
           printf(stringformat, k, splits[k], desc[k])
         }
