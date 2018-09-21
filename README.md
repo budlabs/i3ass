@@ -56,6 +56,11 @@ Execute a script with the `-h` flag to display help about the command. There are
 
 ## updates
 
+### 2018.09.21.0
+
+[i3list]
+fixed issue #32 for real (*i hope ;*) related to getting workspace name and number of the active workspace if it is empty.
+
 ### 2018.09.20.0
 
 # [i3get] BREAKING CHANGE
