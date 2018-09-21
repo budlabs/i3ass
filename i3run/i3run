@@ -110,7 +110,6 @@ focuswindow(){
             ((i3list[TWF] == 1)) && ((followmouse == 1)) \
               && sendtomouse
         else
-          dunstify WTN
           i3-msg -q workspace "${i3list[WTN]}"
         fi
         
