@@ -56,6 +56,11 @@ Execute a script with the `-h` flag to display help about the command. There are
 
 ## updates
 
+### 2018.09.21.0
+
+[i3list]
+fixed issue #32 for real (*i hope ;*) related to getting workspace name and number of the active workspace if it is empty.
+
 ### 2018.09.20.0
 
 # [i3get] BREAKING CHANGE
@@ -162,10 +167,10 @@ All **i3ass** scripts are licensed with the **MIT license**
 [getvisible]: https://github.com/budRich/i3ass/tree/master/getvisible
 [i3flip]: https://github.com/budRich/i3ass/tree/master/i3flip
 [i3fyra]: https://github.com/budRich/i3ass/tree/master/i3fyra
-[i3get]: https://github.com/budRich/i3ass/tree/master/i3get
 [i3gw]: https://github.com/budRich/i3ass/tree/master/i3gw
 [i3Kornhe]: https://github.com/budRich/i3ass/tree/master/i3Kornhe
 [i3list]: https://github.com/budRich/i3ass/tree/master/i3list
+[i3get]: https://github.com/budRich/i3ass/tree/master/i3get
 [i3run]: https://github.com/budRich/i3ass/tree/master/i3run
 [i3var]: https://github.com/budRich/i3ass/tree/master/i3var
 [i3viswiz]: https://github.com/budRich/i3ass/tree/master/i3viswiz
