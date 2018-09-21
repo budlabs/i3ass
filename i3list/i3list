@@ -100,6 +100,8 @@ printlist(){
       desc["AWB"]="Active window titlebar height"
       desc["ATX"]="Active window tab x postion"
       desc["ATW"]="Active window tab width"
+      desc["TTX"]="Target window tab x postion"
+      desc["TTW"]="Target window tab width"
       desc["TWW"]="Target window width"
       desc["TWH"]="Target window height"
       desc["TWX"]="Target window x position"
@@ -112,7 +114,6 @@ printlist(){
       desc["WAN"]="Active workspace name"
       desc["WSA"]="workspace number active"
       desc["WTN"]="Target workspace name"
-
 
       defaults["LD1"]="A"
       defaults["LD2"]="B"
@@ -137,13 +138,12 @@ printlist(){
       }
     }
 
-
     $1=="\"window\"" {curwid=$2}
     $1=="\"name\"" {curnam=$2}
 
     $1=="\"num\"" {
-      aws[curid]["num"]=curws=$2
-      aws[curid]["name"]=curwsnam=curnam
+      aws[curcontid]["num"]=curws=$2
+      aws[curcontid]["name"]=curwsnam=curnam
       if(workspace["WSF"]=="chk"){
         workspace["WSF"]=curws}
       if (wsdchk=="2") {
@@ -164,14 +164,13 @@ printlist(){
     rectb==1 && $1=="\"height\""{sub("}","",$2);curb=$2;rectb=2}
 
     $1~"{\"id\"" || $2~"\"id\"" {
+      curcontid=$NF
       if(trg=="0" || act=="0"){curcid=$NF}
       if(hit!=0){
         conta[curcon]["childs"]=conta[curcon]["childs"] $NF " "
         conta[curcon]["id"]=curcid
       }
     }
-
-    $1~"{\"id\"" || $2~"\"id\"" {curcid=$NF}
 
     trg==0 && $(NF-1) ~ crit && $NF ~ srch {
       target["TWC"]=curcid
@@ -182,8 +181,6 @@ printlist(){
 
     act==0 && $1=="\"focused\"" && $2=="true" {
       active["AWC"]=curcid
-      workspace["WSA"]=curws
-      workspace["WAN"]=curwsnam
       workspace["WAW"]=dim[curws]["w"]
       workspace["WAH"]=dim[curws]["h"]
       workspace["WAX"]=dim[curws]["x"]
