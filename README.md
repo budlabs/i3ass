@@ -7,6 +7,8 @@ assist the usage of the windowmanager known as [i3wm].
   - [usage](#usage)
   - [examples](#examples)
   - [known issues](#known-issues)
+  
+[![Sparkline](https://stars.medv.io/budlabs/i3ass.svg)](https://stars.medv.io/budlabs/i3ass)
 
 ## installation
 
