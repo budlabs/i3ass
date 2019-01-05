@@ -37,11 +37,7 @@ done
 # update dependency list
 {
   for f in "$projectdir/ass"/*; do
-    bashbud --get dependencies "$f" | \
-      sed \
-        -e 's/[][]//g' \
-        -e 's/[,]/ /g' \
-        -e 's/\s/\n/g'
+    bashbud --get dependencies "$f" 
   done | sort -u 
 } > "$projectdir/lib/alldeps"
 
@@ -72,3 +68,20 @@ source "$projectdir/lib/asslist.sh"
 } > "$projectdir/lib/deplist.sh"
 
 rm "$projectdir/lib/alldeps"
+
+# add description table to readme/usage
+tablefile=""$projectdir/manifest.d/usage.md""
+# remove old table
+awk -i inplace '/^[|][[]/ {exit};{print}' \
+  "$tablefile"
+
+# add new table
+for a in "$projectdir/ass"/*; do
+  printf '|[%s] | %s\n' \
+    "${a##*/}" \
+    "$(bashbud --get description "$a")"
+done >> "$tablefile"
+
+
+
+

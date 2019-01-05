@@ -2,7 +2,6 @@
 
 deplist() {
 cat << 'EOB'
-
 bash
 gawk
 i3

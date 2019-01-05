@@ -6,6 +6,8 @@ usage of the windowmanager known as [i3wm].
 
 [![Sparkline](https://stars.medv.io/budlabs/i3ass.svg)](https://stars.medv.io/budlabs/i3ass)
 
+
+
 ## installation
 
 If you are using **Arch linux**, you can install the i3ass
@@ -46,29 +48,35 @@ xdotool   [INSTALLED]
 
 ---
 
-Execute a script with the `-h` flag to display help about
-the command. There are also man pages included in the repo
-that can be installed with `make install-doc` or
-`install.sh`.
-
-EXAMPLES
---------
-`i3get -h` display [i3get] help 
-
-`i3get -v` display [i3get] version 
-
+There is no oneline way to describe what **i3ass** does.
+And some of the scripts are rather complex, To get an idea I
+suggest taking a look in the [wiki] or the individual readme
+files for each script (linked in the table below).
 
 |**file**  |     **function**          |
 |:---------|:--------------------------|
-|[i3fyra]  |An advanced simple layout
-|[i3run]   |Run, Raise or hide a window
-|[i3get]   |Get information about i3
-|[i3list]  |Get lots of information about i3 
-|[i3gw]    |Ghost window wrapper script
-|[i3flip]  |Tabswitching done right
-|[i3viswiz]|Focus switching and visible-window-info
-|[i3var]   |Set or get a i3 variable
-|[i3Kornhe]|move and resize windows gracefully
+|[i3flip] | Tabswitching done right
+|[i3fyra] | An advanced, simple grid-based tiling layout
+|[i3get] | Boilerplate and template maker for bash scripts
+|[i3gw] | a ghost window wrapper for i3wm
+|[i3Kornhe] | move and resize windows gracefully
+|[i3list] | list information about the current i3 session.
+|[i3run] | Run, Raise or hide windows in i3wm
+|[i3var] | Set or get a i3 variable
+|[i3viswiz] | Professional window focus for i3wm
+
+EXAMPLES
+--------
+Execute a script with the `-h` flag to display help about
+the command. There are also man pages included in the repo
+that can be installed with `make install-doc` or
+`install.sh`. 
+
+`i3get -h` display [i3get] help 
+`i3get -v` display [i3get] version 
+`man i3get` show [i3get] man page   
+`i3ass` show version info for all scripts and dependencies.
+
 
 ## updates
 
