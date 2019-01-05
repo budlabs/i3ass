@@ -55,6 +55,4 @@ elif [[ ${__o[version]:-} = 1 ]]; then
   exit
 fi
 
-[[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
-  && __lastarg="" \
-  || true
+

@@ -68,6 +68,7 @@ EXAMPLES
 %%readme_issues%%
 %%fi%%
 %%if readme_footer%%
+
 %%readme_footer%%
 %%fi%%
 

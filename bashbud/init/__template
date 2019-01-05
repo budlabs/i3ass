@@ -12,5 +12,11 @@ for ___f in "${___dir}/lib"/*; do
   source "$___f"
 done
 
+%%if synopsis%%
 %%cat ___getopt%%
+%%fi%%
+
+[[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
+  && __lastarg="" \
+  || true
 

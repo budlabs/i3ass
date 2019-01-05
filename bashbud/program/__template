@@ -10,5 +10,12 @@ wrap:     50
 %%cat -v '\(^#!/\)\|\(\s#bashbud$\)' main.sh%%
 %%cat ___help%%
 %%cat -v '\(^#!/\)' lib/*%%
+%%if synopsis%%
 %%cat ___getopt%%
+%%fi%%
+
+[[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
+  && __lastarg="" \
+  || true
+
 main "${@:-}"

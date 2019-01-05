@@ -26,7 +26,6 @@ Execute a script with the `-h` flag to display help about the command. There are
 |[i3viswiz]|Focus switching and visible-window-info
 |[i3var]   |Set or get a i3 variable
 |[i3Kornhe]|move and resize windows gracefully
-|[Makefile]| -
 
 # readme_install
 

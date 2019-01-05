@@ -1,8 +1,5 @@
 # readme_footer
 
-[AUR]: https://aur.archlinux.org/packages/i3ass/
-[focusvisible]: https://github.com/budRich/i3ass/tree/master/focusvisible
-[getvisible]: https://github.com/budRich/i3ass/tree/master/getvisible
 [i3flip]: https://github.com/budRich/i3ass/tree/master/i3flip
 [i3fyra]: https://github.com/budRich/i3ass/tree/master/i3fyra
 [i3gw]: https://github.com/budRich/i3ass/tree/master/i3gw

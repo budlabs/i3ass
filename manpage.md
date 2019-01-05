@@ -1,25 +1,5 @@
 `i3ass` - i3 assistance scripts
 
-SYNOPSIS
---------
-```text
-i3ass --help|-h
-i3ass --version|-v
-```
-
-DESCRIPTION
------------
-LONG DESCRIPTION
-
-
-OPTIONS
--------
-
-`--help`|`-h`  
-Show help and exit.
-
-`--version`|`-v`  
-Show version and exit.
 
 
 
@@ -40,7 +20,6 @@ EXAMPLES
 |[i3viswiz]|Focus switching and visible-window-info
 |[i3var]   |Set or get a i3 variable
 |[i3Kornhe]|move and resize windows gracefully
-|[Makefile]| -
 
 
 DEPENDENCIES

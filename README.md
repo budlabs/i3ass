@@ -44,25 +44,6 @@ xdotool   [INSTALLED]
 ```
 
 
-### usage
-
-```text
-i3ass --help|-h
-i3ass --version|-v
-```
-
-LONG DESCRIPTION
-
-
-OPTIONS
--------
-
-`--help`|`-h`  
-Show help and exit.
-
-`--version`|`-v`  
-Show version and exit.
-
 ---
 
 Execute a script with the `-h` flag to display help about
@@ -87,7 +68,6 @@ EXAMPLES
 |[i3viswiz]|Focus switching and visible-window-info
 |[i3var]   |Set or get a i3 variable
 |[i3Kornhe]|move and resize windows gracefully
-|[Makefile]| -
 
 ## updates
 
@@ -162,32 +142,23 @@ valid.
 `i3-msg restart` breaks [i3fyra], try to use `i3-msg
 reload` instead (*it's faster and usually works just as good
 as restart*).
+
+[focusvisible]: https://github.com/budRich/i3ass/tree/master/focusvisible
+[getvisible]: https://github.com/budRich/i3ass/tree/master/getvisible
+[i3flip]: https://github.com/budRich/i3ass/tree/master/i3flip
+[i3fyra]: https://github.com/budRich/i3ass/tree/master/i3fyra
+[i3gw]: https://github.com/budRich/i3ass/tree/master/i3gw
+[i3Kornhe]: https://github.com/budRich/i3ass/tree/master/i3Kornhe
+[i3list]: https://github.com/budRich/i3ass/tree/master/i3list
+[i3get]: https://github.com/budRich/i3ass/tree/master/i3get
+[i3run]: https://github.com/budRich/i3ass/tree/master/i3run
+[i3var]: https://github.com/budRich/i3ass/tree/master/i3var
+[i3viswiz]: https://github.com/budRich/i3ass/tree/master/i3viswiz
+[Makefile]: https://github.com/budRich/i3ass/blob/master/Makefile
+[install.sh]: https://github.com/budRich/i3ass/blob/master/install.sh
+[i3add]: https://github.com/budRich/scripts/i3add/
 [AUR]: https://aur.archlinux.org/packages/i3ass/
-[focusvisible]:
-https://github.com/budRich/i3ass/tree/master/focusvisible
-[getvisible]:
-https://github.com/budRich/i3ass/tree/master/getvisible
-[i3flip]:
-https://github.com/budRich/i3ass/tree/master/i3flip
-[i3fyra]:
-https://github.com/budRich/i3ass/tree/master/i3fyra [i3gw]:
-https://github.com/budRich/i3ass/tree/master/i3gw
-[i3Kornhe]:
-https://github.com/budRich/i3ass/tree/master/i3Kornhe
-[i3list]:
-https://github.com/budRich/i3ass/tree/master/i3list [i3get]:
-https://github.com/budRich/i3ass/tree/master/i3get [i3run]:
-https://github.com/budRich/i3ass/tree/master/i3run [i3var]:
-https://github.com/budRich/i3ass/tree/master/i3var
-[i3viswiz]:
-https://github.com/budRich/i3ass/tree/master/i3viswiz
-[Makefile]:
-https://github.com/budRich/i3ass/blob/master/Makefile
-[install.sh]:
-https://github.com/budRich/i3ass/blob/master/install.sh
-[i3add]: https://github.com/budRich/scripts/i3add/ [AUR]:
-https://aur.archlinux.org/packages/i3ass/ [i3]:
-https://i3wm.org/
+[i3]: https://i3wm.org/
 
 ## license
 

@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3ass - version: 2019.01.05.31
+i3ass - version: 2019.01.05.39
 updated: 2019-01-05 by budRich
 EOB
 }
@@ -29,20 +29,8 @@ cat << 'EOB' >&2
 i3ass - i3 assistance scripts
 
 
-SYNOPSIS
---------
-i3ass --help|-h
-i3ass --version|-v
-
 OPTIONS
 -------
-
---help|-h  
-Show help and exit.
-
-
---version|-v  
-Show version and exit.
 EOB
 }
 
@@ -97,19 +85,6 @@ ERM(){ >&2 echo "$*"; }
 ERR(){ >&2 echo "[WARNING]" "$*"; }
 ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
 
-getdeps(){
-  for d in "$___dir/ass/"*; do
-    nejm="${d##*/}"
-    deps["$nejm"]="$(
-      "$d/${nejm}.sh" --help 2>&1 | awk '
-        start==1 && $0 !~ /^[[:space:]]*[-]*[[:space:]]*$/ && $1 !~ /^i3.*/ {print $1}
-        $1 == "DEPENDENCIES" {start=1}
-    ')"
-  done
-
-  alldeps=($(printf '%s\n' ${deps[@]} | sort -u))
-}
-
 whosinstalled(){
   local longest_dep_name=0
 
@@ -134,35 +109,10 @@ whosinstalled(){
     fi
   done
 }
-declare -A __o
-eval set -- "$(getopt --name "i3ass" \
-  --options "hv" \
-  --longoptions "help,version," \
-  -- "$@"
-)"
-
-while true; do
-  case "$1" in
-    --help       | -h ) __o[help]=1 ;; 
-    --version    | -v ) __o[version]=1 ;; 
-    -- ) shift ; break ;;
-    *  ) break ;;
-  esac
-  shift
-done
-
-if [[ ${__o[help]:-} = 1 ]]; then
-  ___printhelp
-  exit
-elif [[ ${__o[version]:-} = 1 ]]; then
-  ___printversion
-  exit
-fi
 
 [[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
   && __lastarg="" \
   || true
-
 
 main "${@:-}"
 
