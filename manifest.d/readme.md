@@ -12,6 +12,7 @@ Execute a script with the `-h` flag to display help about the command. There are
 # examples
 
 `i3get -h` display [i3get] help  
+
 `i3get -v` display [i3get] version  
 
 

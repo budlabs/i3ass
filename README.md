@@ -54,6 +54,7 @@ that can be installed with `make install-doc` or
 EXAMPLES
 --------
 `i3get -h` display [i3get] help 
+
 `i3get -v` display [i3get] version 
 
 
@@ -71,70 +72,34 @@ EXAMPLES
 
 ## updates
 
-### v.0.1.7
+### 2018.09.21.0
 
-Added [i3Kornhe]
+[i3list] fixed issue #32 for real (*i hope ;*) related to
+getting workspace name and number of the active workspace if
+it is empty.
 
-changed output of [i3visiz] again, control variables are
-now all on the first line. Also added workspace dimensions
-for better (not yet perfect) multimonitor support, modified
-i3fyra 'move' command to work with the new changes.
-
-Added workspace position to i3list output.
-
-### v.0.1.6 - new installation scripts
+### 2018.09.20.0
 
 
-Added [Makefile] and updated [install.sh] to include
-(*optional*) systemwide and manpage installation.
+# [i3get] BREAKING CHANGE
 
-### v.0.1.6 - [i3list] 
+leading and trailing doublequotes are now trimmed from all
+output (affecting title and titleformat), this might break
+script which include the quotes in f.i. regex searched. 
 
-**Breaking change** 
-Complete rewrite, script is faster and output is more
-readable and usable (*array format*). If you have scripts
-relying on i3list, you need to make changes. 
+[i3list] fixed issue #32 related to getting workspace name
+and number of the active workspace if it is empty.
 
-### v.0.1.6 - [i3viswiz] 
-**Breaking change** 
-Changed output format and added more options to output.
-Focusing works as before, but if you have scripts that
-relies on the output (`-p`), you might need to update your
-scripts. 
-
-### v.0.1.6 - [i3fyra] 
-**Code cleanup** 
-Made a big code cleanup and removed big chunks are now
-handled by i3var,i3viswiz and i3list. Added more comments to
-the code and made the whole thing more stable, I hope this
-will resolve many issues that some users have reported. No
-breaking changes or new features.
-
-### v.0.1.6 - [i3run] 
-
-**improvements** 
-Adapted the script to use the new [i3list] which resulted
-in faster execution times. 
-
-**new options**   
-
-- `-m` position floating window at cursor (*was default
-in previous version*) 
-- `-x OLDNAME` rename new windows when they are created.
-
-### v.0.1.6 - [i3flip]
+### 2018.09.15.0
 
 
-**direction arguments** 
-More directions then p,n,prev,next are now allowed. up,
-left, prev, u, l, p all do the same thing. Same with: down,
-right, next, d, r, n.   
+[i3Kornhe]
+- refactored code
 
-### v.0.1.66
+- fixed issue with title format not reseting
 
+- add longoption support (`--speed`)
 
-Added error message to install.sh, if the command is not
-valid.
 
 
 ## known issues
@@ -143,22 +108,21 @@ valid.
 reload` instead (*it's faster and usually works just as good
 as restart*).
 
-[focusvisible]: https://github.com/budRich/i3ass/tree/master/focusvisible
-[getvisible]: https://github.com/budRich/i3ass/tree/master/getvisible
-[i3flip]: https://github.com/budRich/i3ass/tree/master/i3flip
-[i3fyra]: https://github.com/budRich/i3ass/tree/master/i3fyra
-[i3gw]: https://github.com/budRich/i3ass/tree/master/i3gw
-[i3Kornhe]: https://github.com/budRich/i3ass/tree/master/i3Kornhe
-[i3list]: https://github.com/budRich/i3ass/tree/master/i3list
-[i3get]: https://github.com/budRich/i3ass/tree/master/i3get
-[i3run]: https://github.com/budRich/i3ass/tree/master/i3run
-[i3var]: https://github.com/budRich/i3ass/tree/master/i3var
-[i3viswiz]: https://github.com/budRich/i3ass/tree/master/i3viswiz
+[i3flip]: https://github.com/budRich/i3ass/tree/dev/i3flip
+[i3fyra]: https://github.com/budRich/i3ass/tree/dev/i3fyra
+[i3gw]: https://github.com/budRich/i3ass/tree/dev/i3gw
+[i3Kornhe]: https://github.com/budRich/i3ass/tree/dev/i3Kornhe
+[i3list]: https://github.com/budRich/i3ass/tree/dev/i3list
+[i3get]: https://github.com/budRich/i3ass/tree/dev/i3get
+[i3run]: https://github.com/budRich/i3ass/tree/dev/i3run
+[i3var]: https://github.com/budRich/i3ass/tree/dev/i3var
+[i3viswiz]: https://github.com/budRich/i3ass/tree/dev/i3viswiz
 [Makefile]: https://github.com/budRich/i3ass/blob/master/Makefile
 [install.sh]: https://github.com/budRich/i3ass/blob/master/install.sh
 [i3add]: https://github.com/budRich/scripts/i3add/
 [AUR]: https://aur.archlinux.org/packages/i3ass/
 [i3]: https://i3wm.org/
+[i3wm]: https://i3wm.org/
 
 ## license
 

@@ -6,6 +6,7 @@
 EXAMPLES
 --------
 `i3get -h` display [i3get] help 
+
 `i3get -v` display [i3get] version 
 
 
