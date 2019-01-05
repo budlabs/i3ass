@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+
+# i3ass specific __pre-apply
+
+# increment version numbers
+# set updated to today in manifest.md
+
+projectdir="$1"
+newver="$(date +%Y.%m.%d).0"
+curver="$(bashbud --get version)"
+
+[[ ${newver%.*} = "${curver%.*}" ]] && {
+  controldigit="${curver##*.}"
+  newver="${newver%.*}.$((controldigit+1))"
+}
+
+bashbud --set version "$newver" "$projectdir"
+bashbud --set updated "$(date +%Y-%m-%d)" "$projectdir"
+
+# copy all ass man pages
+# rename them to the name, add index
+i=10
+for f in "$projectdir/ass"/*/manpage.md; do
+  thisass="${f%/*}"
+  thisass="${thisass##*/}"
+  echo "# $(cat "$f")" > \
+    "$projectdir/wiki/doc/$((i++))AS_${thisass}.md"
+done
+
+# copy all program.sh to src dir
+for f in "$projectdir/ass"/*/program.sh; do
+  thisass="${f%/*}"
+  thisass="${thisass##*/}"
+  cp -f "$f" "$projectdir/src/$thisass"
+done
+
+# update dependency list
+{
+  for f in "$projectdir/ass"/*; do
+    bashbud --get dependencies "$f" | \
+      sed \
+        -e 's/[][]//g' \
+        -e 's/[,]/ /g' \
+        -e 's/\s/\n/g'
+  done | sort -u 
+} > "$projectdir/lib/alldeps"
+
+# update ass list
+{
+  echo '#!/usr/bin/env bash'
+  echo
+  echo 'asslist() {'
+  echo "cat << 'EOB'"
+  for f in "$projectdir/ass"/*; do
+    echo "${f##*/}"
+  done | sort
+  echo 'EOB'
+  echo '}'
+} > "$projectdir/lib/asslist.sh"
+
+source "$projectdir/lib/asslist.sh"
+
+# update dep list
+{
+  echo '#!/usr/bin/env bash'
+  echo
+  echo 'deplist() {'
+  echo "cat << 'EOB'"
+  comm -23 "$projectdir/lib/alldeps" <(asslist)
+  echo 'EOB'
+  echo '}'
+} > "$projectdir/lib/deplist.sh"
+
+rm "$projectdir/lib/alldeps"

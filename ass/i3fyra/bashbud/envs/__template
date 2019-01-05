@@ -1,0 +1,11 @@
+---
+target:   ___envs
+markdown: false
+wrap:     50
+...
+%%if environ%%
+# environment variables
+%%for e in environ%%
+%%printf ': "${%s:=%s}"\n' 'e' 'e[default]'
+%%done%%
+%%fi%%

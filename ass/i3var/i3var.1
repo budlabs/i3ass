@@ -1,0 +1,58 @@
+.TH I3VAR 1 2019\-01\-05 Linx "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3var\fR \- Set or get a i3 variable
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3var \-\-help|\-h
+i3var \-\-version|\-v
+i3var set VARNAME [VALUE]
+i3var get VARNAME
+
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3var\fR is used to get or set a "variable" that
+is bound to the current i3wm session.  The
+variable is actually the mark of a "ghost window"
+on the scratch pad.
+
+.PP
+\fB\fCset\fR  if there is no variable with \fIVARNAME\fP an
+new window and mark will be created.  If \fIVARNAME\fP
+exists it's value will be change.  If \fIVALUE\fP is
+not defined,  \fIVARNAME\fP will get unset (window
+will get killed).
+
+.PP
+\fB\fCget\fR  if \fIVARNAME\fP exists,  its value will be
+returned window and mark will be created.  If
+\fIVARNAME\fP exists it's value will be changed.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR VARNAME
+Show version and exit.
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCsed\fR \fB\fCi3\fR \fB\fCi3gw\fR
+
+.PP
+budRich 
+\[la]https://github.com/budlabs/i3ass\[ra]
+
+.SH SEE ALSO
+.PP
+bash(1), awk(1), i3(1), i3gw(1),

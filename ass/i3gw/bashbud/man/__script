@@ -1,0 +1,18 @@
+#!/usr/bin/env bash
+
+ERR(){ >&2 echo "[WARNING]" "$*"; }
+
+dir="${1%/*}"
+name="${dir##*/}"
+
+command -v go-md2man > /dev/null 2>&1 \
+  && status="INSTALLED" \
+  || status="[NOT FOUND]"
+
+if [[ $status = INSTALLED ]]; then
+  < "$1" go-md2man > "$dir/$name.1"
+else
+  ERR 'Could not generate man page, go-md2man not found in PATH'
+fi
+
+rm "$1"

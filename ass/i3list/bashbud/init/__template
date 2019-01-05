@@ -1,0 +1,16 @@
+---
+target:   init.sh
+markdown: false
+wrap:     50
+...
+#!/usr/bin/env bash
+
+%%cat ___version%%
+%%cat ___envs%%
+%%cat ___help%%
+for ___f in "${___dir}/lib"/*; do
+  source "$___f"
+done
+
+%%cat ___getopt%%
+

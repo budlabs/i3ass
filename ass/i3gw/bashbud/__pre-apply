@@ -1,0 +1,20 @@
+#!/usr/bin/env bash
+
+# increment version number
+# set updated to today in manifest.md
+
+today="$(date +%Y-%m-%d)"
+projectdir=$1
+manifest="$projectdir/manifest.md"
+
+awk -i inplace -v today="$today" '
+    $1 == "version:" {
+      newver=$2 + 0.001
+      sub($2,newver,$0)
+      bump=0
+    }
+    $1 == "updated:" {
+      sub($2,today,$0)
+    }
+    {print}
+' "$manifest"
