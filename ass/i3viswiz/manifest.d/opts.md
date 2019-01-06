@@ -4,51 +4,45 @@ When used in conjunction with: `--titleformat`, `--title`, `--class`, `--instanc
 
 # options-titleformat-description
 
-If no **TARGET** is specified, a list of all tiled windows will get printed with **TITLE_FORMAT** as the last field of each row.  
-
-If **TARGET** matches the **TITLE_FORMAT** of a visible window, that windows **CON_ID** will get printed to `stdout`.  
-
-If the `--focus` flag is set, the found window will get focus.
+If **TARGET** matches the **TITLE_FORMAT** of a visible window, that windows 
+**CON_ID** will get printed to `stdout`.
+If no **TARGET** is specified, a list of all tiled windows will get printed with 
+**TITLE_FORMAT** as the last field of each row. 
 
 # options-class-description
 
-If no **TARGET** is specified, a list of all tiled windows will get printed with **CLASS** as the last field of each row.  
-
-If **TARGET** matches the **CLASS** of a visible window, that windows **CON_ID** will get printed to `stdout`.  
-
-If the `--focus` flag is set, the found window will get focus.
+If **TARGET** matches the **CLASS** of a visible window, that windows 
+**CON_ID** will get printed to `stdout`.
+If no **TARGET** is specified, a list of all tiled windows will get printed with 
+**CLASS** as the last field of each row.
 
 # options-title-description
 
-If no **TARGET** is specified, a list of all tiled windows will get printed with **TITLE** as the last field of each row.  
-
-If **TARGET** matches the **TITLE** of a visible window, that windows **CON_ID** will get printed to `stdout`.  
-
-If the `--focus` flag is set, the found window will get focus.
+If **TARGET** matches the **TITLE** of a visible window, that windows 
+**CON_ID** will get printed to `stdout`.
+If no **TARGET** is specified, a list of all tiled windows will get printed with 
+**TITLE** as the last field of each row.
 
 # options-instance-description
 
-If no **TARGET** is specified, a list of all tiled windows will get printed with **INSTANCE** as the last field of each row.  
-
-If **TARGET** matches the **INSTANCE** of a visible window, that windows **CON_ID** will get printed to `stdout`.  
-
-If the `--focus` flag is set, the found window will get focus.
+If **TARGET** matches the **INSTANCE** of a visible window, that windows 
+**CON_ID** will get printed to `stdout`.
+If no **TARGET** is specified, a list of all tiled windows will get printed with 
+**INSTANCE** as the last field of each row.
 
 # options-parent-description
 
-If no **TARGET** is specified, a list of all tiled windows will get printed with **PARENT** as the last field of each row.  
-
-If **TARGET** matches the **PARENT** of a visible window, that windows **CON_ID** will get printed to `stdout`.  
-
-If the `--focus` flag is set, the found window will get focus.
+If **TARGET** matches the **PARENT** of a visible window, that windows 
+**CON_ID** will get printed to `stdout`.
+If no **TARGET** is specified, a list of all tiled windows will get printed with 
+**PARENT** as the last field of each row.
 
 # options-winid-description
 
-If no **TARGET** is specified, a list of all tiled windows will get printed with **WIN_ID** as the last field of each row.  
-
-If **TARGET** matches the **WIN_ID** of a visible window, that windows **CON_ID** will get printed to `stdout`.  
-
-If the `--focus` flag is set, the found window will get focus.
+If **TARGET** matches the **WIN_ID** of a visible window, that windows 
+**CON_ID** will get printed to `stdout`.
+If no **TARGET** is specified, a list of all tiled windows will get printed with 
+**WIN_ID** as the last field of each row.
 
 
 # options-gap-description

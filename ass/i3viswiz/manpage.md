@@ -3,15 +3,15 @@
 SYNOPSIS
 --------
 ```text
+i3viswiz [--gap|-g GAPSIZE] **DIRECTION**
+i3viswiz [--focus|-f] --title|-t       [TARGET]
+i3viswiz [--focus|-f] --instance|-i    [TARGET]
+i3viswiz [--focus|-f] --class|-c       [TARGET]
+i3viswiz [--focus|-f] --titleformat|-o [TARGET]
+i3viswiz [--focus|-f] --winid|-d       [TARGET]
+i3viswiz [--focus|-f] --parent|-p      [TARGET]
 i3viswiz --help|-h
 i3viswiz --version|-v
-i3viswiz [--gap|-g GAPSIZE] **DIRECTION**
-i3viswiz [--focus|-f] --title|-t       [**TARGET**]
-i3viswiz [--focus|-f] --instance|-i    [**TARGET**]
-i3viswiz [--focus|-f] --class|-c       [**TARGET**]
-i3viswiz [--focus|-f] --titleformat|-o [**TARGET**]
-i3viswiz [--focus|-f] --winid|-d       [**TARGET**]
-i3viswiz [--focus|-f] --parent|-p      [**TARGET**]
 ```
 
 DESCRIPTION
@@ -26,15 +26,8 @@ closest in the given *DIRECTION*, or warp focus if
 there are no windows in the given direction. 
 
 
-
 OPTIONS
 -------
-
-`--help`|`-h`  
-Show help and exit.
-
-`--version`|`-v`  
-Show version and exit.
 
 `--gap`|`-g` GAPSIZE  
 Set GAPSIZE (defaults to 5). GAPSIZE is the
@@ -48,82 +41,59 @@ When used in conjunction with: `--titleformat`,
 will get focused if it is visible.
 
 `--title`|`-t`  
-If no **TARGET** is specified, a list of all
-tiled windows will get printed with **TITLE** as
-the last field of each row. 
-
 If **TARGET** matches the **TITLE** of a visible
-window, that windows **CON_ID** will get printed
-to `stdout`. 
-
-If the `--focus` flag is set, the found window
-will get focus.
+window, that windows  **CON_ID** will get printed
+to `stdout`. If no **TARGET** is specified, a list
+of all tiled windows will get printed with 
+**TITLE** as the last field of each row.
 
 `--instance`|`-i`  
-If no **TARGET** is specified, a list of all
-tiled windows will get printed with **INSTANCE**
-as the last field of each row. 
-
 If **TARGET** matches the **INSTANCE** of a
-visible window, that windows **CON_ID** will get
-printed to `stdout`. 
-
-If the `--focus` flag is set, the found window
-will get focus.
+visible window, that windows  **CON_ID** will get
+printed to `stdout`. If no **TARGET** is
+specified, a list of all tiled windows will get
+printed with  **INSTANCE** as the last field of
+each row.
 
 `--class`|`-c`  
-If no **TARGET** is specified, a list of all
-tiled windows will get printed with **CLASS** as
-the last field of each row. 
-
 If **TARGET** matches the **CLASS** of a visible
-window, that windows **CON_ID** will get printed
-to `stdout`. 
-
-If the `--focus` flag is set, the found window
-will get focus.
+window, that windows  **CON_ID** will get printed
+to `stdout`. If no **TARGET** is specified, a list
+of all tiled windows will get printed with 
+**CLASS** as the last field of each row.
 
 `--titleformat`|`-o`  
-If no **TARGET** is specified, a list of all
-tiled windows will get printed with
-**TITLE_FORMAT** as the last field of each row. 
-
 If **TARGET** matches the **TITLE_FORMAT** of a
-visible window, that windows **CON_ID** will get
-printed to `stdout`. 
-
-If the `--focus` flag is set, the found window
-will get focus.
+visible window, that windows  **CON_ID** will get
+printed to `stdout`. If no **TARGET** is
+specified, a list of all tiled windows will get
+printed with  **TITLE_FORMAT** as the last field
+of each row.
 
 `--winid`|`-d`  
-If no **TARGET** is specified, a list of all
-tiled windows will get printed with **WIN_ID** as
-the last field of each row. 
-
 If **TARGET** matches the **WIN_ID** of a visible
-window, that windows **CON_ID** will get printed
-to `stdout`. 
-
-If the `--focus` flag is set, the found window
-will get focus.
+window, that windows  **CON_ID** will get printed
+to `stdout`. If no **TARGET** is specified, a list
+of all tiled windows will get printed with 
+**WIN_ID** as the last field of each row.
 
 
 `--parent`|`-p`  
-If no **TARGET** is specified, a list of all
-tiled windows will get printed with **PARENT** as
-the last field of each row. 
-
 If **TARGET** matches the **PARENT** of a visible
-window, that windows **CON_ID** will get printed
-to `stdout`. 
+window, that windows  **CON_ID** will get printed
+to `stdout`. If no **TARGET** is specified, a list
+of all tiled windows will get printed with 
+**PARENT** as the last field of each row.
 
-If the `--focus` flag is set, the found window
-will get focus.
+`--help`|`-h`  
+Show help and exit.
 
-EXAMPLE
--------
+`--version`|`-v`  
+Show version and exit.
 
 
+EXAMPLES
+--------
 replace the normal i3 focus keybindings with
 viswiz like this: 
 ``` text

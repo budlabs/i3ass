@@ -1,4 +1,4 @@
-.TH I3VISWIZ 1 2019\-01\-05 Linx "User Manuals"
+.TH I3VISWIZ 1 2019\-01\-06 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3viswiz\fR \- Professional window focus for i3wm
@@ -8,15 +8,15 @@
 .RS
 
 .nf
+i3viswiz [\-\-gap|\-g GAPSIZE] **DIRECTION**
+i3viswiz [\-\-focus|\-f] \-\-title|\-t       [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-instance|\-i    [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-class|\-c       [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-titleformat|\-o [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-winid|\-d       [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-parent|\-p      [TARGET]
 i3viswiz \-\-help|\-h
 i3viswiz \-\-version|\-v
-i3viswiz [\-\-gap|\-g GAPSIZE] **DIRECTION**
-i3viswiz [\-\-focus|\-f] \-\-title|\-t       [**TARGET**]
-i3viswiz [\-\-focus|\-f] \-\-instance|\-i    [**TARGET**]
-i3viswiz [\-\-focus|\-f] \-\-class|\-c       [**TARGET**]
-i3viswiz [\-\-focus|\-f] \-\-titleformat|\-o [**TARGET**]
-i3viswiz [\-\-focus|\-f] \-\-winid|\-d       [**TARGET**]
-i3viswiz [\-\-focus|\-f] \-\-parent|\-p      [**TARGET**]
 
 
 .fi
@@ -36,14 +36,6 @@ there are no windows in the given direction.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
-Show help and exit.
-
-.PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
-Show version and exit.
-
-.PP
 \fB\fC\-\-gap\fR|\fB\fC\-g\fR GAPSIZE
 Set GAPSIZE (defaults to 5). GAPSIZE is the
 distance in pixels from the current window where
@@ -58,95 +50,63 @@ will get focused if it is visible.
 
 .PP
 \fB\fC\-\-title\fR|\fB\fC\-t\fR
-If no \fBTARGET\fP is specified, a list of all
-tiled windows will get printed with \fBTITLE\fP as
-the last field of each row.
-
-.PP
 If \fBTARGET\fP matches the \fBTITLE\fP of a visible
-window, that windows \fBCON\_ID\fP will get printed
-to \fB\fCstdout\fR\&.
-
-.PP
-If the \fB\fC\-\-focus\fR flag is set, the found window
-will get focus.
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBTITLE\fP as the last field of each row.
 
 .PP
 \fB\fC\-\-instance\fR|\fB\fC\-i\fR
-If no \fBTARGET\fP is specified, a list of all
-tiled windows will get printed with \fBINSTANCE\fP
-as the last field of each row.
-
-.PP
 If \fBTARGET\fP matches the \fBINSTANCE\fP of a
-visible window, that windows \fBCON\_ID\fP will get
-printed to \fB\fCstdout\fR\&.
-
-.PP
-If the \fB\fC\-\-focus\fR flag is set, the found window
-will get focus.
+visible window, that windows  \fBCON\_ID\fP will get
+printed to \fB\fCstdout\fR\&. If no \fBTARGET\fP is
+specified, a list of all tiled windows will get
+printed with  \fBINSTANCE\fP as the last field of
+each row.
 
 .PP
 \fB\fC\-\-class\fR|\fB\fC\-c\fR
-If no \fBTARGET\fP is specified, a list of all
-tiled windows will get printed with \fBCLASS\fP as
-the last field of each row.
-
-.PP
 If \fBTARGET\fP matches the \fBCLASS\fP of a visible
-window, that windows \fBCON\_ID\fP will get printed
-to \fB\fCstdout\fR\&.
-
-.PP
-If the \fB\fC\-\-focus\fR flag is set, the found window
-will get focus.
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBCLASS\fP as the last field of each row.
 
 .PP
 \fB\fC\-\-titleformat\fR|\fB\fC\-o\fR
-If no \fBTARGET\fP is specified, a list of all
-tiled windows will get printed with
-\fBTITLE\_FORMAT\fP as the last field of each row.
-
-.PP
 If \fBTARGET\fP matches the \fBTITLE\_FORMAT\fP of a
-visible window, that windows \fBCON\_ID\fP will get
-printed to \fB\fCstdout\fR\&.
-
-.PP
-If the \fB\fC\-\-focus\fR flag is set, the found window
-will get focus.
+visible window, that windows  \fBCON\_ID\fP will get
+printed to \fB\fCstdout\fR\&. If no \fBTARGET\fP is
+specified, a list of all tiled windows will get
+printed with  \fBTITLE\_FORMAT\fP as the last field
+of each row.
 
 .PP
 \fB\fC\-\-winid\fR|\fB\fC\-d\fR
-If no \fBTARGET\fP is specified, a list of all
-tiled windows will get printed with \fBWIN\_ID\fP as
-the last field of each row.
-
-.PP
 If \fBTARGET\fP matches the \fBWIN\_ID\fP of a visible
-window, that windows \fBCON\_ID\fP will get printed
-to \fB\fCstdout\fR\&.
-
-.PP
-If the \fB\fC\-\-focus\fR flag is set, the found window
-will get focus.
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBWIN\_ID\fP as the last field of each row.
 
 .PP
 \fB\fC\-\-parent\fR|\fB\fC\-p\fR
-If no \fBTARGET\fP is specified, a list of all
-tiled windows will get printed with \fBPARENT\fP as
-the last field of each row.
-
-.PP
 If \fBTARGET\fP matches the \fBPARENT\fP of a visible
-window, that windows \fBCON\_ID\fP will get printed
-to \fB\fCstdout\fR\&.
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBPARENT\fP as the last field of each row.
 
 .PP
-If the \fB\fC\-\-focus\fR flag is set, the found window
-will get focus.
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+Show help and exit.
 
-.SH EXAMPLE
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+Show version and exit.
+
+.SH EXAMPLES
 .PP
 replace the normal i3 focus keybindings with
 viswiz like this:
