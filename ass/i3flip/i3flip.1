@@ -1,4 +1,4 @@
-.TH I3FLIP 1 2019\-01\-05 Linx "User Manuals"
+.TH I3FLIP 1 2019\-01\-06 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3flip\fR \- Tabswitching done right
@@ -8,10 +8,10 @@
 .RS
 
 .nf
+i3flip **DIRECTION**
+i3flip \-\-move|\-m DIRECTION
 i3flip \-\-help|\-h
 i3flip \-\-version|\-v
-i3flip \-\-move|\-m **DIRECTION**
-i3flip **DIRECTION**
 
 
 .fi
@@ -30,9 +30,16 @@ first container will be activated.
 which can be defined with different words:
 
 .PP
-\fBnext\fP|right|down|n|r|d  \fBprev\fP|left|up|p|l|u
+\fBnext\fP|right|down|n|r|d
+
+.PP
+\fBprev\fP|left|up|p|l|u
 
 .SH OPTIONS
+.PP
+\fB\fC\-\-move\fR|\fB\fC\-m\fR DIRECTION
+Move the current tab instead of changing focus.
+
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
 Show help and exit.
@@ -40,10 +47,6 @@ Show help and exit.
 .PP
 \fB\fC\-\-version\fR|\fB\fC\-v\fR
 Show version and exit.
-
-.PP
-\fB\fC\-\-move\fR|\fB\fC\-m\fR
-Move the current tab instead of changing focus.
 
 .SH EXAMPLES
 .PP

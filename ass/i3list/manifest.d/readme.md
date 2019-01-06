@@ -1,7 +1,6 @@
-EXAMPLES
---------
+# examples
 
-```shell
+```text
 $ i3list
 i3list[AWF]=0                  # Active Window floating
 i3list[ATW]=270                # Active Window tab width

@@ -1,4 +1,4 @@
-.TH I3LIST 1 2019\-01\-05 Linx "User Manuals"
+.TH I3LIST 1 2019\-01\-06 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3list\fR \- list information about the current i3
@@ -9,14 +9,14 @@ session.
 .RS
 
 .nf
-i3list \-\-help|\-h
-i3list \-\-version|\-v
 i3list \-\-instance|\-i TARGET
 i3list \-\-class|\-c    TARGET
 i3list \-\-conid|\-n    TARGET
 i3list \-\-winid|\-d    TARGET
 i3list \-\-mark|\-m     TARGET
 i3list \-\-title|\-t    TARGET
+i3list \-\-help|\-h
+i3list \-\-version|\-v
 
 
 .fi
@@ -38,14 +38,6 @@ array in bash scripts,  but the array needs to be
 declared first.
 
 .SH OPTIONS
-.PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
-Show help and exit.
-
-.PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
-Show version and exit.
-
 .PP
 \fB\fC\-\-instance\fR|\fB\fC\-i\fR TARGET
 Search for windows with a instance matching
@@ -75,12 +67,17 @@ Search for windows with a \fBmark\fP matching
 Search for windows with a \fBtitle\fP matching
 \fITARGET\fP
 
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+Show version and exit.
+
 .SH EXAMPLES
 .PP
-.RS
-
-.nf
-$ i3list
+```text$ i3list
 i3list[AWF]=0                  # Active Window floating
 i3list[ATW]=270                # Active Window tab width
 i3list[ATX]=540                # Active Window tab x postion
@@ -156,16 +153,14 @@ i3list[WFN]='1'                # i3fyra Workspace name
 i3list[WSA]=1                  # Active Workspace number
 i3list[WTN]='1'                # Target Workspace name
 
-
+.PP
 $ declare \-A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
 
-
-
-.fi
-.RE
+.PP
+```
 
 .SH DEPENDENCIES
 .PP

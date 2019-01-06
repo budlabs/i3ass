@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3flip - version: 0.042
-updated: 2019-01-05 by budRich
+i3flip - version: 0.045
+updated: 2019-01-06 by budRich
 EOB
 }
 
@@ -66,13 +66,16 @@ i3flip - Tabswitching done right
 
 SYNOPSIS
 --------
+i3flip DIRECTION
+i3flip --move|-m DIRECTION
 i3flip --help|-h
 i3flip --version|-v
-i3flip --move|-m DIRECTION
-i3flip DIRECTION
 
 OPTIONS
 -------
+
+--move|-m DIRECTION  
+Move the current tab instead of changing focus.
 
 --help|-h  
 Show help and exit.
@@ -81,9 +84,6 @@ Show help and exit.
 --version|-v  
 Show version and exit.
 
-
---move|-m  
-Move the current tab instead of changing focus.
 EOB
 }
 
@@ -202,16 +202,16 @@ movetarget(){
 }
 declare -A __o
 eval set -- "$(getopt --name "i3flip" \
-  --options "hvm" \
-  --longoptions "help,version,move," \
+  --options "m:hv" \
+  --longoptions "move:,help,version," \
   -- "$@"
 )"
 
 while true; do
   case "$1" in
+    --move       | -m ) __o[move]="${2:-}" ; shift ;;
     --help       | -h ) __o[help]=1 ;; 
     --version    | -v ) __o[version]=1 ;; 
-    --move       | -m ) __o[move]=1 ;; 
     -- ) shift ; break ;;
     *  ) break ;;
   esac

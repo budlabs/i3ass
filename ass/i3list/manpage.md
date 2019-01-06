@@ -3,14 +3,14 @@
 SYNOPSIS
 --------
 ```text
-i3list --help|-h
-i3list --version|-v
 i3list --instance|-i TARGET
 i3list --class|-c    TARGET
 i3list --conid|-n    TARGET
 i3list --winid|-d    TARGET
 i3list --mark|-m     TARGET
 i3list --title|-t    TARGET
+i3list --help|-h
+i3list --version|-v
 ```
 
 DESCRIPTION
@@ -28,12 +28,6 @@ By using eval,  the output can be used as an array in bash scripts,  but the arr
 
 OPTIONS
 -------
-
-`--help`|`-h`  
-Show help and exit.
-
-`--version`|`-v`  
-Show version and exit.
 
 `--instance`|`-i` TARGET  
 Search for windows with a instance matching
@@ -58,12 +52,16 @@ Search for windows with a **mark** matching
 Search for windows with a **title** matching
 *TARGET* 
 
+`--help`|`-h`  
+Show help and exit.
+
+`--version`|`-v`  
+Show version and exit.
+
+
 EXAMPLES
 --------
-
-
-```shell
-$ i3list
+```text$ i3list
 i3list[AWF]=0                  # Active Window floating
 i3list[ATW]=270                # Active Window tab width
 i3list[ATX]=540                # Active Window tab x postion
@@ -146,8 +144,6 @@ $ echo ${i3list[WAW]}
 1080
 
 ```
-
-
 
 DEPENDENCIES
 ------------

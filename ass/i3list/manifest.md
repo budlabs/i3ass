@@ -1,22 +1,22 @@
 ---
 description: >
   list information about the current i3 session.
-updated:       2019-01-05
-version:       0.025
+updated:       2019-01-06
+version:       0.027
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-10-06
 dependencies:  [bash, gawk, i3]
 see-also:      [bash(1), awk(1), i3(1), i3fyra(1)]
 synopsis: |
-    --help|-h
-    --version|-v
     --instance|-i TARGET
     --class|-c    TARGET
     --conid|-n    TARGET
     --winid|-d    TARGET
     --mark|-m     TARGET
     --title|-t    TARGET
+    --help|-h
+    --version|-v
 ...
 
 # long_description
