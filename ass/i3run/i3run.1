@@ -87,19 +87,18 @@ mouse cursor when it is created or shown. (\fIneeds
 .PP
 \fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
 Command to run if no window is found. Complex
-commands can be written inside quotes:  \fB\fCi3run \-i
-sublime\_text \-e 'subl Command to run if no window
-is found. Complex commands can be written inside
-quotes:\fRi3run \-i sublime\_text \-e 'subl Command
-to run if no window is found. Complex commands can
-be written inside quotes:  \fB\fCi3run \-i sublime\_text
-\-e 'subl
-%%amani[options][4][command][description]%%%%amani[options][4][command][description]%%
-notify\-send "sublime is
-started"'\fR%%amani[options][4][command][description]%%
-notify\-send "sublime is
-started"'\fB\fC%%amani[options][4][command][description]%%
-notify\-send "sublime is started"'\fR
+commands can be written inside quotes:
+
+.PP
+.RS
+
+.nf
+i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
+
+
+
+.fi
+.RE
 
 .PP
 \fB\fC\-\-rename\fR|\fB\fC\-x\fR
