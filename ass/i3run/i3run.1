@@ -1,4 +1,4 @@
-.TH I3RUN 1 2019\-01\-05 Linx "User Manuals"
+.TH I3RUN 1 2019\-01\-06 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3run\fR \- Run, Raise or hide windows in i3wm
@@ -8,12 +8,12 @@
 .RS
 
 .nf
-i3run \-\-help|\-h
-i3run \-\-version|\-v
 i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
 i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
 i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
 i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
+i3run \-\-help|\-h
+i3run \-\-version|\-v
 
 
 .fi
@@ -23,11 +23,9 @@ i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\
 .PP
 \fB\fCi3run\fR let's you use one command for multiple
 functions related to the same window identified by
-a given criteria.
-
-.PP
-\fB\fCi3run\fR will take different action depending on
-the state of the searched window:
+a given criteria.  \fB\fCi3run\fR will take different
+action depending on the state of the searched
+window:
 
 .TS
 allbox;
@@ -56,23 +54,17 @@ the scratchpad. Show in this context means,  move
 window to current workspace.
 
 .PP
-It is important that \fB\fC\-e\fR \fICOMMAND\fP is last of
-the options.  \fB\fC\-e\fR is optional, if no \fICOMMAND\fP is
-passed and no window is found,  nothing happens.
-It is also important that \fICOMMAND\fP will spawn a
-window matching the criteria,  otherwise the
-script will get stuck in a loop waiting for the
-window to appear.
+\fB\fC\-e\fR is optional, if no \fICOMMAND\fP is passed and
+no window is found,  nothing happens.  It is
+important that \fB\fC\-e\fR \fICOMMAND\fP is \fBthe last of the
+options\fP\&.  It is also important that \fICOMMAND\fP
+\fBwill spawn a window matching the criteria\fP,
+otherwise the script will get stuck in a loop
+waiting for the window to appear. (\fIit will stop
+waiting for the window to appear after 10
+seconds\fP)
 
 .SH OPTIONS
-.PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
-Show help and exit.
-
-.PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
-Show version and exit.
-
 .PP
 \fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
 Search for windows with the given INSTANCE
@@ -94,6 +86,20 @@ mouse cursor when it is created or shown. (\fIneeds
 
 .PP
 \fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
+Command to run if no window is found. Complex
+commands can be written inside quotes:  \fB\fCi3run \-i
+sublime\_text \-e 'subl Command to run if no window
+is found. Complex commands can be written inside
+quotes:\fRi3run \-i sublime\_text \-e 'subl Command
+to run if no window is found. Complex commands can
+be written inside quotes:  \fB\fCi3run \-i sublime\_text
+\-e 'subl
+%%amani[options][4][command][description]%%%%amani[options][4][command][description]%%
+notify\-send "sublime is
+started"'\fR%%amani[options][4][command][description]%%
+notify\-send "sublime is
+started"'\fB\fC%%amani[options][4][command][description]%%
+notify\-send "sublime is started"'\fR
 
 .PP
 \fB\fC\-\-rename\fR|\fB\fC\-x\fR
@@ -113,6 +119,14 @@ Search for windows with the given TITLE
 .PP
 \fB\fC\-\-conid\fR|\fB\fC\-n\fR
 Search for windows with the given CON\_ID
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+Show version and exit.
 
 .SH DEPENDENCIES
 .PP

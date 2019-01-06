@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.031
-updated: 2019-01-05 by budRich
+i3run - version: 0.032
+updated: 2019-01-06 by budRich
 EOB
 }
 
@@ -18,22 +18,15 @@ i3run - Run, Raise or hide windows in i3wm
 
 SYNOPSIS
 --------
-i3run --help|-h
-i3run --version|-v
 i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
 i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
 i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
 i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
+i3run --help|-h
+i3run --version|-v
 
 OPTIONS
 -------
-
---help|-h  
-Show help and exit.
-
-
---version|-v  
-Show version and exit.
 
 --instance|-i INSTANCE  
 Search for windows with the given INSTANCE
@@ -55,6 +48,19 @@ xdotool)
 
 
 --command|-e COMMAND  
+Command to run if no window is found. Complex
+commands can be written inside quotes: 
+i3run -i sublime_text -e 'subl Command to run if no window is found. Complex
+commands can be written inside quotes: 
+i3run -i sublime_text -e 'subl Command to run if no window is found. Complex
+commands can be written inside quotes: 
+i3run -i sublime_text -e 'subl %%amani[options][4][command][description]%%%%amani[options][4][command][description]%% notify-send
+"sublime is started"'
+%%amani[options][4][command][description]%% notify-send
+"sublime is started"'
+%%amani[options][4][command][description]%% notify-send
+"sublime is started"'
+
 
 --rename|-x  
 If the search criteria is -i (instance), the
@@ -74,6 +80,13 @@ Search for windows with the given TITLE
 --conid|-n  
 Search for windows with the given CON_ID
 
+
+--help|-h  
+Show help and exit.
+
+
+--version|-v  
+Show version and exit.
 EOB
 }
 
@@ -84,15 +97,13 @@ done
 
 declare -A __o
 eval set -- "$(getopt --name "i3run" \
-  --options "hvi:sgme:xc:t:n" \
-  --longoptions "help,version,instance:,summon,nohide,mouse,command:,rename,class:,title:,conid," \
+  --options "i:sgme:xc:t:nhv" \
+  --longoptions "instance:,summon,nohide,mouse,command:,rename,class:,title:,conid,help,version," \
   -- "$@"
 )"
 
 while true; do
   case "$1" in
-    --help       | -h ) __o[help]=1 ;; 
-    --version    | -v ) __o[version]=1 ;; 
     --instance   | -i ) __o[instance]="${2:-}" ; shift ;;
     --summon     | -s ) __o[summon]=1 ;; 
     --nohide     | -g ) __o[nohide]=1 ;; 
@@ -102,6 +113,8 @@ while true; do
     --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --title      | -t ) __o[title]="${2:-}" ; shift ;;
     --conid      | -n ) __o[conid]=1 ;; 
+    --help       | -h ) __o[help]=1 ;; 
+    --version    | -v ) __o[version]=1 ;; 
     -- ) shift ; break ;;
     *  ) break ;;
   esac
