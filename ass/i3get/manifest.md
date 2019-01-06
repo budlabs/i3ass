@@ -1,8 +1,8 @@
 ---
 description: >
   Boilerplate and template maker for bash scripts
-updated:       2019-01-05
-version:       0.327
+updated:       2019-01-06
+version:       0.328
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-03-08
@@ -31,8 +31,6 @@ Request workspace, title and floating state.
 ``` shell
 $ i3get --instance sublime_text -r wtf 
 1
-"~/src/bash/i3ass/i3get (i3ass) - Sublime Text"
+~/src/bash/i3ass/i3get (i3ass) - Sublime Text
 user_off
 ```
-
-Title and tile_format output is always surrounded with double-quotes.  

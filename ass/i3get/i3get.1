@@ -1,4 +1,4 @@
-.TH I3GET 1 2019\-01\-05 Linx "User Manuals"
+.TH I3GET 1 2019\-01\-06 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3get\fR \- Boilerplate and template maker for bash
@@ -76,11 +76,23 @@ will wait till target window exist.
 \fIOUTPUT\fP can be one or more of the following
 characters:
 
-.PP
-\fB\fCt\fR: title  \fB\fCc\fR: class  \fB\fCi\fR: instance  \fB\fCd\fR:
-Window ID  \fB\fCn\fR: Con\_Id (default)  \fB\fCm\fR: mark  \fB\fCw\fR:
-workspace  \fB\fCa\fR: is active  \fB\fCf\fR: floating state
-\fB\fCo\fR: title format  \fB\fCv\fR: visible state
+.TS
+allbox;
+l l 
+l l .
+\fB\fCcharacter\fR	\fB\fCprint\fR
+\fB\fCt\fR	title
+\fB\fCc\fR	class
+\fB\fCi\fR	instance
+\fB\fCd\fR	Window ID
+\fB\fCn\fR	Con\_Id (default)
+\fB\fCm\fR	mark
+\fB\fCw\fR	workspace
+\fB\fCa\fR	is active
+\fB\fCf\fR	floating state
+\fB\fCo\fR	title format
+\fB\fCv\fR	visible state
+.TE
 
 .SH EXAMPLES
 .PP
@@ -94,17 +106,13 @@ floating state.
 .nf
 $ i3get \-\-instance sublime\_text \-r wtf 
 1
-"\~/src/bash/i3ass/i3get (i3ass) \- Sublime Text"
+\~/src/bash/i3ass/i3get (i3ass) \- Sublime Text
 user\_off
 
 
 
 .fi
 .RE
-
-.PP
-Title and tile\_format output is always surrounded
-with double\-quotes.
 
 .SH DEPENDENCIES
 .PP

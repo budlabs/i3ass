@@ -36,14 +36,16 @@ script will wait till target window exist.
 *OUTPUT* can be one or more of the following 
 characters:   
 
-`t`: title  
-`c`: class  
-`i`: instance  
-`d`: Window ID  
-`n`: Con_Id (default)  
-`m`: mark  
-`w`: workspace  
-`a`: is active  
-`f`: floating state  
-`o`: title format  
-`v`: visible state  
+|character | print
+|:---------|:-----
+|`t`       | title  
+|`c`       | class  
+|`i`       | instance  
+|`d`       | Window ID  
+|`n`       | Con_Id (default)  
+|`m`       | mark  
+|`w`       | workspace  
+|`a`       | is active  
+|`f`       | floating state  
+|`o`       | title format  
+|`v`       | visible state  

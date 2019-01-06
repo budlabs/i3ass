@@ -56,17 +56,19 @@ script will wait till target window exist.
 `--print`|`-r` OUTPUT  
 *OUTPUT* can be one or more of the following  characters:  
 
-`t`: title 
-`c`: class 
-`i`: instance 
-`d`: Window ID 
-`n`: Con_Id (default) 
-`m`: mark 
-`w`: workspace 
-`a`: is active 
-`f`: floating state 
-`o`: title format 
-`v`: visible state  
+|character | print
+|:---------|:-----
+|`t`       | title  
+|`c`       | class  
+|`i`       | instance  
+|`d`       | Window ID  
+|`n`       | Con_Id (default)  
+|`m`       | mark  
+|`w`       | workspace  
+|`a`       | is active  
+|`f`       | floating state  
+|`o`       | title format  
+|`v`       | visible state  
 
 EXAMPLES
 --------
@@ -76,13 +78,10 @@ workspace, title and floating state.
 ``` shell
 $ i3get --instance sublime_text -r wtf 
 1
-"~/src/bash/i3ass/i3get (i3ass) - Sublime Text"
+~/src/bash/i3ass/i3get (i3ass) - Sublime Text
 user_off
 
 ```
-
-
-Title and tile_format output is always surrounded with double-quotes.  
 
 
 

@@ -76,8 +76,6 @@ that can be installed with `make install-doc` or
 `i3get -v` display [i3get] version 
 `man i3get` show [i3get] man page   
 `i3ass` show version info for all scripts and dependencies.
-
-
 ## updates
 
 ### 2018.09.21.0
