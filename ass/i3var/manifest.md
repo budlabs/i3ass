@@ -1,8 +1,8 @@
 ---
 description: >
   Set or get a i3 variable
-updated:       2019-01-05
-version:       0.025
+updated:       2019-01-06
+version:       0.027
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-12-22
@@ -23,12 +23,12 @@ synopsis: |
 The variable is actually the mark of a "ghost window" on the scratch pad.
 
 `set`  
-if there is no variable with *VARNAME* an new window and mark will be created. 
-If *VARNAME* exists it's value will be change. 
+If *VARNAME* doesn't exist,
+a new window and mark will be created. 
+If *VARNAME* exists it's value will be replaced with *VALUE*.  
 If *VALUE* is not defined, 
-*VARNAME* will get unset (window will get killed).  
+*VARNAME* will get unset.  
 
 `get`  
 if *VARNAME* exists, 
-its value will be returned window and mark will be created. 
-If *VARNAME* exists it's value will be changed.  
+its value will be returned window.  

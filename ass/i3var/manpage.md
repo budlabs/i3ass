@@ -17,14 +17,14 @@ variable is actually the mark of a "ghost window"
 on the scratch pad.
 
 `set` 
-if there is no variable with *VARNAME* an new
-window and mark will be created.  If *VARNAME*
-exists it's value will be change.  If *VALUE* is
-not defined,  *VARNAME* will get unset (window
-will get killed). 
+If *VARNAME* doesn't exist, a new window and mark
+will be created.  If *VARNAME* exists it's value
+will be replaced with *VALUE*. 
+If *VALUE* is not defined,  *VARNAME* will get
+unset. 
 
 `get` 
-if *VARNAME* exists,  its value will be returned window and mark will be created.  If *VARNAME* exists it's value will be changed.  
+if *VARNAME* exists,  its value will be returned window.  
 
 
 OPTIONS

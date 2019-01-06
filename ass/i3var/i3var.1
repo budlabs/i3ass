@@ -1,4 +1,4 @@
-.TH I3VAR 1 2019\-01\-05 Linx "User Manuals"
+.TH I3VAR 1 2019\-01\-06 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3var\fR \- Set or get a i3 variable
@@ -25,16 +25,14 @@ variable is actually the mark of a "ghost window"
 on the scratch pad.
 
 .PP
-\fB\fCset\fR  if there is no variable with \fIVARNAME\fP an
-new window and mark will be created.  If \fIVARNAME\fP
-exists it's value will be change.  If \fIVALUE\fP is
-not defined,  \fIVARNAME\fP will get unset (window
-will get killed).
+\fB\fCset\fR  If \fIVARNAME\fP doesn't exist, a new window
+and mark will be created.  If \fIVARNAME\fP exists
+it's value will be replaced with \fIVALUE\fP\&.  If
+\fIVALUE\fP is not defined,  \fIVARNAME\fP will get unset.
 
 .PP
 \fB\fCget\fR  if \fIVARNAME\fP exists,  its value will be
-returned window and mark will be created.  If
-\fIVARNAME\fP exists it's value will be changed.
+returned window.
 
 .SH OPTIONS
 .PP
