@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3ass - version: 2019.01.08.0
+i3ass - version: 2019.01.08.1
 updated: 2019-01-08 by budRich
 EOB
 }

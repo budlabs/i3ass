@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.038
+i3run - version: 0.039
 updated: 2019-01-08 by budRich
 EOB
 }
@@ -81,19 +81,7 @@ xdotool)
 Command to run if no window is found. Complex
 commands can be written inside quotes:  
 
-   i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
-commands can be written inside quotes:  
-
-   i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
-commands can be written inside quotes:  
-
-   i3run -i sublime_text -e 'subl \%%amani[options][4][command][description]%%\%%amani[options][4][command][description]%% notify-send "sublime is started"'
-
-
-\%%amani[options][4][command][description]%% notify-send "sublime is started"'
-
-
-\%%amani[options][4][command][description]%% notify-send "sublime is started"'
+   i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
 
 
 
