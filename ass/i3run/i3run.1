@@ -97,35 +97,7 @@ commands can be written inside quotes:
 .RS
 
 .nf
-i3run \-i sublime\_text \-e 'subl \\Command to run if no window is found. Complex
-commands can be written inside quotes:  
-
-.fi
-.RE
-
-.PP
-i3run \-i sublime\_text \-e 'subl \\Command to run if
-no window is found. Complex commands can be
-written inside quotes:
-
-.PP
-.RS
-
-.nf
-i3run \-i sublime\_text \-e 'subl \\%%amani[options][4][command][description]%%\\%%amani[options][4][command][description]%% notify\-send "sublime is started"'
-
-.fi
-.RE
-
-.PP
-\\%%amani[options][4][command][description]%%
-notify\-send "sublime is started"'
-
-.PP
-.RS
-
-.nf
-\\%%amani[options][4][command][description]%% notify\-send "sublime is started"'
+i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
 
 .fi
 .RE

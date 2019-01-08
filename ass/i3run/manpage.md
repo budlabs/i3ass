@@ -60,17 +60,7 @@ mouse cursor when it is created or shown. (*needs
 Command to run if no window is found. Complex
 commands can be written inside quotes:  
 ```
-i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
-commands can be written inside quotes:  
-```
-i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
-commands can be written inside quotes:  
-```
-i3run -i sublime_text -e 'subl \%%amani[options][4][command][description]%%\%%amani[options][4][command][description]%% notify-send "sublime is started"'
-```
-\%%amani[options][4][command][description]%% notify-send "sublime is started"'
-```
-\%%amani[options][4][command][description]%% notify-send "sublime is started"'
+i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
 ```
 
 

@@ -14,7 +14,7 @@ Search for windows with the given CON_ID
 Command to run if no window is found.
 Complex commands can be written inside quotes:  
 ```
-i3run -i sublime_text -e 'subl \&\& notify-send "sublime is started"'
+i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
 ```
 
 # options-summon-description
