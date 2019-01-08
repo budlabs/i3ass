@@ -1,4 +1,4 @@
-.TH I3KORNHE 1 2019\-01\-05 Linx "User Manuals"
+.TH I3KORNHE 1 2019\-01\-08 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3Kornhe\fR \- move and resize windows gracefully
@@ -8,31 +8,45 @@
 .RS
 
 .nf
-i3Kornhe \-\-help|\-h
-i3Kornhe \-\-version|\-v
-i3Kornhe move [\-\-speed|\-p SPEED] [**DIRECTION**]
-i3Kornhe size [\-\-speed|\-p SPEED] [**DIRECTION**]
 i3Kornhe DIRECTION
+i3Kornhe move [\-\-speed|\-p SPEED] [DIRECTION]
+i3Kornhe size [\-\-speed|\-p SPEED] [DIRECTION]
 i3Kornhe 1\-9
 i3Kornhe x
-
+i3Kornhe \-\-help|\-h
+i3Kornhe \-\-version|\-v
 
 .fi
 .RE
 
+.SH DESCRIPTION
+.PP
+i3Kornhe provides an alternative way to move and
+resize windows in \fBi3\fP\&. It has some more
+functions then the defaults and is more
+streamlined. Resizing floating windows is done by
+first selecting a corner of the window,  and then
+moving that corner. See the wiki or the manpage
+for details and how to add the required mode in
+the i3 config file that is needed to use
+\fBi3Kornhe\fP\&.
+
 .SH OPTIONS
 .PP
+\fB\fC\-\-speed\fR|\fB\fC\-p\fR SPEED
+.br
+Sets speed or distance in pixels to use when
+moving and resizing the windows.
+
+.PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR move
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
 Show version and exit.
-
-.PP
-\fB\fC\-\-speed\fR|\fB\fC\-p\fR DIRECTION
-Sets speed or distance in pixels to use when
-moving and resizing the windows.
 
 
 .SH usage
@@ -108,8 +122,6 @@ mode "sizemode" {
   bindsym Escape exec \-\-no\-startup\-id i3Kornhe x
 }
 
-
-
 .fi
 .RE
 
@@ -131,8 +143,6 @@ A tip is also to use variables in the i3config:
 set $super bindsym Mod4
 set $i3Kornhe exec \-\-no\-startup\-id i3Kornhe
 
-
-
 .fi
 .RE
 
@@ -145,8 +155,6 @@ bindsym Mod4+Right exec \-\-no\-startup\-id i3Kornhe move \-p 0 right
 
 after:  
 $super+Right $i3Kornhe m \-p 0 r
-
-
 
 .fi
 .RE
@@ -162,7 +170,9 @@ Let us go through the processes that will happen
 when the different actions are executed.
 
 .PP
-\fIgroup B:\fP  \fB\fC$super+Left $i3Kornhe m \-p 0 l\fR
+\fIgroup B:\fP
+.br
+\fB\fC$super+Left $i3Kornhe m \-p 0 l\fR
 
 .PP
 This will make i3Kornhe to enter \fBmove mode\fP\&.
@@ -221,8 +231,9 @@ or \s+2group 2\s-2 (without a mode definition), the
 named corner will \fIget moved\fP\&. To change corner
 execute a keybinding from \fBgroup 3\fP\&. To switch
 back to MOVE mode, we only need a single
-keybinding (\fBgroup 4\fP):  \fB\fCbindsym m $i3Kornhe m
-\-p 0 l\fR
+keybinding (\fBgroup 4\fP):
+.br
+\fB\fCbindsym m $i3Kornhe m \-p 0 l\fR
 
 .PP
 The direction and speed is needed but will not
@@ -245,8 +256,6 @@ the position corresponding to the number:
 123
 456
 789
-
-
 
 .fi
 .RE

@@ -19,7 +19,7 @@ containershow(){
   [[ $trg =~ [${i3list[LHI]}] ]] && sts=hidden
 
   case "$sts" in
-    visible ) return ;;
+    visible ) return 0;;
     none    ) containercreate "$trg" ;;
     hidden  )
       
@@ -77,11 +77,11 @@ containershow(){
 
           if [[ $tdest = i34XAC ]]; then
             tspl=${i3list[MAC]}  # stored split
-            tdim=${i3list[WSH]}  # workspace width
+            tdim=${i3list[WFH]}  # workspace width
             tmrk=AC
           else
             tspl=${i3list[M${tfam}]}
-            tdim=${i3list[WSW]}      
+            tdim=${i3list[WFW]}      
             tmrk=$tfam 
           fi
 
@@ -91,7 +91,7 @@ containershow(){
           }
 
           [[ -n $tspl ]] \
-            && { ((tdim==i3list[WSW])) || ((famact!=1)) ;} && {
+            && { ((tdim==i3list[WFW])) || ((famact!=1)) ;} && {
               i3list[S${tmrk}]=$((tdim/2))
               eval "applysplits $tmrk=$tspl"
           }
@@ -104,11 +104,11 @@ containershow(){
 
           if [[ $tdest = i34XAB ]]; then
             tspl=${i3list[MAB]}  # stored split
-            tdim=${i3list[WSW]}  # workspace width
+            tdim=${i3list[WFW]}  # workspace width
             tmrk=AB
           else
             tspl=${i3list[M${tfam}]}
-            tdim=${i3list[WSH]}      
+            tdim=${i3list[WFH]}      
             tmrk=$tfam 
           fi
 
@@ -118,7 +118,7 @@ containershow(){
           }
 
           [[ -n $tspl ]] \
-            && { ((tdim==i3list[WSH])) || ((famact!=1)) ;} && {
+            && { ((tdim==i3list[WFH])) || ((famact!=1)) ;} && {
               i3list[S${tmrk}]=$((tdim/2))
               eval "applysplits $tmrk=$tspl"
           }
@@ -130,7 +130,7 @@ containershow(){
       i3list[LHI]=${i3list[LHI]/$trg/}
 
       # bring the whole family
-      [[ $famshow = 1 ]] && [[ $sib =~ [${i3list[LHI]}] ]] \
+      [[ ${famshow:-} = 1 ]] && [[ $sib =~ [${i3list[LHI]}] ]] \
         && containershow "$sib"
     ;;
   esac

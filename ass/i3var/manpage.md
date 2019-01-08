@@ -3,10 +3,10 @@
 SYNOPSIS
 --------
 ```text
-i3var --help|-h
-i3var --version|-v
 i3var set VARNAME [VALUE]
 i3var get VARNAME
+i3var --help|-h
+i3var --version|-v
 ```
 
 DESCRIPTION
@@ -16,14 +16,14 @@ is bound to the current i3wm session.  The
 variable is actually the mark of a "ghost window"
 on the scratch pad.
 
-`set` 
+`set`  \[VALUE\]  
 If *VARNAME* doesn't exist, a new window and mark
 will be created.  If *VARNAME* exists it's value
-will be replaced with *VALUE*. 
+will be replaced with *VALUE*.  
 If *VALUE* is not defined,  *VARNAME* will get
-unset. 
+unset.  
 
-`get` 
+`get`  
 if *VARNAME* exists,  its value will be returned window.  
 
 
@@ -33,7 +33,7 @@ OPTIONS
 `--help`|`-h`  
 Show help and exit.
 
-`--version`|`-v` VARNAME  
+`--version`|`-v`  
 Show version and exit.
 
 

@@ -1,4 +1,4 @@
-.TH I3RUN 1 2019\-01\-06 Linx "User Manuals"
+.TH I3RUN 1 2019\-01\-08 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3run\fR \- Run, Raise or hide windows in i3wm
@@ -14,7 +14,6 @@ i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-
 i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
 i3run \-\-help|\-h
 i3run \-\-version|\-v
-
 
 .fi
 .RE
@@ -67,25 +66,30 @@ seconds\fP)
 .SH OPTIONS
 .PP
 \fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+.br
 Search for windows with the given INSTANCE
 
 .PP
 \fB\fC\-\-summon\fR|\fB\fC\-s\fR
+.br
 Instead of switching workspace, summon window to
 current workspace
 
 .PP
 \fB\fC\-\-nohide\fR|\fB\fC\-g\fR
+.br
 Don't hide window/container if it's active.
 
 .PP
 \fB\fC\-\-mouse\fR|\fB\fC\-m\fR
+.br
 The window will be placed on the location of the
 mouse cursor when it is created or shown. (\fIneeds
 \fB\fCxdotool\fR\fP)
 
 .PP
 \fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
+.br
 Command to run if no window is found. Complex
 commands can be written inside quotes:
 
@@ -93,15 +97,42 @@ commands can be written inside quotes:
 .RS
 
 .nf
-i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
-
-
+i3run \-i sublime\_text \-e 'subl \\Command to run if no window is found. Complex
+commands can be written inside quotes:  
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-rename\fR|\fB\fC\-x\fR
+i3run \-i sublime\_text \-e 'subl \\Command to run if
+no window is found. Complex commands can be
+written inside quotes:
+
+.PP
+.RS
+
+.nf
+i3run \-i sublime\_text \-e 'subl \\%%amani[options][4][command][description]%%\\%%amani[options][4][command][description]%% notify\-send "sublime is started"'
+
+.fi
+.RE
+
+.PP
+\\%%amani[options][4][command][description]%%
+notify\-send "sublime is started"'
+
+.PP
+.RS
+
+.nf
+\\%%amani[options][4][command][description]%% notify\-send "sublime is started"'
+
+.fi
+.RE
+
+.PP
+\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
+.br
 If the search criteria is \fB\fC\-i\fR (instance), the
 window with instance: \fIOLDNAME\fP will get a n new
 instance name matching the criteria when it is
@@ -109,22 +140,27 @@ created (\fIneeds \fB\fCxdotool\fR\fP).
 
 .PP
 \fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+.br
 Search for windows with the given CLASS
 
 .PP
 \fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+.br
 Search for windows with the given TITLE
 
 .PP
-\fB\fC\-\-conid\fR|\fB\fC\-n\fR
+\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+.br
 Search for windows with the given CON\_ID
 
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
 Show help and exit.
 
 .PP
 \fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
 Show version and exit.
 
 .SH DEPENDENCIES

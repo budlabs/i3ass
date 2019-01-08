@@ -3,7 +3,7 @@
 SYNOPSIS
 --------
 ```text
-i3flip **DIRECTION**
+i3flip DIRECTION
 i3flip --move|-m DIRECTION
 i3flip --help|-h
 i3flip --version|-v
@@ -15,14 +15,13 @@ DESCRIPTION
 parent. Perfect for tabbed or stacked layout, but
 works on all layouts. If direction is `next` (or
 `n`) and the active container is the last, the
-first container will be activated. 
+first container will be activated.  
 
 **DIRECTION** can be either *prev* or *next*,
-which can be defined with different words: 
+which can be defined with different words:  
 
-**next**|right|down|n|r|d
-
-**prev**|left|up|p|l|u 
+**next**|right|down|n|r|d  
+**prev**|left|up|p|l|u  
 
 
 OPTIONS
@@ -41,13 +40,12 @@ Show version and exit.
 EXAMPLES
 --------
 Put these keybinding definitions in the i3
-config. 
+config.  
 
-`~/.config/i3/config`: 
+`~/.config/i3/config`:  
 ``` text
 bindsym Mod4+Tab         exec --no-startup-id i3flip next
 bindsym Mod4+Shift+Tab   exec --no-startup-id i3flip prev
-
 ```
 
 

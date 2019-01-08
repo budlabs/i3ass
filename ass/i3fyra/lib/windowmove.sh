@@ -8,16 +8,17 @@ windowmove(){
   # if dir is a container, show/create that container
   # and move the window there
 
-  [[ $dir =~ A|B|C|D ]] && {
-    
-    [[ ! ${i3list[LEX]} =~ $dir ]] && newcont=1
+  [[ ${dir^^} =~ A|B|C|D ]] && {
+    [[ ! ${i3list[LEX]} =~ $dir ]] \
+      && newcont=1 \
+      || newcont=0
     containershow "$dir"
 
-    ((newcont!=1)) \
-      && i3-msg -q "[con_id=${i3list[TWC]}]" \
-           focus, floating disable, \
-           move to mark "i34${dir}"
-
+    if ((newcont!=1)); then
+      i3-msg -q "[con_id=${i3list[TWC]}]" \
+        focus, floating disable, \
+        move to mark "i34${dir}", focus
+    fi
     exit
 
   }
@@ -47,7 +48,7 @@ windowmove(){
 
   eval "$(i3viswiz -p "$dir" | head -1)"
 
-  if [[ $wall != none ]]; then
+  if [[ ${wall:-} != none ]]; then
 
     # sibling toggling
     if [[ $dir =~ u|d ]]; then
@@ -104,7 +105,7 @@ windowmove(){
       fi
     fi
     
-    [[ -n ${toswap[1]} ]] \
+    [[ -n ${toswap[1]:-} ]] \
       && swapmeet "${toswap[0]}" "${toswap[1]}" \
       && i3-msg -q "[con_id=${i3list[TWC]}]" focus
 
@@ -154,18 +155,18 @@ swapmeet(){
   # with their twins
   if [[ $m1 =~ X ]]; then
     if [[ ${I3FYRA_ORIENTATION,,} = vertical ]]; then
-      tspl="${i3list[SAC]}" tdim="${i3list[WSH]}"
+      tspl="${i3list[SAC]}" tdim="${i3list[WFH]}"
       tmrk=AC
     else
-      tspl="${i3list[SAB]}" tdim="${i3list[WSW]}"
+      tspl="${i3list[SAB]}" tdim="${i3list[WFW]}"
       tmrk=AB
     fi
   else
     tmrk="${i3list[AFF]}"
     tspl="${i3list[S${tmrk}]}"
     [[ ${I3FYRA_ORIENTATION,,} = vertical ]] \
-      && tdim="${i3list[WSW]}" \
-      || tdim="${i3list[WSH]}"
+      && tdim="${i3list[WFW]}" \
+      || tdim="${i3list[WFH]}"
   fi
 
   { [[ -n $tspl ]] || ((tspl != tdim)) ;} && {

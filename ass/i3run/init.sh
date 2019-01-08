@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.035
-updated: 2019-01-06 by budRich
+i3run - version: 0.038
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -44,20 +44,31 @@ Don't hide window/container if it's active.
 --mouse|-m  
 The window will be placed on the location of the
 mouse cursor when it is created or shown. (needs
-xdotool) 
+xdotool)  
 
 
 --command|-e COMMAND  
 Command to run if no window is found. Complex
-commands can be written inside quotes: 
+commands can be written inside quotes:  
 
-   i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
-   
+   i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
+commands can be written inside quotes:  
+
+   i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
+commands can be written inside quotes:  
+
+   i3run -i sublime_text -e 'subl \%%amani[options][4][command][description]%%\%%amani[options][4][command][description]%% notify-send "sublime is started"'
+
+
+\%%amani[options][4][command][description]%% notify-send "sublime is started"'
+
+
+\%%amani[options][4][command][description]%% notify-send "sublime is started"'
 
 
 
 
---rename|-x  
+--rename|-x OLD_NAME  
 If the search criteria is -i (instance), the
 window with instance: OLDNAME will get a n new
 instance name matching the criteria when it is
@@ -72,7 +83,7 @@ Search for windows with the given CLASS
 Search for windows with the given TITLE
 
 
---conid|-n  
+--conid|-n CON_ID  
 Search for windows with the given CON_ID
 
 
@@ -92,8 +103,8 @@ done
 
 declare -A __o
 eval set -- "$(getopt --name "i3run" \
-  --options "i:sgme:xc:t:nhv" \
-  --longoptions "instance:,summon,nohide,mouse,command:,rename,class:,title:,conid,help,version," \
+  --options "i:sgme:x:c:t:n:hv" \
+  --longoptions "instance:,summon,nohide,mouse,command:,rename:,class:,title:,conid:,help,version," \
   -- "$@"
 )"
 
@@ -104,10 +115,10 @@ while true; do
     --nohide     | -g ) __o[nohide]=1 ;; 
     --mouse      | -m ) __o[mouse]=1 ;; 
     --command    | -e ) __o[command]="${2:-}" ; shift ;;
-    --rename     | -x ) __o[rename]=1 ;; 
+    --rename     | -x ) __o[rename]="${2:-}" ; shift ;;
     --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --title      | -t ) __o[title]="${2:-}" ; shift ;;
-    --conid      | -n ) __o[conid]=1 ;; 
+    --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
     --help       | -h ) __o[help]=1 ;; 
     --version    | -v ) __o[version]=1 ;; 
     -- ) shift ; break ;;

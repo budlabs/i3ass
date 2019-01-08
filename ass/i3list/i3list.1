@@ -1,4 +1,4 @@
-.TH I3LIST 1 2019\-01\-06 Linx "User Manuals"
+.TH I3LIST 1 2019\-01\-08 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3list\fR \- list information about the current i3
@@ -17,7 +17,6 @@ i3list \-\-mark|\-m     TARGET
 i3list \-\-title|\-t    TARGET
 i3list \-\-help|\-h
 i3list \-\-version|\-v
-
 
 .fi
 .RE
@@ -40,39 +39,47 @@ declared first.
 .SH OPTIONS
 .PP
 \fB\fC\-\-instance\fR|\fB\fC\-i\fR TARGET
+.br
 Search for windows with a instance matching
 \fITARGET\fP
 
 .PP
 \fB\fC\-\-class\fR|\fB\fC\-c\fR TARGET
+.br
 Search for windows with a class matching \fITARGET\fP
 
 .PP
 \fB\fC\-\-conid\fR|\fB\fC\-n\fR TARGET
+.br
 Search for windows with a \fBCON\_ID\fP matching
 \fITARGET\fP
 
 .PP
 \fB\fC\-\-winid\fR|\fB\fC\-d\fR TARGET
+.br
 Search for windows with a \fBWINDOW\_ID\fP matching
 \fITARGET\fP
 
 .PP
 \fB\fC\-\-mark\fR|\fB\fC\-m\fR TARGET
+.br
 Search for windows with a \fBmark\fP matching
 \fITARGET\fP
 
 .PP
 \fB\fC\-\-title\fR|\fB\fC\-t\fR TARGET
+.br
 Search for windows with a \fBtitle\fP matching
 \fITARGET\fP
 
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
 Show help and exit.
 
 .PP
 \fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
 Show version and exit.
 
 .SH EXAMPLES
@@ -158,8 +165,6 @@ $ declare \-A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
-
-.PP
 ```
 
 .SH DEPENDENCIES

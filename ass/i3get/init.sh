@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.328
-updated: 2019-01-06 by budRich
+i3get - version: 0.331
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -18,20 +18,12 @@ i3get - Boilerplate and template maker for bash scripts
 
 SYNOPSIS
 --------
+i3get [--class|-c CLASS] [--instance|-i INSTANCE] [--title|-t TITLE] [--conid|-n CON_ID] [--winid|-d WIN_ID] [--mark|-m MARK] [--titleformat|-o TITLE_FORMAT] [--active|-a] [--synk|-y] [--print|-r OUTPUT]      
 i3get --help|-h
 i3get --version|-v
-i3get [--class|-c CLASS] [--instance|-i INSTANCE] [--title|-t TITLE] [--conid|-n CON_ID] [--winid|-d WIN_ID] [--mark|-m MARK] [--titleformat|-o TITLE_FORMAT] [--active|-a] [--synk|-y] [--print|-r OUTPUT]      
 
 OPTIONS
 -------
-
---help|-h  
-Show help and exit.
-
-
---version|-v  
-Show version and exit
-
 
 --class|-c CLASS  
 Search for windows with the given class
@@ -45,11 +37,11 @@ Search for windows with the given instance
 Search for windows with title.
 
 
---conid|-n  
+--conid|-n CON_ID  
 Search for windows with the given con_id
 
 
---winid|-d  
+--winid|-d WIN_ID  
 Search for windows with the given window id
 
 
@@ -57,7 +49,7 @@ Search for windows with the given window id
 Search for windows with the given mark
 
 
---titleformat|-o  
+--titleformat|-o TITLE_FORMAT  
 Search for windows with the given titleformat
 
 
@@ -66,7 +58,7 @@ Currently active window (default)
 
 
 --synk|-y  
-Synch on. If this option is included, 
+Synch on. If this option is included,  
 script will wait till target window exist.
 
 
@@ -88,6 +80,14 @@ characters:
 |o       | title format  
 |v       | visible state  
 
+
+--help|-h  
+Show help and exit.
+
+
+--version|-v  
+Show version and exit
+
 EOB
 }
 
@@ -98,25 +98,25 @@ done
 
 declare -A __o
 eval set -- "$(getopt --name "i3get" \
-  --options "hvc:i:t:ndm:oayr:" \
-  --longoptions "help,version,class:,instance:,title:,conid,winid,mark:,titleformat,active,synk,print:," \
+  --options "c:i:t:n:d:m:o:ayr:hv" \
+  --longoptions "class:,instance:,title:,conid:,winid:,mark:,titleformat:,active,synk,print:,help,version," \
   -- "$@"
 )"
 
 while true; do
   case "$1" in
-    --help       | -h ) __o[help]=1 ;; 
-    --version    | -v ) __o[version]=1 ;; 
     --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --instance   | -i ) __o[instance]="${2:-}" ; shift ;;
     --title      | -t ) __o[title]="${2:-}" ; shift ;;
-    --conid      | -n ) __o[conid]=1 ;; 
-    --winid      | -d ) __o[winid]=1 ;; 
+    --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
+    --winid      | -d ) __o[winid]="${2:-}" ; shift ;;
     --mark       | -m ) __o[mark]="${2:-}" ; shift ;;
-    --titleformat | -o ) __o[titleformat]=1 ;; 
+    --titleformat | -o ) __o[titleformat]="${2:-}" ; shift ;;
     --active     | -a ) __o[active]=1 ;; 
     --synk       | -y ) __o[synk]=1 ;; 
     --print      | -r ) __o[print]="${2:-}" ; shift ;;
+    --help       | -h ) __o[help]=1 ;; 
+    --version    | -v ) __o[version]=1 ;; 
     -- ) shift ; break ;;
     *  ) break ;;
   esac

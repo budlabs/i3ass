@@ -42,7 +42,7 @@ Search for windows with a **WINDOW_ID** matching *TARGET*
 Search for windows with a **mark** matching *TARGET*
 
 `--title`|`-t` TARGET  
-Search for windows with a **title** matching *TARGET* 
+Search for windows with a **title** matching *TARGET*  
 
 `--help`|`-h`  
 Show help and exit.
@@ -133,7 +133,6 @@ $ declare -A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
-
 ```
 
 

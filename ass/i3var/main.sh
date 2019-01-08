@@ -8,9 +8,9 @@ main(){
 
   local action trgnam trgval trgsts
 
-  action="$1"
-  trgnam="$2"
-  trgval="$3"
+  action="${1:-}"
+  trgnam="${2:-}"
+  trgval="${3:-}"
   
   trgsts="$(
     i3-msg -t get_marks | awk -v trg="$trgnam" -F',' '{

@@ -1,17 +1,17 @@
 ---
 description: >
   Boilerplate and template maker for bash scripts
-updated:       2019-01-06
-version:       0.328
+updated:       2019-01-08
+version:       0.331
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-03-08
 dependencies:  [bash, gawk, i3]
 see-also:      [bash(1), awk(1), i3(1)]
 synopsis: |
+    [--class|-c CLASS] [--instance|-i INSTANCE] [--title|-t TITLE] [--conid|-n CON_ID] [--winid|-d WIN_ID] [--mark|-m MARK] [--titleformat|-o TITLE_FORMAT] [--active|-a] [--synk|-y] [--print|-r OUTPUT]      
     --help|-h
     --version|-v
-    [--class|-c CLASS] [--instance|-i INSTANCE] [--title|-t TITLE] [--conid|-n CON_ID] [--winid|-d WIN_ID] [--mark|-m MARK] [--titleformat|-o TITLE_FORMAT] [--active|-a] [--synk|-y] [--print|-r OUTPUT]      
 ...
 
 # long_description

@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3var - version: 0.027
-updated: 2019-01-06 by budRich
+i3var - version: 0.031
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -18,10 +18,10 @@ i3var - Set or get a i3 variable
 
 SYNOPSIS
 --------
-i3var --help|-h
-i3var --version|-v
 i3var set VARNAME [VALUE]
 i3var get VARNAME
+i3var --help|-h
+i3var --version|-v
 
 OPTIONS
 -------
@@ -30,7 +30,7 @@ OPTIONS
 Show help and exit.
 
 
---version|-v VARNAME  
+--version|-v  
 Show version and exit.
 EOB
 }
@@ -42,15 +42,15 @@ done
 
 declare -A __o
 eval set -- "$(getopt --name "i3var" \
-  --options "hv:" \
-  --longoptions "help,version:," \
+  --options "hv" \
+  --longoptions "help,version," \
   -- "$@"
 )"
 
 while true; do
   case "$1" in
     --help       | -h ) __o[help]=1 ;; 
-    --version    | -v ) __o[version]="${2:-}" ; shift ;;
+    --version    | -v ) __o[version]=1 ;; 
     -- ) shift ; break ;;
     *  ) break ;;
   esac

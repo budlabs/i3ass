@@ -17,7 +17,7 @@ DESCRIPTION
 functions related to the same window identified by
 a given criteria.  `i3run` will take different
 action depending on the state of the searched
-window: 
+window:  
 
 | **target window state**          | **action**
 |:---------------------------------|:------------
@@ -32,7 +32,7 @@ window:
 
 Hidden in this context,  means that window is on
 the scratchpad. Show in this context means,  move
-window to current workspace. 
+window to current workspace.  
 
 
 `-e` is optional, if no *COMMAND* is passed and no window is found,  nothing happens.  It is important that `-e` *COMMAND* is **the last of the options**.  It is also important that *COMMAND* **will spawn a window matching the criteria**,  otherwise the script will get stuck in a loop waiting for the window to appear. (*it will stop waiting for the window to appear after 10 seconds*)
@@ -54,18 +54,27 @@ Don't hide window/container if it's active.
 `--mouse`|`-m`  
 The window will be placed on the location of the
 mouse cursor when it is created or shown. (*needs
-`xdotool`*) 
+`xdotool`*)  
 
 `--command`|`-e` COMMAND  
 Command to run if no window is found. Complex
-commands can be written inside quotes: 
+commands can be written inside quotes:  
 ```
-i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
-
+i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
+commands can be written inside quotes:  
+```
+i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
+commands can be written inside quotes:  
+```
+i3run -i sublime_text -e 'subl \%%amani[options][4][command][description]%%\%%amani[options][4][command][description]%% notify-send "sublime is started"'
+```
+\%%amani[options][4][command][description]%% notify-send "sublime is started"'
+```
+\%%amani[options][4][command][description]%% notify-send "sublime is started"'
 ```
 
 
-`--rename`|`-x`  
+`--rename`|`-x` OLD_NAME  
 If the search criteria is `-i` (instance), the
 window with instance: *OLDNAME* will get a n new
 instance name matching the criteria when it is
@@ -77,7 +86,7 @@ Search for windows with the given CLASS
 `--title`|`-t` TITLE  
 Search for windows with the given TITLE
 
-`--conid`|`-n`  
+`--conid`|`-n` CON_ID  
 Search for windows with the given CON_ID
 
 `--help`|`-h`  

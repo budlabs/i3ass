@@ -14,7 +14,7 @@ containerhide(){
 
   i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
     move absolute position 0 px 0 px, \
-    resize set $((i3list[WSW]/2)) px $((i3list[WSH]/2)) px, \
+    resize set $((i3list[WFW]/2)) px $((i3list[WFH]/2)) px, \
     move scratchpad
   # add to trg to hid
   i3list[LHI]+=$trg
@@ -29,22 +29,22 @@ containerhide(){
 
   # note splits
   if [[ ${I3FYRA_ORIENTATION,,} = vertical ]]; then
-    [[ -n ${i3list[SAC]} ]] && ((i3list[SAC]!=i3list[WSH])) && {
+    [[ -n ${i3list[SAC]} ]] && ((i3list[SAC]!=i3list[WFH])) && {
       i3var set "i34MAC" "${i3list[SAC]}"
       i3list[MAC]=${i3list[SAC]}
     }
 
-    [[ -n ${i3list[S${tfam}]} ]] && ((${i3list[S${tfam}]}!=i3list[WSW])) && {
+    [[ -n ${i3list[S${tfam}]} ]] && ((${i3list[S${tfam}]}!=i3list[WFW])) && {
       i3var set "i34M${tfam}" "${i3list[S${tfam}]}" 
       i3list[M${tfam}]=${i3list[S${tfam}]}
     }
   else
-    [[ -n ${i3list[SAB]} ]] && ((i3list[SAB]!=i3list[WSW])) && {
+    [[ -n ${i3list[SAB]} ]] && ((i3list[SAB]!=i3list[WFW])) && {
       i3var set "i34MAB" "${i3list[SAB]}"
       i3list[MAB]=${i3list[SAB]}
     }
 
-    [[ -n ${i3list[S${tfam}]} ]] && ((${i3list[S${tfam}]}!=i3list[WSH])) && {
+    [[ -n ${i3list[S${tfam}]} ]] && ((${i3list[S${tfam}]}!=i3list[WFH])) && {
       i3var set "i34M${tfam}" "${i3list[S${tfam}]}" 
       i3list[M${tfam}]=${i3list[S${tfam}]}
     }

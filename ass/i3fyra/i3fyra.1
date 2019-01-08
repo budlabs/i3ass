@@ -1,4 +1,4 @@
-.TH I3FYRA 1 2019\-01\-05 Linx "User Manuals"
+.TH I3FYRA 1 2019\-01\-08 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3fyra\fR \- An advanced, simple grid\-based tiling
@@ -9,14 +9,13 @@ layout
 .RS
 
 .nf
-i3fyra \-\-help|\-h
-i3fyra \-\-version|\-v
 i3fyra \-\-show|\-s CONTAINER
 i3fyra \-\-float|\-a [\-\-target|\-t CRITERION]
 i3fyra \-\-hide|\-z CONTAINER(s)
 i3fyra \-\-layout|\-l LAYOUT
 i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-speed|\-p INT]  [\-\-target|\-t CRITERION]
-
+i3fyra \-\-help|\-h
+i3fyra \-\-version|\-v
 
 .fi
 .RE
@@ -31,8 +30,6 @@ The layout consists of four containers:
 .nf
   A B
   C D
-
-
 
 .fi
 .RE
@@ -57,6 +54,7 @@ three splits: AB, AC and BD.
 
 .PP
 Container A and C belong to one family.
+.br
 Container B and D belong to one family.
 
 .PP
@@ -86,21 +84,15 @@ containers, which are very clunky to use with
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
-Show help and exit.
-
-.PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
-Show version and exit
-
-.PP
 \fB\fC\-\-show\fR|\fB\fC\-s\fR CONTAINER
+.br
 Show target container. If it doesn't exist, it
 will be created and current window will be put in
 it. If it is visible, nothing happens.
 
 .PP
 \fB\fC\-\-float\fR|\fB\fC\-a\fR
+.br
 Autolayout. If current window is tiled: floating
 enabled If window is floating, it will be put in a
 visible container. If there is no visible
@@ -111,31 +103,39 @@ there.
 
 .PP
 \fB\fC\-\-target\fR|\fB\fC\-t\fR CRITERION
+.br
 Criteria is a string passed to i3list to use a
 different target then active window.
 
 .PP
-Example:  \fB\fC$ i3fyra \-\-move B \-\-target "\-i
-sublime\_text"\fR this will target the first found
-window with the instance name \fIsublime\_text\fP\&. See
-i3list(1), for all available options.
+Example:
+.br
+\fB\fC$ i3fyra \-\-move B \-\-target "\-i sublime\_text"\fR
+this will target the first found window with the
+instance name \fIsublime\_text\fP\&. See i3list(1), for
+all available options.
 
 .PP
 \fB\fC\-\-hide\fR|\fB\fC\-z\fR
+.br
 Hide target containers if visible.
 
 .PP
 \fB\fC\-\-layout\fR|\fB\fC\-l\fR LAYOUT
+.br
 alter splits Changes the given splits. INT is a
 distance in pixels. AB is on X axis from the left
 side if INT is positive, from the right side if it
 is negative. AC and BD is on Y axis from the top
 if INT is positive, from the bottom if it is
 negative. The whole argument needs to be quoted.
-Example:  \fB\fC$ i3fyra \-\-layout 'AB=\-300 BD=420'\fR
+Example:
+.br
+\fB\fC$ i3fyra \-\-layout 'AB=\-300 BD=420'\fR
 
 .PP
 \fB\fC\-\-move\fR|\fB\fC\-m\fR CONTAINER
+.br
 Moves current window to target container, either
 defined by it's name or it's position relative to
 the current container with a direction:
@@ -153,8 +153,19 @@ is floating.
 
 .PP
 \fB\fC\-\-speed\fR|\fB\fC\-p\fR INT
+.br
 Distance in pixels to move a floating window.
 Defaults to 30.
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit
 
 .SH EXAMPLES
 .PP
@@ -168,8 +179,6 @@ layout would looks like this:
 .nf
   A B
   C B
-
-
 
 .fi
 .RE
@@ -193,8 +202,6 @@ r\fR) \fBA\fP and \fBC\fP would be hidden:
   B B
   B B
 
-
-
 .fi
 .RE
 
@@ -212,8 +219,6 @@ becomes \fBD\fP:
   A B
   A D
 
-
-
 .fi
 .RE
 
@@ -226,6 +231,7 @@ demonstration on youtube:
 .SH ENVIRONMENT
 .PP
 \fB\fCI3FYRA\_MAIN\_CONTAINER\fR
+.br
 This container will be the chosen when a
 container is requested but not given. When using
 the command autolayout (\fB\fC\-a\fR) for example, if the
@@ -235,12 +241,14 @@ to A. defaults to: A
 
 .PP
 \fB\fCI3FYRA\_WS\fR
+.br
 Workspace to use for i3fyra. If not set, the firs
 workspace that request to create the layout will
 be used. defaults to: 1
 
 .PP
 \fB\fCI3FYRA\_ORIENTATION\fR
+.br
 If set to \fB\fCvertical\fR main split will be \fB\fCAC\fR and
 families will be \fB\fCAB\fR and \fB\fCCD\fR\&. Otherwise main
 split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and

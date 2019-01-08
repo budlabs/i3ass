@@ -11,18 +11,18 @@ usage of the windowmanager known as [i3wm].
 ## installation
 
 If you are using **Arch linux**, you can install the i3ass
-package from [AUR]. 
+package from [AUR].  
 
-Or follow the instructions below to install from source: 
+Or follow the instructions below to install from source:  
 
 (*configure the installation destination in the Makefile,
 if needed*)
 
-``` shell
+``` text
 $ git clone https://github.com/budlabs/i3ass.git
 $ cd i3ass
 # make install
-$ ./i3ass.sh
+$ i3ass
 i3ass - version: 0.002
 updated: 2018-10-18 by budRich
 
@@ -42,7 +42,6 @@ bash      [INSTALLED]
 gawk      [INSTALLED]
 sed       [INSTALLED]
 xdotool   [INSTALLED]
-
 ```
 
 
@@ -67,14 +66,12 @@ files for each script (linked in the table below).
 
 EXAMPLES
 --------
-Execute a script with the `-h` flag to display help about
-the command. There are also man pages included in the repo
-that can be installed with `make install-doc` or
-`install.sh`. 
+Execute a script with the `--help` flag to display help
+about the command.
 
-`i3get -h` display [i3get] help 
-`i3get -v` display [i3get] version 
-`man i3get` show [i3get] man page   
+`i3get --help` display [i3get] help  
+`i3get --version` display [i3get] version  
+`man i3get` show [i3get] man page  
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
@@ -91,7 +88,7 @@ it is empty.
 
 leading and trailing doublequotes are now trimmed from all
 output (affecting title and titleformat), this might break
-script which include the quotes in f.i. regex searched. 
+script which include the quotes in f.i. regex searched.  
 
 [i3list] fixed issue #32 related to getting workspace name
 and number of the active workspace if it is empty.

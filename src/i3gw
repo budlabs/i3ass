@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3gw - version: 0.169
-updated: 2019-01-05 by budRich
+i3gw - version: 0.172
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -19,14 +19,6 @@ main(){
   local tmark w
 
   IFS=$'\n\t'
-
-  if [[ ${__o[help]:-} = 1 ]]; then
-    ___printhelp
-    exit
-  elif [[ ${__o[version]:-} = 1 ]]; then
-    ___printversion
-    exit
-  fi
 
   tmark="${1:-}"
 
@@ -51,9 +43,9 @@ i3gw - a ghost window wrapper for i3wm
 
 SYNOPSIS
 --------
+i3gw MARK
 i3gw --help|-h
 i3gw --version|-v
-i3gw MARK
 
 OPTIONS
 -------
@@ -62,7 +54,7 @@ OPTIONS
 Show help and exit.
 
 
---version|-v MARK  
+--version|-v  
 Show version and exit.
 EOB
 }
@@ -73,15 +65,15 @@ ERR(){ >&2 echo "[WARNING]" "$*"; }
 ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
 declare -A __o
 eval set -- "$(getopt --name "i3gw" \
-  --options "hv:" \
-  --longoptions "help,version:," \
+  --options "hv" \
+  --longoptions "help,version," \
   -- "$@"
 )"
 
 while true; do
   case "$1" in
     --help       | -h ) __o[help]=1 ;; 
-    --version    | -v ) __o[version]="${2:-}" ; shift ;;
+    --version    | -v ) __o[version]=1 ;; 
     -- ) shift ; break ;;
     *  ) break ;;
   esac

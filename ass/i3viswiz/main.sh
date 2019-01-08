@@ -8,22 +8,22 @@ main(){
 
   local target type dir
 
-  if [[ -n ${__o[title]} ]]; then
+  if [[ -n ${__o[title]:-} ]]; then
     type=title
     target="${__lastarg:-}"
-  elif [[ -n ${__o[titleformat]} ]]; then
+  elif [[ -n ${__o[titleformat]:-} ]]; then
     type=titleformat
     target="${__lastarg:-}"
-  elif [[ -n ${__o[instance]} ]]; then
+  elif [[ -n ${__o[instance]:-} ]]; then
     type=instance
     target="${__lastarg:-}"
-  elif [[ -n ${__o[class]} ]]; then
+  elif [[ -n ${__o[class]:-} ]]; then
     type=class
     target="${__lastarg:-}"
-  elif [[ -n ${__o[winid]} ]]; then
+  elif [[ -n ${__o[winid]:-} ]]; then
     type=winid
     target="${__lastarg:-}"
-  elif [[ -n ${__o[parent]} ]]; then
+  elif [[ -n ${__o[parent]:-} ]]; then
     type=parent
     target="${__lastarg:-}"
   else

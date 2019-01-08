@@ -10,14 +10,6 @@ main(){
 
   IFS=$'\n\t'
 
-  if [[ ${__o[help]:-} = 1 ]]; then
-    ___printhelp
-    exit
-  elif [[ ${__o[version]:-} = 1 ]]; then
-    ___printversion
-    exit
-  fi
-
   tmark="${1:-}"
 
   [[ -z $tmark ]] && {

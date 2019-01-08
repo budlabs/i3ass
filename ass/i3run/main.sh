@@ -6,13 +6,13 @@ set -o nounset
 
 main(){
 
-  if [[ -n ${__o[instance]} ]]; then
+  if [[ -n ${__o[instance]:-} ]]; then
     acri=("-i" "${__o[instance]}")
-  elif [[ -n ${__o[class]} ]]; then
+  elif [[ -n ${__o[class]:-} ]]; then
     acri=("-c" "${__o[class]}")
-  elif [[ -n ${__o[title]} ]]; then
+  elif [[ -n ${__o[title]:-} ]]; then
     acri=("-t" "${__o[title]}")
-  elif [[ -n ${__o[conid]} ]]; then
+  elif [[ -n ${__o[conid]:-} ]]; then
     acri=("-n" "${__o[conid]}")
   else
     ___printhelp
@@ -23,9 +23,11 @@ main(){
   eval "$(i3list "${acri[@]}")"
 
   # if window doesn't exist, launch the command.
-  [[ -z ${i3list[TWC]} ]] \
-    && launchcommand \
-    || focuswindow
+  if [[ -z ${i3list[TWC]} ]]; then
+    launchcommand
+  else
+    focuswindow
+  fi
 }
 
 ___source="$(readlink -f "${BASH_SOURCE[0]}")"  #bashbud

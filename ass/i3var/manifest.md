@@ -1,8 +1,8 @@
 ---
 description: >
   Set or get a i3 variable
-updated:       2019-01-06
-version:       0.027
+updated:       2019-01-08
+version:       0.031
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-12-22
@@ -11,10 +11,10 @@ see-also:      [bash(1), awk(1), i3(1), i3gw(1)]
 environment-variables:
     ENV_VAR_TEST:  $HOME/.config
 synopsis: |
-    --help|-h
-    --version|-v
     set VARNAME [VALUE]
     get VARNAME
+    --help|-h
+    --version|-v
 ...
 
 # long_description
@@ -22,7 +22,7 @@ synopsis: |
 `i3var` is used to get or set a "variable" that is bound to the current i3wm session. 
 The variable is actually the mark of a "ghost window" on the scratch pad.
 
-`set`  
+`set`  \[VALUE\]  
 If *VARNAME* doesn't exist,
 a new window and mark will be created. 
 If *VARNAME* exists it's value will be replaced with *VALUE*.  

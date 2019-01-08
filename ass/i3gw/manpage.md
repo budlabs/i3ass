@@ -3,9 +3,9 @@
 SYNOPSIS
 --------
 ```text
+i3gw MARK
 i3gw --help|-h
 i3gw --version|-v
-i3gw MARK
 ```
 
 DESCRIPTION
@@ -28,13 +28,13 @@ OPTIONS
 `--help`|`-h`  
 Show help and exit.
 
-`--version`|`-v` MARK  
+`--version`|`-v`  
 Show version and exit.
 
 
 EXAMPLES
 --------
-`$ i3gw casper` 
+`$ i3gw casper`  
 
 this will create a ghost marked casper,  you can
 perform any action you can perform on a regular
@@ -45,7 +45,6 @@ $ i3-msg [con_mark=casper] move to workspace 2
 $ i3-msg [con_mark=casper] split v
 $ i3-msg [con_mark=casper] layout tabbed
 $ i3-msg [con_mark=casper] kill
-
 ```
 
 

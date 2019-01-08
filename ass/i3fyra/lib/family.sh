@@ -13,7 +13,7 @@ familyshow(){
   done
 
 
-  i3list[SAB]=$((i3list[WSW]/2))
+  i3list[SAB]=$((i3list[WFW]/2))
   applysplits "AB=${i3list[MAB]}"
 
 }
@@ -28,8 +28,8 @@ familyhide(){
       i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
         move absolute position 0 px 0 px, \
         resize set \
-        "$((i3list[WSW]/2))" px \
-        "$((i3list[WSH]/2))" px, \
+        "$((i3list[WFW]/2))" px \
+        "$((i3list[WFH]/2))" px, \
         move scratchpad
 
       i3list[LHI]+=$trg

@@ -1,4 +1,4 @@
-.TH I3VAR 1 2019\-01\-06 Linx "User Manuals"
+.TH I3VAR 1 2019\-01\-08 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3var\fR \- Set or get a i3 variable
@@ -8,11 +8,10 @@
 .RS
 
 .nf
-i3var \-\-help|\-h
-i3var \-\-version|\-v
 i3var set VARNAME [VALUE]
 i3var get VARNAME
-
+i3var \-\-help|\-h
+i3var \-\-version|\-v
 
 .fi
 .RE
@@ -25,22 +24,30 @@ variable is actually the mark of a "ghost window"
 on the scratch pad.
 
 .PP
-\fB\fCset\fR  If \fIVARNAME\fP doesn't exist, a new window
-and mark will be created.  If \fIVARNAME\fP exists
-it's value will be replaced with \fIVALUE\fP\&.  If
-\fIVALUE\fP is not defined,  \fIVARNAME\fP will get unset.
+\fB\fCset\fR  [VALUE]
+.br
+If \fIVARNAME\fP doesn't exist, a new window and mark
+will be created.  If \fIVARNAME\fP exists it's value
+will be replaced with \fIVALUE\fP\&.
+.br
+If \fIVALUE\fP is not defined,  \fIVARNAME\fP will get
+unset.
 
 .PP
-\fB\fCget\fR  if \fIVARNAME\fP exists,  its value will be
-returned window.
+\fB\fCget\fR
+.br
+if \fIVARNAME\fP exists,  its value will be returned
+window.
 
 .SH OPTIONS
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR VARNAME
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
 Show version and exit.
 
 .SH DEPENDENCIES

@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.035
-updated: 2019-01-06 by budRich
+i3run - version: 0.038
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -16,13 +16,13 @@ set -o nounset
 
 main(){
 
-  if [[ -n ${__o[instance]} ]]; then
+  if [[ -n ${__o[instance]:-} ]]; then
     acri=("-i" "${__o[instance]}")
-  elif [[ -n ${__o[class]} ]]; then
+  elif [[ -n ${__o[class]:-} ]]; then
     acri=("-c" "${__o[class]}")
-  elif [[ -n ${__o[title]} ]]; then
+  elif [[ -n ${__o[title]:-} ]]; then
     acri=("-t" "${__o[title]}")
-  elif [[ -n ${__o[conid]} ]]; then
+  elif [[ -n ${__o[conid]:-} ]]; then
     acri=("-n" "${__o[conid]}")
   else
     ___printhelp
@@ -33,9 +33,11 @@ main(){
   eval "$(i3list "${acri[@]}")"
 
   # if window doesn't exist, launch the command.
-  [[ -z ${i3list[TWC]} ]] \
-    && launchcommand \
-    || focuswindow
+  if [[ -z ${i3list[TWC]} ]]; then
+    launchcommand
+  else
+    focuswindow
+  fi
 }
 
 ___printhelp(){
@@ -72,20 +74,31 @@ Don't hide window/container if it's active.
 --mouse|-m  
 The window will be placed on the location of the
 mouse cursor when it is created or shown. (needs
-xdotool) 
+xdotool)  
 
 
 --command|-e COMMAND  
 Command to run if no window is found. Complex
-commands can be written inside quotes: 
+commands can be written inside quotes:  
 
-   i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
-   
+   i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
+commands can be written inside quotes:  
+
+   i3run -i sublime_text -e 'subl \Command to run if no window is found. Complex
+commands can be written inside quotes:  
+
+   i3run -i sublime_text -e 'subl \%%amani[options][4][command][description]%%\%%amani[options][4][command][description]%% notify-send "sublime is started"'
+
+
+\%%amani[options][4][command][description]%% notify-send "sublime is started"'
+
+
+\%%amani[options][4][command][description]%% notify-send "sublime is started"'
 
 
 
 
---rename|-x  
+--rename|-x OLD_NAME  
 If the search criteria is -i (instance), the
 window with instance: OLDNAME will get a n new
 instance name matching the criteria when it is
@@ -100,7 +113,7 @@ Search for windows with the given CLASS
 Search for windows with the given TITLE
 
 
---conid|-n  
+--conid|-n CON_ID  
 Search for windows with the given CON_ID
 
 
@@ -119,12 +132,11 @@ ERR(){ >&2 echo "[WARNING]" "$*"; }
 ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
 
 focuswindow(){
+  
   # if target window is active (current), 
   # send it to the scratchpad
-
-  
-  # else focus target window.
   if [[ ${i3list[AWC]} = "${i3list[TWC]}" ]]; then
+    
     if ((${__o[nohide]:-0}!=1)); then
 
       if [[ -z ${i3list[TWP]} ]]; then
@@ -137,8 +149,9 @@ focuswindow(){
         i3fyra -z "${i3list[TWP]}"
       fi
     fi
+  # else focus target window.
   else
-    hvar="$(i3var get "hidden${i3list[TWC]}")"
+    : "${hvar:=$(i3var get "hidden${i3list[TWC]}")}"
     if [[ -n $hvar ]]; then
       ((hvar == 1)) && fs=enable || fs=disable
       # clear the variable
@@ -249,8 +262,8 @@ sendtomouse(){
 }
 declare -A __o
 eval set -- "$(getopt --name "i3run" \
-  --options "i:sgme:xc:t:nhv" \
-  --longoptions "instance:,summon,nohide,mouse,command:,rename,class:,title:,conid,help,version," \
+  --options "i:sgme:x:c:t:n:hv" \
+  --longoptions "instance:,summon,nohide,mouse,command:,rename:,class:,title:,conid:,help,version," \
   -- "$@"
 )"
 
@@ -261,10 +274,10 @@ while true; do
     --nohide     | -g ) __o[nohide]=1 ;; 
     --mouse      | -m ) __o[mouse]=1 ;; 
     --command    | -e ) __o[command]="${2:-}" ; shift ;;
-    --rename     | -x ) __o[rename]=1 ;; 
+    --rename     | -x ) __o[rename]="${2:-}" ; shift ;;
     --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --title      | -t ) __o[title]="${2:-}" ; shift ;;
-    --conid      | -n ) __o[conid]=1 ;; 
+    --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
     --help       | -h ) __o[help]=1 ;; 
     --version    | -v ) __o[version]=1 ;; 
     -- ) shift ; break ;;

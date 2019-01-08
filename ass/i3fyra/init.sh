@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 0.544
-updated: 2019-01-05 by budRich
+i3fyra - version: 0.547
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -23,23 +23,16 @@ i3fyra - An advanced, simple grid-based tiling layout
 
 SYNOPSIS
 --------
-i3fyra --help|-h
-i3fyra --version|-v
 i3fyra --show|-s CONTAINER
 i3fyra --float|-a [--target|-t CRITERION]
 i3fyra --hide|-z CONTAINER(s)
 i3fyra --layout|-l LAYOUT
 i3fyra --move|-m DIRECTION|CONTAINER [--speed|-p INT]  [--target|-t CRITERION]
+i3fyra --help|-h
+i3fyra --version|-v
 
 OPTIONS
 -------
-
---help|-h  
-Show help and exit.
-
-
---version|-v  
-Show version and exit
 
 --show|-s CONTAINER  
 Show target container. If it doesn't exist, it
@@ -59,9 +52,9 @@ there.
 
 --target|-t CRITERION  
 Criteria is a string passed to i3list to use a
-different target then active window. 
+different target then active window.  
 
-Example: 
+Example:  
 $ i3fyra --move B --target "-i sublime_text" this
 will target the first found window with the
 instance name sublime_text. See i3list(1), for all
@@ -79,8 +72,8 @@ side if INT is positive, from the right side if it
 is negative. AC and BD is on Y axis from the top
 if INT is positive, from the bottom if it is
 negative. The whole argument needs to be quoted.
-Example: 
-$ i3fyra --layout 'AB=-300 BD=420' 
+Example:  
+$ i3fyra --layout 'AB=-300 BD=420'  
 
 
 
@@ -105,6 +98,13 @@ floating.
 Distance in pixels to move a floating window.
 Defaults to 30.
 
+
+--help|-h  
+Show help and exit.
+
+
+--version|-v  
+Show version and exit
 EOB
 }
 
@@ -115,15 +115,13 @@ done
 
 declare -A __o
 eval set -- "$(getopt --name "i3fyra" \
-  --options "hvs:at:zl:m:p:" \
-  --longoptions "help,version,show:,float,target:,hide,layout:,move:,speed:," \
+  --options "s:at:zl:m:p:hv" \
+  --longoptions "show:,float,target:,hide,layout:,move:,speed:,help,version," \
   -- "$@"
 )"
 
 while true; do
   case "$1" in
-    --help       | -h ) __o[help]=1 ;; 
-    --version    | -v ) __o[version]=1 ;; 
     --show       | -s ) __o[show]="${2:-}" ; shift ;;
     --float      | -a ) __o[float]=1 ;; 
     --target     | -t ) __o[target]="${2:-}" ; shift ;;
@@ -131,6 +129,8 @@ while true; do
     --layout     | -l ) __o[layout]="${2:-}" ; shift ;;
     --move       | -m ) __o[move]="${2:-}" ; shift ;;
     --speed      | -p ) __o[speed]="${2:-}" ; shift ;;
+    --help       | -h ) __o[help]=1 ;; 
+    --version    | -v ) __o[version]=1 ;; 
     -- ) shift ; break ;;
     *  ) break ;;
   esac

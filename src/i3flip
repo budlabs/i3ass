@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3flip - version: 0.045
-updated: 2019-01-06 by budRich
+i3flip - version: 0.048
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -34,7 +34,7 @@ main(){
   
   __orgtrg="$(gettarget)"
 
-  if ((__o[move]!=1)); then
+  if ((${__o[move]:-0}!=1)); then
     [[ ! ${__acur[layout]:-} =~ tabbed|stacked ]] && {
 
       i3-msg -q focus parent
@@ -51,7 +51,7 @@ main(){
 
   if ((__acur[total]==1)); then
     ERX "only one window in container"
-  elif ((__o[move]==1)); then
+  elif ((${__o[move]:-1}!=1)); then
     movetarget
   else
     i3-msg -q "[con_id=$__orgtrg]" focus, focus child

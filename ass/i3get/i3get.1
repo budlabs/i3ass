@@ -1,4 +1,4 @@
-.TH I3GET 1 2019\-01\-06 Linx "User Manuals"
+.TH I3GET 1 2019\-01\-08 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3get\fR \- Boilerplate and template maker for bash
@@ -9,10 +9,9 @@ scripts
 .RS
 
 .nf
+i3get [\-\-class|\-c CLASS] [\-\-instance|\-i INSTANCE] [\-\-title|\-t TITLE] [\-\-conid|\-n CON\_ID] [\-\-winid|\-d WIN\_ID] [\-\-mark|\-m MARK] [\-\-titleformat|\-o TITLE\_FORMAT] [\-\-active|\-a] [\-\-synk|\-y] [\-\-print|\-r OUTPUT]      
 i3get \-\-help|\-h
 i3get \-\-version|\-v
-i3get [\-\-class|\-c CLASS] [\-\-instance|\-i INSTANCE] [\-\-title|\-t TITLE] [\-\-conid|\-n CON\_ID] [\-\-winid|\-d WIN\_ID] [\-\-mark|\-m MARK] [\-\-titleformat|\-o TITLE\_FORMAT] [\-\-active|\-a] [\-\-synk|\-y] [\-\-print|\-r OUTPUT]      
-
 
 .fi
 .RE
@@ -20,59 +19,66 @@ i3get [\-\-class|\-c CLASS] [\-\-instance|\-i INSTANCE] [\-\-title|\-t TITLE] [\
 .SH DESCRIPTION
 .PP
 Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t
-get\_tree\fR,  return desired information.  If no
-arguments are passed.  \fB\fCcon\_id\fR of acitve window
-is returned.  If there is more then one criterion,
- all of them must be true to get results.
+get\_tree\fR,
+.br
+return desired information.  If no arguments are
+passed.
+.br
+\fB\fCcon\_id\fR of acitve window is returned.  If there
+is more then one criterion,  all of them must be
+true to get results.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
-Show help and exit.
-
-.PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
-Show version and exit
-
-.PP
 \fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+.br
 Search for windows with the given class
 
 .PP
 \fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+.br
 Search for windows with the given instance
 
 .PP
 \fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+.br
 Search for windows with title.
 
 .PP
-\fB\fC\-\-conid\fR|\fB\fC\-n\fR
+\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+.br
 Search for windows with the given con\_id
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR WIN\_ID
+.br
 Search for windows with the given window id
 
 .PP
 \fB\fC\-\-mark\fR|\fB\fC\-m\fR MARK
+.br
 Search for windows with the given mark
 
 .PP
-\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR
+\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR TITLE\_FORMAT
+.br
 Search for windows with the given titleformat
 
 .PP
 \fB\fC\-\-active\fR|\fB\fC\-a\fR
+.br
 Currently active window (default)
 
 .PP
 \fB\fC\-\-synk\fR|\fB\fC\-y\fR
-Synch on. If this option is included,  script
-will wait till target window exist.
+.br
+Synch on. If this option is included,
+.br
+script will wait till target window exist.
 
 .PP
 \fB\fC\-\-print\fR|\fB\fC\-r\fR OUTPUT
+.br
 \fIOUTPUT\fP can be one or more of the following
 characters:
 
@@ -94,6 +100,16 @@ l l .
 \fB\fCv\fR	visible state
 .TE
 
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit
+
 .SH EXAMPLES
 .PP
 search for window with instance name
@@ -108,8 +124,6 @@ $ i3get \-\-instance sublime\_text \-r wtf
 1
 \~/src/bash/i3ass/i3get (i3ass) \- Sublime Text
 user\_off
-
-
 
 .fi
 .RE

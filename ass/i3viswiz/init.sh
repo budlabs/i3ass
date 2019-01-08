@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3viswiz - version: 0.039
-updated: 2019-01-06 by budRich
+i3viswiz - version: 0.042
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -34,7 +34,7 @@ OPTIONS
 --gap|-g GAPSIZE  
 Set GAPSIZE (defaults to 5). GAPSIZE is the
 distance in pixels from the current window where
-new focus will be searched. 
+new focus will be searched.  
 
 
 --focus|-f  
@@ -44,7 +44,7 @@ The CON_ID of TARGET window will get focused if it
 is visible.
 
 
---title|-t  
+--title|-t [TARGET]  
 If TARGET matches the TITLE of a visible window,
 that windows  CON_ID will get printed to stdout.
 If no TARGET is specified, a list of all tiled
@@ -52,7 +52,7 @@ windows will get printed with  TITLE as the last
 field of each row.
 
 
---instance|-i  
+--instance|-i [TARGET]  
 If TARGET matches the INSTANCE of a visible
 window, that windows  CON_ID will get printed to
 stdout. If no TARGET is specified, a list of all
@@ -60,7 +60,7 @@ tiled windows will get printed with  INSTANCE as
 the last field of each row.
 
 
---class|-c  
+--class|-c [TARGET]  
 If TARGET matches the CLASS of a visible window,
 that windows  CON_ID will get printed to stdout.
 If no TARGET is specified, a list of all tiled
@@ -68,7 +68,7 @@ windows will get printed with  CLASS as the last
 field of each row.
 
 
---titleformat|-o  
+--titleformat|-o [TARGET]  
 If TARGET matches the TITLE_FORMAT of a visible
 window, that windows  CON_ID will get printed to
 stdout. If no TARGET is specified, a list of all
@@ -76,7 +76,7 @@ tiled windows will get printed with  TITLE_FORMAT
 as the last field of each row.
 
 
---winid|-d  
+--winid|-d [TARGET]  
 If TARGET matches the WIN_ID of a visible window,
 that windows  CON_ID will get printed to stdout.
 If no TARGET is specified, a list of all tiled
@@ -85,7 +85,7 @@ field of each row.
 
 
 
---parent|-p  
+--parent|-p [TARGET]  
 If TARGET matches the PARENT of a visible window,
 that windows  CON_ID will get printed to stdout.
 If no TARGET is specified, a list of all tiled

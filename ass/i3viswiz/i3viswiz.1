@@ -1,4 +1,4 @@
-.TH I3VISWIZ 1 2019\-01\-06 Linx "User Manuals"
+.TH I3VISWIZ 1 2019\-01\-08 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3viswiz\fR \- Professional window focus for i3wm
@@ -18,7 +18,6 @@ i3viswiz [\-\-focus|\-f] \-\-parent|\-p      [TARGET]
 i3viswiz \-\-help|\-h
 i3viswiz \-\-version|\-v
 
-
 .fi
 .RE
 
@@ -37,19 +36,22 @@ there are no windows in the given direction.
 .SH OPTIONS
 .PP
 \fB\fC\-\-gap\fR|\fB\fC\-g\fR GAPSIZE
+.br
 Set GAPSIZE (defaults to 5). GAPSIZE is the
 distance in pixels from the current window where
 new focus will be searched.
 
 .PP
 \fB\fC\-\-focus\fR|\fB\fC\-f\fR
+.br
 When used in conjunction with: \fB\fC\-\-titleformat\fR,
 \fB\fC\-\-title\fR, \fB\fC\-\-class\fR, \fB\fC\-\-instance\fR, \fB\fC\-\-winid\fR or
 \fB\fC\-\-parent\fR\&. The \fBCON\_ID\fP of \fBTARGET\fP window
 will get focused if it is visible.
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR
+\fB\fC\-\-title\fR|\fB\fC\-t\fR [TARGET]
+.br
 If \fBTARGET\fP matches the \fBTITLE\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
 to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
@@ -57,7 +59,8 @@ of all tiled windows will get printed with
 \fBTITLE\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR [TARGET]
+.br
 If \fBTARGET\fP matches the \fBINSTANCE\fP of a
 visible window, that windows  \fBCON\_ID\fP will get
 printed to \fB\fCstdout\fR\&. If no \fBTARGET\fP is
@@ -66,7 +69,8 @@ printed with  \fBINSTANCE\fP as the last field of
 each row.
 
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR
+\fB\fC\-\-class\fR|\fB\fC\-c\fR [TARGET]
+.br
 If \fBTARGET\fP matches the \fBCLASS\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
 to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
@@ -74,7 +78,8 @@ of all tiled windows will get printed with
 \fBCLASS\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR
+\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR [TARGET]
+.br
 If \fBTARGET\fP matches the \fBTITLE\_FORMAT\fP of a
 visible window, that windows  \fBCON\_ID\fP will get
 printed to \fB\fCstdout\fR\&. If no \fBTARGET\fP is
@@ -83,7 +88,8 @@ printed with  \fBTITLE\_FORMAT\fP as the last field
 of each row.
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR [TARGET]
+.br
 If \fBTARGET\fP matches the \fBWIN\_ID\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
 to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
@@ -91,7 +97,8 @@ of all tiled windows will get printed with
 \fBWIN\_ID\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-parent\fR|\fB\fC\-p\fR
+\fB\fC\-\-parent\fR|\fB\fC\-p\fR [TARGET]
+.br
 If \fBTARGET\fP matches the \fBPARENT\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
 to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
@@ -100,10 +107,12 @@ of all tiled windows will get printed with
 
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
 Show help and exit.
 
 .PP
 \fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
 Show version and exit.
 
 .SH EXAMPLES
@@ -121,8 +130,6 @@ bindsym Mod4+Shift+Left   focus left
 Wizzy binding:
 bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz l 
 
-
-
 .fi
 .RE
 
@@ -139,8 +146,6 @@ tx: 582 ty: 470 wall: none
 * 94851560291216 x: 0     y: 0     w: 1165  h: 450   | URxvt
 \- 94851559487504 x: 0     y: 451   w: 1165  h: 448   | sublime
 \- 94851560318768 x: 1166  y: 0     w: 433   h: 899   | bin
-
-
 
 .fi
 .RE

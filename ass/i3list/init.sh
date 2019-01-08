@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.027
-updated: 2019-01-06 by budRich
+i3list - version: 0.03
+updated: 2019-01-08 by budRich
 EOB
 }
 
@@ -53,7 +53,7 @@ Search for windows with a mark matching TARGET
 
 
 --title|-t TARGET  
-Search for windows with a title matching TARGET 
+Search for windows with a title matching TARGET  
 
 --help|-h  
 Show help and exit.

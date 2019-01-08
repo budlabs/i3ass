@@ -61,7 +61,7 @@ containercreate(){
   # after creation, move cont to scratch
   i3-msg -q "[con_mark=i34${trg}]" focus, floating enable, \
     move absolute position 0 px 0 px, \
-    resize set $((i3list[WSW]/2)) px $((i3list[WSH]/2)) px, \
+    resize set $((i3list[WFW]/2)) px $((i3list[WFH]/2)) px, \
     move scratchpad
   # add to trg to hid
   i3list[LHI]+=$trg

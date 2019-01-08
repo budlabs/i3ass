@@ -50,7 +50,7 @@ Search for windows with a **mark** matching
 
 `--title`|`-t` TARGET  
 Search for windows with a **title** matching
-*TARGET* 
+*TARGET*  
 
 `--help`|`-h`  
 Show help and exit.
@@ -142,7 +142,6 @@ $ declare -A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
-
 ```
 
 DEPENDENCIES

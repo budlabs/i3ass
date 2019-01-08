@@ -25,6 +25,10 @@ OPTIONS
 %%fi%%
 %%if o[arg]%%
 %%printf ' %s' 'o[arg]'%%
+%%else%%
+%%if o[optarg]%%
+%%printf ' [%s]' 'o[optarg]'%%
+%%fi%%
 %%fi%%
 %%printf '  \n'%%
 %%if o[description]%%

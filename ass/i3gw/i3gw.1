@@ -1,4 +1,4 @@
-.TH I3GW 1 2019\-01\-05 Linx "User Manuals"
+.TH I3GW 1 2019\-01\-08 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3gw\fR \- a ghost window wrapper for i3wm
@@ -8,10 +8,9 @@
 .RS
 
 .nf
+i3gw MARK
 i3gw \-\-help|\-h
 i3gw \-\-version|\-v
-i3gw MARK
-
 
 .fi
 .RE
@@ -32,10 +31,12 @@ this script does,  it creates a ghost,  get its
 .SH OPTIONS
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR MARK
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
 Show version and exit.
 
 .SH EXAMPLES
@@ -55,8 +56,6 @@ $ i3\-msg [con\_mark=casper] move to workspace 2
 $ i3\-msg [con\_mark=casper] split v
 $ i3\-msg [con\_mark=casper] layout tabbed
 $ i3\-msg [con\_mark=casper] kill
-
-
 
 .fi
 .RE

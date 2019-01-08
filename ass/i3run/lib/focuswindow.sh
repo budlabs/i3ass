@@ -1,12 +1,11 @@
 #!/bin/env bash
 
 focuswindow(){
+  
   # if target window is active (current), 
   # send it to the scratchpad
-
-  
-  # else focus target window.
   if [[ ${i3list[AWC]} = "${i3list[TWC]}" ]]; then
+    
     if ((${__o[nohide]:-0}!=1)); then
 
       if [[ -z ${i3list[TWP]} ]]; then
@@ -19,8 +18,9 @@ focuswindow(){
         i3fyra -z "${i3list[TWP]}"
       fi
     fi
+  # else focus target window.
   else
-    hvar="$(i3var get "hidden${i3list[TWC]}")"
+    : "${hvar:=$(i3var get "hidden${i3list[TWC]}")}"
     if [[ -n $hvar ]]; then
       ((hvar == 1)) && fs=enable || fs=disable
       # clear the variable
