@@ -1,8 +1,8 @@
 ---
 description: >
   Set or get a i3 variable
-updated:       2019-01-08
-version:       0.031
+updated:       2019-01-09
+version:       0.032
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-12-22

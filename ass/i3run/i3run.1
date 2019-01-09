@@ -1,4 +1,4 @@
-.TH I3RUN 1 2019\-01\-08 Linx "User Manuals"
+.TH I3RUN 1 2019\-01\-09 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3run\fR \- Run, Raise or hide windows in i3wm
@@ -8,10 +8,10 @@
 .RS
 
 .nf
-i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
-i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
-i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
-i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
+i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
 i3run \-\-help|\-h
 i3run \-\-version|\-v
 
@@ -88,6 +88,29 @@ mouse cursor when it is created or shown. (\fIneeds
 \fB\fCxdotool\fR\fP)
 
 .PP
+\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
+.br
+If the search criteria is \fB\fC\-i\fR (instance), the
+window with instance: \fIOLDNAME\fP will get a n new
+instance name matching the criteria when it is
+created (\fIneeds \fB\fCxdotool\fR\fP).
+
+.PP
+.RS
+
+.nf
+i3run \-\-instance budswin \-\-rename sublime\_main \-command subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime\_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+
+.fi
+.RE
+
+.PP
 \fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
 .br
 Command to run if no window is found. Complex
@@ -101,14 +124,6 @@ i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
 
 .fi
 .RE
-
-.PP
-\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
-.br
-If the search criteria is \fB\fC\-i\fR (instance), the
-window with instance: \fIOLDNAME\fP will get a n new
-instance name matching the criteria when it is
-created (\fIneeds \fB\fCxdotool\fR\fP).
 
 .PP
 \fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS

@@ -25,9 +25,9 @@ i3flip \-\-version|\-v
 .PP
 \fB\fCi3flip\fR switch containers without leaving the
 parent. Perfect for tabbed or stacked layout, but
-works on all layouts. If direction is \fB\fCnext\fR (or
-\fB\fCn\fR) and the active container is the last, the
-first container will be activated.
+works on all layouts. If direction is \fB\fCnext\fR and
+the active container is the last, the first
+container will be activated.
 
 .PP
 \fBDIRECTION\fP can be either \fIprev\fP or \fInext\fP,
@@ -56,25 +56,18 @@ Show version and exit.
 
 .SH EXAMPLES
 .PP
-Put these keybinding definitions in the i3
-config.
-
-.PP
 \fB\fC\~/.config/i3/config\fR:
 
 .PP
 .RS
 
 .nf
-bindsym Mod4+Tab         exec \-\-no\-startup\-id i3flip next
-bindsym Mod4+Shift+Tab   exec \-\-no\-startup\-id i3flip prev
+\&...
+bindsym Mod4+Tab         exec \-\&\-\&no\-\&startup\-\&id i3flip next
+bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
 
 .fi
 .RE
-
-.PP
-Mod4/Super/Windows+Tab will switch to the next
-tab.
 
 .SH DEPENDENCIES
 .PP
@@ -354,14 +347,10 @@ i3get \-\-version|\-v
 .SH DESCRIPTION
 .PP
 Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t
-get\_tree\fR,
-.br
-return desired information.  If no arguments are
-passed.
-.br
-\fB\fCcon\_id\fR of acitve window is returned.  If there
-is more then one criterion,  all of them must be
-true to get results.
+get\_tree\fR, return desired information. If no
+arguments are passed. \fB\fCcon\_id\fR of acitve window is
+returned. If there is more then one criterion, all
+of them must be true to get results.
 
 .SH OPTIONS
 .PP
@@ -407,9 +396,9 @@ Currently active window (default)
 .PP
 \fB\fC\-\-synk\fR|\fB\fC\-y\fR
 .br
-Synch on. If this option is included,
-.br
-script will wait till target window exist.
+Synch on. If this option is included,  script
+will wait till target window exist. (\fIor timeout
+after 10 seconds\fP).
 
 .PP
 \fB\fC\-\-print\fR|\fB\fC\-r\fR OUTPUT
@@ -721,8 +710,8 @@ w:WIDTH h:HEIGHT x:X y:Y\fR
 .PP
 Populated with the actual dimensions and position
 of the window. The first word, "MOVE", in the
-title means that we don'"'"'t need to specify the
-mode (move|size|m|s)
+title means that we don't need to specify the mode
+(move|size|m|s)
 
 .PP
 So if a keybinding from \fBgroup 1\fP or \fBgroup
@@ -836,8 +825,8 @@ i3list \-\-version|\-v
 .PP
 \fB\fCi3list\fR prints a list in a \fIarray\fP formatted
 list.  If a search criteria is given
-(\fB\fC\-c\fR|\fB\fC\-i\fR|\fB\fC\-n\fR|\fB\fC\-d\fR)  information about the first
-window matching the criteria is displayed.
+(\fB\fC\-c\fR|\fB\fC\-i\fR|\fB\fC\-n\fR|\fB\fC\-d\fR|\fB\fC\-m\fR)  information about the
+first window matching the criteria is displayed.
 Information about the active window is always
 displayed.  If no search criteria is given,  the
 active window will also be the target window.
@@ -999,10 +988,10 @@ SYNOPSIS
 
 
 ```text
-i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
-i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
-i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
-i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-command|\-e COMMAND] [\-\-rename|\-x OLD\_NAME]
+i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
 i3run \-\-help|\-h
 i3run \-\-version|\-v
 
@@ -1079,6 +1068,29 @@ mouse cursor when it is created or shown. (\fIneeds
 \fB\fCxdotool\fR\fP)
 
 .PP
+\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
+.br
+If the search criteria is \fB\fC\-i\fR (instance), the
+window with instance: \fIOLDNAME\fP will get a n new
+instance name matching the criteria when it is
+created (\fIneeds \fB\fCxdotool\fR\fP).
+
+.PP
+.RS
+
+.nf
+i3run \-\-instance budswin \-\-rename sublime\_main \-command subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime\_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+
+.fi
+.RE
+
+.PP
 \fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
 .br
 Command to run if no window is found. Complex
@@ -1092,14 +1104,6 @@ i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
 
 .fi
 .RE
-
-.PP
-\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
-.br
-If the search criteria is \fB\fC\-i\fR (instance), the
-window with instance: \fIOLDNAME\fP will get a n new
-instance name matching the criteria when it is
-created (\fIneeds \fB\fCxdotool\fR\fP).
 
 .PP
 \fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS

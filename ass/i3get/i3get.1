@@ -1,4 +1,4 @@
-.TH I3GET 1 2019\-01\-08 Linx "User Manuals"
+.TH I3GET 1 2019\-01\-09 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3get\fR \- Boilerplate and template maker for bash
@@ -19,14 +19,10 @@ i3get \-\-version|\-v
 .SH DESCRIPTION
 .PP
 Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t
-get\_tree\fR,
-.br
-return desired information.  If no arguments are
-passed.
-.br
-\fB\fCcon\_id\fR of acitve window is returned.  If there
-is more then one criterion,  all of them must be
-true to get results.
+get\_tree\fR, return desired information. If no
+arguments are passed. \fB\fCcon\_id\fR of acitve window is
+returned. If there is more then one criterion, all
+of them must be true to get results.
 
 .SH OPTIONS
 .PP
@@ -72,9 +68,9 @@ Currently active window (default)
 .PP
 \fB\fC\-\-synk\fR|\fB\fC\-y\fR
 .br
-Synch on. If this option is included,
-.br
-script will wait till target window exist.
+Synch on. If this option is included,  script
+will wait till target window exist. (\fIor timeout
+after 10 seconds\fP).
 
 .PP
 \fB\fC\-\-print\fR|\fB\fC\-r\fR OUTPUT

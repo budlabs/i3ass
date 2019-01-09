@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 0.547
-updated: 2019-01-08 by budRich
+i3fyra - version: 0.548
+updated: 2019-01-09 by budRich
 EOB
 }
 
@@ -14,10 +14,6 @@ EOB
 : "${I3FYRA_WS:=1}"
 : "${I3FYRA_ORIENTATION:=horizontal}"
 
-
-set -o errexit
-set -o pipefail
-set -o nounset
 
 main(){
   local cmd target
@@ -192,11 +188,11 @@ containershow(){
   trg=$1
 
   # trg is not legal
-  [[ ! $trg =~ [${i3list[LAL]}] ]] && exit 1
+  [[ ! $trg =~ [${i3list[LAL]:-}] ]] && exit 1
 
   sts=none
-  [[ $trg =~ [${i3list[LVI]}] ]] && sts=visible
-  [[ $trg =~ [${i3list[LHI]}] ]] && sts=hidden
+  [[ $trg =~ [${i3list[LVI]:-}] ]] && sts=visible
+  [[ $trg =~ [${i3list[LHI]:-}] ]] && sts=hidden
 
   case "$sts" in
     visible ) return 0;;
@@ -216,6 +212,7 @@ containershow(){
 
       sib=${tfam/$trg/}
 
+
       # if sibling is visible, tdest (destination)
       # otherwise XAB, main container
       if [[ ${sib} =~ [${i3list[LVI]}] ]]; then
@@ -223,7 +220,7 @@ containershow(){
       elif [[ ${I3FYRA_ORIENTATION,,} = vertical ]]; then
         tdest=i34XAC
       else
-        tdest=134XAB
+        tdest=i34XAB
       fi
       
       # if if no containers are visible create layout
@@ -238,7 +235,6 @@ containershow(){
           familycreate "$trg"
           famshow=1
         else
-          echo "$tdest"
           # WSA = active workspace
           i3-msg -q "[con_mark=i34${trg}]" \
             move to workspace "${i3list[WSA]}", \
@@ -331,19 +327,23 @@ layoutcreate(){
     i3-msg -q "[con_mark=i34XAB]" unmark
   fi
 
+  ERR "loc $fam"
+
   i3gw gurra  > /dev/null 2>&1
   
   i3-msg -q "[con_mark=gurra]" \
-    split v, layout tabbed, focus parent
-  i3-msg -q mark i34X${fam}, focus parent
-  [[ ${I3FYRA_ORIENTATION,,} = vertical ]] \
-    && i3-msg -q mark i34XAC \
-    || i3-msg -q mark i34XAB
+    split v, layout tabbed
   
   i3-msg -q "[con_mark=i34${trg}]" \
     move to workspace "${i3list[WSA]}", \
     floating disable, \
     move to mark gurra
+
+  i3-msg -q "[con_mark=gurra]" focus parent
+  i3-msg -q mark i34X${fam}, focus parent
+  # [[ ${I3FYRA_ORIENTATION,,} = vertical ]] \
+  #   && i3-msg -q mark i34XAC \
+  #   || i3-msg -q mark i34XAB
 
   if [[ ${I3FYRA_ORIENTATION,,} = vertical ]]; then
     i3-msg -q "[con_mark=gurra]" layout splith, split h
@@ -407,6 +407,7 @@ familycreate(){
     fi
   fi
 
+  ERR "dddk $tfam"
   i3-msg -q "[con_mark=i34X${tfam}]" unmark
   i3gw gurra  > /dev/null 2>&1
   i3-msg -q "[con_mark=gurra]" \
@@ -425,9 +426,9 @@ familycreate(){
     i3-msg -q "[con_mark=i34XAC]" layout splitv, split v
     i3-msg -q "[con_mark=i34X${tfam}]" move down
   else
-    i3-msg -q "[con_mark=gurra]" layout default, split v
+    i3-msg -q "[con_mark=gurra]" layout splitv, split v
     i3-msg -q "[con_mark=gurra]" kill
-    i3-msg -q "[con_mark=i34XAB]" layout splith, split h
+    ERR "hhh $tfam"
     i3-msg -q "[con_mark=i34X${tfam}]" move right
   fi
 
@@ -576,17 +577,17 @@ togglefloat(){
     fi
 
     # AWF == 1 && make AWC tiled and move AWC to trg
-    if [[ ${i3list[CMA]} =~ [${i3list[LVI]}] ]]; then
+    if [[ ${i3list[CMA]} =~ [${i3list[LVI]:-}] ]]; then
       trg="${i3list[CMA]}" 
-    elif [[ -n ${i3list[LVI]} ]]; then
+    elif [[ -n ${i3list[LVI]:-} ]]; then
       trg=${i3list[LVI]:0:1}
-    elif [[ -n ${i3list[LHI]} ]]; then
+    elif [[ -n ${i3list[LHI]:-} ]]; then
       trg=${i3list[LHI]:0:1}
     else
       trg="${i3list[CMA]}"
     fi
 
-    if [[ $trg =~ [${i3list[LEX]}] ]]; then
+    if [[ $trg =~ [${i3list[LEX]:-}] ]]; then
       containershow "$trg"
       i3-msg -q [con_id="${i3list[AWC]}"] floating disable, \
         move to mark "i34${trg}"
@@ -608,8 +609,8 @@ windowmove(){
   # if dir is a container, show/create that container
   # and move the window there
 
-  [[ ${dir^^} =~ A|B|C|D ]] && {
-    [[ ! ${i3list[LEX]} =~ $dir ]] \
+  [[ $dir =~ A|B|C|D ]] && {
+    [[ ! ${i3list[LEX]:-} =~ $dir ]] \
       && newcont=1 \
       || newcont=0
     containershow "$dir"

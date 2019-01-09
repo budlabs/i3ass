@@ -20,9 +20,9 @@ DESCRIPTION
 
 `i3flip` switch containers without leaving the
 parent. Perfect for tabbed or stacked layout, but
-works on all layouts. If direction is `next` (or
-`n`) and the active container is the last, the
-first container will be activated.  
+works on all layouts. If direction is `next` and
+the active container is the last, the first
+container will be activated.  
 
 **DIRECTION** can be either *prev* or *next*,
 which can be defined with different words:  
@@ -48,19 +48,14 @@ Show version and exit.
 EXAMPLES
 --------
 
-Put these keybinding definitions in the i3
-config.  
-
 `~/.config/i3/config`:  
 ``` text
+...
 bindsym Mod4+Tab         exec --no-startup-id i3flip next
 bindsym Mod4+Shift+Tab   exec --no-startup-id i3flip prev
 ```
 
 
-
-Mod4/Super/Windows+Tab will switch to the next
-tab.
 
 DEPENDENCIES
 ------------
@@ -299,12 +294,10 @@ DESCRIPTION
 -----------
 
 Search for `CRITERIA` in the output of `i3-msg -t
-get_tree`,  
-return desired information.  If no arguments are
-passed.  
-`con_id` of acitve window is returned.  If there
-is more then one criterion,  all of them must be
-true to get results.
+get_tree`, return desired information. If no
+arguments are passed. `con_id` of acitve window is
+returned. If there is more then one criterion, all
+of them must be true to get results.
 
 
 OPTIONS
@@ -336,8 +329,9 @@ Search for windows with the given titleformat
 Currently active window (default)
 
 `--synk`|`-y`  
-Synch on. If this option is included,  
-script will wait till target window exist.
+Synch on. If this option is included,  script
+will wait till target window exist. (*or timeout
+after 10 seconds*).
 
 `--print`|`-r` OUTPUT  
 *OUTPUT* can be one or more of the following 
@@ -614,8 +608,8 @@ w:WIDTH h:HEIGHT x:X y:Y`
 
 Populated with the actual dimensions and position
 of the window. The first word, "MOVE", in the
-title means that we don'"'"'t need to specify the
-mode (move|size|m|s)  
+title means that we don't need to specify the mode
+(move|size|m|s)  
 
 So if a keybinding from **group 1** or **group
 2** is executed it will move the window in the
@@ -715,8 +709,8 @@ DESCRIPTION
 
 `i3list` prints a list in a *array* formatted
 list.  If a search criteria is given 
-(`-c`|`-i`|`-n`|`-d`)  information about the first
-window matching the criteria is displayed. 
+(`-c`|`-i`|`-n`|`-d`|`-m`)  information about the
+first window matching the criteria is displayed. 
 Information about the active window is always
 displayed.  If no search criteria is given,  the
 active window will also be the target window.
@@ -859,10 +853,10 @@ SYNOPSIS
 --------
 
 ```text
-i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
+i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
 i3run --help|-h
 i3run --version|-v
 ```
@@ -924,6 +918,25 @@ The window will be placed on the location of the
 mouse cursor when it is created or shown. (*needs
 `xdotool`*)  
 
+`--rename`|`-x` OLD_NAME  
+If the search criteria is `-i` (instance), the
+window with instance: *OLDNAME* will get a n new
+instance name matching the criteria when it is
+created (*needs `xdotool`*).  
+
+```shell
+i3run --instance budswin --rename sublime_main -command subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+```
+
+
+
+
 `--command`|`-e` COMMAND  
 Command to run if no window is found. Complex
 commands can be written inside quotes:  
@@ -932,12 +945,6 @@ i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
 ```
 
 
-
-`--rename`|`-x` OLD_NAME  
-If the search criteria is `-i` (instance), the
-window with instance: *OLDNAME* will get a n new
-instance name matching the criteria when it is
-created (*needs `xdotool`*).
 
 `--class`|`-c` CLASS  
 Search for windows with the given CLASS

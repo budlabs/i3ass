@@ -11,12 +11,10 @@ i3get --version|-v
 DESCRIPTION
 -----------
 Search for `CRITERIA` in the output of `i3-msg -t
-get_tree`,  
-return desired information.  If no arguments are
-passed.  
-`con_id` of acitve window is returned.  If there
-is more then one criterion,  all of them must be
-true to get results.
+get_tree`, return desired information. If no
+arguments are passed. `con_id` of acitve window is
+returned. If there is more then one criterion, all
+of them must be true to get results.
 
 
 OPTIONS
@@ -47,8 +45,9 @@ Search for windows with the given titleformat
 Currently active window (default)
 
 `--synk`|`-y`  
-Synch on. If this option is included,  
-script will wait till target window exist.
+Synch on. If this option is included,  script
+will wait till target window exist. (*or timeout
+after 10 seconds*).
 
 `--print`|`-r` OUTPUT  
 *OUTPUT* can be one or more of the following 

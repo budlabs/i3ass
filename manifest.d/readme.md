@@ -50,6 +50,8 @@ sed       [INSTALLED]
 xdotool   [INSTALLED]
 ```
 
+All the scripts that will be installed are located in the `src` directory of this repo, so you can also just add that directory or the scripts to your **$PATH**.  
+
 # readme_issues
 
 `i3-msg restart` breaks [i3fyra], try to use `i3-msg reload` instead (*it's faster and usually works just as good as restart*).

@@ -1,5 +1,6 @@
 # readme_footer
 
+[wiki]: https://github.com/budlabs/i3ass/wiki
 [i3flip]: https://github.com/budRich/i3ass/tree/dev/ass/i3flip
 [i3fyra]: https://github.com/budRich/i3ass/tree/dev/ass/i3fyra
 [i3gw]: https://github.com/budRich/i3ass/tree/dev/ass/i3gw

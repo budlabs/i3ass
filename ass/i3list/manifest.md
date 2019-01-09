@@ -1,8 +1,8 @@
 ---
 description: >
   list information about the current i3 session.
-updated:       2019-01-08
-version:       0.03
+updated:       2019-01-09
+version:       0.031
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-10-06
@@ -23,7 +23,7 @@ synopsis: |
 
 `i3list` prints a list in a *array* formatted list. 
 If a search criteria is given 
-(`-c`|`-i`|`-n`|`-d`) 
+(`-c`|`-i`|`-n`|`-d`|`-m`) 
 information about the first window matching the criteria is displayed. 
 Information about the active window is always displayed. 
 If no search criteria is given, 

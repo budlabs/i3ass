@@ -3,16 +3,12 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.03
-updated: 2019-01-08 by budRich
+i3list - version: 0.031
+updated: 2019-01-09 by budRich
 EOB
 }
 
 
-
-set -o errexit
-set -o pipefail
-set -o nounset
 
 main(){
 
@@ -345,7 +341,6 @@ match($0,/([{]|"nodes":[}][[]|.*_rect":{)?"([a-z_]+)":[["]*([^]}"]*)[]}"]*$/,ma)
       aws[curcid]["num"]=curws=var
       aws[curcid]["name"]=curwsnam=curnam
       curwsid=curcid
-      if (fourspace == 1) {setworkspace(curwsid,"F");fourspace=0}
     break
 
     case /^(width|height|x|y)$/ :
@@ -385,9 +380,11 @@ match($0,/([{]|"nodes":[}][[]|.*_rect":{)?"([a-z_]+)":[["]*([^]}"]*)[]}"]*$/,ma)
         acon[curcon]=curcid
       }
 
-      else if (var ~ "i34X" splits[3]) {
+      else if (var ~ /^i34X.*/ && fourspace != 1) {
         # if mainsplit container exist, get i3fyra
         # workspace on next occurrence of "num".
+
+        setworkspace(curwsid,"F")
         fourspace=1
       }
 

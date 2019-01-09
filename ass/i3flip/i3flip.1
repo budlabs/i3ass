@@ -1,4 +1,4 @@
-.TH I3FLIP 1 2019\-01\-08 Linx "User Manuals"
+.TH I3FLIP 1 2019\-01\-09 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3flip\fR \- Tabswitching done right
@@ -20,9 +20,9 @@ i3flip \-\-version|\-v
 .PP
 \fB\fCi3flip\fR switch containers without leaving the
 parent. Perfect for tabbed or stacked layout, but
-works on all layouts. If direction is \fB\fCnext\fR (or
-\fB\fCn\fR) and the active container is the last, the
-first container will be activated.
+works on all layouts. If direction is \fB\fCnext\fR and
+the active container is the last, the first
+container will be activated.
 
 .PP
 \fBDIRECTION\fP can be either \fIprev\fP or \fInext\fP,
@@ -51,25 +51,18 @@ Show version and exit.
 
 .SH EXAMPLES
 .PP
-Put these keybinding definitions in the i3
-config.
-
-.PP
 \fB\fC\~/.config/i3/config\fR:
 
 .PP
 .RS
 
 .nf
-bindsym Mod4+Tab         exec \-\-no\-startup\-id i3flip next
-bindsym Mod4+Shift+Tab   exec \-\-no\-startup\-id i3flip prev
+\&...
+bindsym Mod4+Tab         exec \-\&\-\&no\-\&startup\-\&id i3flip next
+bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
 
 .fi
 .RE
-
-.PP
-Mod4/Super/Windows+Tab will switch to the next
-tab.
 
 .SH DEPENDENCIES
 .PP

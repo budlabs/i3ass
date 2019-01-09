@@ -3,10 +3,10 @@
 ### usage
 
 ```text
-i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
+i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
 i3run --help|-h
 i3run --version|-v
 ```
@@ -52,6 +52,23 @@ Don't hide window/container if it's active.
 The window will be placed on the location of the mouse
 cursor when it is created or shown. (*needs `xdotool`*)  
 
+`--rename`|`-x` OLD_NAME  
+If the search criteria is `-i` (instance), the window with
+instance: *OLDNAME* will get a n new instance name matching
+the criteria when it is created (*needs `xdotool`*).  
+
+```shell
+i3run --instance budswin --rename sublime_main -command subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+```
+
+
+
 `--command`|`-e` COMMAND  
 Command to run if no window is found. Complex commands can
 be written inside quotes:  
@@ -59,11 +76,6 @@ be written inside quotes:
 i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
 ```
 
-
-`--rename`|`-x` OLD_NAME  
-If the search criteria is `-i` (instance), the window with
-instance: *OLDNAME* will get a n new instance name matching
-the criteria when it is created (*needs `xdotool`*).
 
 `--class`|`-c` CLASS  
 Search for windows with the given CLASS

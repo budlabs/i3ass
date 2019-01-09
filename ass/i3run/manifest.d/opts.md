@@ -28,7 +28,18 @@ Don't hide window/container if it's active.
 The window will be placed on the location of the mouse cursor when it is created or shown. (*needs `xdotool`*)  
 
 # options-rename-description
-If the search criteria is `-i` (instance), the window with instance: *OLDNAME* will get a n new instance name matching the criteria when it is created (*needs `xdotool`*).
+If the search criteria is `-i` (instance), the window with instance: *OLDNAME* will get a n new instance name matching the criteria when it is created (*needs `xdotool`*).  
+
+```shell
+i3run --instance budswin --rename sublime_main -command subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+```
+
 
 # options-help-description
 Show help and exit.

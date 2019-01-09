@@ -29,8 +29,8 @@ Search for windows with the given mark
 Search for windows with the given titleformat
 
 # options-synk-description
-Synch on. If this option is included,  
-script will wait till target window exist.
+Synch on. If this option is included, 
+script will wait till target window exist. (*or timeout after 10 seconds*).
 
 # options-print-description
 *OUTPUT* can be one or more of the following 

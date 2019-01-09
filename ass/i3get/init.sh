@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.331
-updated: 2019-01-08 by budRich
+i3get - version: 0.332
+updated: 2019-01-09 by budRich
 EOB
 }
 
@@ -58,8 +58,9 @@ Currently active window (default)
 
 
 --synk|-y  
-Synch on. If this option is included,  
-script will wait till target window exist.
+Synch on. If this option is included,  script
+will wait till target window exist. (or timeout
+after 10 seconds).
 
 
 --print|-r OUTPUT  

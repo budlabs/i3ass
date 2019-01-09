@@ -3,16 +3,12 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3Kornhe - version: 0.031
-updated: 2019-01-08 by budRich
+i3Kornhe - version: 0.032
+updated: 2019-01-09 by budRich
 EOB
 }
 
 
-
-set -o errexit
-set -o pipefail
-set -o nounset
 
 main(){
   # globals for absolute positioning

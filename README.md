@@ -45,6 +45,10 @@ xdotool   [INSTALLED]
 ```
 
 
+All the scripts that will be installed are located in the
+`src` directory of this repo, so you can also just add that
+directory or the scripts to your **$PATH**.  
+
 ---
 
 There is no oneline way to describe what **i3ass** does.
@@ -108,6 +112,7 @@ happen then before.)
 reload` instead (*it's faster and usually works just as good
 as restart*).
 
+[wiki]: https://github.com/budlabs/i3ass/wiki
 [i3flip]: https://github.com/budRich/i3ass/tree/dev/ass/i3flip
 [i3fyra]: https://github.com/budRich/i3ass/tree/dev/ass/i3fyra
 [i3gw]: https://github.com/budRich/i3ass/tree/dev/ass/i3gw

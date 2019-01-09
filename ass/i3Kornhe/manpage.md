@@ -153,8 +153,8 @@ w:WIDTH h:HEIGHT x:X y:Y`
 
 Populated with the actual dimensions and position
 of the window. The first word, "MOVE", in the
-title means that we don'"'"'t need to specify the
-mode (move|size|m|s)  
+title means that we don't need to specify the mode
+(move|size|m|s)  
 
 So if a keybinding from **group 1** or **group
 2** is executed it will move the window in the

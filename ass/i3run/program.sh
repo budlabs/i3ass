@@ -3,16 +3,12 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.039
-updated: 2019-01-08 by budRich
+i3run - version: 0.04
+updated: 2019-01-09 by budRich
 EOB
 }
 
 
-
-set -o errexit
-set -o pipefail
-set -o nounset
 
 main(){
 
@@ -33,7 +29,7 @@ main(){
   eval "$(i3list "${acri[@]}")"
 
   # if window doesn't exist, launch the command.
-  if [[ -z ${i3list[TWC]} ]]; then
+  if [[ -z ${i3list[TWC]:-} ]]; then
     launchcommand
   else
     focuswindow
@@ -48,10 +44,10 @@ i3run - Run, Raise or hide windows in i3wm
 
 SYNOPSIS
 --------
-i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
-i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--command|-e COMMAND] [--rename|-x OLD_NAME]
+i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
+i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--command|-e COMMAND]
 i3run --help|-h
 i3run --version|-v
 
@@ -77,6 +73,25 @@ mouse cursor when it is created or shown. (needs
 xdotool)  
 
 
+--rename|-x OLD_NAME  
+If the search criteria is -i (instance), the
+window with instance: OLDNAME will get a n new
+instance name matching the criteria when it is
+created (needs xdotool).  
+
+
+   i3run --instance budswin --rename sublime_main -command subl
+   
+   # when the command above is executed:
+   # a window with the instance name: "budswin" will be searched for.
+   # if no window is found the command: "subl" will get executed,
+   # and when a window with the instance name: "sublime_main" is found,
+   # the instance name of that window will get renamed to: "budswin"
+
+
+
+
+
 --command|-e COMMAND  
 Command to run if no window is found. Complex
 commands can be written inside quotes:  
@@ -84,13 +99,6 @@ commands can be written inside quotes:
    i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
 
 
-
-
---rename|-x OLD_NAME  
-If the search criteria is -i (instance), the
-window with instance: OLDNAME will get a n new
-instance name matching the criteria when it is
-created (needs xdotool).
 
 
 --class|-c CLASS  
@@ -192,6 +200,8 @@ focuswindow(){
 
 launchcommand(){
 
+  [[ -z ${__o[command]:-} ]] && exit 1
+  
   eval "${__o[command]}" > /dev/null 2>&1 & 
 
   [[ -n ${__o[rename]} ]] && {
@@ -250,8 +260,8 @@ sendtomouse(){
 }
 declare -A __o
 eval set -- "$(getopt --name "i3run" \
-  --options "i:sgme:x:c:t:n:hv" \
-  --longoptions "instance:,summon,nohide,mouse,command:,rename:,class:,title:,conid:,help,version," \
+  --options "i:sgmx:e:c:t:n:hv" \
+  --longoptions "instance:,summon,nohide,mouse,rename:,command:,class:,title:,conid:,help,version," \
   -- "$@"
 )"
 
@@ -261,8 +271,8 @@ while true; do
     --summon     | -s ) __o[summon]=1 ;; 
     --nohide     | -g ) __o[nohide]=1 ;; 
     --mouse      | -m ) __o[mouse]=1 ;; 
-    --command    | -e ) __o[command]="${2:-}" ; shift ;;
     --rename     | -x ) __o[rename]="${2:-}" ; shift ;;
+    --command    | -e ) __o[command]="${2:-}" ; shift ;;
     --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --title      | -t ) __o[title]="${2:-}" ; shift ;;
     --conid      | -n ) __o[conid]="${2:-}" ; shift ;;

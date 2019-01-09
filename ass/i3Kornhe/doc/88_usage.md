@@ -91,7 +91,7 @@ This will make i3Kornhe to enter **move mode**. (*it will actually activate the 
 
 It will then set the `title_format` to: `MOVE w:WIDTH h:HEIGHT x:X y:Y`  
 
-Populated with the actual dimensions and position of the window. The first word, "MOVE", in the title means that we don'"'"'t need to specify the mode (move|size|m|s)  
+Populated with the actual dimensions and position of the window. The first word, "MOVE", in the title means that we don't need to specify the mode (move|size|m|s)  
 
 So if a keybinding from **group 1** or **group 2** is executed it will move the window in the specified direction with the specified speed (speed defaults to 10 if not set).  
 

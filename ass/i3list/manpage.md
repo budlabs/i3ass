@@ -17,8 +17,8 @@ DESCRIPTION
 -----------
 `i3list` prints a list in a *array* formatted
 list.  If a search criteria is given 
-(`-c`|`-i`|`-n`|`-d`)  information about the first
-window matching the criteria is displayed. 
+(`-c`|`-i`|`-n`|`-d`|`-m`)  information about the
+first window matching the criteria is displayed. 
 Information about the active window is always
 displayed.  If no search criteria is given,  the
 active window will also be the target window.
