@@ -8,8 +8,8 @@ windowmove(){
   # if dir is a container, show/create that container
   # and move the window there
 
-  [[ ${dir^^} =~ A|B|C|D ]] && {
-    [[ ! ${i3list[LEX]} =~ $dir ]] \
+  [[ $dir =~ A|B|C|D ]] && {
+    [[ ! ${i3list[LEX]:-} =~ $dir ]] \
       && newcont=1 \
       || newcont=0
     containershow "$dir"

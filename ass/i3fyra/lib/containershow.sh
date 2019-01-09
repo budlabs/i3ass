@@ -12,11 +12,11 @@ containershow(){
   trg=$1
 
   # trg is not legal
-  [[ ! $trg =~ [${i3list[LAL]}] ]] && exit 1
+  [[ ! $trg =~ [${i3list[LAL]:-}] ]] && exit 1
 
   sts=none
-  [[ $trg =~ [${i3list[LVI]}] ]] && sts=visible
-  [[ $trg =~ [${i3list[LHI]}] ]] && sts=hidden
+  [[ $trg =~ [${i3list[LVI]:-}] ]] && sts=visible
+  [[ $trg =~ [${i3list[LHI]:-}] ]] && sts=hidden
 
   case "$sts" in
     visible ) return 0;;
@@ -36,6 +36,7 @@ containershow(){
 
       sib=${tfam/$trg/}
 
+
       # if sibling is visible, tdest (destination)
       # otherwise XAB, main container
       if [[ ${sib} =~ [${i3list[LVI]}] ]]; then
@@ -43,7 +44,7 @@ containershow(){
       elif [[ ${I3FYRA_ORIENTATION,,} = vertical ]]; then
         tdest=i34XAC
       else
-        tdest=134XAB
+        tdest=i34XAB
       fi
       
       # if if no containers are visible create layout
@@ -58,7 +59,6 @@ containershow(){
           familycreate "$trg"
           famshow=1
         else
-          echo "$tdest"
           # WSA = active workspace
           i3-msg -q "[con_mark=i34${trg}]" \
             move to workspace "${i3list[WSA]}", \

@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-set -o errexit
-set -o pipefail
-set -o nounset
-
 main(){
   # globals for absolute positioning
   __border_top=25 __border_bot=5

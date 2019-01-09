@@ -75,34 +75,31 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
-### 2018.09.21.0
+### v.0.1.7
 
-[i3list] fixed issue #32 for real (*i hope ;*) related to
-getting workspace name and number of the active workspace if
-it is empty.
+Added [i3Kornhe]
 
-### 2018.09.20.0
+changed output of [i3viswiz] again, control variables are
+now all on the first line. Also added workspace dimensions
+for better (not yet perfect) multimonitor support, modified
+i3fyra 'move' command to work with the new changes.
 
+Added workspace position to i3list output.
 
-# [i3get] BREAKING CHANGE
-
-leading and trailing doublequotes are now trimmed from all
-output (affecting title and titleformat), this might break
-script which include the quotes in f.i. regex searched.  
-
-[i3list] fixed issue #32 related to getting workspace name
-and number of the active workspace if it is empty.
-
-### 2018.09.15.0
+### v.0.1.77
 
 
-[i3Kornhe]
-- refactored code
+cleaned up [i3flip] code and added ability to flip in
+layouts other then tabbed|stacked.
 
-- fixed issue with title format not reseting
+### v.0.1.75
 
-- add longoption support (`--speed`)
 
+fixed an issue with [i3viswiz] and i3gaps, where the
+correct window couldn't be located if the search  ended up
+in the gaps. (this can still happen, and might need some
+more tweaks, but with this fix it's much less likely to
+happen then before.)
 
 
 ## known issues

@@ -2,6 +2,8 @@
 
 launchcommand(){
 
+  [[ -z ${__o[command]:-} ]] && exit 1
+  
   eval "${__o[command]}" > /dev/null 2>&1 & 
 
   [[ -n ${__o[rename]} ]] && {

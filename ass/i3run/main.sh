@@ -1,9 +1,5 @@
 #!/usr/bin/env bash
 
-set -o errexit
-set -o pipefail
-set -o nounset
-
 main(){
 
   if [[ -n ${__o[instance]:-} ]]; then
@@ -23,7 +19,7 @@ main(){
   eval "$(i3list "${acri[@]}")"
 
   # if window doesn't exist, launch the command.
-  if [[ -z ${i3list[TWC]} ]]; then
+  if [[ -z ${i3list[TWC]:-} ]]; then
     launchcommand
   else
     focuswindow
