@@ -1,7 +1,7 @@
 ---
 description:   i3 assistance scripts
 updated:       2019-01-09
-version:       2019.01.09.1
+version:       2019.01.09.2
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2018-10-18
