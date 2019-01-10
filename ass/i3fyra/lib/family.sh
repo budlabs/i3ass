@@ -12,10 +12,13 @@ familyshow(){
       && containershow "${tfammem:$i:1}"
   done
 
-
-  i3list[SAB]=$((i3list[WFW]/2))
-  applysplits "AB=${i3list[MAB]}"
-
+  if [[ ${I3FYRA_ORIENTATION,,} = vertical ]]; then
+    i3list[SAC]=$((i3list[WFH]/2))
+    applysplits "AC=${i3list[MAC]}"
+  else
+    i3list[SAB]=$((i3list[WFW]/2))
+    applysplits "AB=${i3list[MAB]}"
+  fi
 }
 
 familyhide(){

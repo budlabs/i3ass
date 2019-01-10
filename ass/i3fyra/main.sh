@@ -36,7 +36,7 @@ main(){
       && i3-msg -q "[con_id=${i3list[AWC]}]" focus
 
   [[ -n ${i3list[SIBFOC]:-} ]] \
-    && i3-msg "[con_mark=i34${i3list[SIBFOC]}]" focus child
+    && i3-msg -q "[con_mark=i34${i3list[SIBFOC]}]" focus child
   
 }
 

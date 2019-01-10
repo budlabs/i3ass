@@ -15,8 +15,6 @@ layoutcreate(){
     i3-msg -q "[con_mark=i34XAB]" unmark
   fi
 
-  ERR "loc $fam"
-
   i3gw gurra  > /dev/null 2>&1
   
   i3-msg -q "[con_mark=gurra]" \
@@ -29,9 +27,6 @@ layoutcreate(){
 
   i3-msg -q "[con_mark=gurra]" focus parent
   i3-msg -q mark i34X${fam}, focus parent
-  # [[ ${I3FYRA_ORIENTATION,,} = vertical ]] \
-  #   && i3-msg -q mark i34XAC \
-  #   || i3-msg -q mark i34XAB
 
   if [[ ${I3FYRA_ORIENTATION,,} = vertical ]]; then
     i3-msg -q "[con_mark=gurra]" layout splith, split h
@@ -95,7 +90,6 @@ familycreate(){
     fi
   fi
 
-  ERR "dddk $tfam"
   i3-msg -q "[con_mark=i34X${tfam}]" unmark
   i3gw gurra  > /dev/null 2>&1
   i3-msg -q "[con_mark=gurra]" \
@@ -111,12 +105,10 @@ familycreate(){
   if [[ ${I3FYRA_ORIENTATION,,} = vertical ]]; then
     i3-msg -q "[con_mark=gurra]" layout splith, split h
     i3-msg -q "[con_mark=gurra]" kill
-    i3-msg -q "[con_mark=i34XAC]" layout splitv, split v
     i3-msg -q "[con_mark=i34X${tfam}]" move down
   else
     i3-msg -q "[con_mark=gurra]" layout splitv, split v
     i3-msg -q "[con_mark=gurra]" kill
-    ERR "hhh $tfam"
     i3-msg -q "[con_mark=i34X${tfam}]" move right
   fi
 
