@@ -79,34 +79,66 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
-### 2018.09.21.0
+### 2019.01.11.0
 
-[i3list] fixed issue #32 for real (*i hope ;*) related to
-getting workspace name and number of the active workspace if
-it is empty.
+Extreme refactoring edition.  
+The project now uses [bashbud] as the backbone for code and
+documentation organization. A lot of changes "under the
+hood" and to documentation, but few functional changes
+except:  
 
-### 2018.09.20.0
+A new command will get installed, `i3ass`, when executed a
+list of installed i3 ass scripts, their version number and
+dependencies will get printed. Please include this output in
+any submitted issues.
+
+[i3fyra] Should now work well with the latest (4.16)
+version of [i3]. A new environment variable can be set for
+i3fyra, **I3FYRA_ORIENTATION**, setting this to 'vertical'
+changes the layout, read more in the [wiki].  
+
+[i3viswiz] No includes `--focus` option, that will replace
+the previous `focusvisible` command. Likewise specifying a
+search option (`--title`, `--instance`, `--parent`,
+`--class`, `--winid`, `--parent`, `--titleformat`) and a
+search string, will return the **CON_ID** of any found
+visible window, replacing `getvisible` command. If no search
+string is passed, a list of all visible tiles windows and a
+string representing the search option will be displayed.
+
+EXAMPLE
+-------
 
 
-# [i3get] BREAKING CHANGE
-
-leading and trailing doublequotes are now trimmed from all
-output (affecting title and titleformat), this might break
-script which include the quotes in f.i. regex searched.  
-
-[i3list] fixed issue #32 related to getting workspace name
-and number of the active workspace if it is empty.
-
-### 2018.09.15.0
+```text
+i3viswiz --class
+trgcon=94759781247616 trgx=0 trgy=0 wall=none trgpar=A sx=0 sy=0 sw=1080 sh=1920
+* 94759781247616 x: 0     y: 0     w: 514   h: 399   | URxvt
+- 94759780179248 x: 515   y: 0     w: 564   h: 399   | Pavucontrol
+- 94759779366272 x: 0     y: 400   w: 1079  h: 1519  | Sublime_text
+```
 
 
-[i3Kornhe]
-- refactored code
+Starting with this release a [wiki] for i3ass is available
+here on github.
 
-- fixed issue with title format not reseting
+### v.0.1.7
 
-- add longoption support (`--speed`)
 
+Added [i3Kornhe]
+
+changed output of [i3viswiz] again, control variables are
+now all on the first line. Also added workspace dimensions
+for better (not yet perfect) multimonitor support, modified
+i3fyra 'move' command to work with the new changes.
+
+Added workspace position to i3list output.
+
+### v.0.1.77
+
+
+cleaned up [i3flip] code and added ability to flip in
+layouts other then tabbed|stacked.
 
 
 ## known issues
@@ -131,6 +163,7 @@ as restart*).
 [AUR]: https://aur.archlinux.org/packages/i3ass/
 [i3]: https://i3wm.org/
 [i3wm]: https://i3wm.org/
+[bashbud]: https://github.com/budlabs/bashbud
 
 ## license
 
