@@ -16,3 +16,4 @@
 [AUR]: https://aur.archlinux.org/packages/i3ass/
 [i3]: https://i3wm.org/
 [i3wm]: https://i3wm.org/
+[bashbud]: https://github.com/budlabs/bashbud

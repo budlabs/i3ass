@@ -1,7 +1,1345 @@
-.TH I3ASS 1 2019\-01\-10 Linx "User Manuals"
+.TH I3ASS 1 2019\-01\-11 Linx "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3ass\fR \- i3 assistance scripts
+
+.PP
+arbe
+
+
+.SH \fB\fCi3flip\fR \- Tabswitching done right
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3flip DIRECTION
+i3flip \-\-move|\-m DIRECTION
+i3flip \-\-help|\-h
+i3flip \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3flip\fR switch containers without leaving the
+parent. Perfect for tabbed or stacked layout, but
+works on all layouts. If direction is \fB\fCnext\fR and
+the active container is the last, the first
+container will be activated.
+
+.PP
+\fBDIRECTION\fP can be either \fIprev\fP or \fInext\fP,
+which can be defined with different words:
+
+.PP
+\fBnext\fP|right|down|n|r|d
+.br
+\fBprev\fP|left|up|p|l|u
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-move\fR|\fB\fC\-m\fR DIRECTION
+.br
+Move the current tab instead of changing focus.
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+.SH EXAMPLES
+.PP
+\fB\fC\~/.config/i3/config\fR:
+
+.PP
+.RS
+
+.nf
+\&...
+bindsym Mod4+Tab         exec \-\&\-\&no\-\&startup\-\&id i3flip next
+bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
+
+.fi
+.RE
+
+.SH DEPENDENCIES
+.PP
+\fB\fCi3\fR \fB\fCgawk\fR
+
+
+.SH \fB\fCi3fyra\fR \- An advanced, simple grid\-based tiling layout
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3fyra \-\-show|\-s CONTAINER
+i3fyra \-\-float|\-a [\-\-target|\-t CRITERION]
+i3fyra \-\-hide|\-z CONTAINER(s)
+i3fyra \-\-layout|\-l LAYOUT
+i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-speed|\-p INT]  [\-\-target|\-t CRITERION]
+i3fyra \-\-help|\-h
+i3fyra \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+The layout consists of four containers:
+
+.PP
+.RS
+
+.nf
+  A B
+  C D
+
+.fi
+.RE
+
+.PP
+A container can contain one or more windows. The
+internal layout of the containers doesn't matter.
+By default the layout of each container is tabbed.
+
+.PP
+A is always to the left of B and D. And always
+above C. B is always to the right of A and C. And
+always above D.
+
+.PP
+This means that the containers will change names
+if their position changes.
+
+.PP
+The size of the containers are defined by the
+three splits: AB, AC and BD.
+
+.PP
+Container A and C belong to one family.
+.br
+Container B and D belong to one family.
+
+.PP
+The visibility of containers and families can be
+toggled. Not visible containers are placed on the
+scratchpad.
+
+.PP
+The visibility is toggled by either using \fIshow\fP
+(\fB\fC\-s\fR) or \fIhide\fP (\fB\fC\-z\fR). But more often by moving
+a container in an \fIimpossible\fP direction, (\fIsee
+examples below\fP).
+
+.PP
+The \fBi3fyra\fP layout is only active on one
+workspace. That workspace can be set with the
+environment variable: \fB\fCi3FYRA\_WS\fR, otherwise the
+workspace active when the layout is created will
+be used.
+
+.PP
+The benefit of using this layout is that the
+placement of windows is more predictable and
+easier to control. Especially when using tabbed
+containers, which are very clunky to use with
+\fIdefault i3\fP\&.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-show\fR|\fB\fC\-s\fR CONTAINER
+.br
+Show target container. If it doesn't exist, it
+will be created and current window will be put in
+it. If it is visible, nothing happens.
+
+.PP
+\fB\fC\-\-float\fR|\fB\fC\-a\fR
+.br
+Autolayout. If current window is tiled: floating
+enabled If window is floating, it will be put in a
+visible container. If there is no visible
+containers. The window will be placed in a hidden
+container. If no containers exist, container
+'A'will be created and the window will be put
+there.
+
+.PP
+\fB\fC\-\-target\fR|\fB\fC\-t\fR CRITERION
+.br
+Criteria is a string passed to i3list to use a
+different target then active window.
+
+.PP
+Example:
+.br
+\fB\fC$ i3fyra \-\-move B \-\-target "\-i sublime\_text"\fR
+this will target the first found window with the
+instance name \fIsublime\_text\fP\&. See i3list(1), for
+all available options.
+
+.PP
+\fB\fC\-\-hide\fR|\fB\fC\-z\fR
+.br
+Hide target containers if visible.
+
+.PP
+\fB\fC\-\-layout\fR|\fB\fC\-l\fR LAYOUT
+.br
+alter splits Changes the given splits. INT is a
+distance in pixels. AB is on X axis from the left
+side if INT is positive, from the right side if it
+is negative. AC and BD is on Y axis from the top
+if INT is positive, from the bottom if it is
+negative. The whole argument needs to be quoted.
+Example:
+.br
+\fB\fC$ i3fyra \-\-layout 'AB=\-300 BD=420'\fR
+
+.PP
+\fB\fC\-\-move\fR|\fB\fC\-m\fR CONTAINER
+.br
+Moves current window to target container, either
+defined by it's name or it's position relative to
+the current container with a direction:
+[\fB\fCl\fR|\fB\fCleft\fR][\fB\fCr\fR|\fB\fCright\fR][\fB\fCu\fR|\fB\fCup\fR][\fB\fCd\fR|\fB\fCdown\fR] If
+the container doesnt exist it is created. If
+argument is a direction and there is no container
+in that direction, Connected container(s)
+visibility is toggled. If current window is
+floating or not inside ABCD, normal movement is
+performed. Distance for moving floating windows
+with this action can be defined with the \fB\fC\-\-speed\fR
+option. Example: \fB\fC$ i3fyra \-\-speed 30 \-m r\fR Will
+move current window 30 pixels to the right, if it
+is floating.
+
+.PP
+\fB\fC\-\-speed\fR|\fB\fC\-p\fR INT
+.br
+Distance in pixels to move a floating window.
+Defaults to 30.
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit
+
+.SH EXAMPLES
+.PP
+If containers \fBA\fP,\fBB\fP and \fBC\fP are visible
+but \fBD\fP is hidden or none existent, the visible
+layout would looks like this:
+
+.PP
+.RS
+
+.nf
+  A B
+  C B
+
+.fi
+.RE
+
+.PP
+If action: \fImove up\fP (\fB\fC\-m u\fR) would be called
+when container \fBB\fP is active and \fBD\fP is
+hidden. Container \fBD\fP would be shown. If action
+would have been: \fImove down\fP (\fB\fC\-m d\fR), \fBD\fP would
+be shown but \fBB\fP would be placed below \fBD\fP,
+this means that the containers will also swap
+names. If action would have been \fImove left\fP (\fB\fC\-m
+l\fR) the active window in B would be moved to
+container \fBA\fP\&. If action was \fImove right\fP (\fB\fC\-m
+r\fR) \fBA\fP and \fBC\fP would be hidden:
+
+.PP
+.RS
+
+.nf
+  B B
+  B B
+
+.fi
+.RE
+
+.PP
+If we now \fImove left\fP (\fB\fC\-m l\fR), \fBA\fP and \fBC\fP
+would be shown again but to the right of \fBB\fP,
+the containers would also change names, so \fBB\fP
+becomes \fBA\fP, \fBA\fP becomes \fBB\fP and \fBC\fP
+becomes \fBD\fP:
+
+.PP
+.RS
+
+.nf
+  A B
+  A D
+
+.fi
+.RE
+
+.PP
+If this doesn't make sense, check out this
+demonstration on youtube:
+
+\[la]https://youtu.be/kU8gb6WLFk8\[ra]
+
+.SH ENVIRONMENT
+.PP
+\fB\fCI3FYRA\_MAIN\_CONTAINER\fR
+.br
+This container will be the chosen when a
+container is requested but not given. When using
+the command autolayout (\fB\fC\-a\fR) for example, if the
+window is floating it will be sent to the main
+container, if no other containers exist. Defaults
+to A. defaults to: A
+
+.PP
+\fB\fCI3FYRA\_WS\fR
+.br
+Workspace to use for i3fyra. If not set, the firs
+workspace that request to create the layout will
+be used. defaults to: 1
+
+.PP
+\fB\fCI3FYRA\_ORIENTATION\fR
+.br
+If set to \fB\fCvertical\fR main split will be \fB\fCAC\fR and
+families will be \fB\fCAB\fR and \fB\fCCD\fR\&. Otherwise main
+split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and
+\fB\fCBD\fR\&. defaults to: horizontal
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3gw\fR \fB\fCi3var\fR
+\fB\fCi3viswiz\fR
+
+
+.SH \fB\fCi3get\fR \- Boilerplate and template maker for bash scripts
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3get [\-\-class|\-c CLASS] [\-\-instance|\-i INSTANCE] [\-\-title|\-t TITLE] [\-\-conid|\-n CON\_ID] [\-\-winid|\-d WIN\_ID] [\-\-mark|\-m MARK] [\-\-titleformat|\-o TITLE\_FORMAT] [\-\-active|\-a] [\-\-synk|\-y] [\-\-print|\-r OUTPUT]      
+i3get \-\-help|\-h
+i3get \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t
+get\_tree\fR, return desired information. If no
+arguments are passed. \fB\fCcon\_id\fR of acitve window is
+returned. If there is more then one criterion, all
+of them must be true to get results.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+.br
+Search for windows with the given class
+
+.PP
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+.br
+Search for windows with the given instance
+
+.PP
+\fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+.br
+Search for windows with title.
+
+.PP
+\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+.br
+Search for windows with the given con\_id
+
+.PP
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR WIN\_ID
+.br
+Search for windows with the given window id
+
+.PP
+\fB\fC\-\-mark\fR|\fB\fC\-m\fR MARK
+.br
+Search for windows with the given mark
+
+.PP
+\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR TITLE\_FORMAT
+.br
+Search for windows with the given titleformat
+
+.PP
+\fB\fC\-\-active\fR|\fB\fC\-a\fR
+.br
+Currently active window (default)
+
+.PP
+\fB\fC\-\-synk\fR|\fB\fC\-y\fR
+.br
+Synch on. If this option is included,  script
+will wait till target window exist. (\fIor timeout
+after 10 seconds\fP).
+
+.PP
+\fB\fC\-\-print\fR|\fB\fC\-r\fR OUTPUT
+.br
+\fIOUTPUT\fP can be one or more of the following
+characters:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCcharacter\fR	\fB\fCprint\fR
+\fB\fCt\fR	title
+\fB\fCc\fR	class
+\fB\fCi\fR	instance
+\fB\fCd\fR	Window ID
+\fB\fCn\fR	Con\_Id (default)
+\fB\fCm\fR	mark
+\fB\fCw\fR	workspace
+\fB\fCa\fR	is active
+\fB\fCf\fR	floating state
+\fB\fCo\fR	title format
+\fB\fCv\fR	visible state
+.TE
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit
+
+.SH EXAMPLES
+.PP
+search for window with instance name
+sublime\_text.  Request workspace, title and
+floating state.
+
+.PP
+.RS
+
+.nf
+$ i3get \-\-instance sublime\_text \-r wtf 
+1
+\~/src/bash/i3ass/i3get (i3ass) \- Sublime Text
+user\_off
+
+.fi
+.RE
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR
+
+
+.SH \fB\fCi3gw\fR \- a ghost window wrapper for i3wm
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3gw MARK
+i3gw \-\-help|\-h
+i3gw \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3\-msg\fR has an undocumented function: \fIopen\fP,
+it creates empty containers,  or as I call them:
+ghosts.  Since these empty containers doesn't
+contain any windows  there is no
+instance/class/title to identify them,  making it
+difficult to manage them.  They do however have a
+\fB\fCcon\_id\fR  and I found that the easiest way to keep
+track of ghosts, is to mark them.  That is what
+this script does,  it creates a ghost,  get its
+\fB\fCcon\_id\fR and marks it.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+.SH EXAMPLES
+.PP
+\fB\fC$ i3gw casper\fR
+
+.PP
+this will create a ghost marked casper,  you can
+perform any action you can perform on a regular
+container.
+
+.PP
+.RS
+
+.nf
+$ i3\-msg [con\_mark=casper] move to workspace 2
+$ i3\-msg [con\_mark=casper] split v
+$ i3\-msg [con\_mark=casper] layout tabbed
+$ i3\-msg [con\_mark=casper] kill
+
+.fi
+.RE
+
+.PP
+the last command (\fB\fCkill\fR), destroys the
+container.
+
+.SH DEPENDENCIES
+.PP
+\fB\fCi3\fR
+
+
+.SH \fB\fCi3Kornhe\fR \- move and resize windows gracefully
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3Kornhe DIRECTION
+i3Kornhe move [\-\-speed|\-p SPEED] [DIRECTION]
+i3Kornhe size [\-\-speed|\-p SPEED] [DIRECTION]
+i3Kornhe 1\-9
+i3Kornhe x
+i3Kornhe \-\-help|\-h
+i3Kornhe \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+i3Kornhe provides an alternative way to move and
+resize windows in \fBi3\fP\&. It has some more
+functions then the defaults and is more
+streamlined. Resizing floating windows is done by
+first selecting a corner of the window,  and then
+moving that corner. See the wiki or the manpage
+for details and how to add the required mode in
+the i3 config file that is needed to use
+\fBi3Kornhe\fP\&.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-speed\fR|\fB\fC\-p\fR SPEED
+.br
+Sets speed or distance in pixels to use when
+moving and resizing the windows.
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+
+.SH usage
+.PP
+To use this script a
+bindingmode
+\[la]https://i3wm.org/docs/userguide.html#binding_modes\[ra]
+named \fB\fCsizemode\fR needs to be set in your i3 config
+file. Below is how I have set up this mode:
+
+.PP
+\fB\fC\~/.config/i3/config\fR
+
+.PP
+.RS
+
+.nf
+
+...
+
+# these keybindings are outside the mode definition
+
+# group A, enter size mode with direction:
+bindsym Mod4+Control+Left    exec \-\-no\-startup\-id i3Kornhe size left
+bindsym Mod4+Control+Down    exec \-\-no\-startup\-id i3Kornhe size down
+bindsym Mod4+Control+Up      exec \-\-no\-startup\-id i3Kornhe size up
+bindsym Mod4+Control+Right   exec \-\-no\-startup\-id i3Kornhe size right
+
+# group B, enter move mode with direction:
+# by using speed 0 (\-p 0), this will only enter the mode without
+# moving the window.
+bindsym Mod4+Left      exec \-\-no\-startup\-id i3Kornhe move \-p 0 left
+bindsym Mod4+Down      exec \-\-no\-startup\-id i3Kornhe move \-p 0 down
+bindsym Mod4+Up        exec \-\-no\-startup\-id i3Kornhe move \-p 0 up
+bindsym Mod4+Right     exec \-\-no\-startup\-id i3Kornhe move \-p 0 right
+
+...
+
+mode "sizemode" {
+  # group 1 only send direction speed 30:
+  bindsym Left          exec \-\-no\-startup\-id i3Kornhe \-p 30 left
+  bindsym Down          exec \-\-no\-startup\-id i3Kornhe \-p 30 down
+  bindsym Up            exec \-\-no\-startup\-id i3Kornhe \-p 30 up
+  bindsym Right         exec \-\-no\-startup\-id i3Kornhe \-p 30 right
+  
+  # group 2 only send direction speed 5:
+  bindsym Shift+Left    exec \-\-no\-startup\-id i3Kornhe \-p 5 left
+  bindsym Shift+Down    exec \-\-no\-startup\-id i3Kornhe \-p 5 down
+  bindsym Shift+Up      exec \-\-no\-startup\-id i3Kornhe \-p 5 up
+  bindsym Shift+Right   exec \-\-no\-startup\-id i3Kornhe \-p 5 right
+
+  # group 3 change size direction:
+  bindsym Mod4+Left     exec \-\-no\-startup\-id i3Kornhe size left
+  bindsym Mod4+Down     exec \-\-no\-startup\-id i3Kornhe size down
+  bindsym Mod4+Up       exec \-\-no\-startup\-id i3Kornhe size up
+  bindsym Mod4+Right    exec \-\-no\-startup\-id i3Kornhe size right
+
+  # group 4 enter move mode:
+  bindsym m exec \-\-no\-startup\-id i3Kornhe move \-p 0 left
+
+  # group 5 move to absolute position 1\-9:
+  bindsym 1 exec \-\-no\-startup\-id i3Kornhe 1
+  bindsym 2 exec \-\-no\-startup\-id i3Kornhe 2
+  bindsym 3 exec \-\-no\-startup\-id i3Kornhe 3
+  bindsym 4 exec \-\-no\-startup\-id i3Kornhe 4
+  bindsym 5 exec \-\-no\-startup\-id i3Kornhe 5
+  bindsym 6 exec \-\-no\-startup\-id i3Kornhe 6
+  bindsym 7 exec \-\-no\-startup\-id i3Kornhe 7
+  bindsym 8 exec \-\-no\-startup\-id i3Kornhe 8
+  bindsym 9 exec \-\-no\-startup\-id i3Kornhe 9
+
+  # group 6 exit the mode
+  bindsym Escape exec \-\-no\-startup\-id i3Kornhe x
+}
+
+.fi
+.RE
+
+.PP
+As you can see there are a lot of keybinding
+definitions, but keep in mind, without \fB\fCi3Kornhe\fR
+you would need, one mode for every direction and
+action (at least 8). And one reason i made this
+script was unclutter and shrink my own config
+file.
+
+.PP
+A tip is also to use variables in the i3config:
+
+.PP
+.RS
+
+.nf
+set $super bindsym Mod4
+set $i3Kornhe exec \-\-no\-startup\-id i3Kornhe
+
+.fi
+.RE
+
+.PP
+.RS
+
+.nf
+before:  
+bindsym Mod4+Right exec \-\-no\-startup\-id i3Kornhe move \-p 0 right
+
+after:  
+$super+Right $i3Kornhe m \-p 0 r
+
+.fi
+.RE
+
+.PP
+\fINotice that the first character of the
+mode/direction is enough. This shorter way will be
+used when the commands are referenced in the rest
+of this documentation.\fP
+
+.PP
+Let us go through the processes that will happen
+when the different actions are executed.
+
+.PP
+\fIgroup B:\fP
+.br
+\fB\fC$super+Left $i3Kornhe m \-p 0 l\fR
+
+.PP
+This will make i3Kornhe to enter \fBmove mode\fP\&.
+(\fIit will actually activate the i3 mode sizemode,
+move is a pseudo mode that only i3Korhne knows\fP)
+First thing i3Kornhe does is to store the current
+title\_format of the window (by using \fB\fCi3var set\fR).
+
+.PP
+It will then set the \fB\fCtitle\_format\fR to: \fB\fCMOVE
+w:WIDTH h:HEIGHT x:X y:Y\fR
+
+.PP
+Populated with the actual dimensions and position
+of the window. The first word, "MOVE", in the
+title means that we don't need to specify the mode
+(move|size|m|s)
+
+.PP
+So if a keybinding from \fBgroup 1\fP or \fBgroup
+2\fP is executed it will move the window in the
+specified direction with the specified speed
+(speed defaults to 10 if not set).
+
+.PP
+If we would execute a keybinding from \fBgroup
+3\fP, where the mode is specified (size), this
+would change the title to:
+
+.PP
+\fB\fCSIZE:CORNER w:WIDTH h:HEIGHT x:X y:Y\fR
+
+.PP
+CORNER is which corner of the window that will
+get moved. The CORNER is set with a direction:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCdirection\fR	\fB\fCcorner\fR
+Left	topleft
+Down	bottomleft
+Up	topright
+Right	bottomright
+.TE
+
+.PP
+This might look strange at first, but if you look
+at the keys HJKL, you will see that there is some
+logic to it.
+
+.PP
+If we now execute a keybinding from \s+2group 1\s-2
+or \s+2group 2\s-2 (without a mode definition), the
+named corner will \fIget moved\fP\&. To change corner
+execute a keybinding from \fBgroup 3\fP\&. To switch
+back to MOVE mode, we only need a single
+keybinding (\fBgroup 4\fP):
+.br
+\fB\fCbindsym m $i3Kornhe m \-p 0 l\fR
+
+.PP
+The direction and speed is needed but will not
+have any visual effect. To exit back to default
+mode execute \fB\fCi3Kornhe\fR with \fB\fCx\fR as the only
+argument, (\fBgroup 6\fP), this will exit the mode
+and reset the title\_format to what it was
+initially.
+
+.PP
+You can also execute \fB\fCi3Kornhe\fR with a number in
+the range 1\-9 as a single argument. This will move
+the currently active window (if it is floating) to
+the position corresponding to the number:
+
+.PP
+.RS
+
+.nf
+123
+456
+789
+
+.fi
+.RE
+
+.PP
+One important note is that if the active window
+is tiled, \fB\fCi3Kornhe\fR will move it normally or
+resize it according to this table:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCdirection\fR	\fB\fCresize\fR
+Left	shrink width
+Down	shrink height
+Up	grow height
+Right	grow width
+.TE
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3var\fR
+
+
+.SH \fB\fCi3list\fR \- list information about the current i3 session.
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3list \-\-instance|\-i TARGET
+i3list \-\-class|\-c    TARGET
+i3list \-\-conid|\-n    TARGET
+i3list \-\-winid|\-d    TARGET
+i3list \-\-mark|\-m     TARGET
+i3list \-\-title|\-t    TARGET
+i3list \-\-help|\-h
+i3list \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3list\fR prints a list in a \fIarray\fP formatted
+list.  If a search criteria is given
+(\fB\fC\-c\fR|\fB\fC\-i\fR|\fB\fC\-n\fR|\fB\fC\-d\fR|\fB\fC\-m\fR)  information about the
+first window matching the criteria is displayed.
+Information about the active window is always
+displayed.  If no search criteria is given,  the
+active window will also be the target window.
+
+.PP
+By using eval,  the output can be used as an
+array in bash scripts,  but the array needs to be
+declared first.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR TARGET
+.br
+Search for windows with a instance matching
+\fITARGET\fP
+
+.PP
+\fB\fC\-\-class\fR|\fB\fC\-c\fR TARGET
+.br
+Search for windows with a class matching \fITARGET\fP
+
+.PP
+\fB\fC\-\-conid\fR|\fB\fC\-n\fR TARGET
+.br
+Search for windows with a \fBCON\_ID\fP matching
+\fITARGET\fP
+
+.PP
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR TARGET
+.br
+Search for windows with a \fBWINDOW\_ID\fP matching
+\fITARGET\fP
+
+.PP
+\fB\fC\-\-mark\fR|\fB\fC\-m\fR TARGET
+.br
+Search for windows with a \fBmark\fP matching
+\fITARGET\fP
+
+.PP
+\fB\fC\-\-title\fR|\fB\fC\-t\fR TARGET
+.br
+Search for windows with a \fBtitle\fP matching
+\fITARGET\fP
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+.SH EXAMPLES
+.PP
+```text$ i3list
+i3list[AWF]=0                  # Active Window floating
+i3list[ATW]=270                # Active Window tab width
+i3list[ATX]=540                # Active Window tab x postion
+i3list[AWH]=1700               # Active Window height
+i3list[AWI]=4194403            # Active Window id
+i3list[AWW]=1080               # Active Window width
+i3list[AFO]=AB                 # Active Window relatives
+i3list[AWX]=0                  # Active Window x position
+i3list[AFC]=B                  # Active Window cousin
+i3list[AWY]=220                # Active Window y position
+i3list[AFF]=CD                 # Active Window family
+i3list[AFS]=D                  # Active Window sibling
+i3list[AWB]=20                 # Active Window titlebar height
+i3list[AFT]=A                  # Active Window twin
+i3list[AWP]=C                  # Active Window parent
+i3list[AWC]=94283162546096     # Active Window con\_id
+i3list[TWB]=20                 # Target Window titlebar height
+i3list[TFS]=D                  # Target Window sibling
+i3list[TFF]=CD                 # Target Window family
+i3list[TWP]=C                  # Target Window Parent container
+i3list[TFT]=A                  # Target Window twin
+i3list[TWC]=94283162546096     # Target Window con\_id
+i3list[TWF]=0                  # Target Window Floating
+i3list[TTW]=270                # Target Window tab width
+i3list[TWH]=1700               # Target Window height
+i3list[TTX]=540                # Target Window tab x postion
+i3list[TWI]=4194403            # Target Window id
+i3list[TWW]=1080               # Target Window width
+i3list[TWX]=0                  # Target Window x position
+i3list[TFO]=AB                 # Target Window relatives
+i3list[TWY]=220                # Target Window y position
+i3list[TFC]=B                  # Target Window cousin
+i3list[CAF]=94283159300528     # Container A Focused container id
+i3list[CBF]=94283160891520     # Container B Focused container id
+i3list[CCF]=94283162546096     # Container C Focused container id
+i3list[CAW]=1                  # Container A Workspace
+i3list[CBW]=1                  # Container B Workspace
+i3list[CCW]=1                  # Container C Workspace
+i3list[CAL]=tabbed             # Container A Layout
+i3list[CBL]=tabbed             # Container B Layout
+i3list[CCL]=tabbed             # Container C Layout
+i3list[SAB]=730                # Current split: AB
+i3list[MCD]=770                # Stored split: CD
+i3list[SAC]=220                # Current split: AC
+i3list[SBD]=220                # Current split: BD
+i3list[SCD]=1080               # Current split: CD
+i3list[MAB]=730                # Stored split: AB
+i3list[MAC]=220                # Stored split: AC
+i3list[LEX]=CBA                # Existing containers (LVI+LHI)
+i3list[LHI]=                   # Hidden i3fyra containers
+i3list[LVI]=CBA                # Visible i3fyra containers
+i3list[FCD]=C                  # Family CD memory
+i3list[LAL]=ABCD               # All containers in family order
+i3list[WAH]=1920               # Active Workspace height
+i3list[WAI]=94283159180304     # Active Workspace con\_id
+i3list[WAW]=1080               # Active Workspace width
+i3list[WSF]=1                  # i3fyra Workspace Number
+i3list[WAX]=0                  # Active Workspace x position
+i3list[WST]=1                  # Target Workspace Number
+i3list[WAY]=0                  # Active Workspace y position
+i3list[WFH]=1920               # i3fyra Workspace Height
+i3list[WTH]=1920               # Target Workspace Height
+i3list[WFI]=94283159180304     # i3fyra Workspace con\_id
+i3list[WAN]='1'                # Active Workspace name
+i3list[WTI]=94283159180304     # Target Workspace con\_id
+i3list[WFW]=1080               # i3fyra Workspace Width
+i3list[WTW]=1080               # Target Workspace Width
+i3list[WFX]=0                  # i3fyra Workspace X position
+i3list[WTX]=0                  # Target Workspace X poistion
+i3list[WFY]=0                  # i3fyra Workspace Y position
+i3list[WTY]=0                  # Target Workspace Y position
+i3list[WFN]='1'                # i3fyra Workspace name
+i3list[WSA]=1                  # Active Workspace number
+i3list[WTN]='1'                # Target Workspace name
+
+.PP
+$ declare \-A i3list # declares associative array
+$ eval "$(i3list)"
+$ echo ${i3list[WAW]}
+1080
+
+.PP
+.RS
+
+.nf
+
+
+
+DEPENDENCIES
+\-\-\-\-\-\-\-\-\-\-\-\-
+
+
+`bash` `gawk` `i3`
+
+# `i3run` \- Run, Raise or hide windows in i3wm
+
+
+
+SYNOPSIS
+\-\-\-\-\-\-\-\-
+
+
+```text
+i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-help|\-h
+i3run \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3run\fR let's you use one command for multiple
+functions related to the same window identified by
+a given criteria.  \fB\fCi3run\fR will take different
+action depending on the state of the searched
+window:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fC\fBtarget window state\fP\fR	\fB\fC\fBaction\fP\fR
+T{
+Active and not handled by i3fyra
+T}	hide
+Active and handled by i3fyra	T{
+hide container, if not \fB\fC\-g\fR is set
+T}
+Handled by i3fyra and hidden	show container, activate
+T{
+Not handled by i3fyra and hidden
+T}	show window, activate
+Not on current workspace	T{
+goto workspace or show if \fB\fC\-s\fR is set
+T}
+Not found	execute command (\fB\fC\-e\fR)
+.TE
+
+.PP
+Hidden in this context,  means that window is on
+the scratchpad. Show in this context means,  move
+window to current workspace.
+
+.PP
+\fB\fC\-e\fR is optional, if no \fICOMMAND\fP is passed and
+no window is found,  nothing happens.  It is
+important that \fB\fC\-e\fR \fICOMMAND\fP is \fBthe last of the
+options\fP\&.  It is also important that \fICOMMAND\fP
+\fBwill spawn a window matching the criteria\fP,
+otherwise the script will get stuck in a loop
+waiting for the window to appear. (\fIit will stop
+waiting for the window to appear after 10
+seconds\fP)
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+.br
+Search for windows with the given INSTANCE
+
+.PP
+\fB\fC\-\-summon\fR|\fB\fC\-s\fR
+.br
+Instead of switching workspace, summon window to
+current workspace
+
+.PP
+\fB\fC\-\-nohide\fR|\fB\fC\-g\fR
+.br
+Don't hide window/container if it's active.
+
+.PP
+\fB\fC\-\-mouse\fR|\fB\fC\-m\fR
+.br
+The window will be placed on the location of the
+mouse cursor when it is created or shown. (\fIneeds
+\fB\fCxdotool\fR\fP)
+
+.PP
+\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
+.br
+If the search criteria is \fB\fC\-i\fR (instance), the
+window with instance: \fIOLDNAME\fP will get a n new
+instance name matching the criteria when it is
+created (\fIneeds \fB\fCxdotool\fR\fP).
+
+.PP
+.RS
+
+.nf
+i3run \-\-instance budswin \-\-rename sublime\_main \-command subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime\_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+
+.fi
+.RE
+
+.PP
+\fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
+.br
+Command to run if no window is found. Complex
+commands can be written inside quotes:
+
+.PP
+.RS
+
+.nf
+i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
+
+.fi
+.RE
+
+.PP
+\fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+.br
+Search for windows with the given CLASS
+
+.PP
+\fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+.br
+Search for windows with the given TITLE
+
+.PP
+\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+.br
+Search for windows with the given CON\_ID
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3list\fR \fB\fCi3get\fR \fB\fCi3var\fR \fB\fCxdotool\fR
+\fB\fCi3fyra\fR \fB\fCi3\fR
+
+
+.SH \fB\fCi3var\fR \- Set or get a i3 variable
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3var set VARNAME [VALUE]
+i3var get VARNAME
+i3var \-\-help|\-h
+i3var \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3var\fR is used to get or set a "variable" that
+is bound to the current i3wm session.  The
+variable is actually the mark of a "ghost window"
+on the scratch pad.
+
+.PP
+\fB\fCset\fR  [VALUE]
+.br
+If \fIVARNAME\fP doesn't exist, a new window and mark
+will be created.  If \fIVARNAME\fP exists it's value
+will be replaced with \fIVALUE\fP\&.
+.br
+If \fIVALUE\fP is not defined,  \fIVARNAME\fP will get
+unset.
+
+.PP
+\fB\fCget\fR
+.br
+if \fIVARNAME\fP exists,  its value will be returned
+window.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCsed\fR \fB\fCi3\fR \fB\fCi3gw\fR
+
+
+.SH \fB\fCi3viswiz\fR \- Professional window focus for i3wm
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3viswiz [\-\-gap|\-g GAPSIZE] **DIRECTION**
+i3viswiz [\-\-focus|\-f] \-\-title|\-t       [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-instance|\-i    [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-class|\-c       [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-titleformat|\-o [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-winid|\-d       [TARGET]
+i3viswiz [\-\-focus|\-f] \-\-parent|\-p      [TARGET]
+i3viswiz \-\-help|\-h
+i3viswiz \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3viswiz\fR either prints a list of the currently
+visible tiled windows to \fB\fCstdout\fR or shifts the
+focus depending on the arguments.
+
+.PP
+If a \fIDIRECTION\fP (left|right|up|down) is passed,
+\fB\fCi3wizvis\fR will shift the focus to the window
+closest in the given \fIDIRECTION\fP, or warp focus if
+there are no windows in the given direction.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-gap\fR|\fB\fC\-g\fR GAPSIZE
+.br
+Set GAPSIZE (defaults to 5). GAPSIZE is the
+distance in pixels from the current window where
+new focus will be searched.
+
+.PP
+\fB\fC\-\-focus\fR|\fB\fC\-f\fR
+.br
+When used in conjunction with: \fB\fC\-\-titleformat\fR,
+\fB\fC\-\-title\fR, \fB\fC\-\-class\fR, \fB\fC\-\-instance\fR, \fB\fC\-\-winid\fR or
+\fB\fC\-\-parent\fR\&. The \fBCON\_ID\fP of \fBTARGET\fP window
+will get focused if it is visible.
+
+.PP
+\fB\fC\-\-title\fR|\fB\fC\-t\fR [TARGET]
+.br
+If \fBTARGET\fP matches the \fBTITLE\fP of a visible
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBTITLE\fP as the last field of each row.
+
+.PP
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR [TARGET]
+.br
+If \fBTARGET\fP matches the \fBINSTANCE\fP of a
+visible window, that windows  \fBCON\_ID\fP will get
+printed to \fB\fCstdout\fR\&. If no \fBTARGET\fP is
+specified, a list of all tiled windows will get
+printed with  \fBINSTANCE\fP as the last field of
+each row.
+
+.PP
+\fB\fC\-\-class\fR|\fB\fC\-c\fR [TARGET]
+.br
+If \fBTARGET\fP matches the \fBCLASS\fP of a visible
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBCLASS\fP as the last field of each row.
+
+.PP
+\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR [TARGET]
+.br
+If \fBTARGET\fP matches the \fBTITLE\_FORMAT\fP of a
+visible window, that windows  \fBCON\_ID\fP will get
+printed to \fB\fCstdout\fR\&. If no \fBTARGET\fP is
+specified, a list of all tiled windows will get
+printed with  \fBTITLE\_FORMAT\fP as the last field
+of each row.
+
+.PP
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR [TARGET]
+.br
+If \fBTARGET\fP matches the \fBWIN\_ID\fP of a visible
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBWIN\_ID\fP as the last field of each row.
+
+.PP
+\fB\fC\-\-parent\fR|\fB\fC\-p\fR [TARGET]
+.br
+If \fBTARGET\fP matches the \fBPARENT\fP of a visible
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBPARENT\fP as the last field of each row.
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+.SH EXAMPLES
+.PP
+replace the normal i3 focus keybindings with
+viswiz like this:
+
+.PP
+.RS
+
+.nf
+Normal binding:
+bindsym Mod4+Shift+Left   focus left
+
+Wizzy binding:
+bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz l 
+
+.fi
+.RE
+
+.PP
+example output:
+
+.PP
+.RS
+
+.nf
+$ i3viswiz \-o \-g 20 down
+target\_con\_id: 94851559487504
+tx: 582 ty: 470 wall: none
+* 94851560291216 x: 0     y: 0     w: 1165  h: 450   | URxvt
+\- 94851559487504 x: 0     y: 451   w: 1165  h: 448   | sublime
+\- 94851560318768 x: 1166  y: 0     w: 433   h: 899   | bin
+
+.fi
+.RE
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR
 
 .SH EXAMPLES
 .PP
