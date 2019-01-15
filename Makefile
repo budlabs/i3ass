@@ -21,7 +21,6 @@ install:
 		install -m 0755 $$script $(INSTBIN); \
 	done
 
-	@$(SCRIPT)
 .PHONY: install
 
 
