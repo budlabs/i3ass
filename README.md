@@ -79,7 +79,15 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
+### 2019.01.15.0
+
+Removed execution of `i3ass` command from the **Makefile**,
+and added `make uninstall` to the **PKGBUILD** on [AUR]. To
+improve the installation process. (*thanks to Johan for
+reporting issue with i3ass command in makefil*).
+
 ### 2019.01.11.0
+
 
 Extreme refactoring edition.  
 The project now uses [bashbud] as the backbone for code and
@@ -133,12 +141,6 @@ for better (not yet perfect) multimonitor support, modified
 i3fyra 'move' command to work with the new changes.
 
 Added workspace position to i3list output.
-
-### v.0.1.77
-
-
-cleaned up [i3flip] code and added ability to flip in
-layouts other then tabbed|stacked.
 
 
 ## known issues
