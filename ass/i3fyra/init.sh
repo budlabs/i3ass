@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 0.549
-updated: 2019-01-10 by budRich
+i3fyra - version: 0.55
+updated: 2019-01-30 by budRich
 EOB
 }
 
@@ -25,7 +25,7 @@ SYNOPSIS
 --------
 i3fyra --show|-s CONTAINER
 i3fyra --float|-a [--target|-t CRITERION]
-i3fyra --hide|-z CONTAINER(s)
+i3fyra --hide|-z CONTAINER
 i3fyra --layout|-l LAYOUT
 i3fyra --move|-m DIRECTION|CONTAINER [--speed|-p INT]  [--target|-t CRITERION]
 i3fyra --help|-h
@@ -61,7 +61,7 @@ instance name sublime_text. See i3list(1), for all
 available options.
 
 
---hide|-z  
+--hide|-z CONTAINER  
 Hide target containers if visible.  
 
 
@@ -115,8 +115,8 @@ done
 
 declare -A __o
 eval set -- "$(getopt --name "i3fyra" \
-  --options "s:at:zl:m:p:hv" \
-  --longoptions "show:,float,target:,hide,layout:,move:,speed:,help,version," \
+  --options "s:at:z:l:m:p:hv" \
+  --longoptions "show:,float,target:,hide:,layout:,move:,speed:,help,version," \
   -- "$@"
 )"
 
@@ -125,7 +125,7 @@ while true; do
     --show       | -s ) __o[show]="${2:-}" ; shift ;;
     --float      | -a ) __o[float]=1 ;; 
     --target     | -t ) __o[target]="${2:-}" ; shift ;;
-    --hide       | -z ) __o[hide]=1 ;; 
+    --hide       | -z ) __o[hide]="${2:-}" ; shift ;;
     --layout     | -l ) __o[layout]="${2:-}" ; shift ;;
     --move       | -m ) __o[move]="${2:-}" ; shift ;;
     --speed      | -p ) __o[speed]="${2:-}" ; shift ;;
