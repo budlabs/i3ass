@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.031
-updated: 2019-01-09 by budRich
+i3list - version: 0.032
+updated: 2019-01-30 by budRich
 EOB
 }
 
@@ -202,9 +202,9 @@ function descriptions() {
 function setwindow(floats,type) {
 
   if (floats ~ /on$/) 
-    window[type]["AWF"]=1
+    window[type][type"WF"]=1
   else
-    window[type]["AWF"]=0
+    window[type][type"WF"]=0
 
   setworkspace(curwsid,type)
   window[type][type"WI"]=curwid
