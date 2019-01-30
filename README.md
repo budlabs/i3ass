@@ -79,7 +79,20 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
+### 2019.01.30.2
+
+Fixed two bugs (#46,#47) in [i3fyra] and [i3list]. `--hide`
+in [i3fyra] now works again. The issue in [i3list] was
+affecting targeted windows and their floating state, 
+resulting in unpredictable behavior when  fi summoning a
+window from the scratchpad.  All should be good now thanks
+to user **APotOfSoup** who reported and found the solution
+to both these issues. (the cause was the major refactoring
+and adaptation of the codebase to the `bashsbud` framework,
+introduced in the last release).
+
 ### 2019.01.15.0
+
 
 Removed execution of `i3ass` command from the **Makefile**,
 and added `make uninstall` to the **PKGBUILD** on [AUR]. To
@@ -129,18 +142,6 @@ trgcon=94759781247616 trgx=0 trgy=0 wall=none trgpar=A sx=0 sy=0 sw=1080 sh=1920
 
 Starting with this release a [wiki] for i3ass is available
 here on github.
-
-### v.0.1.7
-
-
-Added [i3Kornhe]
-
-changed output of [i3viswiz] again, control variables are
-now all on the first line. Also added workspace dimensions
-for better (not yet perfect) multimonitor support, modified
-i3fyra 'move' command to work with the new changes.
-
-Added workspace position to i3list output.
 
 
 ## known issues
