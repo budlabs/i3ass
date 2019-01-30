@@ -5,7 +5,7 @@
 ```text
 i3fyra --show|-s CONTAINER
 i3fyra --float|-a [--target|-t CRITERION]
-i3fyra --hide|-z CONTAINER(s)
+i3fyra --hide|-z CONTAINER
 i3fyra --layout|-l LAYOUT
 i3fyra --move|-m DIRECTION|CONTAINER [--speed|-p INT]  [--target|-t CRITERION]
 i3fyra --help|-h
@@ -78,7 +78,7 @@ Example:
 target the first found window with the instance name
 *sublime_text*. See i3list(1), for all available options.
 
-`--hide`|`-z`  
+`--hide`|`-z` CONTAINER  
 Hide target containers if visible.  
 
 `--layout`|`-l` LAYOUT  

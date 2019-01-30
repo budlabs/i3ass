@@ -105,9 +105,9 @@ function descriptions() {
 function setwindow(floats,type) {
 
   if (floats ~ /on$/) 
-    window[type]["AWF"]=1
+    window[type][type"WF"]=1
   else
-    window[type]["AWF"]=0
+    window[type][type"WF"]=0
 
   setworkspace(curwsid,type)
   window[type][type"WI"]=curwid

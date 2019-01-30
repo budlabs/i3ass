@@ -1,8 +1,8 @@
 ---
 description: >
   An advanced, simple grid-based tiling layout
-updated:       2019-01-10
-version:       0.549
+updated:       2019-01-30
+version:       0.55
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-01-14
@@ -15,7 +15,7 @@ environ:
 synopsis: |
     --show|-s CONTAINER
     --float|-a [--target|-t CRITERION]
-    --hide|-z CONTAINER(s)
+    --hide|-z CONTAINER
     --layout|-l LAYOUT
     --move|-m DIRECTION|CONTAINER [--speed|-p INT]  [--target|-t CRITERION]
     --help|-h
