@@ -5,6 +5,7 @@ cat << 'EOB'
 bash
 gawk
 i3
+rofi
 sed
 xdotool
 EOB

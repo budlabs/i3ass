@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+
+# increment version number with 0.001
+
+projectdir="$1"
+
+curver="$(bashbud --get version "$projectdir")"
+newver="$(echo "$curver" "0.001" | \
+            awk '{print $1 + $2}')"
+
+
+bashbud --set version "$newver" "$projectdir"

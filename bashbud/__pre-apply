@@ -6,20 +6,12 @@
 # set updated to today in manifest.md
 
 projectdir="$1"
-newver="$(date +%Y.%m.%d).0"
-curver="$(bashbud --get version)"
 
-[[ ${newver%.*} = "${curver%.*}" ]] && {
-  controldigit="${curver##*.}"
-  newver="${newver%.*}.$((controldigit+1))"
-}
-
-bashbud --set version "$newver" "$projectdir"
-bashbud --set updated "$(date +%Y-%m-%d)" "$projectdir"
 
 # copy all ass man pages
 # rename them to the name, add index
 i=10
+rm -rf "$projectdir/wiki/doc/"*
 for f in "$projectdir/ass"/*/manpage.md; do
   thisass="${f%/*}"
   thisass="${thisass##*/}"
@@ -70,7 +62,7 @@ source "$projectdir/lib/asslist.sh"
 rm "$projectdir/lib/alldeps"
 
 # add description table to readme/usage
-tablefile=""$projectdir/manifest.d/usage.md""
+tablefile="$projectdir/manifest.d/usage.md"
 # remove old table
 awk -i inplace '/^[|][[]/ {exit};{print}' \
   "$tablefile"

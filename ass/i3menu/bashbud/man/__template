@@ -1,0 +1,18 @@
+---
+target:   manpage
+markdown: true
+wrap:     50
+...
+%%name ^^%% 1 %%updated%% Linux "User Manuals"
+=======================================
+NAME
+----
+%%cat manpage.md%%
+%%author%% <%%repo%%>
+
+SEE ALSO
+--------
+
+%%for s in see_also%%
+%%printf '%s, ' 's'%%
+%%done%%

@@ -1,0 +1,12 @@
+*{
+  background-color:    @red;
+  border-color:        @red;
+  text-color:          @light;
+  selbg:               @dark;
+  selfg:               @light;
+  promptbg:            @light;
+  promptfg:            @red;
+  font:                @font1; 
+}
+
+
