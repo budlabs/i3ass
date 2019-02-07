@@ -1,9 +1,8 @@
 # readme_usage
 
 There is no oneline way to describe what **i3ass** does.
-And some of the scripts are rather complex,
-To get an idea I suggest taking a look in the [wiki]
-or the individual readme files for each script (linked in the table below).
+And some of the scripts are rather complex.
+The links in the table below, will take you to the wiki page for the script.
 
 |**file**  |     **function**          |
 |:---------|:--------------------------|

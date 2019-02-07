@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3ass - version: 2019.02.07.3
+i3ass - version: 2019.02.07.4
 updated: 2019-02-07 by budRich
 EOB
 }
@@ -85,16 +85,6 @@ EOB
 ERM(){ >&2 echo "$*"; }
 ERR(){ >&2 echo "[WARNING]" "$*"; }
 ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
-
-__=""
-__stdin=""
-
-read -N1 -t0.01 __  && {
-  (( $? <= 128 ))  && {
-    IFS= read -rd '' __stdin
-    __stdin="$__$__stdin"
-  }
-}
 
 whosinstalled(){
   local longest_dep_name=0
