@@ -1,0 +1,54 @@
+/**
+* Oneliner - by budRich 2018
+* Based on dmenu theme by Dave Davenport
+*/
+
+#window {
+  anchor:     @window-anchor;
+  location:   north west;
+  padding:    2px;
+
+  width:     @window-width;
+  height:    @window-height;
+  x-offset:  @window-x;
+  y-offset:  @window-y;
+  children:  @window-content;
+}
+
+#horibox {
+  orientation: horizontal;
+  children:    @horibox-content;
+}
+
+#inputbar {
+  children:   @inputbar-content;
+}
+
+#listview {
+  layout:     @listview-layout;
+  lines:      @listview-lines;
+  spacing:    5px;
+  dynamic:    true;
+}
+
+#entry {
+  expand:     @entry-expand;
+  width:      @entry-width;
+}
+
+
+#element {
+  padding: 0px 2px;
+}
+
+#element selected {
+  text-color: @selfg;
+  background-color: @selbg;
+}
+
+#prompt {
+  text-color: @promptfg;
+  background-color: @promptbg;
+}
+
+// syntax:ssDslash

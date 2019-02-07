@@ -5,4 +5,3 @@
 
 projectdir=$1
 rm -f "$projectdir"/___{version,envs,help,getopt}
-

@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3ass - version: 2019.01.30.2
-updated: 2019-01-30 by budRich
+i3ass - version: 2019.02.07.3
+updated: 2019-02-07 by budRich
 EOB
 }
 
@@ -43,6 +43,7 @@ i3get
 i3gw
 i3Kornhe
 i3list
+i3menu
 i3run
 i3var
 i3viswiz
@@ -75,6 +76,7 @@ cat << 'EOB'
 bash
 gawk
 i3
+rofi
 sed
 xdotool
 EOB
@@ -83,6 +85,16 @@ EOB
 ERM(){ >&2 echo "$*"; }
 ERR(){ >&2 echo "[WARNING]" "$*"; }
 ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
+
+__=""
+__stdin=""
+
+read -N1 -t0.01 __  && {
+  (( $? <= 128 ))  && {
+    IFS= read -rd '' __stdin
+    __stdin="$__$__stdin"
+  }
+}
 
 whosinstalled(){
   local longest_dep_name=0

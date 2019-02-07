@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.032
-updated: 2019-01-30 by budRich
+i3list - version: 0.042
+updated: 2019-02-06 by budRich
 EOB
 }
 
@@ -93,19 +93,56 @@ EOB
 }
 
 
-ERM(){ >&2 echo "$*"; }
-ERR(){ >&2 echo "[WARNING]" "$*"; }
-ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
+awklib() {
+cat << 'EOB'
+BEGIN {
+  # sq contains a single quote for convenience
+  sq = "'"
+  
+  # act|trg == 0: active/target window not found yet
+  # act|trg == 1: active/target window in process
+  # act|trg == 2: active/target window processed
 
-printlist(){
+  # hit !=0: inside i3fyra container
 
-  local crit="${1:-X}"
-  local srch="${2:-X}"
-  local toprint="${3:-all}"
+  act=trg=hit=0
 
-  i3-msg -t get_tree | awk -v RS=',' -F':' \
-    -v crit="${crit}" -v srch="${srch}" -v toprint="${toprint}" '
+  # set trg to processed if no criterion is given.
+  # mirror active window to target before print.
 
+  if (crit=="X") {trg=2}
+
+  # define layout depending on orientation
+  # splits[1] & splits[2] = families
+  # splits[3] = main split
+  
+  if (ENVIRON["I3FYRA_ORIENTATION"]=="vertical") {
+    splits[1]="AB"
+    splits[2]="CD"
+    splits[3]="AC"
+  }
+  else {
+    splits[1]="AC"
+    splits[2]="BD"
+    splits[3]="AB" 
+  }
+
+  # fam array used to calculate relation between
+  # containers in setfamily function.
+
+  fam[1][1]   = substr(splits[1],1,1)
+  fam[1][-1]  = substr(splits[1],2,1)
+  fam[-1][1]  = substr(splits[2],1,1)
+  fam[-1][-1] = substr(splits[2],2,1)
+
+  # base layout array
+
+  defaults[1]="A"
+  defaults[2]="B"
+  defaults[3]="C"
+  defaults[4]="D"
+
+}
 function descriptions() {
   
   desc["CAS"]="Container A Status"
@@ -198,106 +235,140 @@ function descriptions() {
   desc["WFN"]="i3fyra Workspace name"
 
 }
+END {
 
-function setwindow(floats,type) {
+  # mirror active to target if no criteria is given
 
-  if (floats ~ /on$/) 
-    window[type][type"WF"]=1
-  else
-    window[type][type"WF"]=0
+  if (crit == "X") {
+    for (k in window["A"]) {
+      tk=k;sub("A","T",tk)
+      if (!window["T"][tk]) {window["T"][tk]=window["A"][k]}
+    }
 
-  setworkspace(curwsid,type)
-  window[type][type"WI"]=curwid
-  window[type][type"WX"]=dim[curcid]["window"]["x"]
-  window[type][type"WB"]=dim[curcid]["tab"]["height"]
-  window[type][type"WY"]=(dim[curcid]["window"]["y"]-window[type][type"WB"])
-  window[type][type"WW"]=dim[curcid]["window"]["width"]
-  window[type][type"WH"]=(dim[curcid]["window"]["height"]+window[type][type"WB"])
-  window[type][type"TX"]=dim[curcid]["tab"]["x"]
-  window[type][type"TW"]=dim[curcid]["tab"]["width"]
-
-  if(curcid == conta[curcon]["id"]){
-
-    window[type][type"WP"]=curcon
-    setfamily(curcon,type)
-
+    if (!workspace["WST"]) {setworkspace(workspace["WAI"],"T")}  
   }
-}
+  
+  stringformat="i3list[%s]=%-15s\t# %s\n"
+  descriptions()
 
-function setfamily(thiscon,type) {
+  if (toprint ~ /^(all|active|window)$/) {
+    for (k in window["A"]){
+      printf(stringformat, k, window["A"][k], desc[k])
+    }
+  }
 
-  for (f in fam) {
-    for (c in fam[f]) {
-      if (fam[f][c] == thiscon) {
-        window[type][type"FT"]=fam[f*-1][c]
-        window[type][type"FC"]=fam[f*-1][c*-1]
-        window[type][type"FS"]=fam[f][c*-1]
-        window[type][type"FF"]=fam[f][1] fam[f][-1]
-        window[type][type"FO"]=fam[f*-1][1] fam[f*-1][-1]
+  
+  if (toprint ~ /^(all|target|window)$/) {
+
+    if (window["T"]["TWC"]) {
+      for (k in window["T"]) {
+        printf(stringformat, k, window["T"][k], desc[k])
       }
     }
   }
-}
 
-function setworkspace(cid,type) {
-  workspace["WS"type]=aws[cid]["num"]
-  workspace["W"type"I"]=cid
-  workspace["W"type"N"]=sq aws[cid]["name"] sq
-  workspace["W"type"W"]=dim[cid]["window"]["width"]
-  workspace["W"type"H"]=dim[cid]["window"]["height"]
-  workspace["W"type"X"]=dim[cid]["window"]["x"]
-  workspace["W"type"Y"]=dim[cid]["window"]["y"]
-}
 
-BEGIN {
-  # sq contains a single quote for convenience
-  sq = "'"'"'"
+  # following block will only get printed if there is 
+  # an i3fyra layout.
 
-  # act|trg == 0: active/target window not found yet
-  # act|trg == 1: active/target window in process
-  # act|trg == 2: active/target window processed
+  if (workspace["WSF"]) {
 
-  # hit !=0: inside i3fyra container
+    if (toprint ~ /^(all|container|i3fyra)$/) {
+      for (k in container) {
+        printf(stringformat, k, container[k], desc[k])
+      }
+    }
 
-  act=trg=hit=0
+    for (k in defaults) {
 
-  # set trg to processed if no criterion is given.
-  # mirror active window to target before print.
+      if (container["C" defaults[k] "W"]){
+        if (container["C" defaults[k] "W"] == workspace["WSF"]){
+          layout["LVI"]=defaults[k] layout["LVI"]
+        } else {
+          layout["LHI"]=defaults[k] layout["LHI"]
+        }
+      }
 
-  if (crit=="X") {trg=2}
+    }
 
-  # define layout depending on orientation
-  # splits[1] & splits[2] = families
-  # splits[3] = main split
-  
-  if (ENVIRON["I3FYRA_ORIENTATION"]=="vertical") {
+    if (ENVIRON["I3FYRA_ORIENTATION"]=="vertical") {
     splits[1]="AB"
     splits[2]="CD"
     splits[3]="AC"
   }
-  else {
-    splits[1]="AC"
-    splits[2]="BD"
-    splits[3]="AB" 
+
+
+    layout["LEX"]=layout["LVI"] layout["LHI"]
+
+    if (ENVIRON["I3FYRA_ORIENTATION"]=="vertical") {
+      # ac and bd is the same, height of a or b
+      if (layout["LVI"] ~ "A") {
+        outsplit["SAC"]=dim[acon["A"]]["window"]["height"]
+      }
+      else if (layout["LVI"] ~ "B") {
+        outsplit["SAC"]=dim[acon["B"]]["window"]["height"]
+      }
+      else {
+        outsplit["SAC"]=0
+      }
+      
+      outsplit["SBD"]=outsplit["SAC"]
+      outsplit["SAB"]=dim[acon["A"]]["window"]["width"]
+      outsplit["SCD"]=dim[acon["C"]]["window"]["width"]
+    } else {
+      # ab and cd is the same, width of a or c
+      if (layout["LVI"] ~ "A") {
+        outsplit["SAB"]=dim[acon["A"]]["window"]["width"]
+      }
+      else if (layout["LVI"] ~ "C") {
+        outsplit["SAB"]=dim[acon["C"]]["window"]["width"]
+      }
+      else {
+        outsplit["SAB"]=0
+      }
+
+      outsplit["SBD"]=outsplit["SAB"]
+
+      outsplit["SAC"]=dim[acon["A"]]["window"]["height"]
+      outsplit["SCD"]=dim[acon["C"]]["window"]["width"]
+    }
+
+    if (layout["LVI"] ~ "[" splits[1] "]") {
+      if (layout["LVI"] !~ "[" splits[2] "]") {outsplit["S"splits[3]]=0}
+      if (layout["LHI"] ~ "[" splits[1] "]") {outsplit["S"splits[1]]=0}
+    }
+
+    if (layout["LVI"] ~ "[" splits[2] "]") {
+      if (layout["LVI"] !~ "[" splits[1] "]") {outsplit["S"splits[3]]=0}
+      if (layout["LHI"] ~ "[" splits[2] "]") {outsplit["S"splits[2]]=0}
+    }
+    
+    if (toprint ~ /^(all|splits|i3fyra)$/) {
+      for(k in outsplit){
+        printf(stringformat, k, outsplit[k], desc[k])
+      }
+    }
+
+
+    if (toprint ~ /^(all|layout|i3fyra)$/) {
+      for(k in layout){
+        printf(stringformat, k, layout[k], desc[k])
+      }
+
+      for(k in family){
+        printf(stringformat, k, family[k], desc[k])
+      }
+    }
   }
 
-  # fam array used to calculate relation between
-  # containers in setfamily function.
-
-  fam[1][1]   = substr(splits[1],1,1)
-  fam[1][-1]  = substr(splits[1],2,1)
-  fam[-1][1]  = substr(splits[2],1,1)
-  fam[-1][-1] = substr(splits[2],2,1)
-
-  # base layout array
-
-  defaults[1]="A"
-  defaults[2]="B"
-  defaults[3]="C"
-  defaults[4]="D"
-
+  layout["LAL"]=splits[1] splits[2]
+  printf(stringformat, "LAL", layout["LAL"], desc["LAL"])
+  if (toprint ~ /^(all|workspace)$/) {
+    for(k in workspace){
+      printf(stringformat, k, workspace[k], desc[k])
+    }
+  }
 }
-
 hit!=0 && $0~"{" {hit++}
 hit!=0 && $0~"}" {hit--}
 
@@ -415,109 +486,72 @@ match($0,/([{]|"nodes":[}][[]|.*_rect":{)?"([a-z_]+)":[["]*([^]}"]*)[]}"]*$/,ma)
 
   }
 }
+function setfamily(thiscon,type) {
 
-
-END {
-
-  # mirror active to target if no criteria is given
-
-  if (crit == "X") {
-    for (k in window["A"]) {
-      tk=k;sub("A","T",tk)
-      if (!window["T"][tk]) {window["T"][tk]=window["A"][k]}
-    }
-
-    if (!workspace["WST"]) {setworkspace(workspace["WAI"],"T")}  
-  }
-  
-  stringformat="i3list[%s]=%-15s\t# %s\n"
-  descriptions()
-
-  if (toprint ~ /^(all|active|window)$/) {
-    for (k in window["A"]){
-      printf(stringformat, k, window["A"][k], desc[k])
-    }
-  }
-
-  
-  if (toprint ~ /^(all|target|window)$/) {
-
-    if (window["T"]["TWC"]) {
-      for (k in window["T"]) {
-        printf(stringformat, k, window["T"][k], desc[k])
+  for (f in fam) {
+    for (c in fam[f]) {
+      if (fam[f][c] == thiscon) {
+        window[type][type"FT"]=fam[f*-1][c]
+        window[type][type"FC"]=fam[f*-1][c*-1]
+        window[type][type"FS"]=fam[f][c*-1]
+        window[type][type"FF"]=fam[f][1] fam[f][-1]
+        window[type][type"FO"]=fam[f*-1][1] fam[f*-1][-1]
       }
-    }
-  }
-
-
-  # following block will only get printed if there is 
-  # an i3fyra layout.
-
-  if (workspace["WSF"]) {
-
-    if (toprint ~ /^(all|container|i3fyra)$/) {
-      for (k in container) {
-        printf(stringformat, k, container[k], desc[k])
-      }
-    }
-
-    for (k in defaults) {
-
-      if (container["C" defaults[k] "W"]){
-        if (container["C" defaults[k] "W"] == workspace["WSF"]){
-          layout["LVI"]=defaults[k] layout["LVI"]
-        } else {
-          layout["LHI"]=defaults[k] layout["LHI"]
-        }
-      }
-
-    }
-
-
-    layout["LEX"]=layout["LVI"] layout["LHI"]
-    
-    outsplit["SAB"]=dim[acon["A"]]["window"]["width"]
-    outsplit["SAC"]=dim[acon["A"]]["window"]["height"]
-    outsplit["SBD"]=dim[acon["B"]]["window"]["height"]
-    outsplit["SCD"]=dim[acon["C"]]["window"]["width"]
-
-    if (layout["LVI"] ~ "[" splits[1] "]") {
-      if (layout["LVI"] !~ "[" splits[2] "]") {outsplit["S"splits[3]]=0}
-      if (layout["LHI"] ~ "[" splits[1] "]") {outsplit["S"splits[1]]=0}
-    }
-
-    if (layout["LVI"] ~ "[" splits[2] "]") {
-      if (layout["LVI"] !~ "[" splits[1] "]") {outsplit["S"splits[3]]=0}
-      if (layout["LHI"] ~ "[" splits[2] "]") {outsplit["S"splits[2]]=0}
-    }
-    
-    if (toprint ~ /^(all|splits|i3fyra)$/) {
-      for(k in outsplit){
-        printf(stringformat, k, outsplit[k], desc[k])
-      }
-    }
-
-
-    if (toprint ~ /^(all|layout|i3fyra)$/) {
-      for(k in layout){
-        printf(stringformat, k, layout[k], desc[k])
-      }
-
-      for(k in family){
-        printf(stringformat, k, family[k], desc[k])
-      }
-    }
-  }
-
-  layout["LAL"]=splits[1] splits[2]
-  printf(stringformat, "LAL", layout["LAL"], desc["LAL"])
-  if (toprint ~ /^(all|workspace)$/) {
-    for(k in workspace){
-      printf(stringformat, k, workspace[k], desc[k])
     }
   }
 }
-'
+function setwindow(floats,type) {
+
+  if (floats ~ /on$/) 
+    window[type][type"WF"]=1
+  else
+    window[type][type"WF"]=0
+
+  setworkspace(curwsid,type)
+  window[type][type"WI"]=curwid
+  window[type][type"WX"]=dim[curcid]["window"]["x"]
+  window[type][type"WB"]=dim[curcid]["tab"]["height"]
+  window[type][type"WY"]=(dim[curcid]["window"]["y"]-window[type][type"WB"])
+  window[type][type"WW"]=dim[curcid]["window"]["width"]
+  window[type][type"WH"]=(dim[curcid]["window"]["height"]+window[type][type"WB"])
+  window[type][type"TX"]=dim[curcid]["tab"]["x"]
+  window[type][type"TW"]=dim[curcid]["tab"]["width"]
+
+  if(curcid == conta[curcon]["id"]){
+
+    window[type][type"WP"]=curcon
+    setfamily(curcon,type)
+
+  }
+}
+function setworkspace(cid,type) {
+  workspace["WS"type]=aws[cid]["num"]
+  workspace["W"type"I"]=cid
+  workspace["W"type"N"]=sq aws[cid]["name"] sq
+  workspace["W"type"W"]=dim[cid]["window"]["width"]
+  workspace["W"type"H"]=dim[cid]["window"]["height"]
+  workspace["W"type"X"]=dim[cid]["window"]["x"]
+  workspace["W"type"Y"]=dim[cid]["window"]["y"]
+}
+EOB
+}
+
+ERM(){ >&2 echo "$*"; }
+ERR(){ >&2 echo "[WARNING]" "$*"; }
+ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
+
+printlist(){
+
+  local crit="${1:-X}"
+  local srch="${2:-X}"
+  local toprint="${3:-all}"
+
+  i3-msg -t get_tree | awk -f <(awklib) \
+                           -F':' \
+                           -v RS=',' \
+                           -v crit="${crit}" \
+                           -v srch="${srch}" \
+                           -v toprint="${toprint}" 
 }
 declare -A __o
 eval set -- "$(getopt --name "i3list" \

@@ -13,6 +13,7 @@ or the individual readme files for each script (linked in the table below).
 |[i3gw] | a ghost window wrapper for i3wm
 |[i3Kornhe] | move and resize windows gracefully
 |[i3list] | list information about the current i3 session.
+|[i3menu] | Adds more features to rofi when used in i3wm
 |[i3run] | Run, Raise or hide windows in i3wm
 |[i3var] | Set or get a i3 variable
 |[i3viswiz] | Professional window focus for i3wm

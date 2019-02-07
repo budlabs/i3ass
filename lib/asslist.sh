@@ -8,6 +8,7 @@ i3get
 i3gw
 i3Kornhe
 i3list
+i3menu
 i3run
 i3var
 i3viswiz

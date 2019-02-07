@@ -1,0 +1,59 @@
+---
+target:   ___getopt
+markdown: false
+wrap:     50
+...
+declare -A __o
+eval set -- "$(getopt --name "%%name%%" \
+%%printf '  --options "'%%
+%%for o in options%%
+%%if o[short]%%
+%%printf "%s" "o[short]"%%
+%%if o[arg]%%
+%%printf "%s" ":"%%
+%%fi%%
+%%fi%%
+%%done%%
+%%printf '" \' 'null'%%
+%%printf '\n  --longoptions "'%%
+%%for o in options%%
+%%if o[arg]%%
+%%printf "%s:," "o"%%
+%%else%%
+%%printf "%s," "o"%%
+%%fi%%
+%%done%%
+%%printf '" \\n'%%
+  -- "$@"
+)"
+
+while true; do
+  case "$1" in
+%%for opt in options%%
+%%printf '    --%-10s ' 'opt'%%
+%%if opt[short]%%
+%%printf '| -%s ' 'opt[short]'%%
+%%fi%%
+%%printf ') __o[%s]=' 'opt'%%
+%%if opt[arg]%%
+%%printf '"${2:-}" ; shift ;;\n'%%
+%%else%%
+%%printf '1 ;; \n'%%
+%%fi%%
+%%done%%
+    -- ) shift ; break ;;
+    *  ) break ;;
+  esac
+  shift
+done
+
+if [[ ${__o[help]:-} = 1 ]]; then
+  ___printhelp
+  exit
+elif [[ ${__o[version]:-} = 1 ]]; then
+  ___printversion
+  exit
+fi
+
+[[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
+  && __lastarg="" 
