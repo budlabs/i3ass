@@ -79,7 +79,7 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
-### 2019.01.07.05
+### 2019.02.07.06
 
 Added [i3menu] which is an improved version of the script
 `oneliner` that has been available in the **budlabs
