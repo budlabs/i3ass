@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3menu - version: 0.013
-updated: 2019-02-07 by budRich
+i3menu - version: 0.014
+updated: 2019-02-19 by budRich
 EOB
 }
 
@@ -115,6 +115,7 @@ option is one of the following:
 
 | LAYOUT     | menu location and dimensions 
 |:-----------|:---------------
+| mouse      | At the mouse position (requires xdotool)
 | window     | The currently active window.
 | titlebar   | The titlebar of the currently active window.
 | tab        | The tab (or titlebar if it isn't tabbed) of the currently active window.
@@ -127,7 +128,8 @@ LAYOUTS will be of vertical (combobox) layout with
 the prompt and entrybox above the list.  
 
 The position of the menu can be further
-manipulated by using --xpos,--ypos and/or --width.  
+manipulated by using
+--xpos,--ypos,--width,--height,--orientation,--include.  
 
 $ echo "list" | i3menu --prompt "select: "
 --layout window --xpos -50 --ypos 30  
@@ -466,6 +468,19 @@ cat << 'EOCONF' > "$trgdir/base/themevars.rasi"
 
 EOCONF
 
+cat << 'EOCONF' > "$trgdir/themes/dark.rasi"
+*{
+  background-color:    @dark;
+  border-color:        @dark;
+  text-color:          @light;
+  selbg:               @light;
+  selfg:               @dark;
+  promptbg:            @light;
+  promptfg:            @dark;
+  font:                @font1; 
+}
+EOCONF
+
 cat << 'EOCONF' > "$trgdir/themes/default.rasi"
 *{
   background-color:    @bg2;
@@ -475,6 +490,19 @@ cat << 'EOCONF' > "$trgdir/themes/default.rasi"
   selfg:               @activefg;
   promptbg:            @bg2;
   promptfg:            @activehl;
+  font:                @font1; 
+}
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/light.rasi"
+*{
+  background-color:    @light;
+  border-color:        @light;
+  text-color:          @dark;
+  selbg:               @dark;
+  selfg:               @light;
+  promptbg:            @dark;
+  promptfg:            @light;
   font:                @font1; 
 }
 EOCONF
@@ -492,32 +520,6 @@ cat << 'EOCONF' > "$trgdir/themes/red.rasi"
 }
 
 
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/dark.rasi"
-*{
-  background-color:    @dark;
-  border-color:        @dark;
-  text-color:          @light;
-  selbg:               @light;
-  selfg:               @dark;
-  promptbg:            @light;
-  promptfg:            @dark;
-  font:                @font1; 
-}
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/light.rasi"
-*{
-  background-color:    @light;
-  border-color:        @light;
-  text-color:          @dark;
-  selbg:               @dark;
-  selfg:               @light;
-  promptbg:            @dark;
-  promptfg:            @light;
-  font:                @font1; 
-}
 EOCONF
 
 }

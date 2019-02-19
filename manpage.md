@@ -909,6 +909,7 @@ of the following:
 
 | LAYOUT     | menu location and dimensions 
 |:-----------|:---------------
+| mouse      | At the mouse position (requires `xdotool`)
 | window     | The currently active window.
 | titlebar   | The titlebar of the currently active window.
 | tab        | The tab (or titlebar if it isn't tabbed) of the currently active window.
@@ -922,8 +923,8 @@ LAYOUTS will be of vertical (*combobox*) layout
 with the prompt and entrybox above the list.  
 
 The position of the menu can be further
-manipulated by using `--xpos`,`--ypos` and/or
-`--width`.  
+manipulated by using
+`--xpos`,`--ypos`,`--width`,`--height`,`--orientation`,`--include`.  
 
 `$ echo "list" | i3menu --prompt "select: "
 --layout window --xpos -50 --ypos 30`  

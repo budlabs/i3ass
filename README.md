@@ -79,7 +79,26 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
+### 2019.02.19.3
+
+Refactored the code for [i3get] to have a standalone `awk`
+file and also added better handling of regular expressions
+when they are passed as search strings to [i3get]. (*this
+might break some scripts that used esacped quotes and
+backslashes in the search strings*). You can now write a
+search like this: `i3get --instance '^sublime$` the "old"
+way of doing it would look something like this: `i3get -i
+"sublime\"\$"` and was more unreliable.  
+
+[i3list] had one more of those small issues not reporting
+the correct screenheight in some cases, but it is now fixed.
+
+All man pages had a typo that said "Linx manual" instead of
+"Linux manual" that is fixed now.
+
+
 ### 2019.02.07.06
+
 
 Added [i3menu] which is an improved version of the script
 `oneliner` that has been available in the **budlabs
@@ -107,14 +126,6 @@ to user **APotOfSoup** who reported and found the solution
 to both these issues. (the cause was the major refactoring
 and adaptation of the codebase to the `bashsbud` framework,
 introduced in the last release).
-
-### 2019.01.15.0
-
-
-Removed execution of `i3ass` command from the **Makefile**,
-and added `make uninstall` to the **PKGBUILD** on [AUR]. To
-improve the installation process. (*thanks to Johan for
-reporting issue with i3ass command in makefil*).
 
 
 ## known issues

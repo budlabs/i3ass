@@ -234,10 +234,9 @@ END {
         outsplit["SAB"]=0
       }
 
-      outsplit["SBD"]=outsplit["SAB"]
-
+      outsplit["SCD"]=outsplit["SAB"]
       outsplit["SAC"]=dim[acon["A"]]["window"]["height"]
-      outsplit["SCD"]=dim[acon["C"]]["window"]["width"]
+      outsplit["SBD"]=dim[acon["B"]]["window"]["height"]
     }
 
     if (layout["LVI"] ~ "[" splits[1] "]") {

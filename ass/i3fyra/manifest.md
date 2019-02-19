@@ -1,8 +1,8 @@
 ---
 description: >
   An advanced, simple grid-based tiling layout
-updated:       2019-01-30
-version:       0.55
+updated:       2019-02-19
+version:       0.551
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-01-14
