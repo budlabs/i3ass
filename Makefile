@@ -25,12 +25,12 @@ install:
 
 
 uninstall:
-	@$(RM) $(INSTBIN)/$(SCRIPT) 
 	@$(RM) $(INSTMAN)/$(SCRIPT).1
 
 	@for fil in src/* ; do \
-		scriptfile=$${fil##*/} ; \
-		manfile=$${fil}.1 ; \
+		filename=$${fil##*/} ; \
+		manfile=$${filename}.1 ; \
+	  $(RM) $(INSTBIN)/$${filename} ; \
 		$(RM) $(INSTMAN)/$${manfile} ; \
 	done
 	@echo 'i3ass is now no longer installed'
