@@ -4,7 +4,7 @@ launchcommand(){
 
   [[ -z ${__o[command]:-} ]] && exit 1
   
-  eval "${__o[command]}" > /dev/null 2>&1 & 
+  eval "${__o[command]}" > /dev/null 2>&1 &
 
   [[ -n ${__o[rename]} ]] && {
 
@@ -14,7 +14,7 @@ launchcommand(){
 
     xdtopt+=("${acri[1]}")
 
-    xdotool set_window ${xdtopt[@]} `i3get ${acri[0]} "${__o[rename]}" -r d -y`
+    xdotool set_window "${xdtopt[@]}" "$(i3get "${acri[0]}" "${__o[rename]}" -r d -y)"
   }
 
   i3list[TWC]=$(i3get -y "${acri[@]}")
