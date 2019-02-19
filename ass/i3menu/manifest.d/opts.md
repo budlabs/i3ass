@@ -63,6 +63,7 @@ This is where **i3menu** differs the most from normal **rofi** behavior and is t
 
 | LAYOUT     | menu location and dimensions 
 |:-----------|:---------------
+| mouse      | At the mouse position (requires `xdotool`)
 | window     | The currently active window.
 | titlebar   | The titlebar of the currently active window.
 | tab        | The tab (or titlebar if it isn't tabbed) of the currently active window.
@@ -70,7 +71,7 @@ This is where **i3menu** differs the most from normal **rofi** behavior and is t
 
 titlebar and tab LAYOUT will be displayed as a single line (*dmenu like*) menu, and the other LAYOUTS will be of vertical (*combobox*) layout with the prompt and entrybox above the list.  
 
-The position of the menu can be further manipulated by using `--xpos`,`--ypos` and/or `--width`.  
+The position of the menu can be further manipulated by using `--xpos`,`--ypos`,`--width`,`--height`,`--orientation`,`--include`.  
 
 `$ echo "list" | i3menu --prompt "select: " --layout window --xpos -50 --ypos 30`  
 The command above would create a menu with the same size and position as the current window, but place it 50px to the left of the window, and 30px below the *lower* of the window.

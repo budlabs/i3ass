@@ -1051,6 +1051,9 @@ allbox;
 l l 
 l l .
 \fB\fCLAYOUT\fR	\fB\fCmenu location and dimensions\fR
+mouse	T{
+At the mouse position (requires \fB\fCxdotool\fR)
+T}
 window	The currently active window.
 titlebar	T{
 The titlebar of the currently active window.
@@ -1071,8 +1074,8 @@ with the prompt and entrybox above the list.
 
 .PP
 The position of the menu can be further
-manipulated by using \fB\fC\-\-xpos\fR,\fB\fC\-\-ypos\fR and/or
-\fB\fC\-\-width\fR\&.
+manipulated by using
+\fB\fC\-\-xpos\fR,\fB\fC\-\-ypos\fR,\fB\fC\-\-width\fR,\fB\fC\-\-height\fR,\fB\fC\-\-orientation\fR,\fB\fC\-\-include\fR\&.
 
 .PP
 \fB\fC$ echo "list" | i3menu \-\-prompt "select: "

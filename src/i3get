@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.337
-updated: 2019-02-17 by budRich
+i3get - version: 0.341
+updated: 2019-02-19 by budRich
 EOB
 }
 
@@ -233,7 +233,6 @@ ERR(){ >&2 echo "[WARNING]" "$*"; }
 ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
 
 getwindow(){
-  # notify-send "$(printf '%s\n' "${__crit[@]}")"
   {
     for c in "${!__crit[@]}"; do
       echo -n "$c:${__crit[$c]},"

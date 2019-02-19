@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.337
-updated: 2019-02-17 by budRich
+i3get - version: 0.341
+updated: 2019-02-19 by budRich
 EOB
 }
 

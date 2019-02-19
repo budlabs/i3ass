@@ -3,7 +3,7 @@ target:   manpage
 markdown: true
 wrap:     50
 ...
-%%name ^^%% 1 %%updated%% Linx "User Manuals"
+%%name ^^%% 1 %%updated%% Linux "User Manuals"
 =======================================
 NAME
 ----

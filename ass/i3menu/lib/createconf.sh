@@ -103,6 +103,19 @@ cat << 'EOCONF' > "$trgdir/base/themevars.rasi"
 
 EOCONF
 
+cat << 'EOCONF' > "$trgdir/themes/dark.rasi"
+*{
+  background-color:    @dark;
+  border-color:        @dark;
+  text-color:          @light;
+  selbg:               @light;
+  selfg:               @dark;
+  promptbg:            @light;
+  promptfg:            @dark;
+  font:                @font1; 
+}
+EOCONF
+
 cat << 'EOCONF' > "$trgdir/themes/default.rasi"
 *{
   background-color:    @bg2;
@@ -112,6 +125,19 @@ cat << 'EOCONF' > "$trgdir/themes/default.rasi"
   selfg:               @activefg;
   promptbg:            @bg2;
   promptfg:            @activehl;
+  font:                @font1; 
+}
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/light.rasi"
+*{
+  background-color:    @light;
+  border-color:        @light;
+  text-color:          @dark;
+  selbg:               @dark;
+  selfg:               @light;
+  promptbg:            @dark;
+  promptfg:            @light;
   font:                @font1; 
 }
 EOCONF
@@ -129,32 +155,6 @@ cat << 'EOCONF' > "$trgdir/themes/red.rasi"
 }
 
 
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/dark.rasi"
-*{
-  background-color:    @dark;
-  border-color:        @dark;
-  text-color:          @light;
-  selbg:               @light;
-  selfg:               @dark;
-  promptbg:            @light;
-  promptfg:            @dark;
-  font:                @font1; 
-}
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/light.rasi"
-*{
-  background-color:    @light;
-  border-color:        @light;
-  text-color:          @dark;
-  selbg:               @dark;
-  selfg:               @light;
-  promptbg:            @dark;
-  promptfg:            @light;
-  font:                @font1; 
-}
 EOCONF
 
 }

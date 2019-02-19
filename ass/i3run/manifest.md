@@ -1,8 +1,8 @@
 ---
 description: >
   Run, Raise or hide windows in i3wm
-updated:       2019-01-09
-version:       0.04
+updated:       2019-02-19
+version:       0.041
 author:        budRich
 repo:          https://github.com/budlabs/i3ass
 created:       2017-04-20
