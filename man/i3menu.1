@@ -1,0 +1,383 @@
+.TH I3MENU 1 2019\-02\-19 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3menu\fR \- Adds more features to rofi when used
+in i3wm
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3menu [\-\-theme THEME] [\-\-layout|\-a LAYOUT] [\-\-include|\-i INCLUDESTRING] [\-\-top|\-t TOP] [\-\-xpos|\-x INT] [\-\-xoffset INT] [\-\-ypos|\-y INT] [\-\-yoffset INT] [\-\-width|\-w INT] [\-\-options|\-o OPTIONS] [\-\-prompt|\-p PROMPT]  [\-\-filter|\-f FILTER] [\-\-show MODE] [\-\-modi MODI] [\-\-target TARGET] [\-\-orientation ORIENTATION] [\-\-anchor INT] [\-\-height INT] [\-\-fallback FALLBACK]
+i3menu \-\-help|\-h
+i3menu \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3menu\fR wraps the options i use the most with
+\fB\fCrofi\fR  and make it easy to set different color
+schemes and positions for the menu.
+
+.PP
+Every line in \fB\fCstdin\fR will be displayed as a menu
+item.  The order will be the same as entered if
+not \fB\fC\-\-top\fR is set.
+
+.PP
+The foundation for the appearance of the menus
+are the themefiles
+\fBi3menu.rasi\fP,\fBthemevars.rasi\fP, found in
+I3MENU\_DIR (defaults to $XDG\_CONFIG\_HOME/i3menu),
+but depending on the options  passed to \fB\fCi3menu\fR
+certain values of the themefiles  will get
+overwritten.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-theme\fR THEME
+.br
+If a \fB\&.rasi\fP file with same name as THEME exist
+in \fB\fCI3MENU\_DIR/themes\fR, it's content will get
+appended to theme file before showing the menu.
+
+.PP
+\fB\fC$ echo "list" | i3menu \-\-theme red\fR
+.br
+this will use the the file:
+\fB\fCI3MENU\_DIR/themes/red.rasi\fR
+
+.PP
+If no matching themefile is found,
+\fB\fCI3MENU\_DIR/themes/default.rasi\fR will be used
+(and created if it doesn't exist).
+
+.PP
+\fB\fC\-\-layout\fR|\fB\fC\-a\fR LAYOUT
+.br
+This is where \fBi3menu\fP differs the most from
+normal \fBrofi\fP behavior and is the only option
+that truly depends on \fB\fCi3\fR, \fB\fCi3list\fR (and
+\fBi3fyra\fP if the value is A|B|C|D). If this
+option is not set, the menu will default to a
+single line (\fIdmenu like\fP) menu at the top of the
+screen. If however a value to this option is one
+of the following:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCLAYOUT\fR	\fB\fCmenu location and dimensions\fR
+mouse	T{
+At the mouse position (requires \fB\fCxdotool\fR)
+T}
+window	The currently active window.
+titlebar	T{
+The titlebar of the currently active window.
+T}
+tab	T{
+The tab (or titlebar if it isn't tabbed) of the currently active window.
+T}
+A,B,C or D	T{
+The \fBi3fyra\fP container of the same name if it is visible. If target container isn't visible the menu will be displayed at the default location.
+T}
+.TE
+
+.PP
+titlebar and tab LAYOUT will be displayed as a
+single line (\fIdmenu like\fP) menu, and the other
+LAYOUTS will be of vertical (\fIcombobox\fP) layout
+with the prompt and entrybox above the list.
+
+.PP
+The position of the menu can be further
+manipulated by using
+\fB\fC\-\-xpos\fR,\fB\fC\-\-ypos\fR,\fB\fC\-\-width\fR,\fB\fC\-\-height\fR,\fB\fC\-\-orientation\fR,\fB\fC\-\-include\fR\&.
+
+.PP
+\fB\fC$ echo "list" | i3menu \-\-prompt "select: "
+\-\-layout window \-\-xpos \-50 \-\-ypos 30\fR
+.br
+The command above would create a menu with the
+same size and position as the current window, but
+place it 50px to the left of the window, and 30px
+below the \fIlower\fP of the window.
+
+.PP
+\fB\fC\-\-include\fR|\fB\fC\-i\fR INCLUDESTRING
+.br
+INCLUDESTRING can be set to force which elements
+of the menu to include. INCLUDESTRING can be one
+or more of the following character:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCchar\fR	\fB\fCelement\fR
+\fBp\fP	prompt
+\fBe\fP	entrybox
+\fBl\fP	list
+.TE
+
+.PP
+\fB\fCecho "list" | i3menu \-\-include le \-\-prompt
+"enter a value: "\fR
+.br
+The command above will result in a menu without
+the \fBprompt\fP element.
+
+.PP
+\fB\fCi3menu \-\-include pe \-\-prompt "enter a value: "\fR
+.br
+The command above will result in a menu without a
+\fBlist\fP element. (just an inputbox).
+
+.PP
+It's also worth mentioning that \fBi3menu\fP adapts
+to the objects it knows before creating the menu.
+This means that if no input stream (list) exist,
+no list element will be included, the same goes
+for the prompt.
+
+.PP
+\fB\fC\-\-top\fR|\fB\fC\-t\fR TOP
+.br
+If TOP is set, the input stream (LIST) will get
+matched against TOP. Lines in LIST with an exact
+MATCH of those in TOP will get moved to the TOP of
+LIST before the menu is created.
+
+.PP
+\fB\fC$ printf '%s\\n' one two three four | i3menu
+\-\-top "$(printf '%s\\n' two four)"\fR
+
+.PP
+will result in a list looking like this:
+.br
+\fB\fCtwo four one three\fR
+
+.PP
+\fB\fC\-\-xpos\fR|\fB\fC\-x\fR INT
+.br
+Sets the \fBX\fP position of the menu to INT. If
+this option is set, it will override any automatic
+position of the \fBX\fP coordinate.
+
+.PP
+\fB\fC\-\-xoffset\fR INT
+.br
+Adds INT to the calculated \fBX\fP position of the
+menu before it is displayed. XPOS can be either
+positive or negative.
+
+.PP
+\fBEXAMPLE\fP
+.br
+If both \fB\fC\-\-layout\fR is set to \fB\fCwindow\fR and
+\fB\fC\-\-xpos\fR is set to \fB\fC\-50\fR, the menu will be placed
+50 pixels to the left of the active window but
+have the same dimensions as the window.
+
+.PP
+\fB\fC\-\-ypos\fR|\fB\fC\-y\fR INT
+.br
+Sets the \fBY\fP position of the menu to INT. If
+this option is set, it will override any automatic
+position of the \fBY\fP coordinate.
+
+.PP
+\fB\fC\-\-yoffset\fR INT
+.br
+Adds INT to the calculated \fBY\fP position of the
+menu before it is displayed. INT can be either
+positive or negative.
+
+.PP
+\fBEXAMPLE\fP
+.br
+If both \fB\fC\-\-layout\fR is set to \fB\fCtitlebar\fR and
+\fB\fC\-\-ypos\fR is set to \fB\fC50\fR, the menu will be placed
+50 pixels below the active window.
+
+.PP
+\fB\fC\-\-width\fR|\fB\fC\-w\fR INT
+.br
+Changes the width of the menu. If the argument to
+\fB\fC\-\-width\fR ends with a \fB\fC%\fR character the width will
+be that many percentages of the screenwidth.
+Without \fB\fC%\fR absolute width in pixels will be set.
+
+.PP
+\fB\fC\-\-options\fR|\fB\fC\-o\fR OPTIONS
+.br
+The argument is a string of aditional options to
+pass to \fBrofi\fP\&.
+
+.PP
+\fB\fC$ i3menu \-\-prompt "Enter val: " \-\-options
+'\-matching regex'\fR
+.br
+will result in a call to rofi looking something
+like this:
+.br
+\fB\fCrofi \-p "Enter val: " \-matching regex \-dmenu\fR
+
+.PP
+Note that the \fBrofi\fP options: \fB\fC\-p, \-filter,
+\-show, \-modi\fR \fIcould be\fP entered to as arguments
+
+.PP
+to \fB\fCi3menu \-\-options\fR, but it is recommended to
+use: \fB\fC\-\-prompt\fR, \fB\fC\-\-filter\fR, \fB\fC\-\-show\fR and \fB\fC\-\-modi\fR
+instead, since this will make i3menu optimize the
+layout better.
+
+.PP
+\fB\fC\-\-prompt\fR|\fB\fC\-p\fR PROMPT
+.br
+Sets the prompt of the menu to PROMPT.
+
+.PP
+\fB\fC\-\-filter\fR|\fB\fC\-f\fR FILTER
+.br
+Sets the inputbox text/filter to FILTER. Defaults
+to blank string.
+
+.PP
+\fB\fC\-\-show\fR MODE
+.br
+This is a short hand for the \fBrofi\fP option
+\fB\fC\-show\fR\&. So instead of doing this:
+.br
+\fB\fC$ i3menu \-o '\-show run'\fR , you can do this:
+.br
+\fB\fC$ i3menu \-\-show run\fR
+
+.PP
+\fB\fC\-\-modi\fR MODI
+.br
+This is a short hand for the \fBrofi\fP option
+\fB\fC\-modi\fR\&. So instead of doing this:
+.br
+\fB\fC$ i3menu \-o '\-modi run,drun \-show run'\fR , you
+can do this:
+.br
+\fB\fC$ i3menu \-\-modi run,drun \-\-show run\fR
+
+.PP
+\fB\fC\-\-target\fR TARGET
+.br
+TARGET is a string containing additional options
+passed to \fBi3list\fP\&. This can be used to change
+the target window when \fB\fC\-\-layout\fR is set to:
+\fB\fCwindow\fR,\fB\fCtitlebar\fR or \fB\fCtab\fR\&.
+
+.PP
+\fB\fC\-\-orientation\fR ORIENTATION
+.br
+This forces the layout of the menu to be either
+vertical or horizontal. If \fB\fC\-\-layout\fR is set to
+\fBwindow\fP, the layout will always be \fB\fCvertical\fR\&.
+
+.PP
+\fB\fC\-\-anchor\fR INT
+.br
+Sets the "\fIanchor\fP" point of the menu. The
+default is \fB1\fP\&. \fB1\fP means the top left corner,
+\fB9\fP means the bottom right corner. Corner in
+this context doesn't refer to the corners of the
+screen, but the corners of the menu. If the anchor
+is \fItop left\fP (\fB1\fP), the menu will \fIgrow\fP from
+that point.
+
+.PP
+\fB\fC\-\-height\fR INT
+.br
+Overrides the calculated height of the menu.
+
+.PP
+\fB\fC\-\-fallback\fR FALLBACK
+.br
+FALLBACK can be a string of optional options the
+will be tried if the \fIfirst layout\fP fails. A
+layout can fail of three reasons:
+
+.RS
+.IP "  1." 5
+layout is window or container, but no list is passed. If no fallback is set, \fBtitlebar\fP layout will get tried.
+.IP "  2." 5
+layout is container but container is not visible. If no fallback is set, \fBdefault\fP layout will get tried.
+.IP "  3." 5
+layout is window, tab or titlebar but no target window is found. If no fallback is set, \fBdefault\fP layout will get tried.
+
+.RE
+
+.PP
+\fBExample\fP
+
+.PP
+.RS
+
+.nf
+$ echo \-e "one\\ntwo\\nthree" | i3menu \-\-layout A \-\-fallback '\-\-layout mouse \-\-width 300'
+
+.fi
+.RE
+
+.PP
+The example above will display a menu at the
+mouse pointer if container A isn't visible.
+
+.PP
+Fallbacks can be nested, but make sure to
+alternate quotes:
+
+.PP
+.RS
+
+.nf
+$ echo \-e "one\\ntwo\\nthree" | i3menu \-\-layout A \-\-fallback '\-\-layout window \-\-fallback "\-\-layout mouse \-\-width 300"'
+
+.fi
+.RE
+
+.PP
+The example above would first try to display a
+menu with \fB\fC\-\-layout A\fR if that fails, it will try
+a menu with \fB\fC\-\-layout window\fR and last if no
+target window can be found, the menu will get
+displayed at the mouse pointer.
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit
+
+.SH ENVIRONMENT
+.PP
+\fB\fCI3MENU\_DIR\fR
+.br
+Path to config directory. defaults to:
+$XDG\_CONFIG\_HOME/i3menu
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCrofi\fR \fB\fCi3list\fR \fB\fCxdotool\fR
+
+.PP
+budRich 
+\[la]https://github.com/budlabs/i3ass\[ra]
+
+.SH SEE ALSO
+.PP
+bash(1), awk(1), rofi(1), rofi\-theme(1), i3list(1), xdotool(1),

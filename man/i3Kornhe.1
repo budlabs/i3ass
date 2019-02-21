@@ -1,0 +1,289 @@
+.TH I3KORNHE 1 2019\-02\-19 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3Kornhe\fR \- move and resize windows gracefully
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3Kornhe DIRECTION
+i3Kornhe move [\-\-speed|\-p SPEED] [DIRECTION]
+i3Kornhe size [\-\-speed|\-p SPEED] [DIRECTION]
+i3Kornhe 1\-9
+i3Kornhe x
+i3Kornhe \-\-help|\-h
+i3Kornhe \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+i3Kornhe provides an alternative way to move and
+resize windows in \fBi3\fP\&. It has some more
+functions then the defaults and is more
+streamlined. Resizing floating windows is done by
+first selecting a corner of the window,  and then
+moving that corner. See the wiki or the manpage
+for details and how to add the required mode in
+the i3 config file that is needed to use
+\fBi3Kornhe\fP\&.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-speed\fR|\fB\fC\-p\fR SPEED
+.br
+Sets speed or distance in pixels to use when
+moving and resizing the windows.
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+
+.SH usage
+.PP
+To use this script a
+bindingmode
+\[la]https://i3wm.org/docs/userguide.html#binding_modes\[ra]
+named \fB\fCsizemode\fR needs to be set in your i3 config
+file. Below is how I have set up this mode:
+
+.PP
+\fB\fC\~/.config/i3/config\fR
+
+.PP
+.RS
+
+.nf
+
+...
+
+# these keybindings are outside the mode definition
+
+# group A, enter size mode with direction:
+bindsym Mod4+Control+Left    exec \-\-no\-startup\-id i3Kornhe size left
+bindsym Mod4+Control+Down    exec \-\-no\-startup\-id i3Kornhe size down
+bindsym Mod4+Control+Up      exec \-\-no\-startup\-id i3Kornhe size up
+bindsym Mod4+Control+Right   exec \-\-no\-startup\-id i3Kornhe size right
+
+# group B, enter move mode with direction:
+# by using speed 0 (\-p 0), this will only enter the mode without
+# moving the window.
+bindsym Mod4+Left      exec \-\-no\-startup\-id i3Kornhe move \-p 0 left
+bindsym Mod4+Down      exec \-\-no\-startup\-id i3Kornhe move \-p 0 down
+bindsym Mod4+Up        exec \-\-no\-startup\-id i3Kornhe move \-p 0 up
+bindsym Mod4+Right     exec \-\-no\-startup\-id i3Kornhe move \-p 0 right
+
+...
+
+mode "sizemode" {
+  # group 1 only send direction speed 30:
+  bindsym Left          exec \-\-no\-startup\-id i3Kornhe \-p 30 left
+  bindsym Down          exec \-\-no\-startup\-id i3Kornhe \-p 30 down
+  bindsym Up            exec \-\-no\-startup\-id i3Kornhe \-p 30 up
+  bindsym Right         exec \-\-no\-startup\-id i3Kornhe \-p 30 right
+  
+  # group 2 only send direction speed 5:
+  bindsym Shift+Left    exec \-\-no\-startup\-id i3Kornhe \-p 5 left
+  bindsym Shift+Down    exec \-\-no\-startup\-id i3Kornhe \-p 5 down
+  bindsym Shift+Up      exec \-\-no\-startup\-id i3Kornhe \-p 5 up
+  bindsym Shift+Right   exec \-\-no\-startup\-id i3Kornhe \-p 5 right
+
+  # group 3 change size direction:
+  bindsym Mod4+Left     exec \-\-no\-startup\-id i3Kornhe size left
+  bindsym Mod4+Down     exec \-\-no\-startup\-id i3Kornhe size down
+  bindsym Mod4+Up       exec \-\-no\-startup\-id i3Kornhe size up
+  bindsym Mod4+Right    exec \-\-no\-startup\-id i3Kornhe size right
+
+  # group 4 enter move mode:
+  bindsym m exec \-\-no\-startup\-id i3Kornhe move \-p 0 left
+
+  # group 5 move to absolute position 1\-9:
+  bindsym 1 exec \-\-no\-startup\-id i3Kornhe 1
+  bindsym 2 exec \-\-no\-startup\-id i3Kornhe 2
+  bindsym 3 exec \-\-no\-startup\-id i3Kornhe 3
+  bindsym 4 exec \-\-no\-startup\-id i3Kornhe 4
+  bindsym 5 exec \-\-no\-startup\-id i3Kornhe 5
+  bindsym 6 exec \-\-no\-startup\-id i3Kornhe 6
+  bindsym 7 exec \-\-no\-startup\-id i3Kornhe 7
+  bindsym 8 exec \-\-no\-startup\-id i3Kornhe 8
+  bindsym 9 exec \-\-no\-startup\-id i3Kornhe 9
+
+  # group 6 exit the mode
+  bindsym Escape exec \-\-no\-startup\-id i3Kornhe x
+}
+
+.fi
+.RE
+
+.PP
+As you can see there are a lot of keybinding
+definitions, but keep in mind, without \fB\fCi3Kornhe\fR
+you would need, one mode for every direction and
+action (at least 8). And one reason i made this
+script was unclutter and shrink my own config
+file.
+
+.PP
+A tip is also to use variables in the i3config:
+
+.PP
+.RS
+
+.nf
+set $super bindsym Mod4
+set $i3Kornhe exec \-\-no\-startup\-id i3Kornhe
+
+.fi
+.RE
+
+.PP
+.RS
+
+.nf
+before:  
+bindsym Mod4+Right exec \-\-no\-startup\-id i3Kornhe move \-p 0 right
+
+after:  
+$super+Right $i3Kornhe m \-p 0 r
+
+.fi
+.RE
+
+.PP
+\fINotice that the first character of the
+mode/direction is enough. This shorter way will be
+used when the commands are referenced in the rest
+of this documentation.\fP
+
+.PP
+Let us go through the processes that will happen
+when the different actions are executed.
+
+.PP
+\fIgroup B:\fP
+.br
+\fB\fC$super+Left $i3Kornhe m \-p 0 l\fR
+
+.PP
+This will make i3Kornhe to enter \fBmove mode\fP\&.
+(\fIit will actually activate the i3 mode sizemode,
+move is a pseudo mode that only i3Korhne knows\fP)
+First thing i3Kornhe does is to store the current
+title\_format of the window (by using \fB\fCi3var set\fR).
+
+.PP
+It will then set the \fB\fCtitle\_format\fR to: \fB\fCMOVE
+w:WIDTH h:HEIGHT x:X y:Y\fR
+
+.PP
+Populated with the actual dimensions and position
+of the window. The first word, "MOVE", in the
+title means that we don't need to specify the mode
+(move|size|m|s)
+
+.PP
+So if a keybinding from \fBgroup 1\fP or \fBgroup
+2\fP is executed it will move the window in the
+specified direction with the specified speed
+(speed defaults to 10 if not set).
+
+.PP
+If we would execute a keybinding from \fBgroup
+3\fP, where the mode is specified (size), this
+would change the title to:
+
+.PP
+\fB\fCSIZE:CORNER w:WIDTH h:HEIGHT x:X y:Y\fR
+
+.PP
+CORNER is which corner of the window that will
+get moved. The CORNER is set with a direction:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCdirection\fR	\fB\fCcorner\fR
+Left	topleft
+Down	bottomleft
+Up	topright
+Right	bottomright
+.TE
+
+.PP
+This might look strange at first, but if you look
+at the keys HJKL, you will see that there is some
+logic to it.
+
+.PP
+If we now execute a keybinding from \s+2group 1\s-2
+or \s+2group 2\s-2 (without a mode definition), the
+named corner will \fIget moved\fP\&. To change corner
+execute a keybinding from \fBgroup 3\fP\&. To switch
+back to MOVE mode, we only need a single
+keybinding (\fBgroup 4\fP):
+.br
+\fB\fCbindsym m $i3Kornhe m \-p 0 l\fR
+
+.PP
+The direction and speed is needed but will not
+have any visual effect. To exit back to default
+mode execute \fB\fCi3Kornhe\fR with \fB\fCx\fR as the only
+argument, (\fBgroup 6\fP), this will exit the mode
+and reset the title\_format to what it was
+initially.
+
+.PP
+You can also execute \fB\fCi3Kornhe\fR with a number in
+the range 1\-9 as a single argument. This will move
+the currently active window (if it is floating) to
+the position corresponding to the number:
+
+.PP
+.RS
+
+.nf
+123
+456
+789
+
+.fi
+.RE
+
+.PP
+One important note is that if the active window
+is tiled, \fB\fCi3Kornhe\fR will move it normally or
+resize it according to this table:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCdirection\fR	\fB\fCresize\fR
+Left	shrink width
+Down	shrink height
+Up	grow height
+Right	grow width
+.TE
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3var\fR
+
+.PP
+budRich 
+\[la]https://github.com/budlabs/i3ass\[ra]
+
+.SH SEE ALSO
+.PP
+bash(1), awk(1), i3(1), i3list(1), i3var(1),

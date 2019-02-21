@@ -1,0 +1,268 @@
+.TH I3FYRA 1 2019\-02\-19 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3fyra\fR \- An advanced, simple grid\-based tiling
+layout
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3fyra \-\-show|\-s CONTAINER
+i3fyra \-\-float|\-a [\-\-target|\-t CRITERION]
+i3fyra \-\-hide|\-z CONTAINER
+i3fyra \-\-layout|\-l LAYOUT
+i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-speed|\-p INT]  [\-\-target|\-t CRITERION]
+i3fyra \-\-help|\-h
+i3fyra \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+The layout consists of four containers:
+
+.PP
+.RS
+
+.nf
+  A B
+  C D
+
+.fi
+.RE
+
+.PP
+A container can contain one or more windows. The
+internal layout of the containers doesn't matter.
+By default the layout of each container is tabbed.
+
+.PP
+A is always to the left of B and D. And always
+above C. B is always to the right of A and C. And
+always above D.
+
+.PP
+This means that the containers will change names
+if their position changes.
+
+.PP
+The size of the containers are defined by the
+three splits: AB, AC and BD.
+
+.PP
+Container A and C belong to one family.
+.br
+Container B and D belong to one family.
+
+.PP
+The visibility of containers and families can be
+toggled. Not visible containers are placed on the
+scratchpad.
+
+.PP
+The visibility is toggled by either using \fIshow\fP
+(\fB\fC\-s\fR) or \fIhide\fP (\fB\fC\-z\fR). But more often by moving
+a container in an \fIimpossible\fP direction, (\fIsee
+examples below\fP).
+
+.PP
+The \fBi3fyra\fP layout is only active on one
+workspace. That workspace can be set with the
+environment variable: \fB\fCi3FYRA\_WS\fR, otherwise the
+workspace active when the layout is created will
+be used.
+
+.PP
+The benefit of using this layout is that the
+placement of windows is more predictable and
+easier to control. Especially when using tabbed
+containers, which are very clunky to use with
+\fIdefault i3\fP\&.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-show\fR|\fB\fC\-s\fR CONTAINER
+.br
+Show target container. If it doesn't exist, it
+will be created and current window will be put in
+it. If it is visible, nothing happens.
+
+.PP
+\fB\fC\-\-float\fR|\fB\fC\-a\fR
+.br
+Autolayout. If current window is tiled: floating
+enabled If window is floating, it will be put in a
+visible container. If there is no visible
+containers. The window will be placed in a hidden
+container. If no containers exist, container
+'A'will be created and the window will be put
+there.
+
+.PP
+\fB\fC\-\-target\fR|\fB\fC\-t\fR CRITERION
+.br
+Criteria is a string passed to i3list to use a
+different target then active window.
+
+.PP
+Example:
+.br
+\fB\fC$ i3fyra \-\-move B \-\-target "\-i sublime\_text"\fR
+this will target the first found window with the
+instance name \fIsublime\_text\fP\&. See i3list(1), for
+all available options.
+
+.PP
+\fB\fC\-\-hide\fR|\fB\fC\-z\fR CONTAINER
+.br
+Hide target containers if visible.
+
+.PP
+\fB\fC\-\-layout\fR|\fB\fC\-l\fR LAYOUT
+.br
+alter splits Changes the given splits. INT is a
+distance in pixels. AB is on X axis from the left
+side if INT is positive, from the right side if it
+is negative. AC and BD is on Y axis from the top
+if INT is positive, from the bottom if it is
+negative. The whole argument needs to be quoted.
+Example:
+.br
+\fB\fC$ i3fyra \-\-layout 'AB=\-300 BD=420'\fR
+
+.PP
+\fB\fC\-\-move\fR|\fB\fC\-m\fR CONTAINER
+.br
+Moves current window to target container, either
+defined by it's name or it's position relative to
+the current container with a direction:
+[\fB\fCl\fR|\fB\fCleft\fR][\fB\fCr\fR|\fB\fCright\fR][\fB\fCu\fR|\fB\fCup\fR][\fB\fCd\fR|\fB\fCdown\fR] If
+the container doesnt exist it is created. If
+argument is a direction and there is no container
+in that direction, Connected container(s)
+visibility is toggled. If current window is
+floating or not inside ABCD, normal movement is
+performed. Distance for moving floating windows
+with this action can be defined with the \fB\fC\-\-speed\fR
+option. Example: \fB\fC$ i3fyra \-\-speed 30 \-m r\fR Will
+move current window 30 pixels to the right, if it
+is floating.
+
+.PP
+\fB\fC\-\-speed\fR|\fB\fC\-p\fR INT
+.br
+Distance in pixels to move a floating window.
+Defaults to 30.
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit
+
+.SH EXAMPLES
+.PP
+If containers \fBA\fP,\fBB\fP and \fBC\fP are visible
+but \fBD\fP is hidden or none existent, the visible
+layout would looks like this:
+
+.PP
+.RS
+
+.nf
+  A B
+  C B
+
+.fi
+.RE
+
+.PP
+If action: \fImove up\fP (\fB\fC\-m u\fR) would be called
+when container \fBB\fP is active and \fBD\fP is
+hidden. Container \fBD\fP would be shown. If action
+would have been: \fImove down\fP (\fB\fC\-m d\fR), \fBD\fP would
+be shown but \fBB\fP would be placed below \fBD\fP,
+this means that the containers will also swap
+names. If action would have been \fImove left\fP (\fB\fC\-m
+l\fR) the active window in B would be moved to
+container \fBA\fP\&. If action was \fImove right\fP (\fB\fC\-m
+r\fR) \fBA\fP and \fBC\fP would be hidden:
+
+.PP
+.RS
+
+.nf
+  B B
+  B B
+
+.fi
+.RE
+
+.PP
+If we now \fImove left\fP (\fB\fC\-m l\fR), \fBA\fP and \fBC\fP
+would be shown again but to the right of \fBB\fP,
+the containers would also change names, so \fBB\fP
+becomes \fBA\fP, \fBA\fP becomes \fBB\fP and \fBC\fP
+becomes \fBD\fP:
+
+.PP
+.RS
+
+.nf
+  A B
+  A D
+
+.fi
+.RE
+
+.PP
+If this doesn't make sense, check out this
+demonstration on youtube:
+
+\[la]https://youtu.be/kU8gb6WLFk8\[ra]
+
+.SH ENVIRONMENT
+.PP
+\fB\fCI3FYRA\_MAIN\_CONTAINER\fR
+.br
+This container will be the chosen when a
+container is requested but not given. When using
+the command autolayout (\fB\fC\-a\fR) for example, if the
+window is floating it will be sent to the main
+container, if no other containers exist. Defaults
+to A. defaults to: A
+
+.PP
+\fB\fCI3FYRA\_WS\fR
+.br
+Workspace to use for i3fyra. If not set, the firs
+workspace that request to create the layout will
+be used. defaults to: 1
+
+.PP
+\fB\fCI3FYRA\_ORIENTATION\fR
+.br
+If set to \fB\fCvertical\fR main split will be \fB\fCAC\fR and
+families will be \fB\fCAB\fR and \fB\fCCD\fR\&. Otherwise main
+split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and
+\fB\fCBD\fR\&. defaults to: horizontal
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3gw\fR \fB\fCi3var\fR
+\fB\fCi3viswiz\fR
+
+.PP
+budRich 
+\[la]https://github.com/budlabs/i3ass\[ra]
+
+.SH SEE ALSO
+.PP
+i3(1), i3list(1), i3gw(1), i3var(1), i3viswiz(1),

@@ -1,0 +1,137 @@
+.TH I3GET 1 2019\-02\-19 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3get\fR \- Boilerplate and template maker for bash
+scripts
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3get [\-\-class|\-c CLASS] [\-\-instance|\-i INSTANCE] [\-\-title|\-t TITLE] [\-\-conid|\-n CON\_ID] [\-\-winid|\-d WIN\_ID] [\-\-mark|\-m MARK] [\-\-titleformat|\-o TITLE\_FORMAT] [\-\-active|\-a] [\-\-synk|\-y] [\-\-print|\-r OUTPUT]      
+i3get \-\-help|\-h
+i3get \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t
+get\_tree\fR, return desired information. If no
+arguments are passed. \fB\fCcon\_id\fR of acitve window is
+returned. If there is more then one criterion, all
+of them must be true to get results.
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+.br
+Search for windows with the given class
+
+.PP
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+.br
+Search for windows with the given instance
+
+.PP
+\fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+.br
+Search for windows with title.
+
+.PP
+\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+.br
+Search for windows with the given con\_id
+
+.PP
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR WIN\_ID
+.br
+Search for windows with the given window id
+
+.PP
+\fB\fC\-\-mark\fR|\fB\fC\-m\fR MARK
+.br
+Search for windows with the given mark
+
+.PP
+\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR TITLE\_FORMAT
+.br
+Search for windows with the given titleformat
+
+.PP
+\fB\fC\-\-active\fR|\fB\fC\-a\fR
+.br
+Currently active window (default)
+
+.PP
+\fB\fC\-\-synk\fR|\fB\fC\-y\fR
+.br
+Synch on. If this option is included,  script
+will wait till target window exist. (\fIor timeout
+after 10 seconds\fP).
+
+.PP
+\fB\fC\-\-print\fR|\fB\fC\-r\fR OUTPUT
+.br
+\fIOUTPUT\fP can be one or more of the following
+characters:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCcharacter\fR	\fB\fCprint\fR
+\fB\fCt\fR	title
+\fB\fCc\fR	class
+\fB\fCi\fR	instance
+\fB\fCd\fR	Window ID
+\fB\fCn\fR	Con\_Id (default)
+\fB\fCm\fR	mark
+\fB\fCw\fR	workspace
+\fB\fCa\fR	is active
+\fB\fCf\fR	floating state
+\fB\fCo\fR	title format
+\fB\fCv\fR	visible state
+.TE
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit
+
+.SH EXAMPLES
+.PP
+search for window with instance name
+sublime\_text.  Request workspace, title and
+floating state.
+
+.PP
+.RS
+
+.nf
+$ i3get \-\-instance sublime\_text \-r wtf 
+1
+\~/src/bash/i3ass/i3get (i3ass) \- Sublime Text
+user\_off
+
+.fi
+.RE
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR
+
+.PP
+budRich 
+\[la]https://github.com/budlabs/i3ass\[ra]
+
+.SH SEE ALSO
+.PP
+bash(1), awk(1), i3(1),

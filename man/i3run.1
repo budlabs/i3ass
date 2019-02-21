@@ -1,0 +1,164 @@
+.TH I3RUN 1 2019\-02\-19 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3run\fR \- Run, Raise or hide windows in i3wm
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-help|\-h
+i3run \-\-version|\-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+\fB\fCi3run\fR let's you use one command for multiple
+functions related to the same window identified by
+a given criteria.  \fB\fCi3run\fR will take different
+action depending on the state of the searched
+window:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fC\fBtarget window state\fP\fR	\fB\fC\fBaction\fP\fR
+T{
+Active and not handled by i3fyra
+T}	hide
+Active and handled by i3fyra	T{
+hide container, if not \fB\fC\-g\fR is set
+T}
+Handled by i3fyra and hidden	show container, activate
+T{
+Not handled by i3fyra and hidden
+T}	show window, activate
+Not on current workspace	T{
+goto workspace or show if \fB\fC\-s\fR is set
+T}
+Not found	execute command (\fB\fC\-e\fR)
+.TE
+
+.PP
+Hidden in this context,  means that window is on
+the scratchpad. Show in this context means,  move
+window to current workspace.
+
+.PP
+\fB\fC\-e\fR is optional, if no \fICOMMAND\fP is passed and
+no window is found,  nothing happens.  It is
+important that \fB\fC\-e\fR \fICOMMAND\fP is \fBthe last of the
+options\fP\&.  It is also important that \fICOMMAND\fP
+\fBwill spawn a window matching the criteria\fP,
+otherwise the script will get stuck in a loop
+waiting for the window to appear. (\fIit will stop
+waiting for the window to appear after 10
+seconds\fP)
+
+.SH OPTIONS
+.PP
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+.br
+Search for windows with the given INSTANCE
+
+.PP
+\fB\fC\-\-summon\fR|\fB\fC\-s\fR
+.br
+Instead of switching workspace, summon window to
+current workspace
+
+.PP
+\fB\fC\-\-nohide\fR|\fB\fC\-g\fR
+.br
+Don't hide window/container if it's active.
+
+.PP
+\fB\fC\-\-mouse\fR|\fB\fC\-m\fR
+.br
+The window will be placed on the location of the
+mouse cursor when it is created or shown. (\fIneeds
+\fB\fCxdotool\fR\fP)
+
+.PP
+\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
+.br
+If the search criteria is \fB\fC\-i\fR (instance), the
+window with instance: \fIOLDNAME\fP will get a n new
+instance name matching the criteria when it is
+created (\fIneeds \fB\fCxdotool\fR\fP).
+
+.PP
+.RS
+
+.nf
+i3run \-\-instance budswin \-\-rename sublime\_main \-command subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime\_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+
+.fi
+.RE
+
+.PP
+\fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
+.br
+Command to run if no window is found. Complex
+commands can be written inside quotes:
+
+.PP
+.RS
+
+.nf
+i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
+
+.fi
+.RE
+
+.PP
+\fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+.br
+Search for windows with the given CLASS
+
+.PP
+\fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+.br
+Search for windows with the given TITLE
+
+.PP
+\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+.br
+Search for windows with the given CON\_ID
+
+.PP
+\fB\fC\-\-help\fR|\fB\fC\-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC\-\-version\fR|\fB\fC\-v\fR
+.br
+Show version and exit.
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3list\fR \fB\fCi3get\fR \fB\fCi3var\fR \fB\fCxdotool\fR
+\fB\fCi3fyra\fR \fB\fCi3\fR
+
+.PP
+budRich 
+\[la]https://github.com/budlabs/i3ass\[ra]
+
+.SH SEE ALSO
+.PP
+bash(1), awk(1), i3list(1), i3get(1), i3var(1), xdotool(1), i3fyra(1),
