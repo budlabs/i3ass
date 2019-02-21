@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-projectdir="$1"
-
-bashbud --set updated "$(date +%Y-%m-%d)" "$projectdir"

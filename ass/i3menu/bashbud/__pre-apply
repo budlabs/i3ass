@@ -1,6 +1,0 @@
-#!/usr/bin/env bash
-
-# increment version number
-# set updated to today in manifest.md
-
-projectdir="$1"
