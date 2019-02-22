@@ -79,7 +79,24 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
+### next
+
+grand reorganization of i3ass. created a new GitHub
+organization: i3ass-dev. Where all the i3ass scripts have
+it's own repo. It's on these repos development will be done
+from now on. This (budlabs/i3ass), will be the repo where
+all issues should be reported host the wiki and the
+installable version of i3ass. I think this will be great.
+
+This repo also contains two fixes to issues reported by
+APotOfSoup: i3get reported wrong info when criteria was
+**con_id**. and [i3flip] was not moving containers at all
+(the latter issue is only partially fixed, moving in
+containers that are not tabbed or stacked with i3flip is
+temporarily disabled)
+
 ### v.0.1.7
+
 
 Added [i3Kornhe]
 
@@ -95,15 +112,6 @@ Added workspace position to i3list output.
 
 cleaned up [i3flip] code and added ability to flip in
 layouts other then tabbed|stacked.
-
-### v.0.1.75
-
-
-fixed an issue with [i3viswiz] and i3gaps, where the
-correct window couldn't be located if the search  ended up
-in the gaps. (this can still happen, and might need some
-more tweaks, but with this fix it's much less likely to
-happen then before.)
 
 
 ## known issues

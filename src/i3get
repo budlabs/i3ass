@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.341
-updated: 2019-02-19 by budRich
+i3get - version: 0.347
+updated: 2019-02-21 by budRich
 EOB
 }
 
@@ -48,9 +48,12 @@ main(){
     done
   }
 
-  [ -n "$result" ] \
-    && printf '%s\n' "${result}" \
-    || ERX "no matching window."
+  if [ -n "$result" ]; then
+    printf '%s\n' "${result}"
+  else
+    ERX "no matching window."
+  fi
+  
 }
 
 ___printhelp(){
@@ -154,18 +157,7 @@ start == 1 && match($0,/([{]|"nodes":[}][[]|.*_rect":{)?"([a-z_]+)":[["]*([^]}"]
 
   key=ma[2]
   var=ma[3]
-
-  if (hit!=trg) {
-    for (c in crit) {
-      # if (key == c) {print crit[c] "  s " var}
-      if (key == c && var ~ crit[c]) {
-        if (fid==cid) {hit++}
-        else {hit=1;fid=cid}
-      }
-    }
-  }
-
-
+  
   # on every id, check if target is found, if so exit
   # otherwise clear return array (except workspace key)
   if (key == "id") {
@@ -175,6 +167,15 @@ start == 1 && match($0,/([{]|"nodes":[}][[]|.*_rect":{)?"([a-z_]+)":[["]*([^]}"]
     for(k in r){if(k!="w"){r[k]=""}}
     if(sret ~ /[n]/)
       r["n"]=cid
+  }
+
+  if (hit!=trg) {
+    for (c in crit) {
+      if (key == c && var ~ crit[c]) {
+        if (fid==cid) {hit++}
+        else {hit=1;fid=cid}
+      }
+    }
   }
 
   if (sret ~ /[t]/ && key == "title") {
@@ -280,8 +281,7 @@ elif [[ ${__o[version]:-} = 1 ]]; then
 fi
 
 [[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
-  && __lastarg="" \
-  || true
+  && __lastarg="" 
 
 
 main "${@:-}"

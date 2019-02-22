@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3flip - version: 0.05
-updated: 2019-02-19 by budRich
+i3flip - version: 0.052
+updated: 2019-02-22 by budRich
 EOB
 }
 
@@ -47,7 +47,7 @@ main(){
 
   if ((__acur[total]==1)); then
     ERX "only one window in container"
-  elif ((${__o[move]:-1}!=1)); then
+  elif ((${__o[move]:-0}==1)); then
     movetarget
   else
     i3-msg -q "[con_id=$__orgtrg]" focus, focus child
@@ -70,7 +70,7 @@ i3flip --version|-v
 OPTIONS
 -------
 
---move|-m DIRECTION  
+--move|-m  
 Move the current tab instead of changing focus.
 
 --help|-h  
@@ -165,11 +165,13 @@ movetarget(){
   curid="${__acur[focused]}"
 
   if [[ ${__acur[layout]:-} =~ splith|stacked ]]; then
-    case "$__dir" in
-      n) ldir=down ;;
-      p) ldir=up   ;;
-    esac
-    bdir=up
+    # case "$__dir" in
+    #   n) ldir=down ;;
+    #   p) ldir=up   ;;
+    # esac
+    # bdir=up
+    ERM "${__acur[layout]:-} moving with i3flip is currently only supported in tabbed or stacked containers"
+    return 1
   else
     case "$__dir" in
       n) ldir=right ;;
@@ -198,14 +200,14 @@ movetarget(){
 }
 declare -A __o
 eval set -- "$(getopt --name "i3flip" \
-  --options "m:hv" \
-  --longoptions "move:,help,version," \
+  --options "mhv" \
+  --longoptions "move,help,version," \
   -- "$@"
 )"
 
 while true; do
   case "$1" in
-    --move       | -m ) __o[move]="${2:-}" ; shift ;;
+    --move       | -m ) __o[move]=1 ;; 
     --help       | -h ) __o[help]=1 ;; 
     --version    | -v ) __o[version]=1 ;; 
     -- ) shift ; break ;;
