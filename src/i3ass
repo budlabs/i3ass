@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3ass - version: 2019.02.22.2
-updated: 2019-02-22 by budRich
+i3ass - version: 2019.03.07.2
+updated: 2019-03-07 by budRich
 EOB
 }
 
@@ -110,10 +110,32 @@ whosinstalled(){
     fi
   done
 }
+declare -A __o
+eval set -- "$(getopt --name "i3ass" \
+  --options "" \
+  --longoptions "" \
+  -- "$@"
+)"
+
+while true; do
+  case "$1" in
+    -- ) shift ; break ;;
+    *  ) break ;;
+  esac
+  shift
+done
+
+if [[ ${__o[help]:-} = 1 ]]; then
+  ___printhelp
+  exit
+elif [[ ${__o[version]:-} = 1 ]]; then
+  ___printversion
+  exit
+fi
 
 [[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
-  && __lastarg="" \
-  || true
+  && __lastarg="" 
+
 
 main "${@:-}"
 
