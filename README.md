@@ -80,7 +80,49 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
+### 2019.03.14.4
+
+[i3get]  
+- fix: issue in resulting in wrong conid being returned.  
+
+[i3menu]  
+- fix: removed extra row in vertical menus. 
+
+- fix: less twitchy moving of menu when invoked with mouse and off screen. 
+
+- add: negative position argument for xpos and ypos
+
+
+**example**  
+```
+echo list | i3menu --xpos -10 --ypos -20 --width 200 --orientation vertical
+this will result in a menu displayed at a position calculated from
+the right and bottom edges of the screen.
+x=(screenwidth-(menuwidth+xpos))
+y=(screenheight-(menuheight+ypos))
+
+if you really want the menu to appear at a "real" negative coordinate (to the left of the left screen edge or above the top), use: --xoffset or --yoffset:
+
+echo list | i3menu \
+    --xpos -0 \
+    --ypos 0 \
+    --width 200 \
+    --orientation vertical \
+    --yoffset -20 \
+    --xoffset 30
+
+ this would place the "top right corner" of the menu, 20 pixels above the active screen and 30 pixels to the right of the active screen.
+
+```
+
+
+
+
+
+
+
 ### 2019.03.07.1
+
 
 grand reorganization of i3ass. created a new GitHub
 organization: i3ass-dev. Where all the i3ass scripts have
@@ -119,24 +161,6 @@ the correct screenheight in some cases, but it is now fixed.
 All man pages had a typo that said "Linx manual" instead of
 "Linux manual" that is fixed now.
 
-
-
-### 2019.02.07.06
-
-
-Added [i3menu] which is an improved version of the script
-`oneliner` that has been available in the **budlabs
-organization** for some time. I figured i include it with
-**i3ass** instead, since it is very *i3 focused*, see the
-wiki for more info.  
-
-Refactored [i3list] to make it easier to manage and fixed a
-small issue that resulted in splits being reported with the
-wrong size if the *main container* of the split was hidden.
-The issue had never caused any serious issues, but now that
-it is fixed I experience faster creation of the [i3fyra]
-layout, it also made some functions in the new script
-[i3menu] work as expected.
 
 
 

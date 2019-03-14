@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3menu - version: 0.014
-updated: 2019-02-19 by budRich
+i3menu - version: 0.018
+updated: 2019-03-14 by budRich
 EOB
 }
 
@@ -48,11 +48,6 @@ main(){
 
   setgeometry "${__o[layout]:-default}"
   setincludes
-
-  # if layout mouse, get menu position
-  # and adjust if it is outside the screen
-
-  [[ ${__layout:-default} = mouse ]] && adjustposition &
 
   if [[ -n $__list ]] && ((__nolist!=1));then
     printf '%s\n' "${__o[top]:-}" "__START" "${__list}" | awk '
@@ -608,7 +603,7 @@ setgeometry(){
   : "${__o[xoffset]:=0}"
   : "${__o[yoffset]:=0}"
   : "${__o[width]:="100%"}"
-  : "${__height:=${__o[height]:-20}}"
+  : "${__height:=${__o[height]:-${i3list[TWB]:-20}}}"
   : "${__o[anchor]:=1}"
   : "${__orientation:=horizontal}"
 
@@ -708,7 +703,6 @@ setgeometry(){
           __ypos=${i3list[SAC]:-0}
           __o[width]=${i3list[SCD]:-${i3list[SAB]:-${i3list[WAW]}}}
           __height=$((i3list[WAH]-__ypos))
-          echo $__ypos
         ;;
 
         D) 
@@ -718,6 +712,8 @@ setgeometry(){
           __height=$((i3list[WAH]-__ypos))
         ;;
       esac
+      ((__height==0)) && __height="${i3list[WAH]}"
+      ((__o[width]==0)) && __o[width]="${i3list[WAW]}"
       __orientation=vertical
       __o[orientation]=""
     ;;
@@ -737,7 +733,7 @@ setgeometry(){
 
   esac
 
-  case ${__o[anchor]:-1} in
+  case ${__o[anchor]:=1} in
     1   ) __anchor="north west" ;;
     2   ) __anchor="north" ;;
     3   ) __anchor="north east" ;;
@@ -750,14 +746,23 @@ setgeometry(){
     *   ) __anchor="north west" ;;
   esac
 
-  [[ -n ${__o[xpos]:-} ]] && __xpos=${__o[xpos]}
+  [[ -n ${__o[xpos]:-} ]] && {
+    if ((__o[xpos]<0)) || ((__o[xpos]==-0)); then
+      __xpos=$((i3list[WAW]-((__o[xpos]*-1)+__o[width])))
+    else
+      __xpos=${__o[xpos]}
+    fi
+  }
+
+  ((__height<20)) && __height=20
+  [[ -n ${__o[height]} ]] && __height="${__o[height]}"
+
   [[ -n ${__o[ypos]:-} ]] && __ypos=${__o[ypos]}
+
   ((__o[xoffset]>0)) && __xpos=$((__xpos+__o[xoffset]))
   ((__o[yoffset]>0)) && __ypos=$((__ypos+__o[yoffset]))
 
   [[ ${__o[width]} =~ [%]$ ]] || __o[width]=${__o[width]}px
-  ((__height<20)) && __height=20
-  [[ -n ${__o[height]} ]] && __height="${__o[height]}"
   __height+="px"
 }
 
@@ -783,7 +788,7 @@ setincludes(){
     }
     listview_layout="$__orientation"
     ((__nolist!=1)) \
-      && listview_lines="$(echo "${__list}" | wc -l)"
+      && listview_lines="$(($(echo "${__list}" | wc -l)-1))"
   fi
 
   [[ ${__o[include]} =~ [p] ]] && inc+=(prompt)
@@ -800,6 +805,49 @@ setincludes(){
     horibox_content="[${__o[include]//' '/','}]"
     window_content="[ horibox ]"
   fi
+
+  if [[ $__layout = mouse ]] || { [[ $__ypos -lt 0 || $__ypos = -0 ]] && ((__o[anchor]<7)) ;}; then
+
+    notify-send "old y: $__ypos"
+    opty="$__ypos"
+    __ypos=9999999
+
+    {
+      declare -A __menu
+
+      eval "$(xdotool search --sync --classname rofi getwindowgeometry --shell | \
+        awk -v FS='=' '{
+          printf("__menu[%s]=%s\n",$1,$2)
+        }'
+      )"
+
+      if ((__menu[X]<i3list[WAX])); then
+        newx="${i3list[WAX]}"
+      elif (((__menu[X]+__menu[WIDTH])>i3list[WAW])); then
+        newx="$((i3list[WAW]-__menu[WIDTH]))"
+      else
+        newx=${__menu[X]}
+      fi
+
+
+      if ((opty<=-0)); then
+        opty=$((i3list[WAH]-((opty*-1)+__menu[HEIGHT])))
+      fi
+
+      if ((opty<i3list[WAY])); then
+        newy="${i3list[WAY]}"
+      elif (((opty+__menu[HEIGHT])>i3list[WAH])); then
+        newy="$((i3list[WAH]-__menu[HEIGHT]))"
+      else
+        newy="$opty"
+      fi
+
+      notify-send "new y: $newy"
+      xdotool windowmove "${__menu[WINDOW]}" "$newx" "$newy"
+    } &
+    
+    
+  fi 
 
 
   __themelayout="
