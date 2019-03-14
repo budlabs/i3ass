@@ -80,7 +80,17 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
+### 2019.03.14.5
+
+[i3menu]  
+- fix: improved autopositioning (negative xoffset works), less delay when invoked by mouse. 
+
+- removed: test notifications.
+
+
+
 ### 2019.03.14.4
+
 
 [i3get]  
 - fix: issue in resulting in wrong conid being returned.  
@@ -141,26 +151,6 @@ temporarily disabled)
 more [i3get] fixes: there where some issues related to
 special characters in title of a window, and a bug that made
 all class searching and fetching not work. both fixed now.
-
-
-### 2019.02.19.3
-
-
-Refactored the code for [i3get] to have a standalone `awk`
-file and also added better handling of regular expressions
-when they are passed as search strings to [i3get]. (*this
-might break some scripts that used esacped quotes and
-backslashes in the search strings*). You can now write a
-search like this: `i3get --instance '^sublime$` the "old"
-way of doing it would look something like this: `i3get -i
-"sublime\"\$"` and was more unreliable.  
-
-[i3list] had one more of those small issues not reporting
-the correct screenheight in some cases, but it is now fixed.
-
-All man pages had a typo that said "Linx manual" instead of
-"Linux manual" that is fixed now.
-
 
 
 

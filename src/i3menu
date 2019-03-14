@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3menu - version: 0.018
+i3menu - version: 0.02
 updated: 2019-03-14 by budRich
 EOB
 }
@@ -331,7 +331,9 @@ EOB
 
 
 adjustposition() {
-  local newy newx
+  local newy newx opty
+
+  opty="${1:-0}"
 
   declare -A __menu
 
@@ -349,12 +351,17 @@ adjustposition() {
     newx=${__menu[X]}
   fi
 
-  if ((__menu[Y]<i3list[WAY])); then
+
+  if ((opty<=-0)); then
+    opty=$((i3list[WAH]-((opty*-1)+__menu[HEIGHT])))
+  fi
+
+  if ((opty<i3list[WAY])); then
     newy="${i3list[WAY]}"
-  elif (((__menu[Y]+__menu[HEIGHT])>i3list[WAH])); then
+  elif (((opty+__menu[HEIGHT])>i3list[WAH])); then
     newy="$((i3list[WAH]-__menu[HEIGHT]))"
   else
-    newy=${__menu[Y]}
+    newy="$opty"
   fi
 
   xdotool windowmove "${__menu[WINDOW]}" "$newx" "$newy"
@@ -759,8 +766,8 @@ setgeometry(){
 
   [[ -n ${__o[ypos]:-} ]] && __ypos=${__o[ypos]}
 
-  ((__o[xoffset]>0)) && __xpos=$((__xpos+__o[xoffset]))
-  ((__o[yoffset]>0)) && __ypos=$((__ypos+__o[yoffset]))
+  [[ ${__o[xoffset]} =~ ^[0-9-]+$ ]] && __xpos=$((__xpos+__o[xoffset]))
+  [[ ${__o[yoffset]} =~ ^[0-9-]+$ ]] && __ypos=$((__ypos+__o[yoffset]))
 
   [[ ${__o[width]} =~ [%]$ ]] || __o[width]=${__o[width]}px
   __height+="px"
@@ -808,45 +815,16 @@ setincludes(){
 
   if [[ $__layout = mouse ]] || { [[ $__ypos -lt 0 || $__ypos = -0 ]] && ((__o[anchor]<7)) ;}; then
 
-    notify-send "old y: $__ypos"
-    opty="$__ypos"
-    __ypos=9999999
-
-    {
-      declare -A __menu
-
-      eval "$(xdotool search --sync --classname rofi getwindowgeometry --shell | \
-        awk -v FS='=' '{
-          printf("__menu[%s]=%s\n",$1,$2)
-        }'
-      )"
-
-      if ((__menu[X]<i3list[WAX])); then
-        newx="${i3list[WAX]}"
-      elif (((__menu[X]+__menu[WIDTH])>i3list[WAW])); then
-        newx="$((i3list[WAW]-__menu[WIDTH]))"
-      else
-        newx=${__menu[X]}
-      fi
-
-
-      if ((opty<=-0)); then
-        opty=$((i3list[WAH]-((opty*-1)+__menu[HEIGHT])))
-      fi
-
-      if ((opty<i3list[WAY])); then
-        newy="${i3list[WAY]}"
-      elif (((opty+__menu[HEIGHT])>i3list[WAH])); then
-        newy="$((i3list[WAH]-__menu[HEIGHT]))"
-      else
-        newy="$opty"
-      fi
-
-      notify-send "new y: $newy"
-      xdotool windowmove "${__menu[WINDOW]}" "$newx" "$newy"
-    } &
+    adjustposition "$__ypos" &
     
-    
+    # move window offscreen if:
+    { 
+      # negative ypos or xpos is outside of screen
+      { [[ $__ypos -lt 0 || $__ypos = -0 ]] && ((__o[anchor]<7)) ;} || \
+      ((__xpos+${__o[width]%px}>i3list[WAW]))
+
+    } && __ypos=9999999
+
   fi 
 
 
