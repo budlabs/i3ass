@@ -80,31 +80,70 @@ about the command.
 `i3ass` show version info for all scripts and dependencies.
 ## updates
 
-### v.0.1.7
+### 2020.01.26.5
 
-Added [i3Kornhe]
+[i3menu]  
+- added `sleep .05` before reading from STDIN. Hopefully fixes issue with list not getting populated.
 
-changed output of [i3viswiz] again, control variables are
-now all on the first line. Also added workspace dimensions
-for better (not yet perfect) multimonitor support, modified
-i3fyra 'move' command to work with the new changes.
-
-Added workspace position to i3list output.
-
-### v.0.1.77
+- Added `XDG_CONFIG_HOME` environment variable default.
 
 
-cleaned up [i3flip] code and added ability to flip in
-layouts other then tabbed|stacked.
-
-### v.0.1.75
+[i3run]
+- added `--force` and `--FORCE` options. When enabled `command` will get executed even if the window exist.
 
 
-fixed an issue with [i3viswiz] and i3gaps, where the
-correct window couldn't be located if the search  ended up
-in the gaps. (this can still happen, and might need some
-more tweaks, but with this fix it's much less likely to
-happen then before.)
+
+### 2019.03.14.5
+
+
+[i3menu]  
+- fix: improved autopositioning (negative xoffset works), less delay when invoked by mouse. 
+
+- removed: test notifications.
+
+
+
+### 2019.03.14.4
+
+
+[i3get]  
+- fix: issue in resulting in wrong conid being returned.  
+
+[i3menu]  
+- fix: removed extra row in vertical menus. 
+
+- fix: less twitchy moving of menu when invoked with mouse and off screen. 
+
+- add: negative position argument for xpos and ypos
+
+
+**example**  
+```
+echo list | i3menu --xpos -10 --ypos -20 --width 200 --orientation vertical
+this will result in a menu displayed at a position calculated from
+the right and bottom edges of the screen.
+x=(screenwidth-(menuwidth+xpos))
+y=(screenheight-(menuheight+ypos))
+
+if you really want the menu to appear at a "real" negative coordinate (to the left of the left screen edge or above the top), use: --xoffset or --yoffset:
+
+echo list | i3menu \
+    --xpos -0 \
+    --ypos 0 \
+    --width 200 \
+    --orientation vertical \
+    --yoffset -20 \
+    --xoffset 30
+
+ this would place the "top right corner" of the menu, 20 pixels above the active screen and 30 pixels to the right of the active screen.
+
+```
+
+
+
+
+
+
 
 
 ## known issues
