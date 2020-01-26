@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 0.551
-updated: 2019-02-19 by budRich
+i3fyra - version: 0.552
+updated: 2020-01-26 by budRich
 EOB
 }
 
@@ -44,14 +44,16 @@ main(){
 
   ${cmd} "${target:-}" # run command
 
-  [[ $cmd = windowmove ]] && [[ -z ${i3list[SIBFOC]} ]] \
-      && i3-msg -q "[con_id=${i3list[AWC]}]" focus
+  {
+    [[ $cmd = windowmove ]] && [[ -z ${i3list[SIBFOC]} ]] \
+        && i3-msg -q "[con_id=${i3list[AWC]}]" focus
 
-  [[ $cmd = togglefloat ]] \
-      && i3-msg -q "[con_id=${i3list[AWC]}]" focus
+    [[ $cmd = togglefloat ]] \
+        && i3-msg -q "[con_id=${i3list[AWC]}]" focus
 
-  [[ -n ${i3list[SIBFOC]:-} ]] \
-    && i3-msg -q "[con_mark=i34${i3list[SIBFOC]}]" focus child
+    [[ -n ${i3list[SIBFOC]:-} ]] \
+      && i3-msg -q "[con_mark=i34${i3list[SIBFOC]}]" focus child
+  }  > /dev/null 2>&1
   
 }
 
@@ -480,9 +482,10 @@ familyhide(){
 
 
 containerhide(){
-  local trg tfam famchk
+  local trg tfam
 
   trg=$1
+
 
   [[ ${#trg} -gt 1 ]] && multihide "$trg" && return
 
@@ -605,9 +608,10 @@ windowmove(){
   # and move the window there
 
   [[ $dir =~ A|B|C|D ]] && {
+
     [[ ! ${i3list[LEX]:-} =~ $dir ]] \
-      && newcont=1 \
-      || newcont=0
+      && newcont=1 || newcont=0
+
     containershow "$dir"
 
     if ((newcont!=1)); then
@@ -620,7 +624,6 @@ windowmove(){
   }
 
   # else make sure direction is lowercase u,l,d,r
-
   dir=${dir,,}
   dir=${dir:0:1}
 

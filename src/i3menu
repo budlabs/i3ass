@@ -3,13 +3,14 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3menu - version: 0.02
-updated: 2019-03-14 by budRich
+i3menu - version: 0.026
+updated: 2020-01-26 by budRich
 EOB
 }
 
 
 # environment variables
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
 : "${I3MENU_DIR:=$XDG_CONFIG_HOME/i3menu}"
 
 
@@ -31,7 +32,7 @@ main(){
   declare -A i3list
   eval "$(i3list "${listopts[@]}")"
 
-  [[ -n ${__o[option]} ]] && __opts+=" ${__o[option]}"
+  [[ -n ${__o[options]} ]] && __opts+=" ${__o[options]}"
   [[ -n ${__o[filter]} ]] && __cmd+="-filter '${__o[filter]}' "
   
   [[ -n ${__o[show]} ]] \
@@ -372,11 +373,78 @@ local trgdir="$1"
 declare -a aconfdirs
 
 aconfdirs=(
-"$trgdir/base"
 "$trgdir/themes"
+"$trgdir/base"
 )
 
 mkdir -p "${aconfdirs[@]}"
+
+cat << 'EOCONF' > "$trgdir/themes/default.rasi"
+*{
+  background-color:    @bg2;
+  border-color:        @bg2;
+  text-color:          @fg;
+  selbg:               @activebg;
+  selfg:               @activefg;
+  promptbg:            @bg2;
+  promptfg:            @activehl;
+  font:                @font1; 
+}
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/light.rasi"
+*{
+  background-color:    @light;
+  border-color:        @light;
+  text-color:          @dark;
+  selbg:               @dark;
+  selfg:               @light;
+  promptbg:            @dark;
+  promptfg:            @light;
+  font:                @font1; 
+}
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/red.rasi"
+*{
+  background-color:    @red;
+  border-color:        @red;
+  text-color:          @light;
+  selbg:               @dark;
+  selfg:               @light;
+  promptbg:            @light;
+  promptfg:            @red;
+  font:                @font1; 
+}
+
+
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/accent.rasi"
+*{
+  background-color:    @activebg;
+  border-color:        @activebg;
+  text-color:          @activehl;
+  selbg:               @activehl;
+  selfg:               @activebg;
+  promptbg:            @activehl;
+  promptfg:            @activebg;
+  font:                @font1; 
+}
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/dark.rasi"
+*{
+  background-color:    @dark;
+  border-color:        @dark;
+  text-color:          @light;
+  selbg:               @light;
+  selfg:               @dark;
+  promptbg:            @light;
+  promptfg:            @dark;
+  font:                @font1; 
+}
+EOCONF
 
 cat << 'EOCONF' > "$trgdir/base/i3menu.rasi"
 /**
@@ -467,60 +535,6 @@ cat << 'EOCONF' > "$trgdir/base/themevars.rasi"
 
   font1: "FixedFixedsys 12";
 }
-
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/dark.rasi"
-*{
-  background-color:    @dark;
-  border-color:        @dark;
-  text-color:          @light;
-  selbg:               @light;
-  selfg:               @dark;
-  promptbg:            @light;
-  promptfg:            @dark;
-  font:                @font1; 
-}
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/default.rasi"
-*{
-  background-color:    @bg2;
-  border-color:        @bg2;
-  text-color:          @fg;
-  selbg:               @activebg;
-  selfg:               @activefg;
-  promptbg:            @bg2;
-  promptfg:            @activehl;
-  font:                @font1; 
-}
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/light.rasi"
-*{
-  background-color:    @light;
-  border-color:        @light;
-  text-color:          @dark;
-  selbg:               @dark;
-  selfg:               @light;
-  promptbg:            @dark;
-  promptfg:            @light;
-  font:                @font1; 
-}
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/red.rasi"
-*{
-  background-color:    @red;
-  border-color:        @red;
-  text-color:          @light;
-  selbg:               @dark;
-  selfg:               @light;
-  promptbg:            @light;
-  promptfg:            @red;
-  font:                @font1; 
-}
-
 
 EOCONF
 
@@ -778,7 +792,7 @@ setincludes(){
   local window_content horibox_content listview_lines
 
   [[ -n ${__o[prompt]:-} ]] \
-    && __cmd+="-p ${__o[prompt]} " \
+    && __cmd+="-p '${__o[prompt]}' " \
     || __o[include]=${__o[include]/[p]/}
 
   if [[ -z ${__list:-} ]]; then
@@ -849,7 +863,8 @@ setincludes(){
 __=""
 __stdin=""
 
-read -N1 -t0.01 __  && {
+sleep .05
+read -rN1 -t0.01 __  && {
   (( $? <= 128 ))  && {
     IFS= read -rd '' __stdin
     __stdin="$__$__stdin"
