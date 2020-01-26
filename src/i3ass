@@ -3,16 +3,12 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3ass - version: 2019.03.14.5
-updated: 2019-03-14 by budRich
+i3ass - version: 2020.01.26.6
+updated: 2020-01-26 by budRich
 EOB
 }
 
 
-
-set -o errexit
-set -o pipefail
-set -o nounset
 
 main(){
   ___printversion

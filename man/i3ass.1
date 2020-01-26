@@ -1,4 +1,5 @@
-.TH I3ASS 1 2019\-03\-14 Linux "User Manuals"
+.nh
+.TH I3ASS 1 2020\-01\-26 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3ass\fR \- i3 assistance scripts
@@ -296,8 +297,7 @@ becomes \fBD\fP:
 .PP
 If this doesn't make sense, check out this
 demonstration on youtube:
-
-\[la]https://youtu.be/kU8gb6WLFk8\[ra]
+https://youtu.be/kU8gb6WLFk8
 
 .SH ENVIRONMENT
 .PP
@@ -748,8 +748,8 @@ at the keys HJKL, you will see that there is some
 logic to it.
 
 .PP
-If we now execute a keybinding from \s+2group 1\s-2
-or \s+2group 2\s-2 (without a mode definition), the
+If we now execute a keybinding from \fB\fIgroup 1\fP\fP
+or \fB\fIgroup 2\fP\fP (without a mode definition), the
 named corner will \fIget moved\fP\&. To change corner
 execute a keybinding from \fBgroup 3\fP\&. To switch
 back to MOVE mode, we only need a single
@@ -884,7 +884,9 @@ Show version and exit.
 
 .SH EXAMPLES
 .PP
-```text$ i3list
+.RS
+
+.nf
 i3list[AWF]=0                  # Active Window floating
 i3list[ATW]=270                # Active Window tab width
 i3list[ATX]=540                # Active Window tab x postion
@@ -960,34 +962,26 @@ i3list[WFN]='1'                # i3fyra Workspace name
 i3list[WSA]=1                  # Active Workspace number
 i3list[WTN]='1'                # Target Workspace name
 
-.PP
+
 $ declare \-A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
 
+.fi
+.RE
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR
+
+
+.SH \fB\fCi3menu\fR \- Adds more features to rofi when used in i3wm
+.SH SYNOPSIS
 .PP
 .RS
 
 .nf
-
-
-
-DEPENDENCIES
-\-\-\-\-\-\-\-\-\-\-\-\-
-
-
-`bash` `gawk` `i3`
-
-# `i3menu` \- Adds more features to rofi when used in i3wm
-
-
-
-SYNOPSIS
-\-\-\-\-\-\-\-\-
-
-
-```text
 i3menu [\-\-theme THEME] [\-\-layout|\-a LAYOUT] [\-\-include|\-i INCLUDESTRING] [\-\-top|\-t TOP] [\-\-xpos|\-x INT] [\-\-xoffset INT] [\-\-ypos|\-y INT] [\-\-yoffset INT] [\-\-width|\-w INT] [\-\-options|\-o OPTIONS] [\-\-prompt|\-p PROMPT]  [\-\-filter|\-f FILTER] [\-\-show MODE] [\-\-modi MODI] [\-\-target TARGET] [\-\-orientation ORIENTATION] [\-\-anchor INT] [\-\-height INT] [\-\-fallback FALLBACK]
 i3menu \-\-help|\-h
 i3menu \-\-version|\-v
@@ -1052,8 +1046,9 @@ l l
 l l .
 \fB\fCLAYOUT\fR	\fB\fCmenu location and dimensions\fR
 mouse	T{
-At the mouse position (requires \fB\fCxdotool\fR)
+At the mouse position (requires 
 T}
+\fB\fCxdotool\fR)
 window	The currently active window.
 titlebar	T{
 The titlebar of the currently active window.
@@ -1061,8 +1056,9 @@ T}
 tab	T{
 The tab (or titlebar if it isn't tabbed) of the currently active window.
 T}
-A,B,C or D	T{
-The \fBi3fyra\fP container of the same name if it is visible. If target container isn't visible the menu will be displayed at the default location.
+A,B,C or D	The 
+\fBi3fyra\fPT{
+ container of the same name if it is visible. If target container isn't visible the menu will be displayed at the default location.
 T}
 .TE
 
@@ -1344,6 +1340,12 @@ Show version and exit
 
 .SH ENVIRONMENT
 .PP
+\fB\fCXDG\_CONFIG\_HOME\fR
+
+.PP
+defaults to: $HOME/.config
+
+.PP
 \fB\fCI3MENU\_DIR\fR
 .br
 Path to config directory. defaults to:
@@ -1360,10 +1362,10 @@ $XDG\_CONFIG\_HOME/i3menu
 .RS
 
 .nf
-i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
-i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
-i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
-i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-command|\-e COMMAND]
+i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
+i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
+i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
+i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
 i3run \-\-help|\-h
 i3run \-\-version|\-v
 
@@ -1385,18 +1387,19 @@ l l .
 \fB\fC\fBtarget window state\fP\fR	\fB\fC\fBaction\fP\fR
 T{
 Active and not handled by i3fyra
-T}	hide
-Active and handled by i3fyra	T{
-hide container, if not \fB\fC\-g\fR is set
 T}
+	hide
+Active and handled by i3fyra	hide container, if not 
+\fB\fC\-g\fR is set
 Handled by i3fyra and hidden	show container, activate
 T{
 Not handled by i3fyra and hidden
-T}	show window, activate
-Not on current workspace	T{
-goto workspace or show if \fB\fC\-s\fR is set
 T}
-Not found	execute command (\fB\fC\-e\fR)
+	show window, activate
+Not on current workspace	goto workspace or show if 
+\fB\fC\-s\fR is set
+Not found	execute command (
+\fB\fC\-e\fR)
 .TE
 
 .PP
@@ -1461,6 +1464,18 @@ i3run \-\-instance budswin \-\-rename sublime\_main \-command subl
 
 .fi
 .RE
+
+.PP
+\fB\fC\-\-force\fR|\fB\fC\-f\fR
+.br
+Execute COMMAND (\fB\fC\-\-command\fR), even if the window
+already exist. But not when hiding a window.
+
+.PP
+\fB\fC\-\-FORCE\fR|\fB\fC\-F\fR
+.br
+Execute COMMAND (\fB\fC\-\-command\fR), even if the window
+already exist.
 
 .PP
 \fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
@@ -1733,7 +1748,7 @@ dependencies.
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCgit\fR
 
 .PP
-budRich 
+budRich https://github.com/budlabs/i3ass
 \[la]https://github.com/budlabs/i3ass\[ra]
 
 .SH SEE ALSO

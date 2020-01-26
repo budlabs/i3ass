@@ -1,4 +1,5 @@
-.TH I3MENU 1 2019\-03\-14 Linux "User Manuals"
+.nh
+.TH I3MENU 1 2020\-01\-26 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3menu\fR \- Adds more features to rofi when used
@@ -73,8 +74,9 @@ l l
 l l .
 \fB\fCLAYOUT\fR	\fB\fCmenu location and dimensions\fR
 mouse	T{
-At the mouse position (requires \fB\fCxdotool\fR)
+At the mouse position (requires 
 T}
+\fB\fCxdotool\fR)
 window	The currently active window.
 titlebar	T{
 The titlebar of the currently active window.
@@ -82,8 +84,9 @@ T}
 tab	T{
 The tab (or titlebar if it isn't tabbed) of the currently active window.
 T}
-A,B,C or D	T{
-The \fBi3fyra\fP container of the same name if it is visible. If target container isn't visible the menu will be displayed at the default location.
+A,B,C or D	The 
+\fBi3fyra\fPT{
+ container of the same name if it is visible. If target container isn't visible the menu will be displayed at the default location.
 T}
 .TE
 
@@ -365,6 +368,12 @@ Show version and exit
 
 .SH ENVIRONMENT
 .PP
+\fB\fCXDG\_CONFIG\_HOME\fR
+
+.PP
+defaults to: $HOME/.config
+
+.PP
 \fB\fCI3MENU\_DIR\fR
 .br
 Path to config directory. defaults to:
@@ -375,7 +384,7 @@ $XDG\_CONFIG\_HOME/i3menu
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCrofi\fR \fB\fCi3list\fR \fB\fCxdotool\fR
 
 .PP
-budRich 
+budRich https://github.com/budlabs/i3ass
 \[la]https://github.com/budlabs/i3ass\[ra]
 
 .SH SEE ALSO
