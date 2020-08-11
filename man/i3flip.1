@@ -1,4 +1,5 @@
-.TH I3FLIP 1 2019\-02\-22 Linux "User Manuals"
+.nh
+.TH I3FLIP 1 2020\-08\-09 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3flip\fR \- Tabswitching done right
@@ -8,8 +9,7 @@
 .RS
 
 .nf
-i3flip DIRECTION
-i3flip \-\-move|\-m **DIRECTION**
+i3flip [\-\-move|\-m] [\-\-json JSON] [\-\-verbose] [\-\-dryrun] DIRECTION
 i3flip \-\-help|\-h
 i3flip \-\-version|\-v
 
@@ -22,7 +22,7 @@ i3flip \-\-version|\-v
 parent. Perfect for tabbed or stacked layout, but
 works on all layouts. If direction is \fB\fCnext\fR and
 the active container is the last, the first
-container will be activated.
+container will get focused.
 
 .PP
 \fBDIRECTION\fP can be either \fIprev\fP or \fInext\fP,
@@ -37,7 +37,24 @@ which can be defined with different words:
 .PP
 \fB\fC\-\-move\fR|\fB\fC\-m\fR
 .br
-Move the current tab instead of changing focus.
+Move the current container instead of changing
+focus.
+
+.PP
+\fB\fC\-\-json\fR JSON
+.br
+use JSON instead of output from  \fB\fCi3\-msg \-t
+get\_tree\fR
+
+.PP
+\fB\fC\-\-verbose\fR
+.br
+Print more information to \fBstderr\fP\&.
+
+.PP
+\fB\fC\-\-dryrun\fR
+.br
+Don't execute any \fIi3 commands\fP\&.
 
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
@@ -66,10 +83,10 @@ bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
 
 .SH DEPENDENCIES
 .PP
-\fB\fCi3\fR \fB\fCgawk\fR
+\fB\fCi3\fR \fB\fCi3viswiz\fR
 
 .PP
-budRich 
+budRich https://github.com/budlabs/i3ass
 \[la]https://github.com/budlabs/i3ass\[ra]
 
 .SH SEE ALSO

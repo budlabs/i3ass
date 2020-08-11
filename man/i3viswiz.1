@@ -1,4 +1,5 @@
-.TH I3VISWIZ 1 2019\-02\-19 Linux "User Manuals"
+.nh
+.TH I3VISWIZ 1 2020\-08\-10 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3viswiz\fR \- Professional window focus for i3wm
@@ -8,13 +9,13 @@
 .RS
 
 .nf
-i3viswiz [\-\-gap|\-g GAPSIZE] **DIRECTION**
-i3viswiz [\-\-focus|\-f] \-\-title|\-t       [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-instance|\-i    [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-class|\-c       [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-titleformat|\-o [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-winid|\-d       [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-parent|\-p      [TARGET]
+i3viswiz [\-\-gap|\-g GAPSIZE] DIRECTION  [\-\-json JSON]
+i3viswiz \-\-title|\-t       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-instance|\-i    [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-class|\-c       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-titleformat|\-o [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-winid|\-d       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-parent|\-p      [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
 i3viswiz \-\-help|\-h
 i3viswiz \-\-version|\-v
 
@@ -35,11 +36,26 @@ there are no windows in the given direction.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-gap\fR|\fB\fC\-g\fR GAPSIZE
+\fB\fC\-\-gap\fR|\fB\fC\-g\fR TARGET
 .br
 Set GAPSIZE (defaults to 5). GAPSIZE is the
 distance in pixels from the current window where
 new focus will be searched.
+
+.PP
+\fB\fC\-\-json\fR JSON
+.br
+use JSON instead of output from  \fB\fCi3\-msg \-t
+get\_tree\fR
+
+.PP
+\fB\fC\-\-title\fR|\fB\fC\-t\fR
+.br
+If \fBTARGET\fP matches the \fBTITLE\fP of a visible
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBTITLE\fP as the last field of each row.
 
 .PP
 \fB\fC\-\-focus\fR|\fB\fC\-f\fR
@@ -50,16 +66,7 @@ When used in conjunction with: \fB\fC\-\-titleformat\fR,
 will get focused if it is visible.
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR [TARGET]
-.br
-If \fBTARGET\fP matches the \fBTITLE\fP of a visible
-window, that windows  \fBCON\_ID\fP will get printed
-to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
-of all tiled windows will get printed with
-\fBTITLE\fP as the last field of each row.
-
-.PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR [TARGET]
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR
 .br
 If \fBTARGET\fP matches the \fBINSTANCE\fP of a
 visible window, that windows  \fBCON\_ID\fP will get
@@ -69,7 +76,7 @@ printed with  \fBINSTANCE\fP as the last field of
 each row.
 
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR [TARGET]
+\fB\fC\-\-class\fR|\fB\fC\-c\fR
 .br
 If \fBTARGET\fP matches the \fBCLASS\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
@@ -78,7 +85,7 @@ of all tiled windows will get printed with
 \fBCLASS\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR [TARGET]
+\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR
 .br
 If \fBTARGET\fP matches the \fBTITLE\_FORMAT\fP of a
 visible window, that windows  \fBCON\_ID\fP will get
@@ -88,7 +95,7 @@ printed with  \fBTITLE\_FORMAT\fP as the last field
 of each row.
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR [TARGET]
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR
 .br
 If \fBTARGET\fP matches the \fBWIN\_ID\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
@@ -97,7 +104,7 @@ of all tiled windows will get printed with
 \fBWIN\_ID\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-parent\fR|\fB\fC\-p\fR [TARGET]
+\fB\fC\-\-parent\fR|\fB\fC\-p\fR
 .br
 If \fBTARGET\fP matches the \fBPARENT\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
@@ -128,7 +135,7 @@ Normal binding:
 bindsym Mod4+Shift+Left   focus left
 
 Wizzy binding:
-bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz l 
+bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz left
 
 .fi
 .RE
@@ -140,9 +147,8 @@ example output:
 .RS
 
 .nf
-$ i3viswiz \-o \-g 20 down
-target\_con\_id: 94851559487504
-tx: 582 ty: 470 wall: none
+$ i3viswiz \-\-class \-\-gap 20 down
+trgcon=94125805431344 trgx=1329 trgy=828 wall=none trgpar=C sx=0 sy=0 sw=1920 sh=1080 groupsize=3 grouppos=3 firstingroup=94125805065424 lastingroup=94125805553936 grouplayout="tabbed" groupid=94125805519264 gap=5
 * 94851560291216 x: 0     y: 0     w: 1165  h: 450   | URxvt
 \- 94851559487504 x: 0     y: 451   w: 1165  h: 448   | sublime
 \- 94851560318768 x: 1166  y: 0     w: 433   h: 899   | bin
@@ -150,12 +156,22 @@ tx: 582 ty: 470 wall: none
 .fi
 .RE
 
+.PP
+If \fB\fC\-\-class , \-\-instance, \-\-title, \-\-titleformat,
+\-\-winid or \-\-parent\fR is used together with a
+DIRECTION. i3viswiz will print this output, with
+the type in the last column of the table (class in
+the example above). The first line contains a lot
+of useful pseudo variables that is used by other
+scripts in \fBi3ass\fP  \fB\fCeval "$(i3viswiz \-p d)" ;
+echo "$groupsize"\fR
+
 .SH DEPENDENCIES
 .PP
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR
 
 .PP
-budRich 
+budRich https://github.com/budlabs/i3ass
 \[la]https://github.com/budlabs/i3ass\[ra]
 
 .SH SEE ALSO

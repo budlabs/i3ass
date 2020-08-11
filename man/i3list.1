@@ -1,4 +1,5 @@
-.TH I3LIST 1 2019\-02\-19 Linux "User Manuals"
+.nh
+.TH I3LIST 1 2020\-08\-10 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3list\fR \- list information about the current i3
@@ -9,12 +10,13 @@ session.
 .RS
 
 .nf
-i3list \-\-instance|\-i TARGET
-i3list \-\-class|\-c    TARGET
-i3list \-\-conid|\-n    TARGET
-i3list \-\-winid|\-d    TARGET
-i3list \-\-mark|\-m     TARGET
-i3list \-\-title|\-t    TARGET
+i3list [\-\-json JSON]
+i3list \-\-instance|\-i TARGET [\-\-json JSON]
+i3list \-\-class|\-c    TARGET [\-\-json JSON]
+i3list \-\-conid|\-n    TARGET [\-\-json JSON]
+i3list \-\-winid|\-d    TARGET [\-\-json JSON]
+i3list \-\-mark|\-m     TARGET [\-\-json JSON]
+i3list \-\-title|\-t    TARGET [\-\-json JSON]
 i3list \-\-help|\-h
 i3list \-\-version|\-v
 
@@ -37,6 +39,12 @@ array in bash scripts,  but the array needs to be
 declared first.
 
 .SH OPTIONS
+.PP
+\fB\fC\-\-json\fR JSON
+.br
+use JSON instead of output from  \fB\fCi3\-msg \-t
+get\_tree\fR
+
 .PP
 \fB\fC\-\-instance\fR|\fB\fC\-i\fR TARGET
 .br
@@ -84,7 +92,9 @@ Show version and exit.
 
 .SH EXAMPLES
 .PP
-```text$ i3list
+.RS
+
+.nf
 i3list[AWF]=0                  # Active Window floating
 i3list[ATW]=270                # Active Window tab width
 i3list[ATX]=540                # Active Window tab x postion
@@ -160,19 +170,21 @@ i3list[WFN]='1'                # i3fyra Workspace name
 i3list[WSA]=1                  # Active Workspace number
 i3list[WTN]='1'                # Target Workspace name
 
-.PP
+
 $ declare \-A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
-```
+
+.fi
+.RE
 
 .SH DEPENDENCIES
 .PP
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR
 
 .PP
-budRich 
+budRich https://github.com/budlabs/i3ass
 \[la]https://github.com/budlabs/i3ass\[ra]
 
 .SH SEE ALSO

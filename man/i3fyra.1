@@ -1,5 +1,5 @@
 .nh
-.TH I3FYRA 1 2020\-01\-26 Linux "User Manuals"
+.TH I3FYRA 1 2020\-08\-11 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3fyra\fR \- An advanced, simple grid\-based tiling
@@ -10,11 +10,11 @@ layout
 .RS
 
 .nf
-i3fyra \-\-show|\-s CONTAINER
-i3fyra \-\-float|\-a [\-\-target|\-t CRITERION]
-i3fyra \-\-hide|\-z CONTAINER
-i3fyra \-\-layout|\-l LAYOUT
-i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-speed|\-p INT]  [\-\-target|\-t CRITERION]
+i3fyra \-\-show|\-s CONTAINER [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-float|\-a [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-hide|\-z CONTAINER [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-layout|\-l LAYOUT [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-force|\-f] [\-\-speed|\-p INT] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
 i3fyra \-\-help|\-h
 i3fyra \-\-version|\-v
 
@@ -92,6 +92,31 @@ will be created and current window will be put in
 it. If it is visible, nothing happens.
 
 .PP
+\fB\fC\-\-force\fR|\fB\fC\-f\fR
+.br
+If set virtual positions will be ignored.
+
+.PP
+\fB\fC\-\-array\fR ARRAY
+.br
+ARRAY should be the output of \fB\fCi3list\fR\&. It is
+used to improve speed when \fBi3fyra\fP is executed
+from a script that already have the array, f.i.
+\fBi3run\fP and \fBi3Kornhe\fP\&.
+
+.PP
+\fB\fC\-\-verbose\fR
+.br
+If set information about execution will be
+printed to \fBstderr\fP\&.
+
+.PP
+\fB\fC\-\-dryrun\fR
+.br
+If set no window manipulation will be done during
+execution.
+
+.PP
 \fB\fC\-\-float\fR|\fB\fC\-a\fR
 .br
 Autolayout. If current window is tiled: floating
@@ -101,20 +126,6 @@ containers. The window will be placed in a hidden
 container. If no containers exist, container
 'A'will be created and the window will be put
 there.
-
-.PP
-\fB\fC\-\-target\fR|\fB\fC\-t\fR CRITERION
-.br
-Criteria is a string passed to i3list to use a
-different target then active window.
-
-.PP
-Example:
-.br
-\fB\fC$ i3fyra \-\-move B \-\-target "\-i sublime\_text"\fR
-this will target the first found window with the
-instance name \fIsublime\_text\fP\&. See i3list(1), for
-all available options.
 
 .PP
 \fB\fC\-\-hide\fR|\fB\fC\-z\fR CONTAINER
@@ -244,7 +255,7 @@ to A. defaults to: A
 .br
 Workspace to use for i3fyra. If not set, the firs
 workspace that request to create the layout will
-be used. defaults to: 1
+be used. defaults to:
 
 .PP
 \fB\fCI3FYRA\_ORIENTATION\fR
@@ -265,4 +276,4 @@ budRich https://github.com/budlabs/i3ass
 
 .SH SEE ALSO
 .PP
-i3(1), i3list(1), i3gw(1), i3var(1), i3viswiz(1),
+i3(1), i3list(1), i3viswiz(1),

@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3menu - version: 0.026
-updated: 2020-01-26 by budRich
+i3menu - version: 0.064
+updated: 2020-08-10 by budRich
 EOB
 }
 
@@ -16,7 +16,7 @@ EOB
 
 main(){
 
-  local listopts
+  declare -a listopts
 
   # globals
   __cmd="rofi -theme <(themefile) "
@@ -25,9 +25,8 @@ main(){
   : "${__o[include]:=pel}"
 
   # options to pass to i3list via --target optiob
-  listopts=()
-  [[ -n "${__o[target]:-}" ]] \
-    && listopts=(${__o[target]:-})
+  [[ -n "${__o[target]}" ]] \
+    && mapfile -td $'\n\s' listopts <<< "${__o[target]}"
 
   declare -A i3list
   eval "$(i3list "${listopts[@]}")"
@@ -46,6 +45,9 @@ main(){
   else
     __list=nolist
   fi
+
+  [[ ${__o[layout]} =~ A|B|C|D ]] \
+    && __o[layout]=$(getvirtualpos "${__o[layout]}")
 
   setgeometry "${__o[layout]:-default}"
   setincludes
@@ -70,6 +72,7 @@ main(){
     '
   fi | eval "${__cmd} ${__opts}"
 }
+
 
 ___printhelp(){
   
@@ -109,6 +112,7 @@ default to a single line (dmenu like) menu at the
 top of the screen. If however a value to this
 option is one of the following:  
 
+
 | LAYOUT     | menu location and dimensions 
 |:-----------|:---------------
 | mouse      | At the mouse position (requires xdotool)
@@ -116,7 +120,6 @@ option is one of the following:
 | titlebar   | The titlebar of the currently active window.
 | tab        | The tab (or titlebar if it isn't tabbed) of the currently active window.
 | A,B,C or D | The i3fyra container of the same name if it is visible. If target container isn't visible the menu will be displayed at the default location.
-
 
 titlebar and tab LAYOUT will be displayed as a
 single line (dmenu like) menu, and the other
@@ -140,12 +143,12 @@ INCLUDESTRING can be set to force which elements
 of the menu to include. INCLUDESTRING can be one
 or more of the following character:  
 
+
 | char | element  |
 |:-----|:---------|
 |p | prompt   |
 |e | entrybox |
 |l | list     |
-
 
 echo "list" | i3menu --include le --prompt "enter
 a value: "  
@@ -544,26 +547,44 @@ ERM(){ >&2 echo "$*"; }
 ERR(){ >&2 echo "[WARNING]" "$*"; }
 ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
 
-defaultoffset(){
-  __xpos=0
-  __ypos=0
-  __o[xoffset]=0
-  __o[yoffset]=0
-  __o[width]="100%"
-  __height=20
-  __o[layout]=default
-  __orientation=horizontal
-  __anchor=1
+getvirtualpos() {
+
+  local target=$1
+
+  # block below sets "virtual" i3fyra position i3list[VPx]
+  [[ ${target:=${__o[layout]}} =~ A|B|C|D ]] && {
+    declare -i vpos
+    q=([0]=A [1]=B [2]=C [3]=D)
+    for k in "${!q[@]}"; do
+      vpos=${i3list[VP${q[$k]}]:=$k}
+      # if target=A , i3list[VPA]=2 -> target=@@2
+      (( k != vpos )) && [[ $target =~ ${q[k]} ]] \
+        && target=${target//${q[$k]}/@@$vpos}
+    done
+
+    [[ $target =~ @@ ]] && for k in "${!q[@]}"; do
+      # if k=2, target=@@2, q[2]=C -> target=C
+      target=${target//@@$k/${q[$k]}}
+    done
+  }
+
+  echo "$target"
 }
 
 setfallback(){
 
  __o[fallback]=""
 
+ declare -a opts
+ # using eval here to silence shellcheck
+ # $* (__o[fallback]) can look like this: 
+ # __o[fallback]='--layout D --fallback "--layout A"'
+ eval "opts=($*)"
+
  eval set -- "$(getopt --name "i3menu" \
    --options "a:i:t:x:y:w:o:p:f:" \
    --longoptions "theme:,layout:,include:,top:,xpos:,xoffset:,ypos:,yoffset:,width:,options:,prompt:,filter:,show:,modi:,target:,orientation:,anchor:,height:,fallback:" \
-   -- "$@"
+   -- "${opts[@]}"
  )"
 
  while true; do
@@ -591,7 +612,22 @@ setfallback(){
      *  ) break ;;
    esac
    shift
- done 
+ done
+
+ [[ ${__o[layout]} =~ A|B|C|D ]] \
+   && __o[layout]=$(getvirtualpos "${__o[layout]}")
+}
+
+defaultoffset(){
+  __xpos=0
+  __ypos=0
+  __o[xoffset]=0
+  __o[yoffset]=0
+  __o[width]="100%"
+  __height=20
+  __o[layout]=default
+  __orientation=horizontal
+  __anchor=1
 }
 
 setgeometry(){
@@ -633,7 +669,7 @@ setgeometry(){
     defaultoffset
     if [[ -n ${__o[fallback]:-} ]]; then
       __layout=fallback
-      eval setfallback ${__o[fallback]}
+      setfallback "${__o[fallback]}"
       setgeometry "${__o[layout]:-default}"
       return
     else
@@ -646,7 +682,7 @@ setgeometry(){
     defaultoffset
     if [[ -n ${__o[fallback]:-} ]]; then
       __layout=fallback
-      eval setfallback ${__o[fallback]}
+      setfallback "${__o[fallback]}"
       setgeometry "${__o[layout]:-default}"
       return
     else
@@ -659,7 +695,7 @@ setgeometry(){
     defaultoffset
     if [[ -n ${__o[fallback]:-} ]]; then
       __layout=fallback
-      eval setfallback ${__o[fallback]}
+      setfallback "${__o[fallback]}"
       setgeometry "${__o[layout]:-default}"
       return
     else
@@ -775,7 +811,7 @@ setgeometry(){
     fi
   }
 
-  ((__height<20)) && __height=20
+  ((${__height%px}<20)) && __height=20
   [[ -n ${__o[height]} ]] && __height="${__o[height]}"
 
   [[ -n ${__o[ypos]:-} ]] && __ypos=${__o[ypos]}
