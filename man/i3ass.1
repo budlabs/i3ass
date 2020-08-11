@@ -1,5 +1,5 @@
 .nh
-.TH I3ASS 1 2020\-01\-26 Linux "User Manuals"
+.TH I3ASS 1 2020\-08\-11 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3ass\fR \- i3 assistance scripts
@@ -14,8 +14,7 @@ arbe
 .RS
 
 .nf
-i3flip DIRECTION
-i3flip \-\-move|\-m **DIRECTION**
+i3flip [\-\-move|\-m] [\-\-json JSON] [\-\-verbose] [\-\-dryrun] DIRECTION
 i3flip \-\-help|\-h
 i3flip \-\-version|\-v
 
@@ -28,7 +27,7 @@ i3flip \-\-version|\-v
 parent. Perfect for tabbed or stacked layout, but
 works on all layouts. If direction is \fB\fCnext\fR and
 the active container is the last, the first
-container will be activated.
+container will get focused.
 
 .PP
 \fBDIRECTION\fP can be either \fIprev\fP or \fInext\fP,
@@ -43,7 +42,24 @@ which can be defined with different words:
 .PP
 \fB\fC\-\-move\fR|\fB\fC\-m\fR
 .br
-Move the current tab instead of changing focus.
+Move the current container instead of changing
+focus.
+
+.PP
+\fB\fC\-\-json\fR JSON
+.br
+use JSON instead of output from  \fB\fCi3\-msg \-t
+get\_tree\fR
+
+.PP
+\fB\fC\-\-verbose\fR
+.br
+Print more information to \fBstderr\fP\&.
+
+.PP
+\fB\fC\-\-dryrun\fR
+.br
+Don't execute any \fIi3 commands\fP\&.
 
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
@@ -72,7 +88,7 @@ bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
 
 .SH DEPENDENCIES
 .PP
-\fB\fCi3\fR \fB\fCgawk\fR
+\fB\fCi3\fR \fB\fCi3viswiz\fR
 
 
 .SH \fB\fCi3fyra\fR \- An advanced, simple grid\-based tiling layout
@@ -81,11 +97,11 @@ bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
 .RS
 
 .nf
-i3fyra \-\-show|\-s CONTAINER
-i3fyra \-\-float|\-a [\-\-target|\-t CRITERION]
-i3fyra \-\-hide|\-z CONTAINER
-i3fyra \-\-layout|\-l LAYOUT
-i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-speed|\-p INT]  [\-\-target|\-t CRITERION]
+i3fyra \-\-show|\-s CONTAINER [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-float|\-a [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-hide|\-z CONTAINER [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-layout|\-l LAYOUT [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-force|\-f] [\-\-speed|\-p INT] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
 i3fyra \-\-help|\-h
 i3fyra \-\-version|\-v
 
@@ -163,6 +179,31 @@ will be created and current window will be put in
 it. If it is visible, nothing happens.
 
 .PP
+\fB\fC\-\-force\fR|\fB\fC\-f\fR
+.br
+If set virtual positions will be ignored.
+
+.PP
+\fB\fC\-\-array\fR ARRAY
+.br
+ARRAY should be the output of \fB\fCi3list\fR\&. It is
+used to improve speed when \fBi3fyra\fP is executed
+from a script that already have the array, f.i.
+\fBi3run\fP and \fBi3Kornhe\fP\&.
+
+.PP
+\fB\fC\-\-verbose\fR
+.br
+If set information about execution will be
+printed to \fBstderr\fP\&.
+
+.PP
+\fB\fC\-\-dryrun\fR
+.br
+If set no window manipulation will be done during
+execution.
+
+.PP
 \fB\fC\-\-float\fR|\fB\fC\-a\fR
 .br
 Autolayout. If current window is tiled: floating
@@ -172,20 +213,6 @@ containers. The window will be placed in a hidden
 container. If no containers exist, container
 'A'will be created and the window will be put
 there.
-
-.PP
-\fB\fC\-\-target\fR|\fB\fC\-t\fR CRITERION
-.br
-Criteria is a string passed to i3list to use a
-different target then active window.
-
-.PP
-Example:
-.br
-\fB\fC$ i3fyra \-\-move B \-\-target "\-i sublime\_text"\fR
-this will target the first found window with the
-instance name \fIsublime\_text\fP\&. See i3list(1), for
-all available options.
 
 .PP
 \fB\fC\-\-hide\fR|\fB\fC\-z\fR CONTAINER
@@ -315,7 +342,7 @@ to A. defaults to: A
 .br
 Workspace to use for i3fyra. If not set, the firs
 workspace that request to create the layout will
-be used. defaults to: 1
+be used. defaults to:
 
 .PP
 \fB\fCI3FYRA\_ORIENTATION\fR
@@ -331,13 +358,13 @@ split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and
 \fB\fCi3viswiz\fR
 
 
-.SH \fB\fCi3get\fR \- Boilerplate and template maker for bash scripts
+.SH \fB\fCi3get\fR \- prints info about a specific window to stdout
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3get [\-\-class|\-c CLASS] [\-\-instance|\-i INSTANCE] [\-\-title|\-t TITLE] [\-\-conid|\-n CON\_ID] [\-\-winid|\-d WIN\_ID] [\-\-mark|\-m MARK] [\-\-titleformat|\-o TITLE\_FORMAT] [\-\-active|\-a] [\-\-synk|\-y] [\-\-print|\-r OUTPUT]      
+i3get [\-\-class|\-c CLASS] [\-\-instance|\-i INSTANCE] [\-\-title|\-t TITLE] [\-\-conid|\-n CON\_ID] [\-\-id|\-d WIN\_ID] [\-\-mark|\-m MARK] [\-\-titleformat|\-o TITLE\_FORMAT] [\-\-active|\-a] [\-\-synk|\-y] [\-\-print|\-r OUTPUT] [\-\-json TREE]      
 i3get \-\-help|\-h
 i3get \-\-version|\-v
 
@@ -348,7 +375,7 @@ i3get \-\-version|\-v
 .PP
 Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t
 get\_tree\fR, return desired information. If no
-arguments are passed. \fB\fCcon\_id\fR of acitve window is
+arguments are passed, \fB\fCcon\_id\fR of active window is
 returned. If there is more then one criterion, all
 of them must be true to get results.
 
@@ -374,7 +401,7 @@ Search for windows with title.
 Search for windows with the given con\_id
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR WIN\_ID
+\fB\fC\-\-id\fR|\fB\fC\-d\fR WIN\_ID
 .br
 Search for windows with the given window id
 
@@ -398,7 +425,7 @@ Currently active window (default)
 .br
 Synch on. If this option is included,  script
 will wait till target window exist. (\fIor timeout
-after 10 seconds\fP).
+after 60 seconds\fP).
 
 .PP
 \fB\fC\-\-print\fR|\fB\fC\-r\fR OUTPUT
@@ -408,21 +435,54 @@ characters:
 
 .TS
 allbox;
-l l 
-l l .
-\fB\fCcharacter\fR	\fB\fCprint\fR
-\fB\fCt\fR	title
-\fB\fCc\fR	class
-\fB\fCi\fR	instance
-\fB\fCd\fR	Window ID
-\fB\fCn\fR	Con\_Id (default)
-\fB\fCm\fR	mark
-\fB\fCw\fR	workspace
-\fB\fCa\fR	is active
-\fB\fCf\fR	floating state
-\fB\fCo\fR	title format
-\fB\fCv\fR	visible state
+l l l 
+l l l .
+\fB\fCcharacter\fR	\fB\fCprint\fR	\fB\fCreturn\fR
+\fB\fCt\fR	title	string
+\fB\fCc\fR	class	string
+\fB\fCi\fR	instance	string
+\fB\fCd\fR	Window ID	INT
+\fB\fCn\fR	Con\_Id (default)	INT
+\fB\fCm\fR	mark	JSON list
+\fB\fCw\fR	workspace	INT
+\fB\fCa\fR	is active	true or false
+\fB\fCf\fR	floating state	string
+\fB\fCo\fR	title format	string
+\fB\fCe\fR	fullscreen	1 or 0
+\fB\fCs\fR	sticky	true or false
+\fB\fCu\fR	urgent	true or false
 .TE
+
+.PP
+Each character in OUTPUT will be tested and the
+return value will be printed on a new line. If no
+value is found, \fB\fC\-\-i3get could not find:
+CHARACTER\fR will get printed.
+
+.PP
+In the example below, the target window did not
+have a mark:
+
+.PP
+.RS
+
+.nf
+$ i3get \-r tfcmw
+/dev/pts/9
+user\_off
+URxvt
+\-\-i3get could not find: m
+1
+
+.fi
+.RE
+
+.PP
+\fB\fC\-\-json\fR TREE
+.br
+Use TREE instead of the output of
+.br
+\fB\fCi3\-msg \-t get\_tree\fR
 
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
@@ -444,7 +504,7 @@ floating state.
 .RS
 
 .nf
-$ i3get \-\-instance sublime\_text \-r wtf 
+$ i3get \-\-instance sublime\_text \-\-print wtf 
 1
 \~/src/bash/i3ass/i3get (i3ass) \- Sublime Text
 user\_off
@@ -454,7 +514,7 @@ user\_off
 
 .SH DEPENDENCIES
 .PP
-\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR
+\fB\fCbash\fR \fB\fCi3\fR
 
 
 .SH \fB\fCi3gw\fR \- a ghost window wrapper for i3wm
@@ -809,12 +869,13 @@ Right	grow width
 .RS
 
 .nf
-i3list \-\-instance|\-i TARGET
-i3list \-\-class|\-c    TARGET
-i3list \-\-conid|\-n    TARGET
-i3list \-\-winid|\-d    TARGET
-i3list \-\-mark|\-m     TARGET
-i3list \-\-title|\-t    TARGET
+i3list [\-\-json JSON]
+i3list \-\-instance|\-i TARGET [\-\-json JSON]
+i3list \-\-class|\-c    TARGET [\-\-json JSON]
+i3list \-\-conid|\-n    TARGET [\-\-json JSON]
+i3list \-\-winid|\-d    TARGET [\-\-json JSON]
+i3list \-\-mark|\-m     TARGET [\-\-json JSON]
+i3list \-\-title|\-t    TARGET [\-\-json JSON]
 i3list \-\-help|\-h
 i3list \-\-version|\-v
 
@@ -837,6 +898,12 @@ array in bash scripts,  but the array needs to be
 declared first.
 
 .SH OPTIONS
+.PP
+\fB\fC\-\-json\fR JSON
+.br
+use JSON instead of output from  \fB\fCi3\-msg \-t
+get\_tree\fR
+
 .PP
 \fB\fC\-\-instance\fR|\fB\fC\-i\fR TARGET
 .br
@@ -1415,7 +1482,7 @@ options\fP\&.  It is also important that \fICOMMAND\fP
 \fBwill spawn a window matching the criteria\fP,
 otherwise the script will get stuck in a loop
 waiting for the window to appear. (\fIit will stop
-waiting for the window to appear after 10
+waiting for the window to appear after 60
 seconds\fP)
 
 .SH OPTIONS
@@ -1582,13 +1649,13 @@ Show version and exit.
 .RS
 
 .nf
-i3viswiz [\-\-gap|\-g GAPSIZE] **DIRECTION**
-i3viswiz [\-\-focus|\-f] \-\-title|\-t       [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-instance|\-i    [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-class|\-c       [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-titleformat|\-o [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-winid|\-d       [TARGET]
-i3viswiz [\-\-focus|\-f] \-\-parent|\-p      [TARGET]
+i3viswiz [\-\-gap|\-g GAPSIZE] DIRECTION  [\-\-json JSON]
+i3viswiz \-\-title|\-t       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-instance|\-i    [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-class|\-c       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-titleformat|\-o [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-winid|\-d       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
+i3viswiz \-\-parent|\-p      [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] [\-\-json JSON]
 i3viswiz \-\-help|\-h
 i3viswiz \-\-version|\-v
 
@@ -1609,11 +1676,26 @@ there are no windows in the given direction.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-gap\fR|\fB\fC\-g\fR GAPSIZE
+\fB\fC\-\-gap\fR|\fB\fC\-g\fR TARGET
 .br
 Set GAPSIZE (defaults to 5). GAPSIZE is the
 distance in pixels from the current window where
 new focus will be searched.
+
+.PP
+\fB\fC\-\-json\fR JSON
+.br
+use JSON instead of output from  \fB\fCi3\-msg \-t
+get\_tree\fR
+
+.PP
+\fB\fC\-\-title\fR|\fB\fC\-t\fR
+.br
+If \fBTARGET\fP matches the \fBTITLE\fP of a visible
+window, that windows  \fBCON\_ID\fP will get printed
+to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
+of all tiled windows will get printed with
+\fBTITLE\fP as the last field of each row.
 
 .PP
 \fB\fC\-\-focus\fR|\fB\fC\-f\fR
@@ -1624,16 +1706,7 @@ When used in conjunction with: \fB\fC\-\-titleformat\fR,
 will get focused if it is visible.
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR [TARGET]
-.br
-If \fBTARGET\fP matches the \fBTITLE\fP of a visible
-window, that windows  \fBCON\_ID\fP will get printed
-to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
-of all tiled windows will get printed with
-\fBTITLE\fP as the last field of each row.
-
-.PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR [TARGET]
+\fB\fC\-\-instance\fR|\fB\fC\-i\fR
 .br
 If \fBTARGET\fP matches the \fBINSTANCE\fP of a
 visible window, that windows  \fBCON\_ID\fP will get
@@ -1643,7 +1716,7 @@ printed with  \fBINSTANCE\fP as the last field of
 each row.
 
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR [TARGET]
+\fB\fC\-\-class\fR|\fB\fC\-c\fR
 .br
 If \fBTARGET\fP matches the \fBCLASS\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
@@ -1652,7 +1725,7 @@ of all tiled windows will get printed with
 \fBCLASS\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR [TARGET]
+\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR
 .br
 If \fBTARGET\fP matches the \fBTITLE\_FORMAT\fP of a
 visible window, that windows  \fBCON\_ID\fP will get
@@ -1662,7 +1735,7 @@ printed with  \fBTITLE\_FORMAT\fP as the last field
 of each row.
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR [TARGET]
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR
 .br
 If \fBTARGET\fP matches the \fBWIN\_ID\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
@@ -1671,7 +1744,7 @@ of all tiled windows will get printed with
 \fBWIN\_ID\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-parent\fR|\fB\fC\-p\fR [TARGET]
+\fB\fC\-\-parent\fR|\fB\fC\-p\fR
 .br
 If \fBTARGET\fP matches the \fBPARENT\fP of a visible
 window, that windows  \fBCON\_ID\fP will get printed
@@ -1702,7 +1775,7 @@ Normal binding:
 bindsym Mod4+Shift+Left   focus left
 
 Wizzy binding:
-bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz l 
+bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz left
 
 .fi
 .RE
@@ -1714,15 +1787,26 @@ example output:
 .RS
 
 .nf
-$ i3viswiz \-o \-g 20 down
-target\_con\_id: 94851559487504
-tx: 582 ty: 470 wall: none
+$ i3viswiz \-\-class \-\-gap 20 down
+trgcon=94125805431344 trgx=1329 trgy=828 wall=none trgpar=C sx=0 sy=0 sw=1920 sh=1080 groupsize=3 grouppos=3 firstingroup=94125805065424 lastingroup=94125805553936 grouplayout="tabbed" groupid=94125805519264 gap=5
 * 94851560291216 x: 0     y: 0     w: 1165  h: 450   | URxvt
 \- 94851559487504 x: 0     y: 451   w: 1165  h: 448   | sublime
 \- 94851560318768 x: 1166  y: 0     w: 433   h: 899   | bin
 
 .fi
 .RE
+
+.PP
+If \fB\fC\-\-class , \-\-instance, \-\-title, \-\-titleformat,
+\-\-winid or \-\-parent\fR is used together with a
+
+.PP
+DIRECTION. i3viswiz will print this output, with
+the type in the last column of the table (class in
+the example above). The first line contains a lot
+of useful pseudo variables that is used by other
+scripts in \fBi3ass\fP  \fB\fCeval "$(i3viswiz \-p d)" ;
+echo "$groupsize"\fR
 
 .SH DEPENDENCIES
 .PP

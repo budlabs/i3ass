@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.044
-updated: 2020-01-26 by budRich
+i3run - version: 0.089
+updated: 2020-08-10 by budRich
 EOB
 }
 
@@ -12,24 +12,22 @@ EOB
 
 main(){
 
-  if [[ -n ${__o[instance]:-} ]]; then
-    acri=("-i" "${__o[instance]}")
-  elif [[ -n ${__o[class]:-} ]]; then
-    acri=("-c" "${__o[class]}")
-  elif [[ -n ${__o[title]:-} ]]; then
-    acri=("-t" "${__o[title]}")
-  elif [[ -n ${__o[conid]:-} ]]; then
-    acri=("-n" "${__o[conid]}")
-  else
-    ___printhelp
-    ERX "please specify a criteria"
-  fi
-
+  declare -a acri   # options passed to i3list
   declare -A i3list # globals array
-  eval "$(i3list "${acri[@]}")"
+
+  for k in instance class title conid ; do
+    [[ -n ${__o[$k]} ]] \
+      && acri=("--$k" "${__o[$k]}") && break
+  done ; unset k
+
+  [[ -z ${acri[*]} ]] \
+    && ERH "please specify a criteria"
+
+  _array=$(i3list "${acri[@]}")
+  eval "$_array"
 
   # if window doesn't exist, launch the command.
-  if [[ -z ${i3list[TWC]:-} ]]; then
+  if [[ -z ${i3list[TWC]} ]]; then
     launchcommand
   else
     focuswindow
@@ -133,85 +131,102 @@ EOB
 }
 
 
-ERM(){ >&2 echo "$*"; }
-ERR(){ >&2 echo "[WARNING]" "$*"; }
-ERX(){ >&2 echo "[ERROR]" "$*" && exit 1 ; }
+set -E
+trap '[ "$?" -ne 98 ] || exit 98' ERR
+
+ERX() { >&2 echo  "[ERROR] $*" ; exit 98 ;}
+ERR() { >&2 echo  "[WARNING] $*"  ;}
+ERM() { >&2 echo  "$*"  ;}
+ERH(){
+  ___printhelp >&2
+  [[ -n "$*" ]] && printf '\n%s\n' "$*" >&2
+  exit 98
+}
 
 focuswindow(){
-  local forcing
 
-  forcing=$((__o[FORCE] == 1 ? 2 : __o[force] == 1 ? 1 : 0 ))
+  declare -i forcing hvar
 
+  forcing=$((__o[FORCE]?2:__o[force]?1:0))
+  
   # if target window is active (current), 
-  # send it to the scratchpad
-  if [[ ${i3list[AWC]} = "${i3list[TWC]}" ]]; then
+  if ((i3list[AWC] == i3list[TWC])); then
     
-    if ((${__o[nohide]:-0}!=1)); then
-
+    # send it to the scratchpad
+    if ((!__o[nohide])); then
       if [[ -z ${i3list[TWP]} ]]; then
         # keep floating state in a var
-        i3var set "hidden${i3list[TWC]}" "${i3list[TWF]}"
         i3-msg -q "[con_id=${i3list[TWC]}]" move scratchpad
+        i3var set "hidden${i3list[TWC]}" "${i3list[TWF]}"
       else
         # if it is handled by i3fyra and active
         # hide the container
-        i3fyra -z "${i3list[TWP]}"
+        i3fyra --force --hide "${i3list[TWP]}" --array "$_array"
       fi
 
      ((forcing == 2)) && [[ -n ${__o[command]} ]] \
        && eval "${__o[command]}" > /dev/null 2>&1 & 
+
     else
+
      ((forcing > 0)) && [[ -n ${__o[command]} ]] \
        && eval "${__o[command]}" > /dev/null 2>&1 &  
     fi
 
-  # else focus target window.
-  else
-    : "${hvar:=$(i3var get "hidden${i3list[TWC]}")}"
+  else # focus target window.
+    # hvar can contain floating state of target
+    hvar=$(i3var get "hidden${i3list[TWC]}")
     if [[ -n $hvar ]]; then
+      # windows need to be floating on scratchpad
+      # so to "restore" a tiling window we do this
       ((hvar == 1)) && fs=enable || fs=disable
       # clear the variable
       i3var set "hidden${i3list[TWC]}"
     else
       ((i3list[TWF] == 1)) && fs=enable || fs=disable
     fi
-    # window is not handled by i3fyra and not active
+    # target is not handled by i3fyra and not active
+    # TWP - target window parent container name
     if [[ -z ${i3list[TWP]} ]]; then
-      if [[ ${i3list[WSA]} != "${i3list[WST]}" ]]; then
-        if [[ ${i3list[WST]} = "-1" ]] || ((${__o[summon]:-0}==1)); then
-          i3-msg -q "[con_id=${i3list[TWC]}]" \
+
+      # target is not on active workspace
+      if ((i3list[WSA] != i3list[WST])); then
+        # WST == -1 , target window is on scratchpad
+        if ((i3list[WST] == -1 || __o[summon])); then
+          i3-msg -q "[con_id=${i3list[TWC]}]"   \
             move to workspace "${i3list[WAN]}", \
             floating $fs
-            i3-msg -q "[con_id=${i3list[TWC]}]" focus
-            ((i3list[TWF] == 1)) && ((${__o[mouse]:-0}==1)) \
-              && sendtomouse
+            ((i3list[TWF] && __o[mouse])) && sendtomouse
         else
           i3-msg -q workspace "${i3list[WTN]}"
         fi
         
       fi
-    else
-      # window is handled by i3fyra and not active
-      if [[ ${i3list[WSA]} != "${i3list[WST]}" ]]; then
-        # window is not on current ws
-        if [[ ${i3list[WSF]} = "${i3list[WSA]}" ]]; then
-          # current ws is i3fyra WS
+    else # window is handled by i3fyra and not active
+
+      # window is not on current ws
+      if ((i3list[WSA] != i3list[WST])); then
+
+        # current ws is i3fyra WS
+        if ((i3list[WSF] == i3list[WSA])); then
+          # target window is in a hidden (LHI) container
           [[ ${i3list[TWP]} =~ [${i3list[LHI]}] ]] \
-            && i3fyra -s "${i3list[TWP]}"
-        else
-          # current ws is not i3fyra WS
-          if [[ ${i3list[WST]} = "-1" ]] || ((${__o[summon]:-0}==1)); then
+            && i3fyra --force --show "${i3list[TWP]}" --array "$_array"
+
+        else # current ws is not i3fyra WS
+          # WST == -1 , target window is on scratchpad
+          if ((i3list[WST] == -1 || __o[summon])); then
             i3-msg -q "[con_id=${i3list[TWC]}]" \
               move to workspace "${i3list[WAN]}", floating $fs
-              i3-msg -q "[con_id=${i3list[TWC]}]" focus
-              ((i3list[TWF] == 1)) && ((${__o[mouse]:-0}==1)) \
-                && sendtomouse
-          else
+              ((i3list[TWF] && __o[mouse])) && sendtomouse
+          else # got to target windows workspace
+            # WTN == name (string) of workspace
             i3-msg -q workspace "${i3list[WTN]}"
           fi
         fi
       fi
     fi
+
     i3-msg -q "[con_id=${i3list[TWC]}]" focus
 
    ((forcing > 0)) && [[ -n ${__o[command]} ]] \
@@ -223,70 +238,81 @@ focuswindow(){
 
 launchcommand(){
 
-  [[ -z ${__o[command]:-} ]] && exit 1
+  [[ -z ${__o[command]} ]] && ERX i3run no command, no action
   
   eval "${__o[command]}" > /dev/null 2>&1 &
 
+  declare -a xdtopt # options passed to xdotool
+
+  unset 'i3list[TWC]'
+
   [[ -n ${__o[rename]} ]] && {
 
-    [[ ${acri[0]} = '-c' ]] && xdtopt=("--class")
-    [[ ${acri[0]} = '-i' ]] && xdtopt=("--classname")
-    [[ ${acri[0]} = '-t' ]] && xdtopt=("--name")
+    [[ ${acri[0]} = '--class'    ]] && xdtopt=("--class")
+    [[ ${acri[0]} = '--instance' ]] && xdtopt=("--classname")
+    [[ ${acri[0]} = '--title   ' ]] && xdtopt=("--name")
 
     xdtopt+=("${acri[1]}")
 
-    xdotool set_window "${xdtopt[@]}" "$(i3get "${acri[0]}" "${__o[rename]}" -r d -y)"
+    xdotool set_window "${xdtopt[@]}" \
+      "${i3list[TWC]:=$(i3get "${acri[0]}" "${__o[rename]}" -r d -y)}"
   }
-
-  i3list[TWC]=$(i3get -y "${acri[@]}")
   
-  ((i3list[TWF] == 1)) && ((${__o[mouse]:-0} == 1)) && {
-    eval "$(i3list "${acri[@]}")"
-    sendtomouse
-  }
+  : "${i3list[TWC]:=$(i3get -y "${acri[@]}")}"
+  
+  ((__o[mouse])) && sendtomouse
 
-  sleep .2
   i3-msg -q "[con_id=${i3list[TWC]}]" focus
   echo "${i3list[TWC]}"
 }
 
 sendtomouse(){
-  local X Y newy newx tmpx tmpy
+  declare -i X Y newy newx tmpx tmpy breakx breaky
 
-  local breaky=$((i3list[WAH]-(I3RUN_BOTTOM_GAP+i3list[TWH])))
-  local breakx=$((i3list[WAW]-(I3RUN_RIGHT_GAP+i3list[TWW])))
+  eval "$(i3list "${acri[@]}")"
 
-  eval "$(xdotool getmouselocation --shell)"
+  i3-msg -q "[con_id=${i3list[TWC]}]" focus
 
-  local tmpy=$((Y-(i3list[TWH]/2)))
-  local tmpx=$((X-(i3list[TWW]/2)))
-  
+  ((i3list[TWF])) && {
+    breaky=$((i3list[WAH]-(I3RUN_BOTTOM_GAP+i3list[TWH])))
+    breakx=$((i3list[WAW]-(I3RUN_RIGHT_GAP+i3list[TWW])))
 
-  ((Y>(i3list[WAH]/2))) \
-    && newy=$((tmpy>breaky
-            ? breaky
-            : tmpy)) \
-    || newy=$((tmpy<I3RUN_TOP_GAP
-            ? I3RUN_TOP_GAP
-            : tmpy))
+    eval "$(xdotool getmouselocation --shell)"
 
-  ((X<(i3list[WAW]/2))) \
-    && newx=$((tmpx<I3RUN_LEFT_GAP 
-            ? I3RUN_LEFT_GAP 
-            : tmpx)) \
-    || newx=$((tmpx>breakx
-            ? breakx 
-            : tmpx))
+    tmpy=$((Y-(i3list[TWH]/2)))
+    tmpx=$((X-(i3list[TWW]/2))) 
 
-  ((i3list[TWF] == 1)) \
-    && i3-msg "[con_id=${i3list[TWC]}]" move absolute position $newx $newy
+    ((Y>(i3list[WAH]/2))) \
+      && newy=$((tmpy>breaky
+              ? breaky
+              : tmpy)) \
+      || newy=$((tmpy<I3RUN_TOP_GAP
+              ? I3RUN_TOP_GAP
+              : tmpy))
+
+    ((X<(i3list[WAW]/2))) \
+      && newx=$((tmpx<I3RUN_LEFT_GAP 
+              ? I3RUN_LEFT_GAP 
+              : tmpx)) \
+      || newx=$((tmpx>breakx
+              ? breakx 
+              : tmpx))
+
+    i3-msg -q "[con_id=${i3list[TWC]}]" \
+      move absolute position $newx $newy
+  }
 }
+
 declare -A __o
-eval set -- "$(getopt --name "i3run" \
-  --options "i:sgmx:fFe:c:t:n:hv" \
-  --longoptions "instance:,summon,nohide,mouse,rename:,force,FORCE,command:,class:,title:,conid:,help,version," \
-  -- "$@"
+options="$(
+  getopt --name "[ERROR]:i3run" \
+    --options "i:sgmx:fFe:c:t:n:hv" \
+    --longoptions "instance:,summon,nohide,mouse,rename:,force,FORCE,command:,class:,title:,conid:,help,version," \
+    -- "$@" || exit 98
 )"
+
+eval set -- "$options"
+unset options
 
 while true; do
   case "$1" in
@@ -301,27 +327,18 @@ while true; do
     --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --title      | -t ) __o[title]="${2:-}" ; shift ;;
     --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
-    --help       | -h ) __o[help]=1 ;; 
-    --version    | -v ) __o[version]=1 ;; 
+    --help       | -h ) ___printhelp && exit ;;
+    --version    | -v ) ___printversion && exit ;;
     -- ) shift ; break ;;
     *  ) break ;;
   esac
   shift
 done
 
-if [[ ${__o[help]:-} = 1 ]]; then
-  ___printhelp
-  exit
-elif [[ ${__o[version]:-} = 1 ]]; then
-  ___printversion
-  exit
-fi
-
 [[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
-  && __lastarg="" \
-  || true
+  && __lastarg="" 
 
 
-main "${@:-}"
+main "${@}"
 
 
