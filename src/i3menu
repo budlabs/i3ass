@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3menu - version: 0.064
-updated: 2020-08-10 by budRich
+i3menu - version: 0.1
+updated: 2021-05-28 by budRich
 EOB
 }
 
@@ -16,61 +16,60 @@ EOB
 
 main(){
 
-  declare -a listopts
+  
+  # __o[verbose]=1
 
-  # globals
-  __cmd="rofi -theme <(themefile) "
+  ((__o[verbose])) && {
+    declare -gi _stamp
+    _stamp=$(date +%s%N)
+    ERM $'\n'"---i3menu start---"
+  }
+
+  _menu_command="
+    rofi -theme <(themefile)
+    ${__o[options]:+${__o[options]}}
+    ${__o[filter]:+-filter \"${__o[filter]}\"}
+    ${__o[show]:+-show \"${__o[show]}\"}
+    ${__o[modi]:+-modi \"${__o[modi]}\"}
+    ${__o[prompt]:+-p \"${__o[prompt]} \"}
+  "
+
+  _menu_command=${_menu_command//$'\n'/ }
+
+  [[ -n ${__o[modi]}${__o[show]} ]] || {
+
+    _menu_command+="-dmenu "
+
+    # if we have stuff on stdin, put
+    # that in a tempfile that way we can do stuff ( wc in setincludes() )
+    # without worrying that we close and lose whats in stdin
+    [[ ! -t 0 ]] && {
+      _tmp_list_file=$(mktemp)
+      trap 'rm "$_tmp_list_file"' EXIT INT
+      cp /dev/stdin "$_tmp_list_file"
+    }
+  }
 
   # default includes
   : "${__o[include]:=pel}"
 
-  # options to pass to i3list via --target optiob
-  [[ -n "${__o[target]}" ]] \
-    && mapfile -td $'\n\s' listopts <<< "${__o[target]}"
-
   declare -A i3list
-  eval "$(i3list "${listopts[@]}")"
+  eval "$(eval i3list "${__o[target]}")"
 
-  [[ -n ${__o[options]} ]] && __opts+=" ${__o[options]}"
-  [[ -n ${__o[filter]} ]] && __cmd+="-filter '${__o[filter]}' "
-  
-  [[ -n ${__o[show]} ]] \
-    && __opts+=" -show '${__o[show]}'" && __nolist=1
-  [[ -n ${__o[modi]} ]] \
-    && __opts+=" -modi '${__o[modi]}'" && __nolist=1
-
-  if ((__nolist!=1)); then
-    __opts+=" -dmenu"
-    [[ -n $__stdin ]] && __list="${__stdin}"
-  else
-    __list=nolist
-  fi
-
-  [[ ${__o[layout]} =~ A|B|C|D ]] \
+  [[ ${__o[layout]} =~ ^[ABCD]$ ]] \
     && __o[layout]=$(getvirtualpos "${__o[layout]}")
 
   setgeometry "${__o[layout]:-default}"
   setincludes
 
-  if [[ -n $__list ]] && ((__nolist!=1));then
-    printf '%s\n' "${__o[top]:-}" "__START" "${__list}" | awk '
-    {
-      if (start==1) {
-        for (t in tops) {
-          if ($0==tops[t]){tfnd[NR]=$0;topa[t]=$0} 
-        }
-        if (tfnd[NR]!=$0) {lst[NR]=$0}
-      }
-      if ($0=="__START") {start=1}
-      if (start!=1) {tops[NR]=$0;nums++}
-    }
-
-    END {
-      for (f in topa){if (topa[f]){print topa[f]}}
-      for (l in lst){print lst[l]}
-    }
-    '
-  fi | eval "${__cmd} ${__opts}"
+  if [[ -f $_tmp_list_file && ${__o[top]} ]];then
+    awk -f <(topsort) "$_tmp_list_file"
+  elif [[ -f $_tmp_list_file ]]; then
+    cat "$_tmp_list_file"
+  fi | {
+    ((__o[verbose])) && verbose_outro
+    ((__o[dryrun]))  || eval "$_menu_command"
+  }
 }
 
 
@@ -82,9 +81,10 @@ i3menu - Adds more features to rofi when used in i3wm
 
 SYNOPSIS
 --------
-i3menu [--theme THEME] [--layout|-a LAYOUT] [--include|-i INCLUDESTRING] [--top|-t TOP] [--xpos|-x INT] [--xoffset INT] [--ypos|-y INT] [--yoffset INT] [--width|-w INT] [--options|-o OPTIONS] [--prompt|-p PROMPT]  [--filter|-f FILTER] [--show MODE] [--modi MODI] [--target TARGET] [--orientation ORIENTATION] [--anchor INT] [--height INT] [--fallback FALLBACK]
+i3menu [--theme THEME] [--layout|-a LAYOUT] [--include|-i INCLUDESTRING] [--top|-t TOP] [--xpos|-x INT] [--xoffset INT] [--ypos|-y INT] [--yoffset INT] [--width|-w INT] [--options|-o OPTIONS] [--prompt|-p PROMPT]  [--filter|-f FILTER] [--show MODE] [--modi MODI] [--target TARGET] [--orientation ORIENTATION] [--anchor INT] [--height INT] [--fallback FALLBACK] 
 i3menu --help|-h
 i3menu --version|-v
+i3menu [--verbose] [--dryrun]
 
 OPTIONS
 -------
@@ -323,6 +323,14 @@ menu with --layout window and last if no target
 window can be found, the menu will get displayed
 at the mouse pointer.
 
+#options-verbose-description
+
+Print additional information to STDERR
+
+#options-dryrun-description
+
+Do not execute any i3-msg commands
+
 
 --help|-h  
 Show help and exit.
@@ -330,45 +338,45 @@ Show help and exit.
 
 --version|-v  
 Show version and exit
+
+--verbose  
+
+--dryrun  
 EOB
 }
 
 
 adjustposition() {
-  local newy newx opty
+  declare -i newy newx opty
 
-  opty="${1:-0}"
+  declare -A geo
 
-  declare -A __menu
+  # xdotool --getwindowgeometry --shell ; example:
+  # WINDOW=6291526
+  # X=0
+  # Y=43
+  # WIDTH=1568
+  # HEIGHT=171
+  # SCREEN=0
+  #
+  # AWK turns the output from: WINDOW=.. -> geo[WINDOW]=...
+  # before it's evaluated
 
   eval "$(xdotool search --sync --classname rofi getwindowgeometry --shell | \
-    awk -v FS='=' '{
-      printf("__menu[%s]=%s\n",$1,$2)
-    }'
+    awk '{printf("geo[%s]=%s\n",$1,$2)}' FS='='
   )"
 
-  if ((__menu[X]<i3list[WAX])); then
-    newx="${i3list[WAX]}"
-  elif (((__menu[X]+__menu[WIDTH])>i3list[WAW])); then
-    newx="$((i3list[WAW]-__menu[WIDTH]))"
-  else
-    newx=${__menu[X]}
-  fi
+  opty=$(( ${1:-0} <= -0 ? i3list[WAH]-( (opty*-1)+geo[HEIGHT] ) : opty ))
 
+  newy=$(( opty < i3list[WAY] ? i3list[WAY] 
+         : opty+geo[HEIGHT] > i3list[WAH] ? i3list[WAH]-geo[HEIGHT] 
+         : opty ))
 
-  if ((opty<=-0)); then
-    opty=$((i3list[WAH]-((opty*-1)+__menu[HEIGHT])))
-  fi
+  newx=$(( geo[X] < i3list[WAX] ? i3list[WAX] 
+         : geo[X]+geo[WIDTH] > i3list[WAW] ? i3list[WAW]-geo[WIDTH] 
+         : geo[X] ))
 
-  if ((opty<i3list[WAY])); then
-    newy="${i3list[WAY]}"
-  elif (((opty+__menu[HEIGHT])>i3list[WAH])); then
-    newy="$((i3list[WAH]-__menu[HEIGHT]))"
-  else
-    newy="$opty"
-  fi
-
-  xdotool windowmove "${__menu[WINDOW]}" "$newx" "$newy"
+  xdotool windowmove "${geo[WINDOW]}" "$newx" "$newy"
 }
 
 createconf() {
@@ -376,83 +384,17 @@ local trgdir="$1"
 declare -a aconfdirs
 
 aconfdirs=(
-"$trgdir/themes"
 "$trgdir/base"
+"$trgdir/themes"
 )
 
 mkdir -p "${aconfdirs[@]}"
 
-cat << 'EOCONF' > "$trgdir/themes/default.rasi"
-*{
-  background-color:    @bg2;
-  border-color:        @bg2;
-  text-color:          @fg;
-  selbg:               @activebg;
-  selfg:               @activefg;
-  promptbg:            @bg2;
-  promptfg:            @activehl;
-  font:                @font1; 
-}
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/light.rasi"
-*{
-  background-color:    @light;
-  border-color:        @light;
-  text-color:          @dark;
-  selbg:               @dark;
-  selfg:               @light;
-  promptbg:            @dark;
-  promptfg:            @light;
-  font:                @font1; 
-}
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/red.rasi"
-*{
-  background-color:    @red;
-  border-color:        @red;
-  text-color:          @light;
-  selbg:               @dark;
-  selfg:               @light;
-  promptbg:            @light;
-  promptfg:            @red;
-  font:                @font1; 
-}
-
-
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/accent.rasi"
-*{
-  background-color:    @activebg;
-  border-color:        @activebg;
-  text-color:          @activehl;
-  selbg:               @activehl;
-  selfg:               @activebg;
-  promptbg:            @activehl;
-  promptfg:            @activebg;
-  font:                @font1; 
-}
-EOCONF
-
-cat << 'EOCONF' > "$trgdir/themes/dark.rasi"
-*{
-  background-color:    @dark;
-  border-color:        @dark;
-  text-color:          @light;
-  selbg:               @light;
-  selfg:               @dark;
-  promptbg:            @light;
-  promptfg:            @dark;
-  font:                @font1; 
-}
-EOCONF
-
 cat << 'EOCONF' > "$trgdir/base/i3menu.rasi"
 /**
-* Oneliner - by budRich 2018
-* Based on dmenu theme by Dave Davenport
+* i3menu rofi theme - by budRich 2018
+* derived from my old Oneliner.rasi
+* based on dmenu.rasi by Dave Davenport
 */
 
 #window {
@@ -536,9 +478,76 @@ cat << 'EOCONF' > "$trgdir/base/themevars.rasi"
   selectedfg:  #FFFFE8;
   selectedbg:  #8888c8;
 
-  font1: "FixedFixedsys 12";
+  font1: "monospace 12";
 }
 
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/default.rasi"
+*{
+  background-color:    @bg2;
+  border-color:        @bg2;
+  text-color:          @fg;
+  selbg:               @activebg;
+  selfg:               @activefg;
+  promptbg:            @bg2;
+  promptfg:            @activehl;
+  font:                @font1; 
+}
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/accent.rasi"
+*{
+  background-color:    @activebg;
+  border-color:        @activebg;
+  text-color:          @activehl;
+  selbg:               @activehl;
+  selfg:               @activebg;
+  promptbg:            @activehl;
+  promptfg:            @activebg;
+  font:                @font1; 
+}
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/red.rasi"
+*{
+  background-color:    @red;
+  border-color:        @red;
+  text-color:          @light;
+  selbg:               @dark;
+  selfg:               @light;
+  promptbg:            @light;
+  promptfg:            @red;
+  font:                @font1; 
+}
+
+
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/dark.rasi"
+*{
+  background-color:    @dark;
+  border-color:        @dark;
+  text-color:          @light;
+  selbg:               @light;
+  selfg:               @dark;
+  promptbg:            @light;
+  promptfg:            @dark;
+  font:                @font1; 
+}
+EOCONF
+
+cat << 'EOCONF' > "$trgdir/themes/light.rasi"
+*{
+  background-color:    @light;
+  border-color:        @light;
+  text-color:          @dark;
+  selbg:               @dark;
+  selfg:               @light;
+  promptbg:            @dark;
+  promptfg:            @light;
+  font:                @font1; 
+}
 EOCONF
 
 }
@@ -623,7 +632,7 @@ defaultoffset(){
   __ypos=0
   __o[xoffset]=0
   __o[yoffset]=0
-  __o[width]="100%"
+  __o[width]=${i3list[WAW]}
   __height=20
   __o[layout]=default
   __orientation=horizontal
@@ -634,38 +643,18 @@ setgeometry(){
 
   __layout="$1"
 
-  # i3list[TWB]=20               # Target Window titlebar height
-  # i3list[TWC]=94179890124352   # Target Window con_id
-  # i3list[TTW]=257              # Target Window tab width
-  # i3list[TTX]=0                # Target Window tab x postion
-  # i3list[TWH]=220              # Target Window height
-  # i3list[TWW]=514              # Target Window width
-  # i3list[TWX]=0                # Target Window x position
-  # i3list[TWY]=0                # Target Window y position
-  # i3list[CAL]=tabbed           # Container A Layout
-  # i3list[CBL]=tabbed           # Container B Layout
-  # i3list[SAB]=514              # Current split: AB
-  # i3list[SAC]=220              # Current split: AC
-  # i3list[SBD]=220              # Current split: BD
-  # i3list[SCD]=1080             # Current split: CD
-  # i3list[LVI]=CBA              # Visible i3fyra containers
-  # i3list[WAH]=1920             # Active Workspace height
-  # i3list[WAW]=1080             # Active Workspace width
-  # i3list[WAX]=0                # Active Workspace x position
-  # i3list[WAY]=0                # Active Workspace y position
-
   # default geometry
   : "${__xpos:=${__o[xpos]:-0}}"
   : "${__ypos:=${__o[ypos]:-0}}"
   : "${__o[xoffset]:=0}"
   : "${__o[yoffset]:=0}"
-  : "${__o[width]:="100%"}"
+  : "${__o[width]:=${i3list[WAW]}}"
   : "${__height:=${__o[height]:-${i3list[TWB]:-20}}}"
   : "${__o[anchor]:=1}"
   : "${__orientation:=horizontal}"
 
-  # if layout is window or container, but no list titlebar
-  [[ $__layout =~ A|B|C|D|window ]] && [[ -z ${__list:-} ]] && {
+  # if layout is window or container, but no list -> titlebar
+  [[ $__layout =~ A|B|C|D|window && ! -f $_tmp_list_file ]] && {
     defaultoffset
     if [[ -n ${__o[fallback]:-} ]]; then
       __layout=fallback
@@ -677,8 +666,8 @@ setgeometry(){
     fi
   }
 
-  # if layout is container but container is not visible
-  [[ $__layout =~ A|B|C|D ]] && [[ ! ${i3list[LVI]} =~ [${__o[layout]}] ]] && {
+  # if layout is container but container is not visible -> default
+  [[ $__layout =~ A|B|C|D ]] && [[ ! ${i3list[LVI]} =~ [${__layout}] ]] && {
     defaultoffset
     if [[ -n ${__o[fallback]:-} ]]; then
       __layout=fallback
@@ -690,7 +679,7 @@ setgeometry(){
     fi
   }
 
-  # if layout is window, tab or titlebar but no target window, default
+  # if layout is window, tab or titlebar but no target window -> default
   [[ $__layout =~ window|tab|titlebar ]] && [[ -z ${i3list[TWC]} ]] && {
     defaultoffset
     if [[ -n ${__o[fallback]:-} ]]; then
@@ -769,23 +758,32 @@ setgeometry(){
           __height=$((i3list[WAH]-__ypos))
         ;;
       esac
-      ((__height==0)) && __height="${i3list[WAH]}"
-      ((__o[width]==0)) && __o[width]="${i3list[WAW]}"
+
+      ((__height))   || __height="${i3list[WAH]}"
+      ((__o[width])) || __o[width]="${i3list[WAW]}"
       __orientation=vertical
       __o[orientation]=""
     ;;
 
     mouse )
-      declare -A __mouse
+
+      # xdotool getmouselocation --shell ; example:
+      # X=667
+      # Y=175
+      # SCREEN=0
+      # WINDOW=6291526
+      #
+      # AWK turns the output from: WINDOW=.. -> xdo_geo[WINDOW]=...
+      # before it's evaluated
+
+      declare -A xdo_geo
 
       eval "$(xdotool getmouselocation --shell | \
-        awk -v FS='=' '{
-          printf("__mouse[%s]=%s\n",$1,$2)
-        }'
+        awk '{ printf("xdo_geo[%s]=%s\n",$1,$2) }' FS='='
       )"
 
-      __xpos="$((__mouse[X]))"
-      __ypos="$((__mouse[Y]))"
+      __xpos="$((xdo_geo[X]))"
+      __ypos="$((xdo_geo[Y]))"
     ;;
 
   esac
@@ -827,25 +825,23 @@ setincludes(){
   local entry_expand entry_width listview_layout 
   local window_content horibox_content listview_lines
 
-  [[ -n ${__o[prompt]:-} ]] \
-    && __cmd+="-p '${__o[prompt]}' " \
-    || __o[include]=${__o[include]/[p]/}
+  [[ -n ${__o[prompt]} ]] || __o[include]=${__o[include]/[p]/}
 
-  if [[ -z ${__list:-} ]]; then
-    __o[include]=${__o[include]/[l]/}
+  if [[ -f $_tmp_list_file ]]; then
 
-    entry_expand=true
-    entry_width=0
-
-  else
     [[ -n ${__o[orientation]:-} ]] && {
       __orientation=${__o[orientation]}
       [[ $__orientation = vertical ]] && [[ -z ${__o[height]} ]] \
         && __height=0
     }
     listview_layout="$__orientation"
-    ((__nolist!=1)) \
-      && listview_lines="$(($(echo "${__list}" | wc -l)-1))"
+    listview_lines=$(wc -l < "$_tmp_list_file")
+
+
+  else
+    __o[include]=${__o[include]/[l]/}
+    entry_expand=true
+    entry_width=0
   fi
 
   [[ ${__o[include]} =~ [p] ]] && inc+=(prompt)
@@ -857,14 +853,20 @@ setincludes(){
     window_content="[ mainbox ]"
     inputbar_content="[${__o[include]//' '/','}]"
   else
+    # limit number of lines in horizontal menu, 
+    # it gets slow otherwise...
+    ((listview_lines > 500)) && listview_lines=500
     [[ ${__o[include]} =~ [l] ]] && inc+=(listview)
     __o[include]=${inc[*]}
     horibox_content="[${__o[include]//' '/','}]"
     window_content="[ horibox ]"
   fi
 
+
+  # TODO: why this test for negative zero???
   if [[ $__layout = mouse ]] || { [[ $__ypos -lt 0 || $__ypos = -0 ]] && ((__o[anchor]<7)) ;}; then
 
+    ERM "$__ypos ${__o[width]}"
     adjustposition "$__ypos" &
     
     # move window offscreen if:
@@ -896,17 +898,6 @@ setincludes(){
   "
 }
 
-__=""
-__stdin=""
-
-sleep .05
-read -rN1 -t0.01 __  && {
-  (( $? <= 128 ))  && {
-    IFS= read -rd '' __stdin
-    __stdin="$__$__stdin"
-  }
-}
-
 themefile(){
   local themebase themefile themevars usrtheme
 
@@ -929,12 +920,55 @@ themefile(){
   echo "${__themelayout:-}"
   cat "$themevars" "$themefile" "$themebase"
 }
+
+topsort() {
+# this function generates a awk script
+
+# dynamically created BEGIN block for awk
+# with array top_arg[] where each key is a line
+# from the ARG passed to --top
+echo "BEGIN{"
+while read -r top_line ; do
+  echo "top_arg[\"$top_line\"]=1"
+done <<< "${__o[top]}"
+echo "}"
+
+cat << 'END_OF_AWK_MAIN_LOOP'
+{
+  if ($0 in top_arg) {first[$0]=1}
+  else {rest[NR]=$0}
+}
+
+END {
+  for (k in first) { print k }
+  for (i=1;i<=NR;i++) {
+    if (i in rest)
+      print rest[i]
+  }
+}
+END_OF_AWK_MAIN_LOOP
+}
+
+verbose_outro() {
+  declare -i delta=$(( ($(date +%s%N)-_stamp) /1000 ))
+  declare -i time=$(((delta / 1000) % 1000))
+
+  ERM $'\n'"------ theme start ------"
+  themefile >&2
+  ERM "------ theme end ------"
+  ERM $'\n'"cmd: $_menu_command"
+  ERM  $'\n'"---i3menu done: ${time}ms---"$'\n'
+}
 declare -A __o
-eval set -- "$(getopt --name "i3menu" \
-  --options "a:i:t:x:y:w:o:p:f:hv" \
-  --longoptions "theme:,layout:,include:,top:,xpos:,xoffset:,ypos:,yoffset:,width:,options:,prompt:,filter:,show:,modi:,target:,orientation:,anchor:,height:,fallback:,help,version," \
-  -- "$@"
+options="$(
+  getopt --name "[ERROR]:i3menu" \
+    --options "a:i:t:x:y:w:o:p:f:hv" \
+    --longoptions "theme:,layout:,include:,top:,xpos:,xoffset:,ypos:,yoffset:,width:,options:,prompt:,filter:,show:,modi:,target:,orientation:,anchor:,height:,fallback:,help,version,verbose,dryrun," \
+    -- "$@" || exit 98
 )"
+
+eval set -- "$options"
+unset options
 
 while true; do
   case "$1" in
@@ -957,21 +991,15 @@ while true; do
     --anchor     ) __o[anchor]="${2:-}" ; shift ;;
     --height     ) __o[height]="${2:-}" ; shift ;;
     --fallback   ) __o[fallback]="${2:-}" ; shift ;;
-    --help       | -h ) __o[help]=1 ;; 
-    --version    | -v ) __o[version]=1 ;; 
+    --help       | -h ) ___printhelp && exit ;;
+    --version    | -v ) ___printversion && exit ;;
+    --verbose    ) __o[verbose]=1 ;; 
+    --dryrun     ) __o[dryrun]=1 ;; 
     -- ) shift ; break ;;
     *  ) break ;;
   esac
   shift
 done
-
-if [[ ${__o[help]:-} = 1 ]]; then
-  ___printhelp
-  exit
-elif [[ ${__o[version]:-} = 1 ]]; then
-  ___printversion
-  exit
-fi
 
 [[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
   && __lastarg="" 

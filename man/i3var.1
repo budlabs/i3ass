@@ -1,4 +1,5 @@
-.TH I3VAR 1 2019\-02\-19 Linux "User Manuals"
+.nh
+.TH I3VAR 1 2021\-05\-28 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3var\fR \- Set or get a i3 variable
@@ -8,8 +9,8 @@
 .RS
 
 .nf
-i3var set VARNAME [VALUE]
-i3var get VARNAME
+i3var set VARNAME [VALUE] [\-\-json JSON]
+i3var get VARNAME [\-\-json JSON]
 i3var \-\-help|\-h
 i3var \-\-version|\-v
 
@@ -20,26 +21,32 @@ i3var \-\-version|\-v
 .PP
 \fB\fCi3var\fR is used to get or set a "variable" that
 is bound to the current i3wm session.  The
-variable is actually the mark of a "ghost window"
-on the scratch pad.
+variable is actually the mark on the \fBroot
+container\fP\&.
 
 .PP
 \fB\fCset\fR  [VALUE]
 .br
 If \fIVARNAME\fP doesn't exist, a new window and mark
-will be created.  If \fIVARNAME\fP exists it's value
+will be created.  If \fIVARNAME\fP exists, it's value
 will be replaced with \fIVALUE\fP\&.
 .br
 If \fIVALUE\fP is not defined,  \fIVARNAME\fP will get
-unset.
+unset (the mark is removed).
 
 .PP
 \fB\fCget\fR
 .br
-if \fIVARNAME\fP exists,  its value will be returned
-window.
+if \fIVARNAME\fP exists,  its value will be printed
+to \fBSTDOUT\fP\&.
 
 .SH OPTIONS
+.PP
+\fB\fC\-\-json\fR JSON
+.br
+Use JSON instead of the output of \fB\fCi3\-msg \-t
+get\_tree\fR
+
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
 .br
@@ -52,12 +59,12 @@ Show version and exit.
 
 .SH DEPENDENCIES
 .PP
-\fB\fCbash\fR \fB\fCgawk\fR \fB\fCsed\fR \fB\fCi3\fR \fB\fCi3gw\fR
+\fB\fCbash\fR \fB\fCi3\fR
 
 .PP
-budRich 
+budRich https://github.com/budlabs/i3ass
 \[la]https://github.com/budlabs/i3ass\[ra]
 
 .SH SEE ALSO
 .PP
-bash(1), awk(1), i3(1), i3gw(1),
+bash(1), i3(1),

@@ -1,5 +1,5 @@
 .nh
-.TH I3FYRA 1 2020\-08\-11 Linux "User Manuals"
+.TH I3FYRA 1 2021\-05\-28 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3fyra\fR \- An advanced, simple grid\-based tiling
@@ -10,11 +10,11 @@ layout
 .RS
 
 .nf
-i3fyra \-\-show|\-s CONTAINER [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
-i3fyra \-\-float|\-a [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
-i3fyra \-\-hide|\-z CONTAINER [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-show|\-s CONTAINER [\-\-force|\-f]
+i3fyra \-\-float|\-a
+i3fyra \-\-hide|\-z CONTAINER [\-\-force|\-f]
 i3fyra \-\-layout|\-l LAYOUT [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
-i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-force|\-f] [\-\-speed|\-p INT] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
+i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-force|\-f] [\-\-speed|\-p INT]
 i3fyra \-\-help|\-h
 i3fyra \-\-version|\-v
 
@@ -64,9 +64,9 @@ toggled. Not visible containers are placed on the
 scratchpad.
 
 .PP
-The visibility is toggled by either using \fIshow\fP
-(\fB\fC\-s\fR) or \fIhide\fP (\fB\fC\-z\fR). But more often by moving
-a container in an \fIimpossible\fP direction, (\fIsee
+The visibility is toggled by either using
+\fB\fC\-\-show\fR or \fB\fC\-\-hide\fR\&. But more often by moving a
+container in an \fIimpossible\fP direction,(\fIsee
 examples below\fP).
 
 .PP
@@ -97,26 +97,6 @@ it. If it is visible, nothing happens.
 If set virtual positions will be ignored.
 
 .PP
-\fB\fC\-\-array\fR ARRAY
-.br
-ARRAY should be the output of \fB\fCi3list\fR\&. It is
-used to improve speed when \fBi3fyra\fP is executed
-from a script that already have the array, f.i.
-\fBi3run\fP and \fBi3Kornhe\fP\&.
-
-.PP
-\fB\fC\-\-verbose\fR
-.br
-If set information about execution will be
-printed to \fBstderr\fP\&.
-
-.PP
-\fB\fC\-\-dryrun\fR
-.br
-If set no window manipulation will be done during
-execution.
-
-.PP
 \fB\fC\-\-float\fR|\fB\fC\-a\fR
 .br
 Autolayout. If current window is tiled: floating
@@ -144,6 +124,26 @@ negative. The whole argument needs to be quoted.
 Example:
 .br
 \fB\fC$ i3fyra \-\-layout 'AB=\-300 BD=420'\fR
+
+.PP
+\fB\fC\-\-array\fR ARRAY
+.br
+ARRAY should be the output of \fB\fCi3list\fR\&. It is
+used to improve speed when \fBi3fyra\fP is executed
+from a script that already have the array, f.i.
+\fBi3run\fP and \fBi3Kornhe\fP\&.
+
+.PP
+\fB\fC\-\-verbose\fR
+.br
+If set information about execution will be
+printed to \fBstderr\fP\&.
+
+.PP
+\fB\fC\-\-dryrun\fR
+.br
+If set no window manipulation will be done during
+execution.
 
 .PP
 \fB\fC\-\-move\fR|\fB\fC\-m\fR CONTAINER
@@ -196,16 +196,15 @@ layout would looks like this:
 .RE
 
 .PP
-If action: \fImove up\fP (\fB\fC\-m u\fR) would be called
-when container \fBB\fP is active and \fBD\fP is
-hidden. Container \fBD\fP would be shown. If action
-would have been: \fImove down\fP (\fB\fC\-m d\fR), \fBD\fP would
-be shown but \fBB\fP would be placed below \fBD\fP,
-this means that the containers will also swap
-names. If action would have been \fImove left\fP (\fB\fC\-m
-l\fR) the active window in B would be moved to
-container \fBA\fP\&. If action was \fImove right\fP (\fB\fC\-m
-r\fR) \fBA\fP and \fBC\fP would be hidden:
+If action: \fB\fC\-\-move up\fR would be executed when
+container \fBB\fP is active and \fBD\fP is hidden.
+Container \fBD\fP would be shown. If action would
+have been: \fB\fC\-\-move down\fR, \fBD\fP would be shown but
+\fBB\fP would be placed below \fBD\fP, this means that
+the containers will also swap names. If action
+would have been \fB\fC\-\-move left\fR the active window in
+B would be moved to container \fBA\fP\&. If action was
+\fB\fC\-\-move right\fR, \fBA\fP and \fBC\fP would be hidden:
 
 .PP
 .RS
@@ -218,9 +217,9 @@ r\fR) \fBA\fP and \fBC\fP would be hidden:
 .RE
 
 .PP
-If we now \fImove left\fP (\fB\fC\-m l\fR), \fBA\fP and \fBC\fP
-would be shown again but to the right of \fBB\fP,
-the containers would also change names, so \fBB\fP
+If we now \fB\fC\-\-move left\fR, \fBA\fP and \fBC\fP would be
+shown again but to the right of \fBB\fP, the
+containers would also change names, so \fBB\fP
 becomes \fBA\fP, \fBA\fP becomes \fBB\fP and \fBC\fP
 becomes \fBD\fP:
 
@@ -267,8 +266,7 @@ split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and
 
 .SH DEPENDENCIES
 .PP
-\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3gw\fR \fB\fCi3var\fR
-\fB\fCi3viswiz\fR
+\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3var\fR \fB\fCi3viswiz\fR
 
 .PP
 budRich https://github.com/budlabs/i3ass

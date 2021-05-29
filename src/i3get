@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.631
-updated: 2020-08-10 by budRich
+i3get - version: 0.632
+updated: 2021-05-28 by budRich
 EOB
 }
 
@@ -353,7 +353,7 @@ match() {
       [a]="${BASH_REMATCH[$((++i))]}" # "focused:"         - false|true
       [t]="${BASH_REMATCH[$((++i))]}" # "name:"            - STRING
       [O]="${BASH_REMATCH[$((++i))]}" # ! optional group
-      [o]="${BASH_REMATCH[$((++i))]}" # "title_format:"    - string
+      [o]="${BASH_REMATCH[$((++i))]:-%title}" # "title_format:"    - string
       [O]="${BASH_REMATCH[$((++i))]}" # ! optional group
       [d]="${BASH_REMATCH[$((++i))]}" # "window:"          - INT
       [c]="${BASH_REMATCH[$((++i))]}" # "class:"           - STRING

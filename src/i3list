@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.211
-updated: 2020-08-10 by budRich
+i3list - version: 0.3
+updated: 2021-05-28 by budRich
 EOB
 }
 
@@ -12,30 +12,45 @@ EOB
 
 main(){
 
-  local crit srch
+  : "${_json:=${__o[json]:-$(i3-msg -t get_tree)}}"
 
-  if [[ -z ${__o[*]} ]]; then
-    crit=X srch=X
-  elif [[ -n ${srch:=${__o[instance]}} ]]; then
-    crit="instance"
-  elif [[ -n ${srch:=${__o[class]}} ]]; then
-    crit="class"
-  elif [[ -n ${srch:=${__o[conid]}} ]]; then
-    crit="id"
-  elif [[ -n ${srch:=${__o[winid]}} ]]; then
-    crit="window"
-  elif [[ -n ${srch:=${__o[mark]}} ]]; then
-    crit="marks"
-  elif [[ -n ${srch:=${__o[title]}} ]]; then
-    crit="title"
-  else
-    crit=X srch=X
-  fi
+  awk -f <(
+    echo "
+    BEGIN {
+      ${__o[instance]:+
+        arg_target=\"instance\"
+        arg_search[arg_target]=\"${__o[instance]}\"
+      }
+      ${__o[class]:+
+        arg_target=\"class\"
+        arg_search[arg_target]=\"${__o[class]}\"
+      }
+      ${__o[conid]:+
+        arg_target=\"id\"
+        arg_search[arg_target]=\"${__o[conid]}\"
+      }
+      ${__o[winid]:+
+        arg_target=\"window\"
+        arg_search[arg_target]=\"${__o[winid]}\"
+      }
+      ${__o[mark]:+
+        arg_target=\"marks\"
+        arg_search[arg_target]=\"${__o[mark]}\"
+      }
+      ${__o[title]:+
+        arg_target=\"name\"
+        arg_search[arg_target]=\"${__o[title]}\"
+      }
+    }"
+    awklib
+  ) FS=: RS=, <<< "$_json"
 
-  toprint="${1:-all}"
-  printlist "$crit" "$srch" "$toprint"
   
 }
+
+
+
+
 
 ___printhelp(){
   
@@ -101,72 +116,21 @@ EOB
 
 awklib() {
 cat << 'EOB'
-BEGIN {
-  # sq contains a single quote for convenience
-  sq = "'"
-
-  # act|trg == 0: active/target window not found yet
-  # act|trg == 1: active/target window in process
-  # act|trg == 2: active/target window processed
-
-  # hit !=0: inside i3fyra container
-
-  act=trg=hit=0
-
-  # set trg to processed if no criterion is given.
-  # mirror active window to target before print.
-
-  if (crit=="X") {trg=2}
-
-  # define layout depending on orientation
-  # splits[1] & splits[2] = families
-  # splits[3] = main split
-  
-  if (ENVIRON["I3FYRA_ORIENTATION"]=="vertical") {
-    splits[1]="AB"
-    splits[2]="CD"
-    splits[3]="AC"
-  }
-  else {
-    splits[1]="AC"
-    splits[2]="BD"
-    splits[3]="AB" 
-  }
-
-  # fam array used to calculate relation between
-  # containers in setfamily function.
-
-  fam[1][1]   = substr(splits[1],1,1)
-  fam[1][-1]  = substr(splits[1],2,1)
-  fam[-1][1]  = substr(splits[2],1,1)
-  fam[-1][-1] = substr(splits[2],2,1)
-
-  # base layout array
-
-  defaults[1]="A"
-  defaults[2]="B"
-  defaults[3]="C"
-  defaults[4]="D"
-
-}
 function descriptions() {
   
-  desc["CAS"]="Container A Status"
   desc["CAL"]="Container A Layout"
   desc["CAF"]="Container A Focused container id"
-  desc["CBS"]="Container B Status"
+  desc["CAW"]="Container A Workspace"
   desc["CBL"]="Container B Layout"
   desc["CBF"]="Container B Focused container id"
-  desc["CCS"]="Container C Status"
-  desc["CCL"]="Container C Layout"
-  desc["CCW"]="Container C Workspace"
-  desc["CAW"]="Container A Workspace"
   desc["CBW"]="Container B Workspace"
-  desc["CDW"]="Container D Workspace"
+  desc["CCL"]="Container C Layout"
   desc["CCF"]="Container C Focused container id"
-  desc["CDS"]="Container D Status"
+  desc["CCW"]="Container C Workspace"
   desc["CDL"]="Container D Layout"
   desc["CDF"]="Container D Focused container id"
+  desc["CDW"]="Container D Workspace"
+
   desc["SAB"]="Current split: AB"
   desc["SAC"]="Current split: AC"
   desc["SBD"]="Current split: BD"
@@ -178,6 +142,8 @@ function descriptions() {
   desc["FAC"]="Family AC memory"
   desc["FBD"]="Family BD memory"
   desc["FCD"]="Family CD memory"
+  desc["FAB"]="Family AB memory"
+
   desc["LVI"]="Visible i3fyra containers"
   desc["LHI"]="Hidden i3fyra containers"
   desc["LAL"]="All containers in family order"
@@ -216,7 +182,6 @@ function descriptions() {
   desc["TWX"]="Target Window x position"
   desc["TWY"]="Target Window y position"
   desc["TWB"]="Target Window titlebar height"
-
   
   desc["WAW"]="Active Workspace width"
   desc["WAH"]="Active Workspace height"
@@ -250,313 +215,412 @@ function descriptions() {
   desc["VPC"]="virtual position C"
   desc["VPD"]="virtual position D"
 
+  desc["RID"]="root container id"
 
+  desc["ORI"]="i3fyra orientation"
 }
 END {
-
-  # mirror active to target if no criteria is given
-
-  if (WFI) {
-    setworkspace(WFI,"F")
-    layout["X" splits[3]]=workspace["WSF"]
-  }
-
-  if (crit == "X") {
-    for (k in window["A"]) {
-      tk=k;sub("A","T",tk)
-      if (!window["T"][tk]) {window["T"][tk]=window["A"][k]}
-    }
-
-    if (!workspace["WST"]) {setworkspace(workspace["WAI"],"T")}  
-  }
-  
-  stringformat="i3list[%s]=%-15s\t# %s\n"
   descriptions()
 
-  if (toprint ~ /^(all|active|window)$/) {
-    for (k in window["A"]){
-      printf(stringformat, k, window["A"][k], desc[k])
-    }
-  }
+  # strfrm is the format string used for the output
+  strfrm="i3list[%s]=%-17s# %s\n"
 
-  
-  if (toprint ~ /^(all|target|window)$/) {
+  # determine target container ID
+  if ( !arg_target ) {
+    target_container_id=active_container_id
+  } else {
 
-    if (window["T"]["TWC"]) {
-      for (k in window["T"]) {
-        printf(stringformat, k, window["T"][k], desc[k])
+    for (suspect_id in suspect_targets) {
+
+      search_match=0
+
+      for (search in arg_search) { 
+        if (match(ac[suspect_id][search],arg_search[search]))
+          search_match+=1
+      }
+
+      if (search_match == length(arg_search)) {
+        target_container_id=suspect_id
+        break
       }
     }
   }
 
 
-  # following block will only get printed if there is 
-  # an i3fyra layout.
-
-  if (workspace["WSF"]) {
-
-    if (toprint ~ /^(all|container|i3fyra)$/) {
-      for (k in container) {
-        printf(stringformat, k, container[k], desc[k])
-      }
-    }
-
-    for (k in defaults) {
-
-      if (container["C" defaults[k] "W"]){
-        if (container["C" defaults[k] "W"] == workspace["WSF"]){
-          layout["LVI"]=defaults[k] layout["LVI"]
-        } else {
-          layout["LHI"]=defaults[k] layout["LHI"]
-        }
-      }
-
-    }
-
-    if (ENVIRON["I3FYRA_ORIENTATION"]=="vertical") {
-      splits[1]="AB"
-      splits[2]="CD"
-      splits[3]="AC"
-    }
-
-    layout["LEX"]=layout["LVI"] layout["LHI"]
-
-    if (ENVIRON["I3FYRA_ORIENTATION"]=="vertical") {
-      # ac and bd is the same, height of a or b
-      if (layout["LVI"] ~ "A") {
-        outsplit["SAC"]=dim[acon["A"]]["window"]["height"]
-      }
-      else if (layout["LVI"] ~ "B") {
-        outsplit["SAC"]=dim[acon["B"]]["window"]["height"]
-      }
-      else {
-        outsplit["SAC"]=0
-      }
+  # initialize i3fyra values
+  if (i3fyra_workspace_id) {
+    orientation=("ORI" in fyra_vars ? fyra_vars["ORI"] : "horizontal")
+    if (orientation == "horizontal") {
+      main_split="AB"
       
-      outsplit["SBD"]=outsplit["SAC"]
-      outsplit["SAB"]=dim[acon["A"]]["window"]["width"]
-      outsplit["SCD"]=dim[acon["C"]]["window"]["width"]
-    } else {
-      # ab and cd is the same, width of a or c
-      if (layout["LVI"] ~ "A") {
-        outsplit["SAB"]=dim[acon["A"]]["window"]["width"]
-      }
-      else if (layout["LVI"] ~ "C") {
-        outsplit["SAB"]=dim[acon["C"]]["window"]["width"]
-      }
-      else {
-        outsplit["SAB"]=0
-      }
+      fyra_vars["LAL"]="ACBD"
 
-      outsplit["SCD"]=outsplit["SAB"]
-      outsplit["SAC"]=dim[acon["A"]]["window"]["height"]
-      outsplit["SBD"]=dim[acon["B"]]["window"]["height"]
+      # SAB - main split size
+      if ("A" in fyra_containers && fyra_containers["A"]["visible"]) {
+        main_split_size=ac[fyra_containers["A"]["id"]]["w"]
+      }
+      else if ("C" in fyra_containers && fyra_containers["C"]["visible"])
+        main_split_size=ac[fyra_containers["C"]["id"]]["w"]
+      else
+        main_split_size=0
+
+      if (main_split_size == ac[i3fyra_workspace_id]["w"])
+        main_split_size=0
     }
 
-    if (layout["LVI"] ~ "[" splits[1] "]") {
-      if (layout["LVI"] !~ "[" splits[2] "]") {outsplit["S"splits[3]]=0}
-      if (layout["LHI"] ~ "[" splits[1] "]") {outsplit["S"splits[1]]=0}
-    }
+    else if (orientation == "vertical") {
+      main_split="AC"
+      
+      fyra_vars["LAL"]="ABCD"
 
-    if (layout["LVI"] ~ "[" splits[2] "]") {
-      if (layout["LVI"] !~ "[" splits[1] "]") {outsplit["S"splits[3]]=0}
-      if (layout["LHI"] ~ "[" splits[2] "]") {outsplit["S"splits[2]]=0}
+      # SAC - main split size
+      if ("A" in fyra_containers && fyra_containers["A"]["visible"])
+        main_split_size=ac[fyra_containers["A"]["id"]]["h"]
+      else if ("B" in fyra_containers && fyra_containers["B"]["visible"])
+        main_split_size=ac[fyra_containers["B"]["id"]]["h"]
+      else
+        main_split_size=0
+
+      if (main_split_size == ac[i3fyra_workspace_id]["h"])
+        main_split_size=0
+    }
+  }
+
+  at["A"]=active_container_id
+  at["T"]=target_container_id
+
+  for (target in at) {
+    id=at[target]
+    if (id) {
+      print_window(target,id)
+      print ""
+
+      if (i3fyra_workspace_id) {
+
+        parent_id=ac[id]["parent"]
+        awp=ac[parent_id]["i3fyra_mark"]
+        grand_parent_id=ac[parent_id]["parent"]
+        gwp=ac[grand_parent_id]["i3fyra_mark"]
+
+        if (awp) {
+          print_fyra_window(target,id,awp)
+          print ""
+        } else if (gwp) {
+          print_fyra_window(target,id,gwp)
+          print ""
+        }
+
+      }
+
+      print_workspace(target,ac[id]["workspace"])
+      print ""
+    }
+  }
+
+  ### -- I3FYRA STUFF
+  if (i3fyra_workspace_id) {
+    print_workspace("F",i3fyra_workspace_id)
+    print ""
+
+    for (container_name in fyra_containers) {
+      container_id=fyra_containers[container_name]["id"]
+      workspace_id=fyra_containers[container_name]["workspace"]
+
+      key="C" container_name "L"; printf(strfrm,key, ac[container_id]["layout"], desc[key])
+      key="C" container_name "W"; printf(strfrm,key, ac[workspace_id]["num"], desc[key])
+
+      focused=ac[container_id]["focused"]
+      # make sure the focused container is a window
+      # while (!("window" in ac[focused]))
+      #   focused=ac[focused]["focused"]
+
+      key="C" container_name "F"; printf(strfrm,key, focused, desc[key])
+
+      if (fyra_containers[container_name]["visible"])
+        LVI=LVI container_name
+      else 
+        LHI=LHI container_name
     }
     
-    if (toprint ~ /^(all|splits|i3fyra)$/) {
-      for(k in outsplit){
-        printf(stringformat, k, outsplit[k], desc[k])
-      }
+    key="LVI"; printf(strfrm,key, LVI, desc[key])
+    key="LHI"; printf(strfrm,key, LHI, desc[key])
+    key="LEX"; printf(strfrm,key, LVI LHI, desc[key])
+
+    for (family in fyra_splits) {
+
+      first=substr(family,1,1)
+
+      split(family,split_childs,"")
+      first_id=fyra_containers[first]["id"]
+
+      if (family == main_split)
+        family_split_size = main_split_size
+
+      else if ( orientation == "horizontal"       && 
+           fyra_containers[first]["visible"] &&
+           ac[first_id]["h"] != ac[i3fyra_workspace_id]["h"] )
+        family_split_size=ac[first_id]["h"]
+
+      else if ( orientation == "vertical"         && 
+                fyra_containers[first]["visible"] &&
+                ac[first_id]["w"] != ac[i3fyra_workspace_id]["w"] )
+        family_split_size=ac[first_id]["w"]
+
+      else
+        family_split_size=0
+
+      key="S" family; printf(strfrm, key, family_split_size, desc[key])
     }
+    # key="S" main_split; printf(strfrm, key, main_split_size, desc[key])
 
-
-    if (toprint ~ /^(all|layout|i3fyra)$/) {
-      for(k in layout){
-        printf(stringformat, k, layout[k], desc[k])
-      }
-
-      for(k in family){
-        printf(stringformat, k, family[k], desc[k])
-      }
+    print ""
+    for (key in fyra_vars) {
+      printf(strfrm, key, fyra_vars[key], desc[key])
     }
-  
+    
   }
 
-  for(k in memory){
-    printf(stringformat, k, memory[k], desc[k])
-  }
-
-  layout["LAL"]=splits[1] splits[2]
-  printf(stringformat, "LAL", layout["LAL"], desc["LAL"])
-  if (toprint ~ /^(all|workspace)$/) {
-    for(k in workspace){
-      printf(stringformat, k, workspace[k], desc[k])
-    }
-  }
+  print ""
+  printf(strfrm, "RID", root_id, desc["RID"])
 }
-hit && /[{]/ {hit++}
-hit && /[}]/ {hit--}
-
-$1 ~ /"rect"/ && dimget != "workspace" {dimget="window"}
-$1 ~ /"deco_rect"/ {dimget="tab"}
-
-$(NF-1) ~ /"(focus|id|window|name|num|width|height|x|y|floating|marks|layout|focused|instance|class|title)"$/ {
+$(NF-1) ~ /"(type|id|window|name|num|x|floating|marks|layout|focused|instance|class|focus)"$/ {
   
   key=gensub(/.*"([^"]+)"$/,"\\1","g",$(NF-1))
-  var=gensub(/[["]*([^]}"]+)[]}"]*$/,"\\1","g",$NF)
-
-  
-  if (key == crit && !trg && var ~ srch) {
-    if (key=="id") {curcid=var}
-    window["T"]["TWC"]=curcid
-    trg=1
-  }
-
+    
   switch (key) {
-    case "focus":
-      if (hit) {
-        container["C"curcon"F"]=var
-      } else {
-        # define active workspace by id
-        # (only useful when workspace is empty)
-        for (w in aws) 
-          if (var == w) { setworkspace(w,"A") }
-      }
+
+    case "layout":
+    case "type":
+      ac[cid][key]=$NF
     break
 
-    case "window":
-      curwid=var
+    case "class":
+    case "instance":
+      ac[cid][key]=$NF
+      if ( key == arg_target && match($NF, arg_search[key]) )
+        suspect_targets[cid]=1
     break
 
     case "name":
-      curnam=var
-    break
+      ac[cid][key]=$NF
+      if ( key == arg_target && match($NF, arg_search[key]) )
+        suspect_targets[cid]=1
 
-    case "num":
-      aws[curcid]["num"]=curws=var
-      aws[curcid]["name"]=curwsnam=curnam
-      curwsid=curcid
-    break
-
-    case /^(width|height|x|y)$/ :
-
-      if (dimget) {
-        dim[curcid][dimget][key]=var
+      if (ac[cid]["type"] == "\"workspace\"" && $NF == "\"" i3fyra_workspace_name "\"") {
+        i3fyra_workspace_id = cid
       }
-
-      if (key == "height") {dimget=0}
-
     break
 
     case "id":
-      curcid=var
-      if (hit) {conta[curcon]["id"]=curcid}
+      # when "nodes": (or "floating_nodes":) and "id":
+      # is on the same record.
+      #   example -> "nodes":[{"id":94446734049888 
+      # it is the start of a branch in the tree.
+      # save the last container_id as current_parent_id
+      if ($1 ~ /nodes"$/) {
+        current_parent_id=cid
+      } else if (NR == 1) {
+        root_id=$NF
+      }
+
+
+      # cid, "current id" is the last seen container_id
+      cid=$NF
+      ac[cid][key]=$NF
+
+      if ( key == arg_target && match($NF, arg_search[key]) )
+        suspect_targets[cid]=1
+    break
+
+    case "x":
+
+      if ($1 ~ /"(deco_)?rect"/) {
+        # this will add values to:
+        #   ac[cid]["x"] , ["y"] , ["w"] , ["h"]
+        #   ac[cid]["deco_x"] , ["deco_y"] , ["deco_w"] , ["deco_h"]
+        keyprefix=($1 ~ /"deco_rect"/ ? "deco_" : "")
+        while (1) {
+
+          match($0,/"([^"])[^"]*":([0-9]+)([}])?$/,ma)
+          ac[cid][keyprefix ma[1]]=ma[2]
+          if (ma[3] ~ "}")
+            break
+          # break before getline, otherwise we will
+          # miss the "deco_rect" line..
+          getline
+        }
+      }
+
+    break
+
+    case "num":
+      ac[cid][key]=$NF
+      cwsid=cid # current workspace id
+
+      if (cid == i3fyra_workspace_id)
+        i3fyra_workspace_num=$NF
+    break
+
+    case "focused":
+      if ($NF == "true") {
+        active_container_id=cid
+        active_workspace_id=cwsid
+      }
+      ac[cid]["workspace"]=cwsid
+      ac[cid]["parent"]=current_parent_id
+    break
+
+    case "window":
+      if ($NF != "null") {
+        ac[cid]["window"]=$NF
+        if ( key == arg_target && match($NF, arg_search[key]) )
+          suspect_targets[cid]=1
+      }
     break
 
     case "floating":
-      if (curcid == window["A"]["AWC"] && act != 2) {
-        setwindow(var,"A")
-        act=2
-      }
+      ac[cid]["floating"]=($NF ~ /_on"$/ ? 1 : 0)
+    break
 
-      if (curcid == window["T"]["TWC"] && trg != 2) {
-        setwindow(var,"T")
-        trg=2
+    case "focus":
+      if ($2 != "[]") {
+        # a not empty focus list is the first thing
+        # we encounter after a branch. The first
+        # item of the list is the focused container
+        # which is of interest if the container is
+        # tabbed or stacked, where only the focused container
+        # is visible.
+        first_id=gensub(/[^0-9]/,"","g",$2)
+        parent_id=ac[first_id]["parent"]
+        ac[parent_id]["focused"]=first_id
+
+        # this restores current_parent_id  and cid 
+        # to what it was before this branch.
+        cid=parent_id
+        current_parent_id=ac[parent_id]["parent"]
       }
     break
 
     case "marks":
 
-      if (var ~ /^i34[ABCD]$/) {
-        hit=1
-        curcon=substr(var,4,1)
-        container["C"curcon"W"]=curws
-        container["C"curcon"L"]="-"
-        acon[curcon]=curcid
+      if ($NF == "[]")
+        break
+
+      if ( key == arg_target && match($NF, arg_search[key]) )
+        suspect_targets[cid]=1
+
+      else if ( match($NF,/"i34([ABCD])"/,ma) ) {
+        fyra_containers[ma[1]]["id"]=cid
+        fyra_containers[ma[1]]["workspace"]=cwsid
+        ac[cid]["i3fyra_mark"]=ma[1]
+
+        if (ac[cwsid]["num"] != -1) {
+          fyra_containers[ma[1]]["visible"]=1
+          fyra_containers[ma[1]]["family"]=current_fyra_family
+        }
       }
 
-
-      else if (match(var,/^i34X(.+)/,splitmark)) {
-        # if mainsplit (splits[3]) container exist
-        # curcid is id of fyra workspace (WFI)
-        if (splitmark[1] == splits[3]) {
-          WFI=curcid
-        } 
-        
-        layout["X" splitmark[1]]=curws  
+      else if ( match($NF,/"i34X([ABCD]{2})"/,ma) ) {
+        fyra_splits[ma[1]]=cid
+        current_fyra_family=ma[1]
+        fyra_vars["X" ma[1]]=ac[cwsid]["num"]
       }
 
-      else if (match(var,/^i34([FM].{2})=(.*)/,splitmark)) {
-        memory[splitmark[1]]=splitmark[2]
-      }
+      # marks set by i3var all are at the root_id.
+      # all that are related to i3fyra has i34 prefix
+      
+      # "marks":["i34MAC=157"
+      # "i34MAB=1570"
+      # "i34MBD=252"
+      # "i34FAC=X"
+      # "i34FBD=X"
+      # "hidden93845635698816="]
+      else if (cid == root_id) {
+        while (1) {
+          match($0,/"(i34)?([^"=]+)=([^"]*)"([]])?$/,ma)
 
-      else if (match(var,/^i34(VP[ABCD])=(.*)/,splitmark)) {
-        memory[splitmark[1]]=splitmark[2]
+          if (ma[2] == "i3fyra_ws") {
+            i3fyra_workspace_name=ma[3]
+          }
+          else if (ma[1] == "i34")
+            fyra_vars[ma[2]]=ma[3]
+          if (ma[4] ~ "]")
+            break
+
+          getline
+        }
       }
 
     break
-
-    case "layout":
-      if (hit!=0 && container["C"curcon"L"]=="-") {
-        container["C"curcon"L"]=var
-      }
-    break
-
-    case "focused":
-      if (var == "true") {
-        window["A"]["AWC"]=curcid
-        act=1
-      }
-    break
-
   }
 }
-function setfamily(thiscon,type) {
+function print_fyra_window(t, container_id, parent, key) {
 
-  for (f in fam) {
-    for (c in fam[f]) {
-      if (fam[f][c] == thiscon) {
-        window[type][type"FT"]=fam[f*-1][c]
-        window[type][type"FC"]=fam[f*-1][c*-1]
-        window[type][type"FS"]=fam[f][c*-1]
-        window[type][type"FF"]=fam[f][1] fam[f][-1]
-        window[type][type"FO"]=fam[f*-1][1] fam[f*-1][-1]
-      }
-    }
-  }
+  key=t "WP"; printf(strfrm,key, parent, desc[key])
+
+  # desc["AFT"]="Active Window twin" 
+  key=t "FT"; printf(strfrm,key,
+    (parent == "A" ? ( orientation == "horizontal" ? "B" : "C") : 
+     parent == "B" ? ( orientation == "horizontal" ? "A" : "D") :
+     parent == "C" ? ( orientation == "horizontal" ? "D" : "A") :
+     parent == "D" ? ( orientation == "horizontal" ? "C" : "B") : 0),
+    desc[key])
+
+  # desc["AFC"]="Active Window cousin" 
+  key=t "FC"; printf(strfrm,key,
+    (parent == "A" ? "D" : 
+     parent == "B" ? "C" :
+     parent == "C" ? "B" :
+     parent == "D" ? "A" : 0),
+    desc[key])
+
+  # desc["AFS"]="Active Window sibling" 
+  key=t "FS"; printf(strfrm,key,
+    (parent == "A" ? ( orientation == "horizontal" ? "C" : "B") : 
+     parent == "B" ? ( orientation == "horizontal" ? "D" : "A") :
+     parent == "C" ? ( orientation == "horizontal" ? "A" : "D") :
+     parent == "D" ? ( orientation == "horizontal" ? "B" : "C") : 0),
+    desc[key])
+
+  # desc["AFF"]="Active Window family"
+  key=t "FF"; printf(strfrm,key,
+    (parent == "A" ? ( orientation == "horizontal" ? "AC" : "AB") : 
+     parent == "B" ? ( orientation == "horizontal" ? "BD" : "AB") :
+     parent == "C" ? ( orientation == "horizontal" ? "AC" : "CD") :
+     parent == "D" ? ( orientation == "horizontal" ? "BD" : "CD") : 0),
+    desc[key])
+
+  # desc["AFO"]="Active Window relatives"
+  key=t "FO"; printf(strfrm,key,
+    (parent == "A" ? ( orientation == "horizontal" ? "BD" : "CD") : 
+     parent == "B" ? ( orientation == "horizontal" ? "AC" : "CD") :
+     parent == "C" ? ( orientation == "horizontal" ? "BD" : "AB") :
+     parent == "D" ? ( orientation == "horizontal" ? "AC" : "AB") : 0),
+    desc[key])
 }
-function setwindow(floats,type) {
-
-  if (floats ~ /on$/) 
-    window[type][type"WF"]=1
-  else
-    window[type][type"WF"]=0
-
-  setworkspace(curwsid,type)
-  window[type][type"WI"]=curwid
-  window[type][type"WX"]=dim[curcid]["window"]["x"]
-  window[type][type"WB"]=dim[curcid]["tab"]["height"]
-  window[type][type"WY"]=(dim[curcid]["window"]["y"]-window[type][type"WB"])
-  window[type][type"WW"]=dim[curcid]["window"]["width"]
-  window[type][type"WH"]=(dim[curcid]["window"]["height"]+window[type][type"WB"])
-  window[type][type"TX"]=dim[curcid]["tab"]["x"]
-  window[type][type"TW"]=dim[curcid]["tab"]["width"]
-
-  if(curcid == conta[curcon]["id"]){
-
-    window[type][type"WP"]=curcon
-    setfamily(curcon,type)
-
-  }
+function print_window(t, container_id, key) {
+  key=t "WC"; printf(strfrm,key, container_id, desc[key])
+  key=t "WF"; printf(strfrm,key, ac[container_id]["floating"], desc[key])
+  key=t "WI"; printf(strfrm,key, ac[container_id]["window"], desc[key])
+  key=t "WW"; printf(strfrm,key, ac[container_id]["w"], desc[key])
+  key=t "WH"; printf(strfrm,key, ac[container_id]["h"]+ac[container_id]["deco_h"], desc[key])
+  key=t "WX"; printf(strfrm,key, ac[container_id]["x"], desc[key])
+  key=t "WY"; printf(strfrm,key, ac[container_id]["y"]-ac[container_id]["deco_h"], desc[key])
+  key=t "WB"; printf(strfrm,key, ac[container_id]["deco_h"], desc[key])
+  key=t "TX"; printf(strfrm,key, ac[container_id]["deco_x"], desc[key])
+  key=t "TW"; printf(strfrm,key, ac[container_id]["deco_w"], desc[key])
 }
-function setworkspace(cid,type) {
-  workspace["WS"type]=aws[cid]["num"]
-  workspace["W"type"I"]=cid
-  workspace["W"type"N"]=sq aws[cid]["name"] sq
-  workspace["W"type"W"]=dim[cid]["window"]["width"]
-  workspace["W"type"H"]=dim[cid]["window"]["height"]
-  workspace["W"type"X"]=dim[cid]["window"]["x"]
-  workspace["W"type"Y"]=dim[cid]["window"]["y"]
+
+function print_workspace(t, container_id, key) {
+  key="W" t "I"; printf(strfrm,key, container_id, desc[key])
+  key="W" t "X"; printf(strfrm,key, ac[container_id]["x"], desc[key])
+  key="W" t "Y"; printf(strfrm,key, ac[container_id]["y"], desc[key])
+  key="W" t "W"; printf(strfrm,key, ac[container_id]["w"], desc[key])
+  key="W" t "H"; printf(strfrm,key, ac[container_id]["h"], desc[key])
+
+  
+  key="W" t "N"; printf(strfrm,key, ac[container_id]["name"], desc[key])
+  key="WS" t   ; printf(strfrm,key, ac[container_id]["num"], desc[key])
 }
 EOB
 }
@@ -567,16 +631,6 @@ trap '[ "$?" -ne 98 ] || exit 98' ERR
 ERX() { echo  "[ERROR] $*" >&2 ; exit 98 ;}
 ERR() { echo  "[WARNING] $*" >&2 ;}
 ERM() { echo  "$*" >&2 ;}
-
-printlist(){
-
-  [[ -n ${_json:=${__o[json]}} ]] \
-    || _json=$(i3-msg -t get_tree)
-
-  awk -f <(awklib)                                  \
-         FS=: RS=, crit="$1" srch="$2" toprint="$3" \
-         <<< "$_json"
-}
 
 
 declare -A __o

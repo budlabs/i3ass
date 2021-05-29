@@ -1,5 +1,5 @@
 .nh
-.TH I3RUN 1 2020\-08\-10 Linux "User Manuals"
+.TH I3RUN 1 2021\-05\-28 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3run\fR \- Run, Raise or hide windows in i3wm
@@ -13,6 +13,7 @@ i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m
 i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
 i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
 i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
+i3run \-\-winid|\-d CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
 i3run \-\-help|\-h
 i3run \-\-version|\-v
 
@@ -153,6 +154,9 @@ Search for windows with the given TITLE
 \fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
 .br
 Search for windows with the given CON\_ID
+
+.PP
+\fB\fC\-\-winid\fR|\fB\fC\-d\fR CON\_ID
 
 .PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR

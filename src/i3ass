@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3ass - version: 2020.08.11.1
-updated: 2020-08-11 by budRich
+i3ass - version: 2021.05.29.5
+updated: 2021-05-29 by budRich
 EOB
 }
 
@@ -73,7 +73,6 @@ bash
 gawk
 i3
 rofi
-sed
 xdotool
 EOB
 }
