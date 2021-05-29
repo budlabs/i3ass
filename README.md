@@ -1,6 +1,7 @@
 # i3ass - i3 assistance scripts 
 
-![logo](assets/i3ass-first-logo2021-05-26-300x200.png)  
+
+![logo](https://github.com/i3ass-dev/i3ass/blob/dev/assets/i3ass-first-logo2021-05-26-300x200.png?raw=true)  
 This is a collection of scripts I have made to assist the
 usage of the windowmanager known as [i3wm].
 
@@ -19,25 +20,28 @@ $ git clone https://github.com/budlabs/i3ass.git
 $ cd i3ass
 # make install
 $ i3ass
-i3ass - version: 0.002
-updated: 2018-10-18 by budRich
+i3ass - version: 2021.05.29.5
+updated: 2021-05-29 by budRich
 
 script   | version
 ------------------
-i3viswiz | 0.006
-i3get    | 0.302
-i3var    | 0.006
-i3fyra   | 0.501
-i3list   | 0.006
-i3flip   | 0.013
-i3Kornhe | 0.006
-i3gw     | 0.147
-i3run    | 0.011
+i3flip   | 0.101
+i3fyra   | 1.1
+i3get    | 0.632
+i3gw     | 2020.08.12.0
+i3Kornhe | 0.5
+i3list   | 0.3
+i3menu   | 0.1
+i3run    | 0.09
+i3var    | 0.050
+i3viswiz | 0.5
 
-bash      [INSTALLED]
-gawk      [INSTALLED]
-sed       [INSTALLED]
-xdotool   [INSTALLED]
+dependencies:
+bash     [INSTALLED]
+gawk     [INSTALLED]
+i3       [INSTALLED]
+rofi     [INSTALLED]
+xdotool  [INSTALLED]
 ```
 
 
