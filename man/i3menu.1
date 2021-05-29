@@ -1,5 +1,5 @@
 .nh
-.TH I3MENU 1 2020\-08\-10 Linux "User Manuals"
+.TH I3MENU 1 2021\-05\-28 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3menu\fR \- Adds more features to rofi when used
@@ -10,9 +10,10 @@ in i3wm
 .RS
 
 .nf
-i3menu [\-\-theme THEME] [\-\-layout|\-a LAYOUT] [\-\-include|\-i INCLUDESTRING] [\-\-top|\-t TOP] [\-\-xpos|\-x INT] [\-\-xoffset INT] [\-\-ypos|\-y INT] [\-\-yoffset INT] [\-\-width|\-w INT] [\-\-options|\-o OPTIONS] [\-\-prompt|\-p PROMPT]  [\-\-filter|\-f FILTER] [\-\-show MODE] [\-\-modi MODI] [\-\-target TARGET] [\-\-orientation ORIENTATION] [\-\-anchor INT] [\-\-height INT] [\-\-fallback FALLBACK]
+i3menu [\-\-theme THEME] [\-\-layout|\-a LAYOUT] [\-\-include|\-i INCLUDESTRING] [\-\-top|\-t TOP] [\-\-xpos|\-x INT] [\-\-xoffset INT] [\-\-ypos|\-y INT] [\-\-yoffset INT] [\-\-width|\-w INT] [\-\-options|\-o OPTIONS] [\-\-prompt|\-p PROMPT]  [\-\-filter|\-f FILTER] [\-\-show MODE] [\-\-modi MODI] [\-\-target TARGET] [\-\-orientation ORIENTATION] [\-\-anchor INT] [\-\-height INT] [\-\-fallback FALLBACK] 
 i3menu \-\-help|\-h
 i3menu \-\-version|\-v
+i3menu [\-\-verbose] [\-\-dryrun]
 
 .fi
 .RE
@@ -357,6 +358,18 @@ target window can be found, the menu will get
 displayed at the mouse pointer.
 
 .PP
+#options\-verbose\-description
+
+.PP
+Print additional information to STDERR
+
+.PP
+#options\-dryrun\-description
+
+.PP
+Do not execute any i3\-msg commands
+
+.PP
 \fB\fC\-\-help\fR|\fB\fC\-h\fR
 .br
 Show help and exit.
@@ -365,6 +378,12 @@ Show help and exit.
 \fB\fC\-\-version\fR|\fB\fC\-v\fR
 .br
 Show version and exit
+
+.PP
+\fB\fC\-\-verbose\fR
+
+.PP
+\fB\fC\-\-dryrun\fR
 
 .SH ENVIRONMENT
 .PP

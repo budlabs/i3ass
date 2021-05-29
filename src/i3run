@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.089
-updated: 2020-08-10 by budRich
+i3run - version: 0.09
+updated: 2021-05-28 by budRich
 EOB
 }
 
@@ -15,7 +15,7 @@ main(){
   declare -a acri   # options passed to i3list
   declare -A i3list # globals array
 
-  for k in instance class title conid ; do
+  for k in instance class title conid winid; do
     [[ -n ${__o[$k]} ]] \
       && acri=("--$k" "${__o[$k]}") && break
   done ; unset k
@@ -46,6 +46,7 @@ i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|
 i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
 i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
 i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --winid|-d CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
 i3run --help|-h
 i3run --version|-v
 
@@ -121,6 +122,8 @@ Search for windows with the given TITLE
 Search for windows with the given CON_ID
 
 
+--winid|-d CON_ID  
+
 --help|-h  
 Show help and exit.
 
@@ -147,9 +150,9 @@ focuswindow(){
 
   declare -i forcing hvar
 
-  forcing=$((__o[FORCE]?2:__o[force]?1:0))
+  forcing=$((__o[FORCE] ? 2 : __o[force] ? 1 : 0))
   
-  # if target window is active (current), 
+  # if target window is active, 
   if ((i3list[AWC] == i3list[TWC])); then
     
     # send it to the scratchpad
@@ -185,44 +188,39 @@ focuswindow(){
     else
       ((i3list[TWF] == 1)) && fs=enable || fs=disable
     fi
-    # target is not handled by i3fyra and not active
-    # TWP - target window parent container name
-    if [[ -z ${i3list[TWP]} ]]; then
-
+    
+    if [[ -z ${i3list[TWP]} && ${i3list[WSA]} != ${i3list[WST]} ]]; then
+      # target is not handled by i3fyra and not active
+      # TWP - target window parent container name
       # target is not on active workspace
-      if ((i3list[WSA] != i3list[WST])); then
+
+      # WST == -1 , target window is on scratchpad
+      if ((i3list[WST] == -1 || __o[summon])); then
+        i3-msg -q "[con_id=${i3list[TWC]}]"   \
+          move to workspace "${i3list[WAN]}", \
+          floating $fs
+          ((i3list[TWF] && __o[mouse])) && sendtomouse
+      else
+        i3-msg -q workspace "${i3list[WTN]}"
+      fi
+        
+    elif ((i3list[WSA] != i3list[WST])); then
+      # window is handled by i3fyra and not active
+      # current ws is i3fyra WS
+      if ((i3list[WSF] == i3list[WSA])); then
+        # target window is in a hidden (LHI) container
+        [[ ${i3list[TWP]} =~ [${i3list[LHI]}] ]] \
+          && i3fyra --force --show "${i3list[TWP]}" --array "$_array"
+
+      else # current ws is not i3fyra WS
         # WST == -1 , target window is on scratchpad
         if ((i3list[WST] == -1 || __o[summon])); then
-          i3-msg -q "[con_id=${i3list[TWC]}]"   \
-            move to workspace "${i3list[WAN]}", \
-            floating $fs
+          i3-msg -q "[con_id=${i3list[TWC]}]" \
+            move to workspace "${i3list[WAN]}", floating $fs
             ((i3list[TWF] && __o[mouse])) && sendtomouse
-        else
+        else # got to target windows workspace
+          # WTN == name (string) of workspace
           i3-msg -q workspace "${i3list[WTN]}"
-        fi
-        
-      fi
-    else # window is handled by i3fyra and not active
-
-      # window is not on current ws
-      if ((i3list[WSA] != i3list[WST])); then
-
-        # current ws is i3fyra WS
-        if ((i3list[WSF] == i3list[WSA])); then
-          # target window is in a hidden (LHI) container
-          [[ ${i3list[TWP]} =~ [${i3list[LHI]}] ]] \
-            && i3fyra --force --show "${i3list[TWP]}" --array "$_array"
-
-        else # current ws is not i3fyra WS
-          # WST == -1 , target window is on scratchpad
-          if ((i3list[WST] == -1 || __o[summon])); then
-            i3-msg -q "[con_id=${i3list[TWC]}]" \
-              move to workspace "${i3list[WAN]}", floating $fs
-              ((i3list[TWF] && __o[mouse])) && sendtomouse
-          else # got to target windows workspace
-            # WTN == name (string) of workspace
-            i3-msg -q workspace "${i3list[WTN]}"
-          fi
         fi
       fi
     fi
@@ -244,8 +242,6 @@ launchcommand(){
 
   declare -a xdtopt # options passed to xdotool
 
-  unset 'i3list[TWC]'
-
   [[ -n ${__o[rename]} ]] && {
 
     [[ ${acri[0]} = '--class'    ]] && xdtopt=("--class")
@@ -255,14 +251,14 @@ launchcommand(){
     xdtopt+=("${acri[1]}")
 
     xdotool set_window "${xdtopt[@]}" \
-      "${i3list[TWC]:=$(i3get "${acri[0]}" "${__o[rename]}" -r d -y)}"
+      "$(i3get "${acri[0]}" "${__o[rename]}" -r d -y)"
   }
   
-  : "${i3list[TWC]:=$(i3get -y "${acri[@]}")}"
+  i3list[TWC]=$(i3get -y "${acri[@]}")
   
   ((__o[mouse])) && sendtomouse
 
-  i3-msg -q "[con_id=${i3list[TWC]}]" focus
+  i3-msg -q "[id=${i3list[TWC]}]" focus
   echo "${i3list[TWC]}"
 }
 
@@ -306,8 +302,8 @@ sendtomouse(){
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3run" \
-    --options "i:sgmx:fFe:c:t:n:hv" \
-    --longoptions "instance:,summon,nohide,mouse,rename:,force,FORCE,command:,class:,title:,conid:,help,version," \
+    --options "i:sgmx:fFe:c:t:n:d:hv" \
+    --longoptions "instance:,summon,nohide,mouse,rename:,force,FORCE,command:,class:,title:,conid:,winid:,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -327,6 +323,7 @@ while true; do
     --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --title      | -t ) __o[title]="${2:-}" ; shift ;;
     --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
+    --winid      | -d ) __o[winid]="${2:-}" ; shift ;;
     --help       | -h ) ___printhelp && exit ;;
     --version    | -v ) ___printversion && exit ;;
     -- ) shift ; break ;;
