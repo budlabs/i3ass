@@ -1,21 +1,21 @@
 .nh
-.TH I3RUN 1 2021\-05\-28 Linux "User Manuals"
+.TH I3RUN 1 2021-05-28 Linux "User Manuals"
 .SH NAME
 .PP
-\fB\fCi3run\fR \- Run, Raise or hide windows in i3wm
+\fB\fCi3run\fR - Run, Raise or hide windows in i3wm
 
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-winid|\-d CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-help|\-h
-i3run \-\-version|\-v
+i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --winid|-d CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --help|-h
+i3run --version|-v
 
 .fi
 .RE
@@ -37,17 +37,14 @@ T{
 Active and not handled by i3fyra
 T}
 	hide
-Active and handled by i3fyra	hide container, if not 
-\fB\fC\-g\fR is set
+Active and handled by i3fyra	hide container, if not \fB\fC-g\fR is set
 Handled by i3fyra and hidden	show container, activate
 T{
 Not handled by i3fyra and hidden
 T}
 	show window, activate
-Not on current workspace	goto workspace or show if 
-\fB\fC\-s\fR is set
-Not found	execute command (
-\fB\fC\-e\fR)
+Not on current workspace	goto workspace or show if \fB\fC-s\fR is set
+Not found	execute command (\fB\fC-e\fR)
 .TE
 
 .PP
@@ -56,9 +53,9 @@ the scratchpad. Show in this context means,  move
 window to current workspace.
 
 .PP
-\fB\fC\-e\fR is optional, if no \fICOMMAND\fP is passed and
+\fB\fC-e\fR is optional, if no \fICOMMAND\fP is passed and
 no window is found,  nothing happens.  It is
-important that \fB\fC\-e\fR \fICOMMAND\fP is \fBthe last of the
+important that \fB\fC-e\fR \fICOMMAND\fP is \fBthe last of the
 options\fP\&.  It is also important that \fICOMMAND\fP
 \fBwill spawn a window matching the criteria\fP,
 otherwise the script will get stuck in a loop
@@ -68,32 +65,32 @@ seconds\fP)
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+\fB\fC--instance\fR|\fB\fC-i\fR INSTANCE
 .br
 Search for windows with the given INSTANCE
 
 .PP
-\fB\fC\-\-summon\fR|\fB\fC\-s\fR
+\fB\fC--summon\fR|\fB\fC-s\fR
 .br
 Instead of switching workspace, summon window to
 current workspace
 
 .PP
-\fB\fC\-\-nohide\fR|\fB\fC\-g\fR
+\fB\fC--nohide\fR|\fB\fC-g\fR
 .br
 Don't hide window/container if it's active.
 
 .PP
-\fB\fC\-\-mouse\fR|\fB\fC\-m\fR
+\fB\fC--mouse\fR|\fB\fC-m\fR
 .br
 The window will be placed on the location of the
 mouse cursor when it is created or shown. (\fIneeds
 \fB\fCxdotool\fR\fP)
 
 .PP
-\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
+\fB\fC--rename\fR|\fB\fC-x\fR OLD_NAME
 .br
-If the search criteria is \fB\fC\-i\fR (instance), the
+If the search criteria is \fB\fC-i\fR (instance), the
 window with instance: \fIOLDNAME\fP will get a n new
 instance name matching the criteria when it is
 created (\fIneeds \fB\fCxdotool\fR\fP).
@@ -102,31 +99,31 @@ created (\fIneeds \fB\fCxdotool\fR\fP).
 .RS
 
 .nf
-i3run \-\-instance budswin \-\-rename sublime\_main \-command subl
+i3run --instance budswin --rename sublime_main -command subl
 
 # when the command above is executed:
 # a window with the instance name: "budswin" will be searched for.
 # if no window is found the command: "subl" will get executed,
-# and when a window with the instance name: "sublime\_main" is found,
+# and when a window with the instance name: "sublime_main" is found,
 # the instance name of that window will get renamed to: "budswin"
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-force\fR|\fB\fC\-f\fR
+\fB\fC--force\fR|\fB\fC-f\fR
 .br
-Execute COMMAND (\fB\fC\-\-command\fR), even if the window
+Execute COMMAND (\fB\fC--command\fR), even if the window
 already exist. But not when hiding a window.
 
 .PP
-\fB\fC\-\-FORCE\fR|\fB\fC\-F\fR
+\fB\fC--FORCE\fR|\fB\fC-F\fR
 .br
-Execute COMMAND (\fB\fC\-\-command\fR), even if the window
+Execute COMMAND (\fB\fC--command\fR), even if the window
 already exist.
 
 .PP
-\fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
+\fB\fC--command\fR|\fB\fC-e\fR COMMAND
 .br
 Command to run if no window is found. Complex
 commands can be written inside quotes:
@@ -135,36 +132,36 @@ commands can be written inside quotes:
 .RS
 
 .nf
-i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
+i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+\fB\fC--class\fR|\fB\fC-c\fR CLASS
 .br
 Search for windows with the given CLASS
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+\fB\fC--title\fR|\fB\fC-t\fR TITLE
 .br
 Search for windows with the given TITLE
 
 .PP
-\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+\fB\fC--conid\fR|\fB\fC-n\fR CON_ID
 .br
-Search for windows with the given CON\_ID
+Search for windows with the given CON_ID
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR CON\_ID
+\fB\fC--winid\fR|\fB\fC-d\fR CON_ID
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 

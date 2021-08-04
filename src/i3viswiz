@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3viswiz - version: 0.5
-updated: 2021-05-28 by budRich
+i3viswiz - version: 0.51
+updated: 2021-06-07 by budRich
 EOB
 }
 
@@ -47,6 +47,17 @@ main(){
   : "${__o[debug]:=LIST}"
   : "${__o[debug-format]:=%k=%v }"
   arg_gap=$((__o[gap] > 0 ? __o[gap] : 5))
+
+  # check if focus_wrap workspace is set
+  # by looking for a mark on root container (i3var)
+  # if no mark exist, check config, set the mark
+  re='^\{"id":([0-9]+)[^[]+\[([^]]*"focus_wrap=([^"]*)"[^]]*)?\]'
+  [[ ${__o[json]} =~ $re ]] || {
+    i3-msg -t get_config | grep -E 'focus_wrapping\s+workspace' > /dev/null \
+      && wrapping=workspace
+
+    i3var set focus_wrap "${wrapping:-normal}"
+  }
 
   result=$(
     # <<<    - content of string __o[json] will be input  to command awk
@@ -405,8 +416,16 @@ function find_window(direction,
     # invert direction
     direction=(direction == "l" ? "r" : "l")
 
-    if ( (direction == "l" && trgx > rootx+rootw) ||
-         (direction == "r" && trgx < rootx) ) {
+    if (focus_wrap == "workspace") {
+
+      trgx=(direction == "r" ? wsx+wsw-arg_gap :
+                               wsx+arg_gap)
+
+      wall=wall "-workspace"
+    }
+
+    else if ( (direction == "l" && trgx > rootx+rootw) ||
+              (direction == "r" && trgx < rootx) ) {
 
       trgx=(direction == "r" ? rootx+rootw-arg_gap :
                                rootx+arg_gap)
@@ -428,8 +447,16 @@ function find_window(direction,
     # invert direction
     direction=(direction == "u" ? "d" : "u")
 
-    if ( (direction == "d" && trgy < rooty) ||
-         (direction == "u" && trgy > rooty+rooth) ) {
+    if (focus_wrap == "workspace") {
+
+      trgy=(direction == "d" ? wsy+wsh-arg_gap :
+                               wsy+arg_gap )
+
+      wall=wall "-workspace"
+    }
+
+    else if ( (direction == "d" && trgy < rooty) ||
+              (direction == "u" && trgy > rooty+rooth) ) {
 
       trgy=(direction == "d" ? rooty+rooth-arg_gap :
                                rooty+arg_gap )
@@ -689,6 +716,8 @@ $(NF-1) ~ /"(type|output|id|window|name|num|x|floating|marks|layout|focused|inst
 
           if (ma[1] == "i3viswiz")
             last_direction_id=ma[3]
+          else if (ma[2] == "focus_wrap")
+            focus_wrap=ma[3]
           if (ma[4] ~ "]")
             break
 

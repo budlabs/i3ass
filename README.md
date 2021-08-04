@@ -20,26 +20,28 @@ $ git clone https://github.com/budlabs/i3ass.git
 $ cd i3ass
 # make install
 $ i3ass
-i3ass - version: 2021.05.29.5
-updated: 2021-05-29 by budRich
+i3ass - version: 2021.08.04.3
+updated: 2021-08-04 by budRich
 
 script   | version
 ------------------
 i3flip   | 0.101
 i3fyra   | 1.1
-i3get    | 0.632
+i3get    | 0.7
 i3gw     | 2020.08.12.0
+i3king   | 0.1
 i3Kornhe | 0.5
 i3list   | 0.3
 i3menu   | 0.1
-i3run    | 0.09
+i3run    | 0.1
 i3var    | 0.050
-i3viswiz | 0.5
+i3viswiz | 0.51
 
 dependencies:
 bash     [INSTALLED]
 gawk     [INSTALLED]
 i3       [INSTALLED]
+i3-msg   [INSTALLED]
 rofi     [INSTALLED]
 xdotool  [INSTALLED]
 ```
@@ -62,6 +64,7 @@ table below, will take you to the wiki page for the script.
 |[i3fyra] | An advanced, simple grid-based tiling layout
 |[i3get] | prints info about a specific window to stdout
 |[i3gw] | a ghost window wrapper for i3wm
+|[i3king] | window ruler
 |[i3Kornhe] | move and resize windows gracefully
 |[i3list] | list information about the current i3 session.
 |[i3menu] | Adds more features to rofi when used in i3wm
@@ -82,101 +85,42 @@ about the command.
 
 ## updates
 
+### [i3king]
+
+New script for managing window rules.
+
 ### [i3viswiz]
 
-Now works correctly with multiple active monitors.  
 
-#### focusing back and forth in the opposite directions feels more intuitive
+if the setting "focus_wrapping" is set to "workspace" in
+the i3config. i3viswiz will wrap the focus only inside the
+currenttly focused workspace instead of the whole work area
+(other monitors).
 
+The setting has to be present in the active config before
+the first i3viswiz invokation.
 
-When **i3viswiz** is used to shift focus in a direction
-(left, right, up, down) the current container ID is noted
-(`i3var set`). This is done so that the next time we focus
-in a direction we will test if the saved ID is adjacent to
-the current container at the searched direction and focus
-that if it is the case.
+To force this behavior otherwise, issue the following
+command:  
+`i3var set focus_wrap workspace`
 
-
-#### less noisy output
-
-
-when **i3viswiz** is used to output text, it by default
-only prints a table representing the visible windows. It now
-also prints the workspace number. And all visible windows
-from all workspaces not just the active one. Example:  
-
-```text
-$ i3viswiz --instance
-
-* 94475856575600 ws: 1 x: 0     y: 0     w: 1558  h: 410   | termsmall
-- 94475856763248 ws: 1 x: 1558  y: 0     w: 362   h: 272   | gl
-- 94475856286352 ws: 1 x: 0     y: 410   w: 1558  h: 643   | sublime_main
-- 94475856449344 ws: 1 x: 1558  y: 272   w: 362   h: 781   | thunar-lna
-```
-
-
-In previous versions of **i3viswiz** the first line of this
-output contained additional information that is being used
-by other **i3ass** scripts. That info is still available,
-but the user needs to use the new `--debug VARLIST` option, 
-to get that info. See the manpage or `--help` for more info.
-
-
-### [i3flip]
-
-
-Use a lock file to make sure we don't "double execute" the
-script. Updated to work with new version of **i3viswiz**.
-
-### [i3fyra]
-
-
-the value of the environment variable, **I3FYRA_WS**, which
-is used to declare which workspace to be used for
-**i3fyra**. Is now checked against a workspace name instead
-of a workspace number.
-
-`i3-msg open` is not used  in **i3fyra** anymore, this
-shuold make the experience smoother and the creation of new
-containers faster.
-
-### [i3Kornhe]
-
-
-Added 5 new commanline options to set the screenmargin size
-when moving windows in direction [1-9].
-
-Removed the use of `i3-msg open` and use a more robust
-method for keeping track of the active window, previous
-versions someimes changed the titleformat of the wrong
-windows becuase of the old method.
-
-### [i3list]
-
-
-It is now possible to use multiple criteria for windows.
-
-The output is printed in a better organized way.  
-Two new keys added to the output array:
-
-```
-i3list["RID"] # root container id
-i3list["ORI"] # i3fyra orientation
-```
+Or to disable it:  
+`i3var set focus_wrap normal`
 
 
 ### [i3menu]
 
 
-Improved the way i3menu reads from STDIN. Large lists
-(10000+ lines) loads much faster now.
+Fixed issue where empty STDIN got treated as a list.
 
-### [i3var]
+### [i3run]
 
 
-Add variables as marks on the root container instead of
-creating separate empty windows with `i3-msg open` for each
-mark.
+Only change since last version is to use `i3fyra --force
+--array ARRAY` to override the new virtual positions which
+are not needed with i3run because it already figures out the
+correct container.
+
 
 
 ## known issues
@@ -217,6 +161,7 @@ as restart*).
 [i3run]: https://github.com/budlabs/i3ass/wiki/i3run
 [i3var]: https://github.com/budlabs/i3ass/wiki/i3var
 [i3viswiz]: https://github.com/budlabs/i3ass/wiki/i3viswiz
+[i3king]: https://github.com/budlabs/i3ass/wiki/i3king
 
 
 

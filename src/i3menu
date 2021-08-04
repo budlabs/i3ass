@@ -81,7 +81,7 @@ i3menu - Adds more features to rofi when used in i3wm
 
 SYNOPSIS
 --------
-i3menu [--theme THEME] [--layout|-a LAYOUT] [--include|-i INCLUDESTRING] [--top|-t TOP] [--xpos|-x INT] [--xoffset INT] [--ypos|-y INT] [--yoffset INT] [--width|-w INT] [--options|-o OPTIONS] [--prompt|-p PROMPT]  [--filter|-f FILTER] [--show MODE] [--modi MODI] [--target TARGET] [--orientation ORIENTATION] [--anchor INT] [--height INT] [--fallback FALLBACK] 
+i3menu [--theme THEME] [--layout|-a LAYOUT] [--include|-i INCLUDESTRING] [--top|-t TOP] [--xpos|-x INT] [--xoffset INT] [--ypos|-y INT] [--yoffset INT] [--width|-w INT] [--options|-o OPTIONS] [--prompt|-p PROMPT]  [--filter|-f FILTER] [--show MODE] [--modi MODI] [--target TARGET] [--orientation ORIENTATION] [--anchor INT] [--height INT] [--fallback FALLBACK] [--no-auto-position] 
 i3menu --help|-h
 i3menu --version|-v
 i3menu [--verbose] [--dryrun]
@@ -332,6 +332,8 @@ Print additional information to STDERR
 Do not execute any i3-msg commands
 
 
+--no-auto-position  
+
 --help|-h  
 Show help and exit.
 
@@ -366,7 +368,7 @@ adjustposition() {
     awk '{printf("geo[%s]=%s\n",$1,$2)}' FS='='
   )"
 
-  opty=$(( ${1:-0} <= -0 ? i3list[WAH]-( (opty*-1)+geo[HEIGHT] ) : opty ))
+  opty=$(( ${1:-0} <= -0 ? i3list[WAH]-( (opty*-1)+geo[HEIGHT] ) : $1 ))
 
   newy=$(( opty < i3list[WAY] ? i3list[WAY] 
          : opty+geo[HEIGHT] > i3list[WAH] ? i3list[WAH]-geo[HEIGHT] 
@@ -963,7 +965,7 @@ declare -A __o
 options="$(
   getopt --name "[ERROR]:i3menu" \
     --options "a:i:t:x:y:w:o:p:f:hv" \
-    --longoptions "theme:,layout:,include:,top:,xpos:,xoffset:,ypos:,yoffset:,width:,options:,prompt:,filter:,show:,modi:,target:,orientation:,anchor:,height:,fallback:,help,version,verbose,dryrun," \
+    --longoptions "theme:,layout:,include:,top:,xpos:,xoffset:,ypos:,yoffset:,width:,options:,prompt:,filter:,show:,modi:,target:,orientation:,anchor:,height:,fallback:,no-auto-position,help,version,verbose,dryrun," \
     -- "$@" || exit 98
 )"
 
@@ -991,6 +993,7 @@ while true; do
     --anchor     ) __o[anchor]="${2:-}" ; shift ;;
     --height     ) __o[height]="${2:-}" ; shift ;;
     --fallback   ) __o[fallback]="${2:-}" ; shift ;;
+    --no-auto-position ) __o[no-auto-position]=1 ;; 
     --help       | -h ) ___printhelp && exit ;;
     --version    | -v ) ___printversion && exit ;;
     --verbose    ) __o[verbose]=1 ;; 

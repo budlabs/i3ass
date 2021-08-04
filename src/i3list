@@ -397,7 +397,7 @@ $(NF-1) ~ /"(type|id|window|name|num|x|floating|marks|layout|focused|instance|cl
     case "class":
     case "instance":
       ac[cid][key]=$NF
-      if ( key == arg_target && match($NF, arg_search[key]) )
+      if ( key == arg_target && $NF == "\"" arg_search[key] "\"" )
         suspect_targets[cid]=1
     break
 
