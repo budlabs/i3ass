@@ -1,22 +1,22 @@
 .nh
-.TH I3ASS 1 2021\-05\-29 Linux "User Manuals"
+.TH I3ASS 1 2021-08-04 Linux "User Manuals"
 .SH NAME
 .PP
-\fB\fCi3ass\fR \- i3 assistance scripts
+\fB\fCi3ass\fR - i3 assistance scripts
 
 .PP
 arbe
 
 
-.SH \fB\fCi3flip\fR \- Tabswitching done right
+.SH \fB\fCi3flip\fR - Tabswitching done right
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3flip [\-\-move|\-m] [\-\-json JSON] [\-\-verbose] [\-\-dryrun] DIRECTION
-i3flip \-\-help|\-h
-i3flip \-\-version|\-v
+i3flip [--move|-m] [--json JSON] [--verbose] [--dryrun] DIRECTION
+i3flip --help|-h
+i3flip --version|-v
 
 .fi
 .RE
@@ -40,48 +40,48 @@ which can be defined with different words:
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-move\fR|\fB\fC\-m\fR
+\fB\fC--move\fR|\fB\fC-m\fR
 .br
 Move the current container instead of changing
 focus.
 
 .PP
-\fB\fC\-\-json\fR JSON
+\fB\fC--json\fR JSON
 .br
-use JSON instead of output from  \fB\fCi3\-msg \-t
-get\_tree\fR
+use JSON instead of output from  \fB\fCi3-msg -t
+get_tree\fR
 
 .PP
-\fB\fC\-\-verbose\fR
+\fB\fC--verbose\fR
 .br
 Print more information to \fBstderr\fP\&.
 
 .PP
-\fB\fC\-\-dryrun\fR
+\fB\fC--dryrun\fR
 .br
 Don't execute any \fIi3 commands\fP\&.
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
 .SH EXAMPLES
 .PP
-\fB\fC\~/.config/i3/config\fR:
+\fB\fC~/.config/i3/config\fR:
 
 .PP
 .RS
 
 .nf
 \&...
-bindsym Mod4+Tab         exec \-\&\-\&no\-\&startup\-\&id i3flip next
-bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
+bindsym Mod4+Tab         exec --no-startup-id i3flip next
+bindsym Mod4+Shift+Tab   exec --no-startup-id i3flip prev
 
 .fi
 .RE
@@ -91,19 +91,19 @@ bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
 \fB\fCi3\fR \fB\fCi3viswiz\fR
 
 
-.SH \fB\fCi3fyra\fR \- An advanced, simple grid\-based tiling layout
+.SH \fB\fCi3fyra\fR - An advanced, simple grid-based tiling layout
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3fyra \-\-show|\-s CONTAINER [\-\-force|\-f]
-i3fyra \-\-float|\-a
-i3fyra \-\-hide|\-z CONTAINER [\-\-force|\-f]
-i3fyra \-\-layout|\-l LAYOUT [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
-i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-force|\-f] [\-\-speed|\-p INT]
-i3fyra \-\-help|\-h
-i3fyra \-\-version|\-v
+i3fyra --show|-s CONTAINER [--force|-f]
+i3fyra --float|-a
+i3fyra --hide|-z CONTAINER [--force|-f]
+i3fyra --layout|-l LAYOUT [--force|-f] [--array ARRAY] [--verbose] [--dryrun]
+i3fyra --move|-m DIRECTION|CONTAINER [--force|-f] [--speed|-p INT]
+i3fyra --help|-h
+i3fyra --version|-v
 
 .fi
 .RE
@@ -152,14 +152,14 @@ scratchpad.
 
 .PP
 The visibility is toggled by either using
-\fB\fC\-\-show\fR or \fB\fC\-\-hide\fR\&. But more often by moving a
+\fB\fC--show\fR or \fB\fC--hide\fR\&. But more often by moving a
 container in an \fIimpossible\fP direction,(\fIsee
 examples below\fP).
 
 .PP
 The \fBi3fyra\fP layout is only active on one
 workspace. That workspace can be set with the
-environment variable: \fB\fCi3FYRA\_WS\fR, otherwise the
+environment variable: \fB\fCi3FYRA_WS\fR, otherwise the
 workspace active when the layout is created will
 be used.
 
@@ -172,19 +172,19 @@ containers, which are very clunky to use with
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-show\fR|\fB\fC\-s\fR CONTAINER
+\fB\fC--show\fR|\fB\fC-s\fR CONTAINER
 .br
 Show target container. If it doesn't exist, it
 will be created and current window will be put in
 it. If it is visible, nothing happens.
 
 .PP
-\fB\fC\-\-force\fR|\fB\fC\-f\fR
+\fB\fC--force\fR|\fB\fC-f\fR
 .br
 If set virtual positions will be ignored.
 
 .PP
-\fB\fC\-\-float\fR|\fB\fC\-a\fR
+\fB\fC--float\fR|\fB\fC-a\fR
 .br
 Autolayout. If current window is tiled: floating
 enabled If window is floating, it will be put in a
@@ -195,12 +195,12 @@ container. If no containers exist, container
 there.
 
 .PP
-\fB\fC\-\-hide\fR|\fB\fC\-z\fR CONTAINER
+\fB\fC--hide\fR|\fB\fC-z\fR CONTAINER
 .br
 Hide target containers if visible.
 
 .PP
-\fB\fC\-\-layout\fR|\fB\fC\-l\fR LAYOUT
+\fB\fC--layout\fR|\fB\fC-l\fR LAYOUT
 .br
 alter splits Changes the given splits. INT is a
 distance in pixels. AB is on X axis from the left
@@ -210,10 +210,10 @@ if INT is positive, from the bottom if it is
 negative. The whole argument needs to be quoted.
 Example:
 .br
-\fB\fC$ i3fyra \-\-layout 'AB=\-300 BD=420'\fR
+\fB\fC$ i3fyra --layout 'AB=-300 BD=420'\fR
 
 .PP
-\fB\fC\-\-array\fR ARRAY
+\fB\fC--array\fR ARRAY
 .br
 ARRAY should be the output of \fB\fCi3list\fR\&. It is
 used to improve speed when \fBi3fyra\fP is executed
@@ -221,19 +221,19 @@ from a script that already have the array, f.i.
 \fBi3run\fP and \fBi3Kornhe\fP\&.
 
 .PP
-\fB\fC\-\-verbose\fR
+\fB\fC--verbose\fR
 .br
 If set information about execution will be
 printed to \fBstderr\fP\&.
 
 .PP
-\fB\fC\-\-dryrun\fR
+\fB\fC--dryrun\fR
 .br
 If set no window manipulation will be done during
 execution.
 
 .PP
-\fB\fC\-\-move\fR|\fB\fC\-m\fR CONTAINER
+\fB\fC--move\fR|\fB\fC-m\fR CONTAINER
 .br
 Moves current window to target container, either
 defined by it's name or it's position relative to
@@ -245,24 +245,24 @@ in that direction, Connected container(s)
 visibility is toggled. If current window is
 floating or not inside ABCD, normal movement is
 performed. Distance for moving floating windows
-with this action can be defined with the \fB\fC\-\-speed\fR
-option. Example: \fB\fC$ i3fyra \-\-speed 30 \-m r\fR Will
+with this action can be defined with the \fB\fC--speed\fR
+option. Example: \fB\fC$ i3fyra --speed 30 -m r\fR Will
 move current window 30 pixels to the right, if it
 is floating.
 
 .PP
-\fB\fC\-\-speed\fR|\fB\fC\-p\fR INT
+\fB\fC--speed\fR|\fB\fC-p\fR INT
 .br
 Distance in pixels to move a floating window.
 Defaults to 30.
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit
 
@@ -283,15 +283,15 @@ layout would looks like this:
 .RE
 
 .PP
-If action: \fB\fC\-\-move up\fR would be executed when
+If action: \fB\fC--move up\fR would be executed when
 container \fBB\fP is active and \fBD\fP is hidden.
 Container \fBD\fP would be shown. If action would
-have been: \fB\fC\-\-move down\fR, \fBD\fP would be shown but
+have been: \fB\fC--move down\fR, \fBD\fP would be shown but
 \fBB\fP would be placed below \fBD\fP, this means that
 the containers will also swap names. If action
-would have been \fB\fC\-\-move left\fR the active window in
+would have been \fB\fC--move left\fR the active window in
 B would be moved to container \fBA\fP\&. If action was
-\fB\fC\-\-move right\fR, \fBA\fP and \fBC\fP would be hidden:
+\fB\fC--move right\fR, \fBA\fP and \fBC\fP would be hidden:
 
 .PP
 .RS
@@ -304,7 +304,7 @@ B would be moved to container \fBA\fP\&. If action was
 .RE
 
 .PP
-If we now \fB\fC\-\-move left\fR, \fBA\fP and \fBC\fP would be
+If we now \fB\fC--move left\fR, \fBA\fP and \fBC\fP would be
 shown again but to the right of \fBB\fP, the
 containers would also change names, so \fBB\fP
 becomes \fBA\fP, \fBA\fP becomes \fBB\fP and \fBC\fP
@@ -327,24 +327,24 @@ https://youtu.be/kU8gb6WLFk8
 
 .SH ENVIRONMENT
 .PP
-\fB\fCI3FYRA\_MAIN\_CONTAINER\fR
+\fB\fCI3FYRA_MAIN_CONTAINER\fR
 .br
 This container will be the chosen when a
 container is requested but not given. When using
-the command autolayout (\fB\fC\-a\fR) for example, if the
+the command autolayout (\fB\fC-a\fR) for example, if the
 window is floating it will be sent to the main
 container, if no other containers exist. Defaults
 to A. defaults to: A
 
 .PP
-\fB\fCI3FYRA\_WS\fR
+\fB\fCI3FYRA_WS\fR
 .br
 Workspace to use for i3fyra. If not set, the firs
 workspace that request to create the layout will
 be used. defaults to:
 
 .PP
-\fB\fCI3FYRA\_ORIENTATION\fR
+\fB\fCI3FYRA_ORIENTATION\fR
 .br
 If set to \fB\fCvertical\fR main split will be \fB\fCAC\fR and
 families will be \fB\fCAB\fR and \fB\fCCD\fR\&. Otherwise main
@@ -356,77 +356,77 @@ split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3var\fR \fB\fCi3viswiz\fR
 
 
-.SH \fB\fCi3get\fR \- prints info about a specific window to stdout
+.SH \fB\fCi3get\fR - prints info about a specific window to stdout
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3get [\-\-class|\-c CLASS] [\-\-instance|\-i INSTANCE] [\-\-title|\-t TITLE] [\-\-conid|\-n CON\_ID] [\-\-id|\-d WIN\_ID] [\-\-mark|\-m MARK] [\-\-titleformat|\-o TITLE\_FORMAT] [\-\-active|\-a] [\-\-synk|\-y] [\-\-print|\-r OUTPUT] [\-\-json TREE]      
-i3get \-\-help|\-h
-i3get \-\-version|\-v
+i3get [--class|-c CLASS] [--instance|-i INSTANCE] [--title|-t TITLE] [--conid|-n CON_ID] [--id|-d WIN_ID] [--mark|-m MARK] [--titleformat|-o TITLE_FORMAT] [--active|-a] [--synk|-y] [--print|-r OUTPUT] [--json TREE]
+i3get --help|-h
+i3get --version|-v
 
 .fi
 .RE
 
 .SH DESCRIPTION
 .PP
-Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3\-msg \-t
-get\_tree\fR, return desired information. If no
-arguments are passed, \fB\fCcon\_id\fR of active window is
+Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3-msg -t
+get_tree\fR, return desired information. If no
+arguments are passed, \fB\fCcon_id\fR of active window is
 returned. If there is more then one criterion, all
 of them must be true to get results.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+\fB\fC--class\fR|\fB\fC-c\fR CLASS
 .br
 Search for windows with the given class
 
 .PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+\fB\fC--instance\fR|\fB\fC-i\fR INSTANCE
 .br
 Search for windows with the given instance
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+\fB\fC--title\fR|\fB\fC-t\fR TITLE
 .br
 Search for windows with title.
 
 .PP
-\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+\fB\fC--conid\fR|\fB\fC-n\fR CON_ID
 .br
-Search for windows with the given con\_id
+Search for windows with the given con_id
 
 .PP
-\fB\fC\-\-id\fR|\fB\fC\-d\fR WIN\_ID
+\fB\fC--id\fR|\fB\fC-d\fR WIN_ID
 .br
 Search for windows with the given window id
 
 .PP
-\fB\fC\-\-mark\fR|\fB\fC\-m\fR MARK
+\fB\fC--mark\fR|\fB\fC-m\fR MARK
 .br
 Search for windows with the given mark
 
 .PP
-\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR TITLE\_FORMAT
+\fB\fC--titleformat\fR|\fB\fC-o\fR TITLE_FORMAT
 .br
 Search for windows with the given titleformat
 
 .PP
-\fB\fC\-\-active\fR|\fB\fC\-a\fR
+\fB\fC--active\fR|\fB\fC-a\fR
 .br
 Currently active window (default)
 
 .PP
-\fB\fC\-\-synk\fR|\fB\fC\-y\fR
+\fB\fC--synk\fR|\fB\fC-y\fR
 .br
 Synch on. If this option is included,  script
 will wait till target window exist. (\fIor timeout
 after 60 seconds\fP).
 
 .PP
-\fB\fC\-\-print\fR|\fB\fC\-r\fR OUTPUT
+\fB\fC--print\fR|\fB\fC-r\fR OUTPUT
 .br
 \fIOUTPUT\fP can be one or more of the following
 characters:
@@ -440,7 +440,7 @@ l l l .
 \fB\fCc\fR	class	string
 \fB\fCi\fR	instance	string
 \fB\fCd\fR	Window ID	INT
-\fB\fCn\fR	Con\_Id (default)	INT
+\fB\fCn\fR	Con_Id (default)	INT
 \fB\fCm\fR	mark	JSON list
 \fB\fCw\fR	workspace	INT
 \fB\fCa\fR	is active	true or false
@@ -454,7 +454,7 @@ l l l .
 .PP
 Each character in OUTPUT will be tested and the
 return value will be printed on a new line. If no
-value is found, \fB\fC\-\-i3get could not find:
+value is found, \fB\fC--i3get could not find:
 CHARACTER\fR will get printed.
 
 .PP
@@ -465,90 +465,90 @@ have a mark:
 .RS
 
 .nf
-$ i3get \-r tfcmw
+$ i3get -r tfcmw
 /dev/pts/9
-user\_off
+user_off
 URxvt
-\-\-i3get could not find: m
+--i3get could not find: m
 1
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-json\fR TREE
+\fB\fC--json\fR TREE
 .br
 Use TREE instead of the output of
 .br
-\fB\fCi3\-msg \-t get\_tree\fR
+\fB\fCi3-msg -t get_tree\fR
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit
 
 .SH EXAMPLES
 .PP
 search for window with instance name
-sublime\_text.  Request workspace, title and
+sublime_text.  Request workspace, title and
 floating state.
 
 .PP
 .RS
 
 .nf
-$ i3get \-\-instance sublime\_text \-\-print wtf 
+$ i3get --instance sublime_text --print wtf 
 1
-\~/src/bash/i3ass/i3get (i3ass) \- Sublime Text
-user\_off
+~/src/bash/i3ass/i3get (i3ass) - Sublime Text
+user_off
 
 .fi
 .RE
 
 .SH DEPENDENCIES
 .PP
-\fB\fCbash\fR \fB\fCi3\fR
+\fB\fCbash\fR \fB\fCi3\fR \fB\fCgawk\fR
 
 
-.SH \fB\fCi3gw\fR \- a ghost window wrapper for i3wm
+.SH \fB\fCi3gw\fR - a ghost window wrapper for i3wm
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
 i3gw MARK
-i3gw \-\-help|\-h
-i3gw \-\-version|\-v
+i3gw --help|-h
+i3gw --version|-v
 
 .fi
 .RE
 
 .SH DESCRIPTION
 .PP
-\fB\fCi3\-msg\fR has an undocumented function: \fIopen\fP,
+\fB\fCi3-msg\fR has an undocumented function: \fIopen\fP,
 it creates empty containers,  or as I call them:
 ghosts.  Since these empty containers doesn't
 contain any windows  there is no
 instance/class/title to identify them,  making it
 difficult to manage them.  They do however have a
-\fB\fCcon\_id\fR  and I found that the easiest way to keep
+\fB\fCcon_id\fR  and I found that the easiest way to keep
 track of ghosts, is to mark them.  That is what
 this script does,  it creates a ghost,  get its
-\fB\fCcon\_id\fR and marks it.
+\fB\fCcon_id\fR and marks it.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
@@ -565,10 +565,10 @@ container.
 .RS
 
 .nf
-$ i3\-msg [con\_mark=casper] move to workspace 2
-$ i3\-msg [con\_mark=casper] split v
-$ i3\-msg [con\_mark=casper] layout tabbed
-$ i3\-msg [con\_mark=casper] kill
+$ i3-msg [con_mark=casper] move to workspace 2
+$ i3-msg [con_mark=casper] split v
+$ i3-msg [con_mark=casper] layout tabbed
+$ i3-msg [con_mark=casper] kill
 
 .fi
 .RE
@@ -582,19 +582,170 @@ container.
 \fB\fCi3\fR
 
 
-.SH \fB\fCi3Kornhe\fR \- move and resize windows gracefully
+.SH \fB\fCi3king\fR - window ruler
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3Kornhe DIRECTION [\-\-verbose] [\-\-array ARRAY] [\-\-json JSON]
-i3Kornhe move [\-\-speed|\-p SPEED] [DIRECTION]
-i3Kornhe size [\-\-speed|\-p SPEED] [DIRECTION]
-i3Kornhe 1\-9 [\-\-margin INT] [\-\-margin\-top INT] [\-\-margin\-bottom INT] [\-\-margin\-left INT] [\-\-margin\-right INT]
+i3king --config|-c FILE
+i3king --json JSON [--verbose] [--dryrun] [--log FILE]
+i3king --help|-h
+i3king --version|-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+i3king will match all \fBnew\fP windows against the
+rules defined in \fBI3_KING_RULE_FILE\fP
+(\fI\fB\fC~/.config/i3king/rules\fR\fP). If a rule matches
+the created window, the command associated with
+the rule will get passed to \fB\fCi3-msg\fR\&.
+
+.PP
+The criterias a window can get matched against
+are
+.br
+- \fBclass\fP
+
+.RS
+.IP \(bu 2
+\fBinstance\fP
+.IP \(bu 2
+\fBtitle\fP
+.IP \(bu 2
+\fBwindow_type\fP
+
+.RE
+
+.PP
+It is also possible to use \fBGLOBAL\fP rules which
+will match any windows. But each global rules can
+have a \fBblack\fPlist with windows that will not
+trigger that rule.
+
+.PP
+A variant of the GLOBAL rule is \fBDEFAULT\fP
+rules, which works exactly like GLOBAL rules,
+except they only get triggered if the window
+didn't match any \fI"normal"\fP rules (regular GLOBAL
+rules are normal).
+
+.PP
+Just like in the i3 config the \fB\fCset\fR directive is
+available, so you can make variables.
+
+.PP
+Two built in magic variables are avaible in the
+config:
+.br
+- $INSTANCE
+
+.RS
+.IP \(bu 2
+$CLASS
+
+.RE
+
+.SH EXAMPLE
+.PP
+.RS
+
+.nf
+GLOBAL \\
+  class=URxvt instance=htop, \\
+  instance=firefox
+    title_format $INSTANCE
+
+.fi
+.RE
+
+.PP
+The above rule will set the title_format to the
+instance name of all windows, except a URxvt
+window with the instance name htop, and firefox
+windows.
+
+.PP
+If $I3_KING_RULES_FILE doesn't exist, a example
+rule file will get created. See that file for
+details about the syntax.
+
+.SH OPTIONS
+.PP
+\fB\fC--config\fR|\fB\fC-c\fR FILE
+.br
+Override the value of the Environment variable
+\fBI3_KING_RULE_FILE\fP . Or the default value:
+.br
+\fB\fC~/.config/i3king/rules\fR
+
+.PP
+\fB\fC--json\fR JSON
+.br
+Parse JSON instead of the output from: \fB\fCi3-msg -t
+subscribe\fR
+
+.PP
+\fB\fC--verbose\fR
+.br
+More verbose output to \fBSTDERR\fP\&.
+
+.PP
+\fB\fC--dryrun\fR
+.br
+Parse rules but don't execute commands.
+
+.PP
+\fB\fC--log\fR FILE
+.br
+Same as verbose but the output is printed to FILE
+instead.
+
+.PP
+\fB\fC--help\fR|\fB\fC-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC--version\fR|\fB\fC-v\fR
+.br
+Show version and exit.
+
+.SH ENVIRONMENT
+.PP
+\fB\fCXDG_CONFIG_HOME\fR
+
+.PP
+defaults to: $HOME/.config
+
+.PP
+\fB\fCI3_KING_RULE_FILE\fR
+.br
+Path to file containing rules to be parsed.
+Defaults to $XDG_CONFIG_HOME/i3king/rules defaults
+to: $XDG_CONFIG_HOME/i3king/rules
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCi3-msg\fR
+
+
+.SH \fB\fCi3Kornhe\fR - move and resize windows gracefully
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3Kornhe DIRECTION [--verbose] [--array ARRAY] [--json JSON]
+i3Kornhe move [--speed|-p SPEED] [DIRECTION]
+i3Kornhe size [--speed|-p SPEED] [DIRECTION]
+i3Kornhe 1-9 [--margin INT] [--margin-top INT] [--margin-bottom INT] [--margin-left INT] [--margin-right INT]
 i3Kornhe x
-i3Kornhe \-\-help|\-h
-i3Kornhe \-\-version|\-v
+i3Kornhe --help|-h
+i3Kornhe --version|-v
 
 .fi
 .RE
@@ -613,54 +764,54 @@ the i3 config file that is needed to use
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-verbose\fR
+\fB\fC--verbose\fR
 
 .PP
-\fB\fC\-\-array\fR ARRAY
+\fB\fC--array\fR ARRAY
 
 .PP
-\fB\fC\-\-json\fR JSON
+\fB\fC--json\fR JSON
 
 .PP
-\fB\fC\-\-speed\fR|\fB\fC\-p\fR SPEED
+\fB\fC--speed\fR|\fB\fC-p\fR SPEED
 .br
 Sets speed or distance in pixels to use when
 moving and resizing the windows.
 
 .PP
-\fB\fC\-\-margin\fR INT
+\fB\fC--margin\fR INT
 
 .PP
-\fB\fC\-\-margin\-top\fR INT
+\fB\fC--margin-top\fR INT
 .br
-Override the top\-margin value. Defaults to the
-value of \fB\fC\-\-margin\fR (which is 5)
+Override the top-margin value. Defaults to the
+value of \fB\fC--margin\fR (which is 5)
 
 .PP
-\fB\fC\-\-margin\-bottom\fR INT
+\fB\fC--margin-bottom\fR INT
 .br
-Override the bottom\-margin value. Defaults to the
-value of \fB\fC\-\-margin\fR (which is 5)
+Override the bottom-margin value. Defaults to the
+value of \fB\fC--margin\fR (which is 5)
 
 .PP
-\fB\fC\-\-margin\-left\fR INT
+\fB\fC--margin-left\fR INT
 .br
-Override the left\-margin value. Defaults to the
-value of \fB\fC\-\-margin\fR (which is 5)
+Override the left-margin value. Defaults to the
+value of \fB\fC--margin\fR (which is 5)
 
 .PP
-\fB\fC\-\-margin\-right\fR INT
+\fB\fC--margin-right\fR INT
 .br
-Override the right\-margin value. Defaults to the
-value of \fB\fC\-\-margin\fR (which is 5)
+Override the right-margin value. Defaults to the
+value of \fB\fC--margin\fR (which is 5)
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
@@ -669,21 +820,21 @@ Show version and exit.
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3var\fR
 
 
-.SH \fB\fCi3list\fR \- list information about the current i3 session.
+.SH \fB\fCi3list\fR - list information about the current i3 session.
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3list [\-\-json JSON]
-i3list \-\-instance|\-i TARGET [\-\-json JSON]
-i3list \-\-class|\-c    TARGET [\-\-json JSON]
-i3list \-\-conid|\-n    TARGET [\-\-json JSON]
-i3list \-\-winid|\-d    TARGET [\-\-json JSON]
-i3list \-\-mark|\-m     TARGET [\-\-json JSON]
-i3list \-\-title|\-t    TARGET [\-\-json JSON]
-i3list \-\-help|\-h
-i3list \-\-version|\-v
+i3list [--json JSON]
+i3list --instance|-i TARGET [--json JSON]
+i3list --class|-c    TARGET [--json JSON]
+i3list --conid|-n    TARGET [--json JSON]
+i3list --winid|-d    TARGET [--json JSON]
+i3list --mark|-m     TARGET [--json JSON]
+i3list --title|-t    TARGET [--json JSON]
+i3list --help|-h
+i3list --version|-v
 
 .fi
 .RE
@@ -692,7 +843,7 @@ i3list \-\-version|\-v
 .PP
 \fB\fCi3list\fR prints a list in a \fIarray\fP formatted
 list.  If a search criteria is given
-(\fB\fC\-c\fR|\fB\fC\-i\fR|\fB\fC\-n\fR|\fB\fC\-d\fR|\fB\fC\-m\fR)  information about the
+(\fB\fC-c\fR|\fB\fC-i\fR|\fB\fC-n\fR|\fB\fC-d\fR|\fB\fC-m\fR)  information about the
 first window matching the criteria is displayed.
 Information about the active window is always
 displayed.  If no search criteria is given,  the
@@ -705,53 +856,53 @@ declared first.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-json\fR JSON
+\fB\fC--json\fR JSON
 .br
-use JSON instead of output from  \fB\fCi3\-msg \-t
-get\_tree\fR
+use JSON instead of output from  \fB\fCi3-msg -t
+get_tree\fR
 
 .PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR TARGET
+\fB\fC--instance\fR|\fB\fC-i\fR TARGET
 .br
 Search for windows with a instance matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR TARGET
+\fB\fC--class\fR|\fB\fC-c\fR TARGET
 .br
 Search for windows with a class matching \fITARGET\fP
 
 .PP
-\fB\fC\-\-conid\fR|\fB\fC\-n\fR TARGET
+\fB\fC--conid\fR|\fB\fC-n\fR TARGET
 .br
-Search for windows with a \fBCON\_ID\fP matching
+Search for windows with a \fBCON_ID\fP matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR TARGET
+\fB\fC--winid\fR|\fB\fC-d\fR TARGET
 .br
-Search for windows with a \fBWINDOW\_ID\fP matching
+Search for windows with a \fBWINDOW_ID\fP matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-mark\fR|\fB\fC\-m\fR TARGET
+\fB\fC--mark\fR|\fB\fC-m\fR TARGET
 .br
 Search for windows with a \fBmark\fP matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR TARGET
+\fB\fC--title\fR|\fB\fC-t\fR TARGET
 .br
 Search for windows with a \fBtitle\fP matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
@@ -775,13 +926,13 @@ i3list[AFS]=D                  # Active Window sibling
 i3list[AWB]=20                 # Active Window titlebar height
 i3list[AFT]=A                  # Active Window twin
 i3list[AWP]=C                  # Active Window parent
-i3list[AWC]=94283162546096     # Active Window con\_id
+i3list[AWC]=94283162546096     # Active Window con_id
 i3list[TWB]=20                 # Target Window titlebar height
 i3list[TFS]=D                  # Target Window sibling
 i3list[TFF]=CD                 # Target Window family
 i3list[TWP]=C                  # Target Window Parent container
 i3list[TFT]=A                  # Target Window twin
-i3list[TWC]=94283162546096     # Target Window con\_id
+i3list[TWC]=94283162546096     # Target Window con_id
 i3list[TWF]=0                  # Target Window Floating
 i3list[TTW]=270                # Target Window tab width
 i3list[TWH]=1700               # Target Window height
@@ -814,7 +965,7 @@ i3list[LVI]=CBA                # Visible i3fyra containers
 i3list[FCD]=C                  # Family CD memory
 i3list[LAL]=ABCD               # All containers in family order
 i3list[WAH]=1920               # Active Workspace height
-i3list[WAI]=94283159180304     # Active Workspace con\_id
+i3list[WAI]=94283159180304     # Active Workspace con_id
 i3list[WAW]=1080               # Active Workspace width
 i3list[WSF]=1                  # i3fyra Workspace Number
 i3list[WAX]=0                  # Active Workspace x position
@@ -822,9 +973,9 @@ i3list[WST]=1                  # Target Workspace Number
 i3list[WAY]=0                  # Active Workspace y position
 i3list[WFH]=1920               # i3fyra Workspace Height
 i3list[WTH]=1920               # Target Workspace Height
-i3list[WFI]=94283159180304     # i3fyra Workspace con\_id
+i3list[WFI]=94283159180304     # i3fyra Workspace con_id
 i3list[WAN]='1'                # Active Workspace name
-i3list[WTI]=94283159180304     # Target Workspace con\_id
+i3list[WTI]=94283159180304     # Target Workspace con_id
 i3list[WFW]=1080               # i3fyra Workspace Width
 i3list[WTW]=1080               # Target Workspace Width
 i3list[WFX]=0                  # i3fyra Workspace X position
@@ -836,7 +987,7 @@ i3list[WSA]=1                  # Active Workspace number
 i3list[WTN]='1'                # Target Workspace name
 
 
-$ declare \-A i3list # declares associative array
+$ declare -A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
@@ -849,16 +1000,16 @@ $ echo ${i3list[WAW]}
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR
 
 
-.SH \fB\fCi3menu\fR \- Adds more features to rofi when used in i3wm
+.SH \fB\fCi3menu\fR - Adds more features to rofi when used in i3wm
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3menu [\-\-theme THEME] [\-\-layout|\-a LAYOUT] [\-\-include|\-i INCLUDESTRING] [\-\-top|\-t TOP] [\-\-xpos|\-x INT] [\-\-xoffset INT] [\-\-ypos|\-y INT] [\-\-yoffset INT] [\-\-width|\-w INT] [\-\-options|\-o OPTIONS] [\-\-prompt|\-p PROMPT]  [\-\-filter|\-f FILTER] [\-\-show MODE] [\-\-modi MODI] [\-\-target TARGET] [\-\-orientation ORIENTATION] [\-\-anchor INT] [\-\-height INT] [\-\-fallback FALLBACK] 
-i3menu \-\-help|\-h
-i3menu \-\-version|\-v
-i3menu [\-\-verbose] [\-\-dryrun]
+i3menu [--theme THEME] [--layout|-a LAYOUT] [--include|-i INCLUDESTRING] [--top|-t TOP] [--xpos|-x INT] [--xoffset INT] [--ypos|-y INT] [--yoffset INT] [--width|-w INT] [--options|-o OPTIONS] [--prompt|-p PROMPT]  [--filter|-f FILTER] [--show MODE] [--modi MODI] [--target TARGET] [--orientation ORIENTATION] [--anchor INT] [--height INT] [--fallback FALLBACK] [--no-auto-position] 
+i3menu --help|-h
+i3menu --version|-v
+i3menu [--verbose] [--dryrun]
 
 .fi
 .RE
@@ -872,38 +1023,38 @@ schemes and positions for the menu.
 .PP
 Every line in \fB\fCstdin\fR will be displayed as a menu
 item.  The order will be the same as entered if
-not \fB\fC\-\-top\fR is set.
+not \fB\fC--top\fR is set.
 
 .PP
 The foundation for the appearance of the menus
 are the themefiles
 \fBi3menu.rasi\fP,\fBthemevars.rasi\fP, found in
-I3MENU\_DIR (defaults to $XDG\_CONFIG\_HOME/i3menu),
+I3MENU_DIR (defaults to $XDG_CONFIG_HOME/i3menu),
 but depending on the options  passed to \fB\fCi3menu\fR
 certain values of the themefiles  will get
 overwritten.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-theme\fR THEME
+\fB\fC--theme\fR THEME
 .br
 If a \fB\&.rasi\fP file with same name as THEME exist
-in \fB\fCI3MENU\_DIR/themes\fR, it's content will get
+in \fB\fCI3MENU_DIR/themes\fR, it's content will get
 appended to theme file before showing the menu.
 
 .PP
-\fB\fC$ echo "list" | i3menu \-\-theme red\fR
+\fB\fC$ echo "list" | i3menu --theme red\fR
 .br
 this will use the the file:
-\fB\fCI3MENU\_DIR/themes/red.rasi\fR
+\fB\fCI3MENU_DIR/themes/red.rasi\fR
 
 .PP
 If no matching themefile is found,
-\fB\fCI3MENU\_DIR/themes/default.rasi\fR will be used
+\fB\fCI3MENU_DIR/themes/default.rasi\fR will be used
 (and created if it doesn't exist).
 
 .PP
-\fB\fC\-\-layout\fR|\fB\fC\-a\fR LAYOUT
+\fB\fC--layout\fR|\fB\fC-a\fR LAYOUT
 .br
 This is where \fBi3menu\fP differs the most from
 normal \fBrofi\fP behavior and is the only option
@@ -920,9 +1071,8 @@ l l
 l l .
 \fB\fCLAYOUT\fR	\fB\fCmenu location and dimensions\fR
 mouse	T{
-At the mouse position (requires 
+At the mouse position (requires \fB\fCxdotool\fR)
 T}
-\fB\fCxdotool\fR)
 window	The currently active window.
 titlebar	T{
 The titlebar of the currently active window.
@@ -930,10 +1080,7 @@ T}
 tab	T{
 The tab (or titlebar if it isn't tabbed) of the currently active window.
 T}
-A,B,C or D	The 
-\fBi3fyra\fPT{
- container of the same name if it is visible. If target container isn't visible the menu will be displayed at the default location.
-T}
+A,B,C or D	The \fBi3fyra\fP container of the same name if it is visible. If target container isn't visible the menu will be displayed at the default location.
 .TE
 
 .PP
@@ -945,11 +1092,11 @@ with the prompt and entrybox above the list.
 .PP
 The position of the menu can be further
 manipulated by using
-\fB\fC\-\-xpos\fR,\fB\fC\-\-ypos\fR,\fB\fC\-\-width\fR,\fB\fC\-\-height\fR,\fB\fC\-\-orientation\fR,\fB\fC\-\-include\fR\&.
+\fB\fC--xpos\fR,\fB\fC--ypos\fR,\fB\fC--width\fR,\fB\fC--height\fR,\fB\fC--orientation\fR,\fB\fC--include\fR\&.
 
 .PP
-\fB\fC$ echo "list" | i3menu \-\-prompt "select: "
-\-\-layout window \-\-xpos \-50 \-\-ypos 30\fR
+\fB\fC$ echo "list" | i3menu --prompt "select: "
+--layout window --xpos -50 --ypos 30\fR
 .br
 The command above would create a menu with the
 same size and position as the current window, but
@@ -957,7 +1104,7 @@ place it 50px to the left of the window, and 30px
 below the \fIlower\fP of the window.
 
 .PP
-\fB\fC\-\-include\fR|\fB\fC\-i\fR INCLUDESTRING
+\fB\fC--include\fR|\fB\fC-i\fR INCLUDESTRING
 .br
 INCLUDESTRING can be set to force which elements
 of the menu to include. INCLUDESTRING can be one
@@ -974,14 +1121,14 @@ l l .
 .TE
 
 .PP
-\fB\fCecho "list" | i3menu \-\-include le \-\-prompt
+\fB\fCecho "list" | i3menu --include le --prompt
 "enter a value: "\fR
 .br
 The command above will result in a menu without
 the \fBprompt\fP element.
 
 .PP
-\fB\fCi3menu \-\-include pe \-\-prompt "enter a value: "\fR
+\fB\fCi3menu --include pe --prompt "enter a value: "\fR
 .br
 The command above will result in a menu without a
 \fBlist\fP element. (just an inputbox).
@@ -994,7 +1141,7 @@ no list element will be included, the same goes
 for the prompt.
 
 .PP
-\fB\fC\-\-top\fR|\fB\fC\-t\fR TOP
+\fB\fC--top\fR|\fB\fC-t\fR TOP
 .br
 If TOP is set, the input stream (LIST) will get
 matched against TOP. Lines in LIST with an exact
@@ -1003,7 +1150,7 @@ LIST before the menu is created.
 
 .PP
 \fB\fC$ printf '%s\\n' one two three four | i3menu
-\-\-top "$(printf '%s\\n' two four)"\fR
+--top "$(printf '%s\\n' two four)"\fR
 
 .PP
 will result in a list looking like this:
@@ -1011,14 +1158,14 @@ will result in a list looking like this:
 \fB\fCtwo four one three\fR
 
 .PP
-\fB\fC\-\-xpos\fR|\fB\fC\-x\fR INT
+\fB\fC--xpos\fR|\fB\fC-x\fR INT
 .br
 Sets the \fBX\fP position of the menu to INT. If
 this option is set, it will override any automatic
 position of the \fBX\fP coordinate.
 
 .PP
-\fB\fC\-\-xoffset\fR INT
+\fB\fC--xoffset\fR INT
 .br
 Adds INT to the calculated \fBX\fP position of the
 menu before it is displayed. XPOS can be either
@@ -1027,20 +1174,20 @@ positive or negative.
 .PP
 \fBEXAMPLE\fP
 .br
-If both \fB\fC\-\-layout\fR is set to \fB\fCwindow\fR and
-\fB\fC\-\-xpos\fR is set to \fB\fC\-50\fR, the menu will be placed
+If both \fB\fC--layout\fR is set to \fB\fCwindow\fR and
+\fB\fC--xpos\fR is set to \fB\fC-50\fR, the menu will be placed
 50 pixels to the left of the active window but
 have the same dimensions as the window.
 
 .PP
-\fB\fC\-\-ypos\fR|\fB\fC\-y\fR INT
+\fB\fC--ypos\fR|\fB\fC-y\fR INT
 .br
 Sets the \fBY\fP position of the menu to INT. If
 this option is set, it will override any automatic
 position of the \fBY\fP coordinate.
 
 .PP
-\fB\fC\-\-yoffset\fR INT
+\fB\fC--yoffset\fR INT
 .br
 Adds INT to the calculated \fBY\fP position of the
 menu before it is displayed. INT can be either
@@ -1049,92 +1196,92 @@ positive or negative.
 .PP
 \fBEXAMPLE\fP
 .br
-If both \fB\fC\-\-layout\fR is set to \fB\fCtitlebar\fR and
-\fB\fC\-\-ypos\fR is set to \fB\fC50\fR, the menu will be placed
+If both \fB\fC--layout\fR is set to \fB\fCtitlebar\fR and
+\fB\fC--ypos\fR is set to \fB\fC50\fR, the menu will be placed
 50 pixels below the active window.
 
 .PP
-\fB\fC\-\-width\fR|\fB\fC\-w\fR INT
+\fB\fC--width\fR|\fB\fC-w\fR INT
 .br
 Changes the width of the menu. If the argument to
-\fB\fC\-\-width\fR ends with a \fB\fC%\fR character the width will
+\fB\fC--width\fR ends with a \fB\fC%\fR character the width will
 be that many percentages of the screenwidth.
 Without \fB\fC%\fR absolute width in pixels will be set.
 
 .PP
-\fB\fC\-\-options\fR|\fB\fC\-o\fR OPTIONS
+\fB\fC--options\fR|\fB\fC-o\fR OPTIONS
 .br
 The argument is a string of aditional options to
 pass to \fBrofi\fP\&.
 
 .PP
-\fB\fC$ i3menu \-\-prompt "Enter val: " \-\-options
-'\-matching regex'\fR
+\fB\fC$ i3menu --prompt "Enter val: " --options
+'-matching regex'\fR
 .br
 will result in a call to rofi looking something
 like this:
 .br
-\fB\fCrofi \-p "Enter val: " \-matching regex \-dmenu\fR
+\fB\fCrofi -p "Enter val: " -matching regex -dmenu\fR
 
 .PP
-Note that the \fBrofi\fP options: \fB\fC\-p, \-filter,
-\-show, \-modi\fR \fIcould be\fP entered to as arguments
+Note that the \fBrofi\fP options: \fB\fC-p, -filter,
+-show, -modi\fR \fIcould be\fP entered to as arguments
 
 .PP
-to \fB\fCi3menu \-\-options\fR, but it is recommended to
-use: \fB\fC\-\-prompt\fR, \fB\fC\-\-filter\fR, \fB\fC\-\-show\fR and \fB\fC\-\-modi\fR
+to \fB\fCi3menu --options\fR, but it is recommended to
+use: \fB\fC--prompt\fR, \fB\fC--filter\fR, \fB\fC--show\fR and \fB\fC--modi\fR
 instead, since this will make i3menu optimize the
 layout better.
 
 .PP
-\fB\fC\-\-prompt\fR|\fB\fC\-p\fR PROMPT
+\fB\fC--prompt\fR|\fB\fC-p\fR PROMPT
 .br
 Sets the prompt of the menu to PROMPT.
 
 .PP
-\fB\fC\-\-filter\fR|\fB\fC\-f\fR FILTER
+\fB\fC--filter\fR|\fB\fC-f\fR FILTER
 .br
 Sets the inputbox text/filter to FILTER. Defaults
 to blank string.
 
 .PP
-\fB\fC\-\-show\fR MODE
+\fB\fC--show\fR MODE
 .br
 This is a short hand for the \fBrofi\fP option
-\fB\fC\-show\fR\&. So instead of doing this:
+\fB\fC-show\fR\&. So instead of doing this:
 .br
-\fB\fC$ i3menu \-o '\-show run'\fR , you can do this:
+\fB\fC$ i3menu -o '-show run'\fR , you can do this:
 .br
-\fB\fC$ i3menu \-\-show run\fR
+\fB\fC$ i3menu --show run\fR
 
 .PP
-\fB\fC\-\-modi\fR MODI
+\fB\fC--modi\fR MODI
 .br
 This is a short hand for the \fBrofi\fP option
-\fB\fC\-modi\fR\&. So instead of doing this:
+\fB\fC-modi\fR\&. So instead of doing this:
 .br
-\fB\fC$ i3menu \-o '\-modi run,drun \-show run'\fR , you
+\fB\fC$ i3menu -o '-modi run,drun -show run'\fR , you
 can do this:
 .br
-\fB\fC$ i3menu \-\-modi run,drun \-\-show run\fR
+\fB\fC$ i3menu --modi run,drun --show run\fR
 
 .PP
-\fB\fC\-\-target\fR TARGET
+\fB\fC--target\fR TARGET
 .br
 TARGET is a string containing additional options
 passed to \fBi3list\fP\&. This can be used to change
-the target window when \fB\fC\-\-layout\fR is set to:
+the target window when \fB\fC--layout\fR is set to:
 \fB\fCwindow\fR,\fB\fCtitlebar\fR or \fB\fCtab\fR\&.
 
 .PP
-\fB\fC\-\-orientation\fR ORIENTATION
+\fB\fC--orientation\fR ORIENTATION
 .br
 This forces the layout of the menu to be either
-vertical or horizontal. If \fB\fC\-\-layout\fR is set to
+vertical or horizontal. If \fB\fC--layout\fR is set to
 \fBwindow\fP, the layout will always be \fB\fCvertical\fR\&.
 
 .PP
-\fB\fC\-\-anchor\fR INT
+\fB\fC--anchor\fR INT
 .br
 Sets the "\fIanchor\fP" point of the menu. The
 default is \fB1\fP\&. \fB1\fP means the top left corner,
@@ -1145,12 +1292,12 @@ is \fItop left\fP (\fB1\fP), the menu will \fIgrow\fP from
 that point.
 
 .PP
-\fB\fC\-\-height\fR INT
+\fB\fC--height\fR INT
 .br
 Overrides the calculated height of the menu.
 
 .PP
-\fB\fC\-\-fallback\fR FALLBACK
+\fB\fC--fallback\fR FALLBACK
 .br
 FALLBACK can be a string of optional options the
 will be tried if the \fIfirst layout\fP fails. A
@@ -1173,7 +1320,7 @@ layout is window, tab or titlebar but no target window is found. If no fallback 
 .RS
 
 .nf
-$ echo \-e "one\\ntwo\\nthree" | i3menu \-\-layout A \-\-fallback '\-\-layout mouse \-\-width 300'
+$ echo -e "one\\ntwo\\nthree" | i3menu --layout A --fallback '--layout mouse --width 300'
 
 .fi
 .RE
@@ -1190,77 +1337,80 @@ alternate quotes:
 .RS
 
 .nf
-$ echo \-e "one\\ntwo\\nthree" | i3menu \-\-layout A \-\-fallback '\-\-layout window \-\-fallback "\-\-layout mouse \-\-width 300"'
+$ echo -e "one\\ntwo\\nthree" | i3menu --layout A --fallback '--layout window --fallback "--layout mouse --width 300"'
 
 .fi
 .RE
 
 .PP
 The example above would first try to display a
-menu with \fB\fC\-\-layout A\fR if that fails, it will try
-a menu with \fB\fC\-\-layout window\fR and last if no
+menu with \fB\fC--layout A\fR if that fails, it will try
+a menu with \fB\fC--layout window\fR and last if no
 target window can be found, the menu will get
 displayed at the mouse pointer.
 
 .PP
-#options\-verbose\-description
+#options-verbose-description
 
 .PP
 Print additional information to STDERR
 
 .PP
-#options\-dryrun\-description
+#options-dryrun-description
 
 .PP
-Do not execute any i3\-msg commands
+Do not execute any i3-msg commands
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--no-auto-position\fR
+
+.PP
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit
 
 .PP
-\fB\fC\-\-verbose\fR
+\fB\fC--verbose\fR
 
 .PP
-\fB\fC\-\-dryrun\fR
+\fB\fC--dryrun\fR
 
 .SH ENVIRONMENT
 .PP
-\fB\fCXDG\_CONFIG\_HOME\fR
+\fB\fCXDG_CONFIG_HOME\fR
 
 .PP
 defaults to: $HOME/.config
 
 .PP
-\fB\fCI3MENU\_DIR\fR
+\fB\fCI3MENU_DIR\fR
 .br
 Path to config directory. defaults to:
-$XDG\_CONFIG\_HOME/i3menu
+$XDG_CONFIG_HOME/i3menu
 
 .SH DEPENDENCIES
 .PP
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCrofi\fR \fB\fCi3list\fR \fB\fCxdotool\fR
 
 
-.SH \fB\fCi3run\fR \- Run, Raise or hide windows in i3wm
+.SH \fB\fCi3run\fR - Run, Raise or hide windows in i3wm
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3run \-\-instance|\-i INSTANCE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-class|\-c CLASS [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-title|\-t  TITLE [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-conid|\-n CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-winid|\-d CON\_ID [\-\-summon|\-s] [\-\-nohide|\-g] [\-\-mouse|\-m] [\-\-rename|\-x OLD\_NAME] [\-\-force|\-f] [\-\-FORCE|\-F] [\-\-command|\-e COMMAND]
-i3run \-\-help|\-h
-i3run \-\-version|\-v
+i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --winid|-d CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --help|-h
+i3run --version|-v
 
 .fi
 .RE
@@ -1282,17 +1432,14 @@ T{
 Active and not handled by i3fyra
 T}
 	hide
-Active and handled by i3fyra	hide container, if not 
-\fB\fC\-g\fR is set
+Active and handled by i3fyra	hide container, if not \fB\fC-g\fR is set
 Handled by i3fyra and hidden	show container, activate
 T{
 Not handled by i3fyra and hidden
 T}
 	show window, activate
-Not on current workspace	goto workspace or show if 
-\fB\fC\-s\fR is set
-Not found	execute command (
-\fB\fC\-e\fR)
+Not on current workspace	goto workspace or show if \fB\fC-s\fR is set
+Not found	execute command (\fB\fC-e\fR)
 .TE
 
 .PP
@@ -1301,9 +1448,9 @@ the scratchpad. Show in this context means,  move
 window to current workspace.
 
 .PP
-\fB\fC\-e\fR is optional, if no \fICOMMAND\fP is passed and
+\fB\fC-e\fR is optional, if no \fICOMMAND\fP is passed and
 no window is found,  nothing happens.  It is
-important that \fB\fC\-e\fR \fICOMMAND\fP is \fBthe last of the
+important that \fB\fC-e\fR \fICOMMAND\fP is \fBthe last of the
 options\fP\&.  It is also important that \fICOMMAND\fP
 \fBwill spawn a window matching the criteria\fP,
 otherwise the script will get stuck in a loop
@@ -1313,32 +1460,32 @@ seconds\fP)
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR INSTANCE
+\fB\fC--instance\fR|\fB\fC-i\fR INSTANCE
 .br
 Search for windows with the given INSTANCE
 
 .PP
-\fB\fC\-\-summon\fR|\fB\fC\-s\fR
+\fB\fC--summon\fR|\fB\fC-s\fR
 .br
 Instead of switching workspace, summon window to
 current workspace
 
 .PP
-\fB\fC\-\-nohide\fR|\fB\fC\-g\fR
+\fB\fC--nohide\fR|\fB\fC-g\fR
 .br
 Don't hide window/container if it's active.
 
 .PP
-\fB\fC\-\-mouse\fR|\fB\fC\-m\fR
+\fB\fC--mouse\fR|\fB\fC-m\fR
 .br
 The window will be placed on the location of the
 mouse cursor when it is created or shown. (\fIneeds
 \fB\fCxdotool\fR\fP)
 
 .PP
-\fB\fC\-\-rename\fR|\fB\fC\-x\fR OLD\_NAME
+\fB\fC--rename\fR|\fB\fC-x\fR OLD_NAME
 .br
-If the search criteria is \fB\fC\-i\fR (instance), the
+If the search criteria is \fB\fC-i\fR (instance), the
 window with instance: \fIOLDNAME\fP will get a n new
 instance name matching the criteria when it is
 created (\fIneeds \fB\fCxdotool\fR\fP).
@@ -1347,31 +1494,31 @@ created (\fIneeds \fB\fCxdotool\fR\fP).
 .RS
 
 .nf
-i3run \-\-instance budswin \-\-rename sublime\_main \-command subl
+i3run --instance budswin --rename sublime_main -command subl
 
 # when the command above is executed:
 # a window with the instance name: "budswin" will be searched for.
 # if no window is found the command: "subl" will get executed,
-# and when a window with the instance name: "sublime\_main" is found,
+# and when a window with the instance name: "sublime_main" is found,
 # the instance name of that window will get renamed to: "budswin"
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-force\fR|\fB\fC\-f\fR
+\fB\fC--force\fR|\fB\fC-f\fR
 .br
-Execute COMMAND (\fB\fC\-\-command\fR), even if the window
+Execute COMMAND (\fB\fC--command\fR), even if the window
 already exist. But not when hiding a window.
 
 .PP
-\fB\fC\-\-FORCE\fR|\fB\fC\-F\fR
+\fB\fC--FORCE\fR|\fB\fC-F\fR
 .br
-Execute COMMAND (\fB\fC\-\-command\fR), even if the window
+Execute COMMAND (\fB\fC--command\fR), even if the window
 already exist.
 
 .PP
-\fB\fC\-\-command\fR|\fB\fC\-e\fR COMMAND
+\fB\fC--command\fR|\fB\fC-e\fR COMMAND
 .br
 Command to run if no window is found. Complex
 commands can be written inside quotes:
@@ -1380,36 +1527,36 @@ commands can be written inside quotes:
 .RS
 
 .nf
-i3run \-i sublime\_text \-e 'subl \&\& notify\-send "sublime is started"'
+i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR CLASS
+\fB\fC--class\fR|\fB\fC-c\fR CLASS
 .br
 Search for windows with the given CLASS
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR TITLE
+\fB\fC--title\fR|\fB\fC-t\fR TITLE
 .br
 Search for windows with the given TITLE
 
 .PP
-\fB\fC\-\-conid\fR|\fB\fC\-n\fR CON\_ID
+\fB\fC--conid\fR|\fB\fC-n\fR CON_ID
 .br
-Search for windows with the given CON\_ID
+Search for windows with the given CON_ID
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR CON\_ID
+\fB\fC--winid\fR|\fB\fC-d\fR CON_ID
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
@@ -1419,16 +1566,16 @@ Show version and exit.
 \fB\fCi3fyra\fR \fB\fCi3\fR
 
 
-.SH \fB\fCi3var\fR \- Set or get a i3 variable
+.SH \fB\fCi3var\fR - Set or get a i3 variable
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3var set VARNAME [VALUE] [\-\-json JSON]
-i3var get VARNAME [\-\-json JSON]
-i3var \-\-help|\-h
-i3var \-\-version|\-v
+i3var set VARNAME [VALUE] [--json JSON]
+i3var get VARNAME [--json JSON]
+i3var --help|-h
+i3var --version|-v
 
 .fi
 .RE
@@ -1458,18 +1605,18 @@ to \fBSTDOUT\fP\&.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-json\fR JSON
+\fB\fC--json\fR JSON
 .br
-Use JSON instead of the output of \fB\fCi3\-msg \-t
-get\_tree\fR
+Use JSON instead of the output of \fB\fCi3-msg -t
+get_tree\fR
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
@@ -1478,22 +1625,22 @@ Show version and exit.
 \fB\fCbash\fR \fB\fCi3\fR
 
 
-.SH \fB\fCi3viswiz\fR \- Professional window focus for i3wm
+.SH \fB\fCi3viswiz\fR - Professional window focus for i3wm
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3viswiz [\-\-gap|\-g GAPSIZE] DIRECTION 
-i3viswiz \-\-title|\-t       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f] 
-i3viswiz \-\-instance|\-i    [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f]
-i3viswiz \-\-class|\-c       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f]
-i3viswiz \-\-titleformat|\-o [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f]
-i3viswiz \-\-winid|\-d       [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f]
-i3viswiz \-\-parent|\-p      [\-\-gap|\-g GAPSIZE] [DIRECTION|TARGET] [\-\-focus|\-f]
-i3viswiz [\-\-json JSON] [\-\-debug VARLIST] [\-\-debug\-format FORMAT] [\-\-verbose]
-i3viswiz \-\-help|\-h
-i3viswiz \-\-version|\-v
+i3viswiz [--gap|-g GAPSIZE] DIRECTION 
+i3viswiz --title|-t       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f] 
+i3viswiz --instance|-i    [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz --class|-c       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz --titleformat|-o [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz --winid|-d       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz --parent|-p      [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz [--json JSON] [--debug VARLIST] [--debug-format FORMAT] [--verbose]
+i3viswiz --help|-h
+i3viswiz --version|-v
 
 .fi
 .RE
@@ -1512,84 +1659,84 @@ there are no windows in the given direction.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-gap\fR|\fB\fC\-g\fR TARGET
+\fB\fC--gap\fR|\fB\fC-g\fR TARGET
 .br
 Set GAPSIZE (defaults to 5). GAPSIZE is the
 distance in pixels from the current window where
 new focus will be searched.
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR
+\fB\fC--title\fR|\fB\fC-t\fR
 .br
 If \fBTARGET\fP matches the \fBTITLE\fP of a visible
-window, that windows  \fBCON\_ID\fP will get printed
+window, that windows  \fBCON_ID\fP will get printed
 to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
 of all tiled windows will get printed with
 \fBTITLE\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-focus\fR|\fB\fC\-f\fR
+\fB\fC--focus\fR|\fB\fC-f\fR
 .br
-When used in conjunction with: \fB\fC\-\-titleformat\fR,
-\fB\fC\-\-title\fR, \fB\fC\-\-class\fR, \fB\fC\-\-instance\fR, \fB\fC\-\-winid\fR or
-\fB\fC\-\-parent\fR\&. The \fBCON\_ID\fP of \fBTARGET\fP window
+When used in conjunction with: \fB\fC--titleformat\fR,
+\fB\fC--title\fR, \fB\fC--class\fR, \fB\fC--instance\fR, \fB\fC--winid\fR or
+\fB\fC--parent\fR\&. The \fBCON_ID\fP of \fBTARGET\fP window
 will get focused if it is visible.
 
 .PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR
+\fB\fC--instance\fR|\fB\fC-i\fR
 .br
 If \fBTARGET\fP matches the \fBINSTANCE\fP of a
-visible window, that windows  \fBCON\_ID\fP will get
+visible window, that windows  \fBCON_ID\fP will get
 printed to \fB\fCstdout\fR\&. If no \fBTARGET\fP is
 specified, a list of all tiled windows will get
 printed with  \fBINSTANCE\fP as the last field of
 each row.
 
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR
+\fB\fC--class\fR|\fB\fC-c\fR
 .br
 If \fBTARGET\fP matches the \fBCLASS\fP of a visible
-window, that windows  \fBCON\_ID\fP will get printed
+window, that windows  \fBCON_ID\fP will get printed
 to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
 of all tiled windows will get printed with
 \fBCLASS\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-titleformat\fR|\fB\fC\-o\fR
+\fB\fC--titleformat\fR|\fB\fC-o\fR
 .br
-If \fBTARGET\fP matches the \fBTITLE\_FORMAT\fP of a
-visible window, that windows  \fBCON\_ID\fP will get
+If \fBTARGET\fP matches the \fBTITLE_FORMAT\fP of a
+visible window, that windows  \fBCON_ID\fP will get
 printed to \fB\fCstdout\fR\&. If no \fBTARGET\fP is
 specified, a list of all tiled windows will get
-printed with  \fBTITLE\_FORMAT\fP as the last field
+printed with  \fBTITLE_FORMAT\fP as the last field
 of each row.
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR
+\fB\fC--winid\fR|\fB\fC-d\fR
 .br
-If \fBTARGET\fP matches the \fBWIN\_ID\fP of a visible
-window, that windows  \fBCON\_ID\fP will get printed
+If \fBTARGET\fP matches the \fBWIN_ID\fP of a visible
+window, that windows  \fBCON_ID\fP will get printed
 to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
 of all tiled windows will get printed with
-\fBWIN\_ID\fP as the last field of each row.
+\fBWIN_ID\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-parent\fR|\fB\fC\-p\fR
+\fB\fC--parent\fR|\fB\fC-p\fR
 .br
 If \fBTARGET\fP matches the \fBPARENT\fP of a visible
-window, that windows  \fBCON\_ID\fP will get printed
+window, that windows  \fBCON_ID\fP will get printed
 to \fB\fCstdout\fR\&. If no \fBTARGET\fP is specified, a list
 of all tiled windows will get printed with
 \fBPARENT\fP as the last field of each row.
 
 .PP
-\fB\fC\-\-json\fR JSON
+\fB\fC--json\fR JSON
 .br
-use JSON instead of output from  \fB\fCi3\-msg \-t
-get\_tree\fR
+use JSON instead of output from  \fB\fCi3-msg -t
+get_tree\fR
 
 .PP
-\fB\fC\-\-debug\fR VARLIST
+\fB\fC--debug\fR VARLIST
 .br
 VARLIST is used to determine what to output. By
 default the value of VARLIST is: \fB\fCLIST\fR .
@@ -1599,7 +1746,7 @@ Available units are:
 .RS
 
 .nf
-wall         | none|(up|left|down|right\-)(workspace|area)
+wall         | none|(up|left|down|right-)(workspace|area)
 trgcon       | container id of the window to be focused
 trgpar       | name of i3fyra container target container is located in
 gap          | internal gap value used
@@ -1631,14 +1778,14 @@ Example:
 .RS
 
 .nf
-$ i3viswiz \-\-instance u \-\-debug gap,wall,grouppos
-gap=5 wall=up\-area grouppos=1 
+$ i3viswiz --instance u --debug gap,wall,grouppos
+gap=5 wall=up-area grouppos=1 
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-debug\-format\fR FORMAT
+\fB\fC--debug-format\fR FORMAT
 .br
 The default value of FORMAT is "%k=%v ".  \fB\fC%k\fR is
 translated to the key/unit name, and \fB\fC%v\fR to the
@@ -1651,16 +1798,16 @@ Example:
 .RS
 
 .nf
-$ i3viswiz \-\-instance u \-\-debug gap,wall,grouppos \-\-debug\-format "%v\\n"
+$ i3viswiz --instance u --debug gap,wall,grouppos --debug-format "%v\\n"
 5
-up\-area
+up-area
 1 
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-verbose\fR
+\fB\fC--verbose\fR
 .br
 If set, more stuff gets printed to \fBSTDERR\fP
 during the execution of the script.
@@ -1672,23 +1819,23 @@ Example:
 .RS
 
 .nf
-$ i3viswiz \-\-instance u \-\-debug gap \-\-verbose 
+$ i3viswiz --instance u --debug gap --verbose 
 
-\-\-\-i3viswiz start\-\-\-
+---i3viswiz start---
 gap=5 
 f cleanup()
-\-\-\-i3viswiz done: 14ms\-\-\-
+---i3viswiz done: 14ms---
 
 .fi
 .RE
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
@@ -1705,7 +1852,7 @@ Normal binding:
 bindsym Mod4+Shift+Left   focus left
 
 Wizzy binding:
-bindsym Mod4+Left   exec \-\-no\-startup\-id i3viswiz left
+bindsym Mod4+Left   exec --no-startup-id i3viswiz left
 
 .fi
 .RE
@@ -1717,19 +1864,19 @@ example output:
 .RS
 
 .nf
-$ i3viswiz \-\-instance
+$ i3viswiz --instance
 
 * 94475856575600 ws: 1 x: 0     y: 0     w: 1558  h: 410   | termsmall
-\- 94475856763248 ws: 1 x: 1558  y: 0     w: 362   h: 272   | gl
-\- 94475856286352 ws: 1 x: 0     y: 410   w: 1558  h: 643   | sublime\_main
-\- 94475856449344 ws: 1 x: 1558  y: 272   w: 362   h: 781   | thunar\-lna
+- 94475856763248 ws: 1 x: 1558  y: 0     w: 362   h: 272   | gl
+- 94475856286352 ws: 1 x: 0     y: 410   w: 1558  h: 643   | sublime_main
+- 94475856449344 ws: 1 x: 1558  y: 272   w: 362   h: 781   | thunar-lna
 
 .fi
 .RE
 
 .PP
-If \fB\fC\-\-class\fR , \fB\fC\-\-instance\fR, \fB\fC\-\-title\fR,
-\fB\fC\-\-titleformat\fR, \fB\fC\-\-winid\fR or \fB\fC\-\-parent\fR is used
+If \fB\fC--class\fR , \fB\fC--instance\fR, \fB\fC--title\fR,
+\fB\fC--titleformat\fR, \fB\fC--winid\fR or \fB\fC--parent\fR is used
 together with a DIRECTION or no argument. i3viswiz
 will print this output, with the type in the last
 column of the table (class in the example above).
@@ -1743,11 +1890,36 @@ string.
 Assuming the same scenario as the example above,
 the following command:
 .br
-\fB\fC$ i3viswiz \-\-instance termsmall\fR
+\fB\fC$ i3viswiz --instance termsmall\fR
 .br
-will output the container\_id (\fB\fC94475856575600\fR).
+will output the container_id (\fB\fC94475856575600\fR).
 .br
 If now window is matching output will be blank.
+
+.PP
+\fBfocus wrapping\fP
+
+.PP
+if the setting "focus_wrapping" is set to
+"workspace" in the i3config. i3viswiz will wrap
+the focus only inside the currenttly focused
+workspace instead of the whole work area (other
+monitors).
+
+.PP
+The setting has to be present in the active
+config before the first i3viswiz invokation.
+
+.PP
+To force this behavior otherwise, issue the
+following command:
+.br
+\fB\fCi3var set focus_wrap workspace\fR
+
+.PP
+Or to disable it:
+.br
+\fB\fCi3var set focus_wrap normal\fR
 
 .SH DEPENDENCIES
 .PP
@@ -1755,13 +1927,13 @@ If now window is matching output will be blank.
 
 .SH EXAMPLES
 .PP
-Execute a script with the \fB\fC\-\-help\fR flag to
+Execute a script with the \fB\fC--help\fR flag to
 display help about the command.
 
 .PP
-\fB\fCi3get \-\-help\fR display [i3get] help
+\fB\fCi3get --help\fR display [i3get] help
 .br
-\fB\fCi3get \-\-version\fR display [i3get] version
+\fB\fCi3get --version\fR display [i3get] version
 .br
 \fB\fCman i3get\fR show [i3get] man page
 .br
