@@ -1,5 +1,5 @@
 .nh
-.TH I3VISWIZ 1 2021\-05\-28 Linux "User Manuals"
+.TH I3VISWIZ 1 2021\-06\-07 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3viswiz\fR \- Professional window focus for i3wm
@@ -273,6 +273,31 @@ the following command:
 will output the container\_id (\fB\fC94475856575600\fR).
 .br
 If now window is matching output will be blank.
+
+.PP
+\fBfocus wrapping\fP
+
+.PP
+if the setting "focus\_wrapping" is set to
+"workspace" in the i3config. i3viswiz will wrap
+the focus only inside the currenttly focused
+workspace instead of the whole work area (other
+monitors).
+
+.PP
+The setting has to be present in the active
+config before the first i3viswiz invokation.
+
+.PP
+To force this behavior otherwise, issue the
+following command:
+.br
+\fB\fCi3var set focus\_wrap workspace\fR
+
+.PP
+Or to disable it:
+.br
+\fB\fCi3var set focus\_wrap normal\fR
 
 .SH DEPENDENCIES
 .PP

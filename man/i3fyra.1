@@ -1,8 +1,8 @@
 .nh
-.TH I3FYRA 1 2021\-05\-28 Linux "User Manuals"
+.TH I3FYRA 1 2021-05-28 Linux "User Manuals"
 .SH NAME
 .PP
-\fB\fCi3fyra\fR \- An advanced, simple grid\-based tiling
+\fB\fCi3fyra\fR - An advanced, simple grid-based tiling
 layout
 
 .SH SYNOPSIS
@@ -10,13 +10,13 @@ layout
 .RS
 
 .nf
-i3fyra \-\-show|\-s CONTAINER [\-\-force|\-f]
-i3fyra \-\-float|\-a
-i3fyra \-\-hide|\-z CONTAINER [\-\-force|\-f]
-i3fyra \-\-layout|\-l LAYOUT [\-\-force|\-f] [\-\-array ARRAY] [\-\-verbose] [\-\-dryrun]
-i3fyra \-\-move|\-m DIRECTION|CONTAINER [\-\-force|\-f] [\-\-speed|\-p INT]
-i3fyra \-\-help|\-h
-i3fyra \-\-version|\-v
+i3fyra --show|-s CONTAINER [--force|-f]
+i3fyra --float|-a
+i3fyra --hide|-z CONTAINER [--force|-f]
+i3fyra --layout|-l LAYOUT [--force|-f] [--array ARRAY] [--verbose] [--dryrun]
+i3fyra --move|-m DIRECTION|CONTAINER [--force|-f] [--speed|-p INT]
+i3fyra --help|-h
+i3fyra --version|-v
 
 .fi
 .RE
@@ -65,14 +65,14 @@ scratchpad.
 
 .PP
 The visibility is toggled by either using
-\fB\fC\-\-show\fR or \fB\fC\-\-hide\fR\&. But more often by moving a
+\fB\fC--show\fR or \fB\fC--hide\fR\&. But more often by moving a
 container in an \fIimpossible\fP direction,(\fIsee
 examples below\fP).
 
 .PP
 The \fBi3fyra\fP layout is only active on one
 workspace. That workspace can be set with the
-environment variable: \fB\fCi3FYRA\_WS\fR, otherwise the
+environment variable: \fB\fCi3FYRA_WS\fR, otherwise the
 workspace active when the layout is created will
 be used.
 
@@ -85,19 +85,19 @@ containers, which are very clunky to use with
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-show\fR|\fB\fC\-s\fR CONTAINER
+\fB\fC--show\fR|\fB\fC-s\fR CONTAINER
 .br
 Show target container. If it doesn't exist, it
 will be created and current window will be put in
 it. If it is visible, nothing happens.
 
 .PP
-\fB\fC\-\-force\fR|\fB\fC\-f\fR
+\fB\fC--force\fR|\fB\fC-f\fR
 .br
 If set virtual positions will be ignored.
 
 .PP
-\fB\fC\-\-float\fR|\fB\fC\-a\fR
+\fB\fC--float\fR|\fB\fC-a\fR
 .br
 Autolayout. If current window is tiled: floating
 enabled If window is floating, it will be put in a
@@ -108,12 +108,12 @@ container. If no containers exist, container
 there.
 
 .PP
-\fB\fC\-\-hide\fR|\fB\fC\-z\fR CONTAINER
+\fB\fC--hide\fR|\fB\fC-z\fR CONTAINER
 .br
 Hide target containers if visible.
 
 .PP
-\fB\fC\-\-layout\fR|\fB\fC\-l\fR LAYOUT
+\fB\fC--layout\fR|\fB\fC-l\fR LAYOUT
 .br
 alter splits Changes the given splits. INT is a
 distance in pixels. AB is on X axis from the left
@@ -123,10 +123,10 @@ if INT is positive, from the bottom if it is
 negative. The whole argument needs to be quoted.
 Example:
 .br
-\fB\fC$ i3fyra \-\-layout 'AB=\-300 BD=420'\fR
+\fB\fC$ i3fyra --layout 'AB=-300 BD=420'\fR
 
 .PP
-\fB\fC\-\-array\fR ARRAY
+\fB\fC--array\fR ARRAY
 .br
 ARRAY should be the output of \fB\fCi3list\fR\&. It is
 used to improve speed when \fBi3fyra\fP is executed
@@ -134,19 +134,19 @@ from a script that already have the array, f.i.
 \fBi3run\fP and \fBi3Kornhe\fP\&.
 
 .PP
-\fB\fC\-\-verbose\fR
+\fB\fC--verbose\fR
 .br
 If set information about execution will be
 printed to \fBstderr\fP\&.
 
 .PP
-\fB\fC\-\-dryrun\fR
+\fB\fC--dryrun\fR
 .br
 If set no window manipulation will be done during
 execution.
 
 .PP
-\fB\fC\-\-move\fR|\fB\fC\-m\fR CONTAINER
+\fB\fC--move\fR|\fB\fC-m\fR CONTAINER
 .br
 Moves current window to target container, either
 defined by it's name or it's position relative to
@@ -158,24 +158,24 @@ in that direction, Connected container(s)
 visibility is toggled. If current window is
 floating or not inside ABCD, normal movement is
 performed. Distance for moving floating windows
-with this action can be defined with the \fB\fC\-\-speed\fR
-option. Example: \fB\fC$ i3fyra \-\-speed 30 \-m r\fR Will
+with this action can be defined with the \fB\fC--speed\fR
+option. Example: \fB\fC$ i3fyra --speed 30 -m r\fR Will
 move current window 30 pixels to the right, if it
 is floating.
 
 .PP
-\fB\fC\-\-speed\fR|\fB\fC\-p\fR INT
+\fB\fC--speed\fR|\fB\fC-p\fR INT
 .br
 Distance in pixels to move a floating window.
 Defaults to 30.
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit
 
@@ -196,15 +196,15 @@ layout would looks like this:
 .RE
 
 .PP
-If action: \fB\fC\-\-move up\fR would be executed when
+If action: \fB\fC--move up\fR would be executed when
 container \fBB\fP is active and \fBD\fP is hidden.
 Container \fBD\fP would be shown. If action would
-have been: \fB\fC\-\-move down\fR, \fBD\fP would be shown but
+have been: \fB\fC--move down\fR, \fBD\fP would be shown but
 \fBB\fP would be placed below \fBD\fP, this means that
 the containers will also swap names. If action
-would have been \fB\fC\-\-move left\fR the active window in
+would have been \fB\fC--move left\fR the active window in
 B would be moved to container \fBA\fP\&. If action was
-\fB\fC\-\-move right\fR, \fBA\fP and \fBC\fP would be hidden:
+\fB\fC--move right\fR, \fBA\fP and \fBC\fP would be hidden:
 
 .PP
 .RS
@@ -217,7 +217,7 @@ B would be moved to container \fBA\fP\&. If action was
 .RE
 
 .PP
-If we now \fB\fC\-\-move left\fR, \fBA\fP and \fBC\fP would be
+If we now \fB\fC--move left\fR, \fBA\fP and \fBC\fP would be
 shown again but to the right of \fBB\fP, the
 containers would also change names, so \fBB\fP
 becomes \fBA\fP, \fBA\fP becomes \fBB\fP and \fBC\fP
@@ -240,24 +240,24 @@ https://youtu.be/kU8gb6WLFk8
 
 .SH ENVIRONMENT
 .PP
-\fB\fCI3FYRA\_MAIN\_CONTAINER\fR
+\fB\fCI3FYRA_MAIN_CONTAINER\fR
 .br
 This container will be the chosen when a
 container is requested but not given. When using
-the command autolayout (\fB\fC\-a\fR) for example, if the
+the command autolayout (\fB\fC-a\fR) for example, if the
 window is floating it will be sent to the main
 container, if no other containers exist. Defaults
 to A. defaults to: A
 
 .PP
-\fB\fCI3FYRA\_WS\fR
+\fB\fCI3FYRA_WS\fR
 .br
 Workspace to use for i3fyra. If not set, the firs
 workspace that request to create the layout will
 be used. defaults to:
 
 .PP
-\fB\fCI3FYRA\_ORIENTATION\fR
+\fB\fCI3FYRA_ORIENTATION\fR
 .br
 If set to \fB\fCvertical\fR main split will be \fB\fCAC\fR and
 families will be \fB\fCAB\fR and \fB\fCCD\fR\&. Otherwise main

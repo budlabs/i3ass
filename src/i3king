@@ -1,0 +1,493 @@
+#!/bin/bash
+
+___printversion(){
+  
+cat << 'EOB' >&2
+i3king - version: 0.1
+updated: 2021-08-04 by budRich
+EOB
+}
+
+
+# environment variables
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${I3_KING_RULE_FILE:=$XDG_CONFIG_HOME/i3king/rules}"
+
+
+main(){
+
+  declare -Ag ma
+
+  declare -ag global_rules
+  declare -ag default_rules
+  declare -ag rules
+  declare -ag commands
+
+  ((__o[verbose])) && {
+    ERM "i3king start"
+    _file_log=/dev/stderr
+  }
+
+  [[ ${__o[log]} ]] && {
+    _file_log=${__o[log]}
+    mkdir -p "${_file_log%/*}"
+    {
+      date
+      echo ---------------------------------
+    } >> "$_file_log"
+  }
+
+  _file_rules=${__o[config]:-$I3_KING_RULE_FILE}
+
+  # create default config file if it doesn't exist
+  [[ -f $_file_rules ]] || {
+    [[ -f $I3_KING_RULE_FILE ]] \
+      || createconf "${I3_KING_RULE_FILE%/*}"
+    _file_rules=$I3_KING_RULE_FILE
+  }
+
+  parse_rules "$_file_rules"
+  re=$(make_regex)
+
+  while read -r json ; do
+
+    [[ ${json//\\\"/%DQ%} =~ $re ]] && {
+
+      i=1
+      ma=(
+        [change]="${BASH_REMATCH[++i]}"          # "num:"             - INT
+        [cid]="${BASH_REMATCH[++i]}"             # "id:"              - INT
+        [urgent]="${BASH_REMATCH[++i]}"          # "urgent:"          - false|true
+        [O]="${BASH_REMATCH[++i]}"               # ! optional group
+        [mrk]="${BASH_REMATCH[++i]}"             # "marks:"           - ["mark1","mark2"...]
+        [focused]="${BASH_REMATCH[++i]}"         # "focused:"         - false|true
+        [x]="${BASH_REMATCH[++i]}"               # rect
+        [y]="${BASH_REMATCH[++i]}"               # rect
+        [w]="${BASH_REMATCH[++i]}"               # rect
+        [h]="${BASH_REMATCH[++i]}"               # rect
+        [b]="${BASH_REMATCH[++i]}"               # deco_rect, height. i.e. titlebar height
+        [title]="${BASH_REMATCH[++i]//%DQ%/\"}"  # "name:"            - STRING
+        [O]="${BASH_REMATCH[++i]}"               # ! optional group
+        [frm]="${BASH_REMATCH[++i]//%DQ%/\"}"    # "title_format:"    - string
+        [wid]="${BASH_REMATCH[++i]}"             # "window:"          - INT
+        [typ]="${BASH_REMATCH[++i]}"             # "window_type:"     - STRING
+        [O]="${BASH_REMATCH[++i]}"               # ! optional group
+        [cls]="${BASH_REMATCH[++i]}"             # "class:"           - STRING
+        [O]="${BASH_REMATCH[++i]}"               # "instance:"        - STRING
+        [ins]="${BASH_REMATCH[++i]}"             # "instance:"        - STRING
+        [fullscreen]="${BASH_REMATCH[++i]}"      # "fullscreen_mode:" - 0|1
+        [sticky]="${BASH_REMATCH[++i]}"          # "sticky:"          - true|false
+        [floating]="${BASH_REMATCH[++i]}"        # "floating:"        - auto_off|auto_on|user_off|user_on
+        [O]="${BASH_REMATCH[++i]}"               # "swallows:"        - auto_off|auto_on|user_off|user_on
+      )
+
+      # ma[y]=$((ma[y]-ma[b]))
+      # ma[h]=$((ma[h]+ma[b]))
+      # ma[geo]=$(printf "%d:%d+%dx%d" "${ma[x]}" "${ma[y]}" "${ma[w]}" "${ma[h]}")
+
+      identifier="class:${ma[cls]:-.*}:"
+      identifier+="instance:${ma[ins]:-.*}:"
+      identifier+="title:${ma[title]:-.*}:"
+      identifier+="window_type:${ma[typ]:-.*}:"
+
+      # test global rules first
+      for rule in "${!global_rules[@]}"; do
+
+        cmd=${commands[$rule]}
+        [[ $identifier =~ ${global_rules[$rule]} ]] && {
+          [[ $cmd = "$last_cmd" ]] && {
+            unset 'execute[-1]'
+            unset 'matches[-1]'
+          }
+          last_cmd=$cmd
+          continue
+        }
+
+        [[ $cmd = "$last_cmd" ]] && continue
+        last_cmd=$cmd
+
+        if ((default_rules[rule])); then
+          default_execute+=("$cmd")
+          matches+=("DEFAULT: -"$'\n'$'\t'"$cmd")
+        else
+          execute+=("$cmd")
+          matches+=("GLOBAL: -"$'\n'$'\t'"$cmd")
+        fi
+      done
+
+      for rule in "${!rules[@]}"; do
+        [[ $identifier =~ ${rules[$rule]} ]] || continue
+        cmd=${commands[$rule]}
+        [[ $cmd = "$last_cmd" ]] && continue
+        last_cmd=$cmd
+        execute+=("$cmd")
+        matches+=("NORMAL: ${rules[$rule]}"$'\n'$'\t'"$cmd")
+      done
+
+      [[ -a $_file_log && ${#matches[@]} -gt 0 ]] && {
+        echo $'\n'"WINDOW: $identifier"$'\n'
+        for k in "${matches[@]}"; do
+          echo "$k"
+        done
+        echo
+      } >> "$_file_log"
+
+      unset 'matches[@]'
+      unset last_cmd cmd
+
+      ((${#execute[@]}+${#default_execute[@]} && __o[dryrun] != 1)) && {
+
+        # don't include default rules if "normal" rules where matched
+        if ((${#default_execute[@]} && ${#execute[@]})); then
+          real_execute=("${execute[@]}")
+        elif ((${#default_execute[@]})); then
+          real_execute=("${default_execute[@]}")
+        else
+          real_execute=("${execute[@]}")
+        fi
+
+        [[ -a $_file_log ]] && {
+          echo EXECUTE:
+        } >> "$_file_log"
+
+        (
+          for k in "${real_execute[@]}"; do
+            [[ -a $_file_log ]] && {
+              echo $'\t'"$k"
+            } >> "$_file_log"
+
+            cmd=$k
+            cmd=${cmd//\$INSTANCE/${ma[ins]}}
+            cmd=${cmd//\$CLASS/${ma[cls]}}
+
+            i3-msg "[con_id=${ma[cid]}]" "$cmd"
+            
+          done
+        ) &
+        
+      }
+
+      unset 'execute[@]'
+      unset 'real_execute[@]'
+      unset 'default_execute[@]'
+    }
+
+  done < <(
+            if [[ ${__o[json]} ]]; then
+              echo "${__o[json]}"
+            else
+              i3-msg -mt subscribe '["window"]'
+            fi
+          )
+}
+
+___printhelp(){
+  
+cat << 'EOB' >&2
+i3king - window ruler
+
+
+SYNOPSIS
+--------
+i3king --config|-c FILE
+i3king --json JSON [--verbose] [--dryrun] [--log FILE]
+i3king --help|-h
+i3king --version|-v
+
+OPTIONS
+-------
+
+--config|-c FILE  
+Override the value of the Environment variable
+I3_KING_RULE_FILE . Or the default value:  
+~/.config/i3king/rules
+
+
+--json JSON  
+Parse JSON instead of the output from: i3-msg -t
+subscribe
+
+
+--verbose  
+More verbose output to STDERR.
+
+
+--dryrun  
+Parse rules but don't execute commands.
+
+--log FILE  
+Same as verbose but the output is printed to FILE
+instead.
+
+
+--help|-h  
+Show help and exit.
+
+
+--version|-v  
+Show version and exit.
+
+EOB
+}
+
+
+### createconf() function is automatically generated
+### by bashbud based on the content of the conf/ directory
+
+createconf() {
+local trgdir="$1"
+declare -a aconfdirs
+
+aconfdirs=(
+)
+
+mkdir -p "$1" "${aconfdirs[@]}"
+
+cat << 'EOCONF' > "$trgdir/rules"
+# if the first nonblank character is "#", the line is ignored (comment)
+# blank lines are also ignored.
+
+# rules are always declared before the commands:
+instance=firefox title="a window title|tab"
+# the commands need to be on one line and indented with whitespace:
+# the commands are sent to i3-msg, so to execute
+# "other" commands you need to use 'exec' just as in 
+# the i3 config.
+  exec --no-startup-id notify-send "a firefox window was created"
+
+# it is also possible to use 'set' like in the i3 config
+# to make variables.
+set $X   exec --no-startup-id
+set $MSG exec --no-startup-id notify-send
+
+# global rules will apply to all windows
+GLOBAL
+  $MSG "a new window was created"
+
+# default rules applies to any window that does
+# not match a "normal" rule
+# in this file it will never get triggered, since
+# the above GLOBAL rule is considered normal and
+# will always trigger.
+DEFAULT
+  $MSG "no other rules matched"
+
+# global rule declarations can be followed by a rule.
+# windows matching such a rule will be ignored.
+GLOBAL class=URxvt
+  $MSG "this is NOT a URxvt window"
+
+# use comma to group rules to the same command
+class=URxvt , instance=firefox
+  $MSG "this is a terminal or browser window"
+
+# this also works for global rules
+GLOBAL class=URxvt , instance=firefox
+  $MSG "this is NOT a URxvt or firefox window"
+
+# lines ending with backslash (\)
+# will get added to the beginning of the next line
+# the rule below is equivalent to the one above:
+GLOBAL \
+  class=URxvt ,\
+  instance=firefox
+    $MSG "this is NOT a URxvt or firefox window"
+
+# use semicolon to execute more then one command,
+# notice that we need exec after the semicolon ($X/$MSG)
+class=URxvt
+  $MSG "this is a terminal window" ;\
+  $MSG "the instance name is $I3_KING_INSTANCE"
+EOCONF
+
+}
+
+set -E
+trap '[ "$?" -ne 98 ] || exit 98' ERR
+
+ERX() { >&2 echo  "[ERROR] $*" ; exit 98 ;}
+ERR() { >&2 echo  "[WARNING] $*"  ;}
+ERM() { >&2 echo  "$*"  ;}
+ERH(){
+  ___printhelp >&2
+  [[ -n "$*" ]] && printf '\n%s\n' "$*" >&2
+  exit 98
+}
+
+
+make_regex() {
+
+local re
+
+re+=$(cat << EOB
+(\{)
+"change":"(new)",
+"container":[{]
+"id":([0-9]+),
+"type":"[^"]+",
+"orientation":"[^"]+",
+"scratchpad_state":"[^"]+",
+"percent":[0-9.]+,
+"urgent":(false|true),
+("marks":(\[[^]]*\]),)?
+"focused":(true|false),
+"output":"[^"]+",
+"layout":"[^"]+",
+"workspace_layout":"[^"]+",
+"last_split_layout":"[^"]+",
+"border":"[^"]+",
+"current_border_width":[0-9-]+,
+"rect":[{]"x":([0-9]+),"y":([0-9]+),"width":([0-9]+),"height":([0-9]+)},
+"deco_rect":[^g]+ght":([0-9]+)},
+"window_rect":[^}]+},
+"geometry":[^}]+},
+"name":"?([^\"]+)"?,
+("title_format":"([^"]+)",)?
+"window":(${_c[id]:-[0-9]+}),
+"window_type":"([^"]+)",
+"window_properties":\{
+("class":"([^"]+)",)?
+("instance":"([^"]+)",)?
+[^}]+\},
+"nodes":[^,]+,
+"floating_nodes":[^,]+,
+"focus":[^,]+,
+"fullscreen_mode":([0-9]),
+"sticky":(false|true),
+"floating":"([^"]+)",
+("swallows":.+)?
+EOB
+)
+
+# remove all newline characters
+echo "${re//$'\n'/}"
+}
+
+parse_rules() {
+
+  declare -A vars
+  local re_set re_group re_rule
+
+  re_set='^\s*set\s+[$](\S+)\s+(.+)$'
+  re_group='(\s*([^=[:space:]]+)=([^=]+\S)\s*)$'
+  re_rule='^(GLOBAL|DEFAULT)?((\s+)?(.+)\s*)?$'
+
+  declare -i counter_criteria counter_commands
+  
+  while read -r  ; do
+
+    line="${prevline:+$prevline }$REPLY"
+
+    if [[ $line =~ \\$ ]]; then
+      prevline=${line%\\}
+      continue
+    else
+      unset prevline
+    fi
+
+    if [[ $line =~ ^[[:space:]]*$ ]]; then
+      continue
+    elif [[ $line =~ ^[[:space:]]*# ]]; then
+      continue
+    elif [[ $line =~ $re_set ]]; then
+      vars["${BASH_REMATCH[1]}"]=${BASH_REMATCH[2]}
+    elif [[ $line =~ ^[[:space:]]+(.+)[[:space:]]*$ ]]; then
+
+      cmd=${BASH_REMATCH[1]}
+      for k in "${!vars[@]}"; do
+        cmd=${cmd//\$$k/${vars[$k]}}
+      done
+
+      while ((counter_commands < counter_criteria)); do
+        commands[counter_commands++]=$cmd
+      done
+    elif [[ $line =~ $re_rule ]]; then
+
+      is_global_rule=${BASH_REMATCH[1]}
+
+      # group by comma
+      mapfile -t ignore_combined <<< "${BASH_REMATCH[4]//,/$'\n'}"
+      for crit in "${ignore_combined[@]}"; do
+
+        # if we don't have  a criteria it is
+        # a line with a single GLOBAL/NORMAL
+        # we set the rule to nonsense (-)
+        # to make sure it never matches
+        [[ $crit ]] \
+          && rule="class:.*:instance:.*:title:.*:window_type:.*:" \
+          || rule=-
+
+        while [[ $crit =~ $re_group ]]; do
+
+          crit=${crit:0:$((${#BASH_REMATCH[1]}*-1))}
+          key=${BASH_REMATCH[2]} 
+          val=${BASH_REMATCH[3]//\\s/[[:space:]]}
+
+          # remove double quotes
+          val=${val#\"} val=${val%\"}
+
+          # ^ and $
+          if [[ $val =~ ^\^(.+)\$$ ]]; then
+            val="(${BASH_REMATCH[1]})"
+          elif [[ $val =~ ^\^(.+) ]]; then
+            val="(${BASH_REMATCH[1]})[^:]*"
+          elif [[ $val =~ ^(.+)\$$ ]]; then
+            val="[^:]*(${BASH_REMATCH[1]})"
+          fi
+
+          rule=${rule/$key:.\*:/$key:$val:}
+        done
+
+        [[ -a $_file_log ]] && {
+          echo "$rule" >> "$_file_log"
+        }
+
+        if [[ $is_global_rule ]]; then
+          global_rules[counter_criteria++]=$rule
+          [[ $is_global_rule =~ ^DEFAULT ]] && {
+            default_rules[counter_criteria-1]=1
+          }
+        else
+          rules[counter_criteria++]=$rule
+        fi
+      done
+    fi
+
+  done < "$1"
+}
+
+# SC2034 __o appears unused.
+# shellcheck disable=2034
+declare -A __o
+options="$(
+  getopt --name "[ERROR]:i3king" \
+    --options "c:hv" \
+    --longoptions "config:,json:,verbose,dryrun,log:,help,version," \
+    -- "$@" || exit 98
+)"
+
+eval set -- "$options"
+unset options
+
+while true; do
+  case "$1" in
+    --config     | -c ) __o[config]="${2:-}" ; shift ;;
+    --json       ) __o[json]="${2:-}" ; shift ;;
+    --verbose    ) __o[verbose]=1 ;; 
+    --dryrun     ) __o[dryrun]=1 ;; 
+    --log        ) __o[log]="${2:-}" ; shift ;;
+    --help       | -h ) ___printhelp && exit ;;
+    --version    | -v ) ___printversion && exit ;;
+    -- ) shift ; break ;;
+    *  ) break ;;
+  esac
+  shift
+done
+
+[[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
+  && __lastarg="" 
+
+
+main "${@:-}"
+
+

@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.632
-updated: 2021-05-28 by budRich
+i3get - version: 0.7
+updated: 2021-06-07 by budRich
 EOB
 }
 
@@ -12,39 +12,18 @@ EOB
 
 main(){
 
-  declare -a _op         # output, populated in match()
-  declare -r _special= # used when searching for ws
-  declare -g _expression # makeexpression() via match()
-  declare -i timeout
+  result=$(get_window)
 
-  # _toprint what information to print, 
-  # defaults to n (container id)
-  declare -g _toprint=${__o[print]:-n}
+  timeout=$SECONDS
 
-  [[ -n ${_json:=${__o[json]}} ]] \
-    || _json=$(i3-msg -t get_tree)
+  ((__o[synk])) && until [[ $result ]]; do
+    i3-msg -qt subscribe '["window"]'
+    result=$(get_window)
+    ((SECONDS-timeout > 60)) && break
+  done
 
-  match "$_json"
-
-  ((__o[synk])) && [[ -z "${_op[*]}" ]] && {
-
-    timeout=$SECONDS
-
-    match "$(i3-msg -t get_tree)"
-
-    while [[ -z "${_op[*]}" ]]; do
-      ((SECONDS-timeout > 60)) && break
-      i3-msg -qt subscribe '["window"]'
-      match "$(i3-msg -t get_tree)"
-    done
-  }
-
-  [[ -n ${_op[*]} ]] && {
-    printf '%s\n' "${_op[@]}"
-    exit
-  }
-
-  ERX "no matching window."
+  [[ $result ]] || ERX "no matching window"
+  echo "$result"
 }
 
 ___printhelp(){
@@ -55,7 +34,7 @@ i3get - prints info about a specific window to stdout
 
 SYNOPSIS
 --------
-i3get [--class|-c CLASS] [--instance|-i INSTANCE] [--title|-t TITLE] [--conid|-n CON_ID] [--id|-d WIN_ID] [--mark|-m MARK] [--titleformat|-o TITLE_FORMAT] [--active|-a] [--synk|-y] [--print|-r OUTPUT] [--json TREE]      
+i3get [--class|-c CLASS] [--instance|-i INSTANCE] [--title|-t TITLE] [--conid|-n CON_ID] [--id|-d WIN_ID] [--mark|-m MARK] [--titleformat|-o TITLE_FORMAT] [--active|-a] [--synk|-y] [--print|-r OUTPUT] [--json TREE]
 i3get --help|-h
 i3get --version|-v
 
@@ -156,6 +135,245 @@ EOB
 }
 
 
+awklib() {
+cat << 'EOB'
+END {
+
+  if ( !arg_target ) {
+    target_container_id=active_container_id
+  } else {
+
+    for (suspect_id in suspect_targets) {
+
+      search_match=0
+
+      for (search in arg_search) { 
+        if (match(ac[suspect_id][search],arg_search[search]))
+          search_match+=1
+      }
+
+      if (search_match == length(arg_search)) {
+        target_container_id=suspect_id
+        break
+      }
+    }
+  }
+
+  if (! target_container_id)
+    exit
+
+  split(arg_print,toprint,"")
+
+  for (k in toprint) {
+    switch(toprint[k]) {
+
+      case "t":
+        print gensub(/^"|"$/,"","g",ac[target_container_id]["name"])
+      break
+
+      case "c":
+        print gensub(/^"|"$/,"","g",ac[target_container_id]["class"])
+      break
+
+      case "i":
+        print gensub(/^"|"$/,"","g",ac[target_container_id]["instance"])
+      break
+
+      case "d":
+        print ac[target_container_id]["window"]
+      break
+
+      case "n":
+        print target_container_id
+      break
+
+      case "m":
+        print ac[target_container_id]["marks"]
+      break
+
+      case "w":
+        print ac[target_container_id]["workspace"]
+      break
+
+      case "a":
+        print gensub(/^"|"$/,"","g",ac[target_container_id]["focused"])
+      break
+
+      case "f":
+        print gensub(/^"|"$/,"","g",ac[target_container_id]["floating"])
+      break
+
+      case "o":
+        print gensub(/^"|"$/,"","g",ac[target_container_id]["title_format"])
+      break
+
+      case "e":
+        print ac[target_container_id]["fullscreen_mode"]
+      break
+
+      case "s":
+        print ac[target_container_id]["sticky"]
+      break
+
+      case "u":
+        print ac[target_container_id]["urgent"]
+      break
+    }
+  }
+}
+# add x to list to grab geometry
+$(NF-1) ~ /"(id|window|name|urgent|num|floating|sticky|title_format|fullscreen_mode|marks|focused|instance|class|focus)"$/ {
+  
+  key=gensub(/.*"([^"]+)"$/,"\\1","g",$(NF-1))
+    
+  switch (key) {
+
+    
+    case "fullscreen_mode":
+    case "sticky":
+    case "urgent":
+      ac[cid][key]=$NF
+    break
+
+    case "class":
+    case "instance":
+    case "title_format":
+      ac[cid][key]=$NF
+      if ( key == arg_target && $NF == "\"" arg_search[key] "\"" )
+        suspect_targets[cid]=1
+    break
+
+    # if $NF doesnt end with ", 
+    # its a comma in the name
+    # use getline in that case
+    case "name":
+      title=gensub(/\\"/,"@@_DQ_@@","g",$NF)
+      while (title ~ /[^"]$/ && title != "null") {
+        getline
+        title = title "," gensub(/\\"/,"@@_DQ_@@","g",$0)
+      }
+      title=gensub("@@_DQ_@@","\"","g",title)
+      ac[cid][key]=title
+      if ( key == arg_target && match(title, arg_search[key]) )
+        suspect_targets[cid]=1
+    break
+
+    case "id":
+      # when "nodes": (or "floating_nodes":) and "id":
+      # is on the same record.
+      #   example -> "nodes":[{"id":94446734049888 
+      # it is the start of a branch in the tree.
+      # save the last container_id as current_parent_id
+      if ($1 ~ /nodes"$/) {
+        current_parent_id=cid
+      } else if (NR == 1) {
+        root_id=$NF
+      }
+
+
+      # cid, "current id" is the last seen container_id
+      cid=$NF
+      ac[cid][key]=$NF
+
+      if ( key == arg_target && match($NF, arg_search[key]) )
+        suspect_targets[cid]=1
+    break
+
+    case "x":
+
+      if ($1 ~ /"(deco_)?rect"/) {
+        # this will add values to:
+        #   ac[cid]["x"] , ["y"] , ["w"] , ["h"]
+        #   ac[cid]["deco_x"] , ["deco_y"] , ["deco_w"] , ["deco_h"]
+        keyprefix=($1 ~ /"deco_rect"/ ? "deco_" : "")
+        while (1) {
+
+          match($0,/"([^"])[^"]*":([0-9]+)([}])?$/,ma)
+          ac[cid][keyprefix ma[1]]=ma[2]
+          if (ma[3] ~ "}")
+            break
+          # break before getline, otherwise we will
+          # miss the "deco_rect" line..
+          getline
+        }
+      }
+
+    break
+
+    case "num":
+      ac[cid][key]=$NF
+      cwsid=cid # current workspace id
+    break
+
+    case "focused":
+      ac[cid][key]=$NF
+      if ($NF == "true") {
+        active_container_id=cid
+        active_workspace_id=cwsid
+      }
+      ac[cid]["workspace"]=ac[cwsid]["num"]
+      ac[cid]["parent"]=current_parent_id
+    break
+
+    case "window":
+      if ($NF != "null") {
+        ac[cid]["window"]=$NF
+        if ( key == arg_target && $NF == arg_search[key] )
+          suspect_targets[cid]=1
+      }
+    break
+
+    case "floating":
+      ac[cid]["floating"]=$NF
+    break
+
+    case "focus":
+      if ($2 != "[]") {
+        # a not empty focus list is the first thing
+        # we encounter after a branch. The first
+        # item of the list is the focused container
+        # which is of interest if the container is
+        # tabbed or stacked, where only the focused container
+        # is visible.
+        first_id=gensub(/[^0-9]/,"","g",$2)
+        parent_id=ac[first_id]["parent"]
+        ac[parent_id]["focused"]=first_id
+
+        # this restores current_parent_id  and cid 
+        # to what it was before this branch.
+        cid=parent_id
+        current_parent_id=ac[parent_id]["parent"]
+      }
+    break
+
+    case "marks":
+
+      if ($NF == "[]") {
+        ac[cid][key] = $NF
+        break
+      }
+
+      if ( key == arg_target && match($NF, "\"" arg_search[key] "\"") )
+        suspect_targets[cid]=1
+
+      # ac[cid][key]="["
+      while (1) {
+        match($0,/"([^"]+)"([]])?$/,ma)
+        ac[cid][key] = ( ac[cid][key] ? ac[cid][key] "," : "[" ) "\"" ma[1] "\""
+        if (ma[2] ~ "]")
+          break
+
+        getline
+      }
+
+      ac[cid][key] = ac[cid][key] "]"
+
+    break
+  }
+}
+EOB
+}
+
 set -E
 trap '[ "$?" -ne 77 ] || exit 77' ERR
 
@@ -163,212 +381,46 @@ ERX() { echo  "[ERROR] $*" >&2 ; exit 77 ;}
 ERR() { echo  "[WARNING] $*" >&2 ;}
 ERM() { echo  "$*" >&2 ;}
 
-makeexpression() {
+get_window() {
 
-local mark o re crit format
+  local json
+  json=${__o[json]:-$(i3-msg -t get_tree)}
 
-declare -A _c
-
-for o in "${!__o[@]}"; do
-  [[ $o =~ synk|active|print ]] && continue
-
-  crit=${__o[$o]}
-
-  # allow ^ and $ re in criteria
-  if [[ $crit =~ [$]$ ]]; then
-    crit='[^"]*'"${crit%$}"
-  elif [[ $crit =~ ^[^] ]]; then
-    crit=${crit#^}'[^"]*'
-  elif [[ $crit =~ ^[^](.+)[$]$ ]]; then
-    crit=${BASH_REMATCH[1]}
-  fi
-
-  _c[$o]=$crit
-done
-
-# no criteria specified, search active window
-((__o[active] || !${#_c[@]})) && _c[active]=true
-: "${_c[active]:=true|false}"
-
-[[ -n ${_c[titleformat]} ]] \
-  && format="(\"title_format\":(\"${_c[titleformat]}\"),)" \
-  || format='("title_format":"([^"]+)",)?'
-
-[[ -n ${_c[mark]} ]] \
-  && mark="(\"marks\":(\[[^]]*\"${_c[mark]}\"[^]]*\]),)" \
-  || mark='("marks":(\[[^]]*\]),)?'
-
-# when workspace is important we insert the "_special"
-# character at all "num:" fields to be able to "backtrack"
-# the json. This replacement operation is somewhat expensive
-# and will slow down the overall execution of the script...
-if [[ ${__o[print]} =~ w || -n ${_c[workspace]} ]]; then
-  re="\"num$_special\":(${_c[workspace]:-[0-9-]+})"
-  re+=",[^$_special]+"
-else
-  re="(\{)"
-fi
-
-re+=$(cat << EOB
-"id":(${_c[conid]:-[0-9]+}),
-"type":"[^"]+",
-"orientation":"[^"]+",
-"scratchpad_state":"[^"]+",
-"percent":[0-9.]+,
-"urgent":(false|true),
-${mark}
-"focused":(${_c[active]}),
-"output":"[^"]+",
-"layout":"[^"]+",
-"workspace_layout":"[^"]+",
-"last_split_layout":"[^"]+",
-"border":"[^"]+",
-"current_border_width":[0-9-]+,
-"rect":[^}]+},
-"deco_rect":[^}]+},
-"window_rect":[^}]+},
-"geometry":[^}]+},
-"name":"?(${_c[title]:-[^\"]+})"?,
-${format}
-("window":(${_c[id]:-[0-9]+}),
-[^,]+,
-"window_properties":\{
-"class":"(${_c[class]:-[^\"]+})",
-"instance":"(${_c[instance]:-[^\"]+})",
-[^}]+\},
-"nodes":[^,]+,
-"floating_nodes":[^,]+,
-"focus":[^,]+,
-"fullscreen_mode":([0-9]),
-"sticky":(false|true),
-"floating":"([^"]+)",)
-EOB
-)
-
-# if criteria is mark || conid, window properties are optional
-[[ -n ${_c[mark]}${_c[conid]}${_c[titleformat]} ]] && re+='?'
-
-# remove all newline characters
-_expression="${re//$'\n'/}"
-}
-
-# example node, this is formated with 'jq' the
-# output we parse have NO WHITESPACE other then
-# within strings.
-# 
-# "title_format" and "marks" entries are only present
-# if they contain a value.
-#
-# "name": can be null (not enclosed in quotes)
-
-# {
-#   "id": 94203263545520,
-#   "type": "con",
-#   "orientation": "none",
-#   "scratchpad_state": "none",
-#   "percent": 1,
-#   "urgent": false,
-#   "focused": false,
-#   "output": "__i3",
-#   "layout": "splith",
-#   "workspace_layout": "default",
-#   "last_split_layout": "splith",
-#   "border": "normal",
-#   "current_border_width": 2,
-#   "rect": {
-#     "x": 596,
-#     "y": 355,
-#     "width": 728,
-#     "height": 350
-#   },
-#   "deco_rect": {
-#     "x": 0,
-#     "y": 0,
-#     "width": 728,
-#     "height": 20
-#   },
-#   "window_rect": {
-#     "x": 2,
-#     "y": 0,
-#     "width": 724,
-#     "height": 348
-#   },
-#   "geometry": {
-#     "x": 0,
-#     "y": 0,
-#     "width": 724,
-#     "height": 348
-#   },
-#   "name": "/dev/pts/12",
-#   "title_format": "typiskt",
-#   "window": 8393677,
-#   "window_type": "unknown",
-#   "window_properties": {
-#     "class": "URxvt",
-#     "instance": "typiskt",
-#     "title": "/dev/pts/12",
-#     "transient_for": null
-#   },
-#   "nodes": [],
-#   "floating_nodes": [],
-#   "focus": [],
-#   "fullscreen_mode": 0,
-#   "sticky": false,
-#   "floating": "user_on",
-#   "swallows": []
-# }
-# ],
-# "floating_nodes": [],
-# "focus": [
-# 94203263545520
-# ],
-# "fullscreen_mode": 0,
-# "sticky": false,
-# "floating": "auto_off",
-# "swallows": []
-# }
-
-match() {
-
-  local json=$1 k
-
-  [[ -z $_expression ]] && makeexpression
-
-  declare -i i
-  declare -A ma
-
-  [[ $_toprint =~ w || -n ${__o[workspace]} ]] \
-    && json=${_json//\"num\":/\"num${_special}\":}
-
-  # name of the keys in array "ma" match the characters
-  # that can be used as arguments to --print (_toprint)
-  # optional capture groups are collected in the dummykey O
-  [[ $json =~ $_expression ]] && {
-    ma=(
-      [w]="${BASH_REMATCH[$((++i))]}" # "num:"             - INT
-      [n]="${BASH_REMATCH[$((++i))]}" # "id:"              - INT
-      [u]="${BASH_REMATCH[$((++i))]}" # "urgent:"          - false|true
-      [O]="${BASH_REMATCH[$((++i))]}" # ! optional group
-      [m]="${BASH_REMATCH[$((++i))]}" # "marks:"           - ["mark1","mark2"...]
-      [a]="${BASH_REMATCH[$((++i))]}" # "focused:"         - false|true
-      [t]="${BASH_REMATCH[$((++i))]}" # "name:"            - STRING
-      [O]="${BASH_REMATCH[$((++i))]}" # ! optional group
-      [o]="${BASH_REMATCH[$((++i))]:-%title}" # "title_format:"    - string
-      [O]="${BASH_REMATCH[$((++i))]}" # ! optional group
-      [d]="${BASH_REMATCH[$((++i))]}" # "window:"          - INT
-      [c]="${BASH_REMATCH[$((++i))]}" # "class:"           - STRING
-      [i]="${BASH_REMATCH[$((++i))]}" # "instance:"        - STRING
-      [e]="${BASH_REMATCH[$((++i))]}" # "fullscreen_mode:" - 0|1
-      [s]="${BASH_REMATCH[$((++i))]}" # "sticky:"          - true|false
-      [f]="${BASH_REMATCH[$((++i))]}" # "floating:"        - auto_off|auto_on|user_off|user_on
-    )
-
-    for ((i=0;i<${#_toprint};i++)); do
-      k=${_toprint:$i:1}
-      _op+=("${ma[$k]:---i3get could not find: $k}")
-    done
-
-  }
+  awk -f <(
+    echo "
+    BEGIN {
+      ${__o[instance]:+
+        arg_target=\"instance\"
+        arg_search[arg_target]=\"${__o[instance]}\"
+      }
+      ${__o[class]:+
+        arg_target=\"class\"
+        arg_search[arg_target]=\"${__o[class]}\"
+      }
+      ${__o[conid]:+
+        arg_target=\"id\"
+        arg_search[arg_target]=\"${__o[conid]}\"
+      }
+      ${__o[id]:+
+        arg_target=\"window\"
+        arg_search[arg_target]=\"${__o[id]}\"
+      }
+      ${__o[mark]:+
+        arg_target=\"marks\"
+        arg_search[arg_target]=\"${__o[mark]}\"
+      }
+      ${__o[title]:+
+        arg_target=\"name\"
+        arg_search[arg_target]=\"${__o[title]}\"
+      }
+      ${__o[titleformat]:+
+        arg_target=\"title_format\"
+        arg_search[arg_target]=\"${__o[titleformat]}\"
+      }
+      arg_print=\"${__o[print]:-n}\"
+    }"
+    awklib
+  ) FS=: RS=, <<< "$json"
 }
 
 

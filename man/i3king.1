@@ -1,0 +1,162 @@
+.nh
+.TH I3KING 1 2021-08-04 Linux "User Manuals"
+.SH NAME
+.PP
+\fB\fCi3king\fR - window ruler
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3king --config|-c FILE
+i3king --json JSON [--verbose] [--dryrun] [--log FILE]
+i3king --help|-h
+i3king --version|-v
+
+.fi
+.RE
+
+.SH DESCRIPTION
+.PP
+i3king will match all \fBnew\fP windows against the
+rules defined in \fBI3_KING_RULE_FILE\fP
+(\fI\fB\fC~/.config/i3king/rules\fR\fP). If a rule matches
+the created window, the command associated with
+the rule will get passed to \fB\fCi3-msg\fR\&.
+
+.PP
+The criterias a window can get matched against
+are
+.br
+- \fBclass\fP
+
+.RS
+.IP \(bu 2
+\fBinstance\fP
+.IP \(bu 2
+\fBtitle\fP
+.IP \(bu 2
+\fBwindow_type\fP
+
+.RE
+
+.PP
+It is also possible to use \fBGLOBAL\fP rules which
+will match any windows. But each global rules can
+have a \fBblack\fPlist with windows that will not
+trigger that rule.
+
+.PP
+A variant of the GLOBAL rule is \fBDEFAULT\fP
+rules, which works exactly like GLOBAL rules,
+except they only get triggered if the window
+didn't match any \fI"normal"\fP rules (regular GLOBAL
+rules are normal).
+
+.PP
+Just like in the i3 config the \fB\fCset\fR directive is
+available, so you can make variables.
+
+.PP
+Two built in magic variables are avaible in the
+config:
+.br
+- $INSTANCE
+
+.RS
+.IP \(bu 2
+$CLASS
+
+.RE
+
+.SH EXAMPLE
+.PP
+.RS
+
+.nf
+GLOBAL \\
+  class=URxvt instance=htop, \\
+  instance=firefox
+    title_format $INSTANCE
+
+.fi
+.RE
+
+.PP
+The above rule will set the title_format to the
+instance name of all windows, except a URxvt
+window with the instance name htop, and firefox
+windows.
+
+.PP
+If $I3_KING_RULES_FILE doesn't exist, a example
+rule file will get created. See that file for
+details about the syntax.
+
+.SH OPTIONS
+.PP
+\fB\fC--config\fR|\fB\fC-c\fR FILE
+.br
+Override the value of the Environment variable
+\fBI3_KING_RULE_FILE\fP . Or the default value:
+.br
+\fB\fC~/.config/i3king/rules\fR
+
+.PP
+\fB\fC--json\fR JSON
+.br
+Parse JSON instead of the output from: \fB\fCi3-msg -t
+subscribe\fR
+
+.PP
+\fB\fC--verbose\fR
+.br
+More verbose output to \fBSTDERR\fP\&.
+
+.PP
+\fB\fC--dryrun\fR
+.br
+Parse rules but don't execute commands.
+
+.PP
+\fB\fC--log\fR FILE
+.br
+Same as verbose but the output is printed to FILE
+instead.
+
+.PP
+\fB\fC--help\fR|\fB\fC-h\fR
+.br
+Show help and exit.
+
+.PP
+\fB\fC--version\fR|\fB\fC-v\fR
+.br
+Show version and exit.
+
+.SH ENVIRONMENT
+.PP
+\fB\fCXDG_CONFIG_HOME\fR
+
+.PP
+defaults to: $HOME/.config
+
+.PP
+\fB\fCI3_KING_RULE_FILE\fR
+.br
+Path to file containing rules to be parsed.
+Defaults to $XDG_CONFIG_HOME/i3king/rules defaults
+to: $XDG_CONFIG_HOME/i3king/rules
+
+.SH DEPENDENCIES
+.PP
+\fB\fCbash\fR \fB\fCi3-msg\fR
+
+.PP
+budRich https://github.com/budlabs
+\[la]https://github.com/budlabs\[ra]
+
+.SH SEE ALSO
+.PP
+i3-msg(1),

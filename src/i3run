@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.09
+i3run - version: 0.1
 updated: 2021-05-28 by budRich
 EOB
 }
@@ -236,6 +236,8 @@ focuswindow(){
 
 launchcommand(){
 
+  local windowid
+
   [[ -z ${__o[command]} ]] && ERX i3run no command, no action
   
   eval "${__o[command]}" > /dev/null 2>&1 &
@@ -250,8 +252,14 @@ launchcommand(){
 
     xdtopt+=("${acri[1]}")
 
-    xdotool set_window "${xdtopt[@]}" \
-      "$(i3get "${acri[0]}" "${__o[rename]}" -r d -y)"
+    windowid="$(i3get "${acri[0]}" "${__o[rename]}" -r d -y)"
+
+    xdotool \
+      set_window "${xdtopt[@]}" "$windowid"       \
+      set_window --overrideredirect 1 "$windowid" \
+      set_window --overrideredirect 0 "$windowid" \
+      windowunmap "$windowid"                     \
+      windowmap   "$windowid"                           
   }
   
   i3list[TWC]=$(i3get -y "${acri[@]}")
