@@ -94,7 +94,7 @@ New script for managing window rules.
 
 if the setting "focus_wrapping" is set to "workspace" in
 the i3config. i3viswiz will wrap the focus only inside the
-currenttly focused workspace instead of the whole work area
+currently focused workspace instead of the whole work area
 (other monitors).
 
 The setting has to be present in the active config before
@@ -116,10 +116,8 @@ Fixed issue where empty STDIN got treated as a list.
 ### [i3run]
 
 
-Only change since last version is to use `i3fyra --force
---array ARRAY` to override the new virtual positions which
-are not needed with i3run because it already figures out the
-correct container.
+xdotool now also map/unmap a window to trigger new window
+rule when a new window is renamed.
 
 
 
@@ -157,9 +155,9 @@ as restart*).
 [i3gw]: https://github.com/budlabs/i3ass/wiki/i3gw
 [i3Kornhe]: https://github.com/budlabs/i3ass/wiki/i3Kornhe
 [i3list]: https://github.com/budlabs/i3ass/wiki/i3list
-[i3menu]: https://github.com/budlabs/i3ass/wiki/i3menu
-[i3run]: https://github.com/budlabs/i3ass/wiki/i3run
 [i3var]: https://github.com/budlabs/i3ass/wiki/i3var
+[i3run]: https://github.com/budlabs/i3ass/wiki/i3run
+[i3menu]: https://github.com/budlabs/i3ass/wiki/i3menu
 [i3viswiz]: https://github.com/budlabs/i3ass/wiki/i3viswiz
 [i3king]: https://github.com/budlabs/i3ass/wiki/i3king
 
