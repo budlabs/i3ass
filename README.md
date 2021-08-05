@@ -87,7 +87,22 @@ about the command.
 
 ### [i3king]
 
-Fixed issue with default and global rules that didn't have blacklists. 
+Added two new commandline options:  
+`--apply` and `--no-restart`  
+We now handle the restart signal from i3 IPC, when that
+happens, all windows are matched against the rules and
+i3king will automatically get restarted.
+
+### [i3get]
+
+
+added `y` as an argument for `--return`. It will print the
+**window_type** of the current window.
+
+### [i3fyra]
+
+
+New commanline option `--conid`
 
 ## known issues
 

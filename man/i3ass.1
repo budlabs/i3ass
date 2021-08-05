@@ -1,5 +1,5 @@
 .nh
-.TH I3ASS 1 2021-08-05 Linux "User Manuals"
+.TH I3ASS 1 2021-08-06 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3ass\fR - i3 assistance scripts
@@ -101,7 +101,7 @@ i3fyra --show|-s CONTAINER [--force|-f]
 i3fyra --float|-a
 i3fyra --hide|-z CONTAINER [--force|-f]
 i3fyra --layout|-l LAYOUT [--force|-f] [--array ARRAY] [--verbose] [--dryrun]
-i3fyra --move|-m DIRECTION|CONTAINER [--force|-f] [--speed|-p INT]
+i3fyra --move|-m DIRECTION|CONTAINER [--conid ID] [--force|-f] [--speed|-p INT]
 i3fyra --help|-h
 i3fyra --version|-v
 
@@ -249,6 +249,12 @@ with this action can be defined with the \fB\fC--speed\fR
 option. Example: \fB\fC$ i3fyra --speed 30 -m r\fR Will
 move current window 30 pixels to the right, if it
 is floating.
+
+.PP
+\fB\fC--conid\fR|\fB\fC-m\fR ID
+.br
+To set the target window for operations. If not
+set the active window will be used.
 
 .PP
 \fB\fC--speed\fR|\fB\fC-p\fR INT
@@ -449,6 +455,7 @@ l l l .
 \fB\fCe\fR	fullscreen	1 or 0
 \fB\fCs\fR	sticky	true or false
 \fB\fCu\fR	urgent	true or false
+\fB\fCy\fR	window_type	string
 .TE
 
 .PP
@@ -588,7 +595,8 @@ container.
 .RS
 
 .nf
-i3king --config|-c FILE
+i3king [--config|-c FILE] [--no-restart]
+i3king --apply|-a [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
 i3king --help|-h
 i3king --version|-v
@@ -638,7 +646,7 @@ Just like in the i3 config the \fB\fCset\fR directive is
 available, so you can make variables.
 
 .PP
-Two built in magic variables are avaible in the
+Some built in magic variables are avaible in the
 config:
 
 .RS
@@ -646,6 +654,10 @@ config:
 $INSTANCE
 .IP \(bu 2
 $CLASS
+.IP \(bu 2
+$CONID
+.IP \(bu 2
+$WINID
 
 .RE
 
@@ -673,6 +685,42 @@ If $I3_KING_RULES_FILE doesn't exist, a example
 rule file will get created. See that file for
 details about the syntax.
 
+.PP
+If you used to have \fB\fCfor_window\fR rules that
+triggered \fB\fCi3fyra --move\fR commands. It is
+recommended to use the built in varialbe
+\fB$CONID\fP when executing i3fyra:
+
+.SH EXAMPLE
+.PP
+.RS
+
+.nf
+# old i3 version:
+for_window [instance=qutebrowser] exec --no-startup-id i3fyra --move C
+
+# with i3 king:
+instance=qutebrowser
+  exec --no-startup-id i3fyra --conid $CONID --move C
+
+.fi
+.RE
+
+.PP
+(\fIthe \fB\fC--conid\fR option in i3fyra is brand new\fP)
+
+.PP
+If the \fB\fCrestart\fR command is issued from i3, all
+windows lose gets new container IDs, marks are
+lost and other more or less strange things might
+happen to the layout. Another thing is that all
+open IPC sockets are closed and this means that
+any ipc subscriber would have to be restarted.
+\fBi3king\fP will when this happens match all known
+windows against the rules again, and automatically
+restart itself. If you for some reason don't want
+this behaviour, use the \fB\fC--no-restart\fR option.
+
 .SH OPTIONS
 .PP
 \fB\fC--config\fR|\fB\fC-c\fR FILE
@@ -681,6 +729,20 @@ Override the value of the Environment variable
 \fBI3_KING_RULE_FILE\fP . Or the default value:
 .br
 \fB\fC~/.config/i3king/rules\fR
+
+.PP
+\fB\fC--no-restart\fR
+.br
+When i3 emits the \fB\fCrestart\fR event all IPC
+subscribers needs to be restarted. i3King does
+this automatically but with this option set, it
+will instead just die.
+
+.PP
+\fB\fC--apply\fR|\fB\fC-a\fR
+.br
+Match all existing windows against the rules and
+exit.
 
 .PP
 \fB\fC--json\fR JSON
@@ -729,7 +791,7 @@ defaults to: $XDG_CONFIG_HOME/i3king/rules
 
 .SH DEPENDENCIES
 .PP
-\fB\fCbash\fR \fB\fCi3-msg\fR
+\fB\fCbash\fR \fB\fCi3-msg\fR \fB\fCgawk\fR \fB\fCi3get\fR
 
 
 .SH \fB\fCi3Kornhe\fR - move and resize windows gracefully

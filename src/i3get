@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.7
+i3get - version: 0.71
 updated: 2021-06-07 by budRich
 EOB
 }
@@ -99,6 +99,7 @@ characters:
 |e         | fullscreen       | 1 or 0
 |s         | sticky           | true or false
 |u         | urgent           | true or false
+|y         | window_type      | string
 
 Each character in OUTPUT will be tested and the
 return value will be printed on a new line. If no
@@ -218,11 +219,15 @@ END {
       case "u":
         print ac[target_container_id]["urgent"]
       break
+
+      case "y":
+        print gensub(/^"|"$/,"","g",ac[target_container_id]["window_type"])
+      break
     }
   }
 }
 # add x to list to grab geometry
-$(NF-1) ~ /"(id|window|name|urgent|num|floating|sticky|title_format|fullscreen_mode|marks|focused|instance|class|focus)"$/ {
+$(NF-1) ~ /"(id|window|name|urgent|num|floating|sticky|title_format|fullscreen_mode|marks|focused|instance|class|focus|window_type)"$/ {
   
   key=gensub(/.*"([^"]+)"$/,"\\1","g",$(NF-1))
     
@@ -232,6 +237,7 @@ $(NF-1) ~ /"(id|window|name|urgent|num|floating|sticky|title_format|fullscreen_m
     case "fullscreen_mode":
     case "sticky":
     case "urgent":
+    case "window_type":
       ac[cid][key]=$NF
     break
 
