@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3king - version: 0.1
-updated: 2021-08-04 by budRich
+i3king - version: 0.12
+updated: 2021-08-05 by budRich
 EOB
 }
 
@@ -90,30 +90,59 @@ main(){
       identifier+="title:${ma[title]:-.*}:"
       identifier+="window_type:${ma[typ]:-.*}:"
 
-      # test global rules first
+
+      # test default rules first
+      for rule in "${!default_rules[@]}"; do
+
+        cmd=${commands[$rule]}
+
+        if [[ $identifier =~ ${default_rules[$rule]} ]]; then
+
+          [[ $cmd = "$last_cmd" ]] && {
+            unset 'default_execute[-1]'
+            unset 'matches[-1]'
+          }
+          last_cmd=$cmd
+          continue
+        else
+          :
+        fi
+
+        [[ $cmd = "$last_cmd" ]] && continue
+        last_cmd=$cmd
+
+        default_execute+=("$cmd")
+        matches+=("DEFAULT: -"$'\n'$'\t'"$cmd")
+
+      done
+
+      unset last_cmd
+
+      # then global rules
       for rule in "${!global_rules[@]}"; do
 
         cmd=${commands[$rule]}
-        [[ $identifier =~ ${global_rules[$rule]} ]] && {
-          [[ $cmd = "$last_cmd" ]] && {
+
+        if [[ $identifier =~ ${global_rules[$rule]} ]]; then
+
+          [[ $cmd = "${execute[-1]}" ]] && {
             unset 'execute[-1]'
             unset 'matches[-1]'
           }
           last_cmd=$cmd
           continue
-        }
+        else
+          :
+        fi
 
         [[ $cmd = "$last_cmd" ]] && continue
         last_cmd=$cmd
 
-        if ((default_rules[rule])); then
-          default_execute+=("$cmd")
-          matches+=("DEFAULT: -"$'\n'$'\t'"$cmd")
-        else
-          execute+=("$cmd")
-          matches+=("GLOBAL: -"$'\n'$'\t'"$cmd")
-        fi
+        execute+=("$cmd")
+        matches+=("GLOBAL: -"$'\n'$'\t'"$cmd")
       done
+
+      unset last_cmd
 
       for rule in "${!rules[@]}"; do
         [[ $identifier =~ ${rules[$rule]} ]] || continue
@@ -122,6 +151,9 @@ main(){
         last_cmd=$cmd
         execute+=("$cmd")
         matches+=("NORMAL: ${rules[$rule]}"$'\n'$'\t'"$cmd")
+
+        # if we reach this point, delete default
+        unset 'default_execute[@]'
       done
 
       [[ -a $_file_log && ${#matches[@]} -gt 0 ]] && {
@@ -135,23 +167,17 @@ main(){
       unset 'matches[@]'
       unset last_cmd cmd
 
-      ((${#execute[@]}+${#default_execute[@]} && __o[dryrun] != 1)) && {
+      ((${#execute[@]})) && unset 'default_execute[@]'
+      ((${#default_execute[@]})) && execute=("${default_execute[@]}")
 
-        # don't include default rules if "normal" rules where matched
-        if ((${#default_execute[@]} && ${#execute[@]})); then
-          real_execute=("${execute[@]}")
-        elif ((${#default_execute[@]})); then
-          real_execute=("${default_execute[@]}")
-        else
-          real_execute=("${execute[@]}")
-        fi
+      ((${#execute[@]} && __o[dryrun] != 1)) && {
 
         [[ -a $_file_log ]] && {
           echo EXECUTE:
         } >> "$_file_log"
 
         (
-          for k in "${real_execute[@]}"; do
+          for k in "${execute[@]}"; do
             [[ -a $_file_log ]] && {
               echo $'\t'"$k"
             } >> "$_file_log"
@@ -168,7 +194,6 @@ main(){
       }
 
       unset 'execute[@]'
-      unset 'real_execute[@]'
       unset 'default_execute[@]'
     }
 
@@ -297,7 +322,7 @@ GLOBAL \
 # notice that we need exec after the semicolon ($X/$MSG)
 class=URxvt
   $MSG "this is a terminal window" ;\
-  $MSG "the instance name is $I3_KING_INSTANCE"
+  $MSG "the instance name is $INSTANCE"
 EOCONF
 
 }
@@ -398,15 +423,19 @@ parse_rules() {
         cmd=${cmd//\$$k/${vars[$k]}}
       done
 
+      # use command id instead of storing cmd string
+
       while ((counter_commands < counter_criteria)); do
         commands[counter_commands++]=$cmd
       done
-    elif [[ $line =~ $re_rule ]]; then
 
+    elif [[ $line =~ $re_rule ]]; then
+      # re_rules=^(GLOBAL|DEFAULT)?((\s+)?(.+)\s*)?$
       is_global_rule=${BASH_REMATCH[1]}
 
       # group by comma
       mapfile -t ignore_combined <<< "${BASH_REMATCH[4]//,/$'\n'}"
+
       for crit in "${ignore_combined[@]}"; do
 
         # if we don't have  a criteria it is
@@ -419,9 +448,12 @@ parse_rules() {
 
         while [[ $crit =~ $re_group ]]; do
 
+          # re_group='(\s*([^=[:space:]]+)=([^=]+\S)\s*)$'
+
           crit=${crit:0:$((${#BASH_REMATCH[1]}*-1))}
           key=${BASH_REMATCH[2]} 
           val=${BASH_REMATCH[3]//\\s/[[:space:]]}
+          val=${val// /[[:space:]]}
 
           # remove double quotes
           val=${val#\"} val=${val%\"}
@@ -442,11 +474,10 @@ parse_rules() {
           echo "$rule" >> "$_file_log"
         }
 
-        if [[ $is_global_rule ]]; then
+        if [[ $is_global_rule = DEFAULT ]]; then
+          default_rules[counter_criteria++]=$rule
+        elif [[ $is_global_rule = GLOBAL ]]; then
           global_rules[counter_criteria++]=$rule
-          [[ $is_global_rule =~ ^DEFAULT ]] && {
-            default_rules[counter_criteria-1]=1
-          }
         else
           rules[counter_criteria++]=$rule
         fi
