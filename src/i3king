@@ -201,7 +201,7 @@ apply_rules() {
 all_window_ids() {
   i3-msg -t get_tree \
     | awk '$1 == "\"window\"" && $2 != "null" {print $2}' RS=, FS=:
-}#!/usr/bin/env bash
+}
 
 ### createconf() function is automatically generated
 ### by bashbud based on the content of the conf/ directory
@@ -434,7 +434,7 @@ match_window() {
       
     done
   }
-}#!/bin/bash
+}
 
 parse_rules() {
 
@@ -518,9 +518,7 @@ parse_rules() {
           rule=${rule/$key:.\*:/$key:$val:}
         done
 
-        # [[ -a $_file_log ]] && {
-        #   echo "$rule" >> "$_file_log"
-        # }
+        [[ -a $_file_log ]] && echo "$rule" >> "$_file_log"
 
         if [[ $is_global_rule = DEFAULT ]]; then
           default_rules[counter_criteria++]=$rule

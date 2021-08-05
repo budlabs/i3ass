@@ -653,7 +653,7 @@ float_toggle(){
 
 initialize_globals() {
 
-  __o[verbose]=1
+  # __o[verbose]=1
   # __o[dryrun]=1
 
   ((__o[verbose])) && {
