@@ -87,39 +87,7 @@ about the command.
 
 ### [i3king]
 
-New script for managing window rules.
-
-### [i3viswiz]
-
-
-if the setting "focus_wrapping" is set to "workspace" in
-the i3config. i3viswiz will wrap the focus only inside the
-currently focused workspace instead of the whole work area
-(other monitors).
-
-The setting has to be present in the active config before
-the first i3viswiz invokation.
-
-To force this behavior otherwise, issue the following
-command:  
-`i3var set focus_wrap workspace`
-
-Or to disable it:  
-`i3var set focus_wrap normal`
-
-
-### [i3menu]
-
-
-Fixed issue where empty STDIN got treated as a list.
-
-### [i3run]
-
-
-xdotool now also map/unmap a window to trigger new window
-rule when a new window is renamed.
-
-
+Fixed issue with default and global rules that didn't have blacklists. 
 
 ## known issues
 
