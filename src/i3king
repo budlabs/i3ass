@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3king - version: 0.12
-updated: 2021-08-05 by budRich
+i3king - version: 0.2
+updated: 2021-08-06 by budRich
 EOB
 }
 
@@ -47,8 +47,14 @@ main(){
   }
 
   parse_rules "$_file_rules"
-  re=$(make_regex)
 
+  [[ ${__o[apply]} ]] && {
+    apply_rules
+    exit
+  }
+
+  re=$(make_regex)
+  
   while read -r json ; do
 
     [[ ${json//\\\"/%DQ%} =~ $re ]] && {
@@ -81,129 +87,39 @@ main(){
         [O]="${BASH_REMATCH[++i]}"               # "swallows:"        - auto_off|auto_on|user_off|user_on
       )
 
-      # ma[y]=$((ma[y]-ma[b]))
-      # ma[h]=$((ma[h]+ma[b]))
-      # ma[geo]=$(printf "%d:%d+%dx%d" "${ma[x]}" "${ma[y]}" "${ma[w]}" "${ma[h]}")
-
-      identifier="class:${ma[cls]:-.*}:"
-      identifier+="instance:${ma[ins]:-.*}:"
-      identifier+="title:${ma[title]:-.*}:"
-      identifier+="window_type:${ma[typ]:-.*}:"
-
-
-      # test default rules first
-      for rule in "${!default_rules[@]}"; do
-
-        cmd=${commands[$rule]}
-
-        if [[ $identifier =~ ${default_rules[$rule]} ]]; then
-
-          [[ $cmd = "$last_cmd" ]] && {
-            unset 'default_execute[-1]'
-            unset 'matches[-1]'
-          }
-          last_cmd=$cmd
-          continue
-        else
-          :
-        fi
-
-        [[ $cmd = "$last_cmd" ]] && continue
-        last_cmd=$cmd
-
-        default_execute+=("$cmd")
-        matches+=("DEFAULT: -"$'\n'$'\t'"$cmd")
-
-      done
-
-      unset last_cmd
-
-      # then global rules
-      for rule in "${!global_rules[@]}"; do
-
-        cmd=${commands[$rule]}
-
-        if [[ $identifier =~ ${global_rules[$rule]} ]]; then
-
-          [[ $cmd = "${execute[-1]}" ]] && {
-            unset 'execute[-1]'
-            unset 'matches[-1]'
-          }
-          last_cmd=$cmd
-          continue
-        else
-          :
-        fi
-
-        [[ $cmd = "$last_cmd" ]] && continue
-        last_cmd=$cmd
-
-        execute+=("$cmd")
-        matches+=("GLOBAL: -"$'\n'$'\t'"$cmd")
-      done
-
-      unset last_cmd
-
-      for rule in "${!rules[@]}"; do
-        [[ $identifier =~ ${rules[$rule]} ]] || continue
-        cmd=${commands[$rule]}
-        [[ $cmd = "$last_cmd" ]] && continue
-        last_cmd=$cmd
-        execute+=("$cmd")
-        matches+=("NORMAL: ${rules[$rule]}"$'\n'$'\t'"$cmd")
-
-        # if we reach this point, delete default
-        unset 'default_execute[@]'
-      done
-
-      [[ -a $_file_log && ${#matches[@]} -gt 0 ]] && {
-        echo $'\n'"WINDOW: $identifier"$'\n'
-        for k in "${matches[@]}"; do
-          echo "$k"
-        done
-        echo
-      } >> "$_file_log"
-
-      unset 'matches[@]'
-      unset last_cmd cmd
-
-      ((${#execute[@]})) && unset 'default_execute[@]'
-      ((${#default_execute[@]})) && execute=("${default_execute[@]}")
-
-      ((${#execute[@]} && __o[dryrun] != 1)) && {
-
-        [[ -a $_file_log ]] && {
-          echo EXECUTE:
-        } >> "$_file_log"
-
-        (
-          for k in "${execute[@]}"; do
-            [[ -a $_file_log ]] && {
-              echo $'\t'"$k"
-            } >> "$_file_log"
-
-            cmd=$k
-            cmd=${cmd//\$INSTANCE/${ma[ins]}}
-            cmd=${cmd//\$CLASS/${ma[cls]}}
-
-            i3-msg "[con_id=${ma[cid]}]" "$cmd"
-            
-          done
-        ) &
-        
-      }
-
-      unset 'execute[@]'
-      unset 'default_execute[@]'
+      match_window "${ma[cid]}"       \
+                   "${ma[cls]:-.*}"   \
+                   "${ma[ins]:-.*}"   \
+                   "${ma[title]:-.*}" \
+                   "${ma[typ]:-.*}"   \
+                   "${ma[wid]}"
+      
     }
+
+    [[ $json = '{"change":"restart"}' ]] && restart=1
 
   done < <(
             if [[ ${__o[json]} ]]; then
               echo "${__o[json]}"
             else
-              i3-msg -mt subscribe '["window"]'
+              i3-msg -mt subscribe '["window","shutdown"]'
             fi
           )
+
+  [[ $restart = 1 && ${__o[no-restart]} != 1 ]] && {
+
+    echo "got restart event" >> "$_file_log"
+
+    while :; do
+      sleep .1
+      [[ -S $(i3 --get-socketpath) ]] && break
+    done
+
+    apply_rules
+
+    echo "restarting i3king" >> "$_file_log"
+    exec "${BASH_SOURCE[0]}" "${BASH_ARGV[@]}"
+  }
 }
 
 ___printhelp(){
@@ -214,7 +130,8 @@ i3king - window ruler
 
 SYNOPSIS
 --------
-i3king --config|-c FILE
+i3king [--config|-c FILE] [--no-restart]
+i3king --apply|-a [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
 i3king --help|-h
 i3king --version|-v
@@ -228,6 +145,17 @@ I3_KING_RULE_FILE . Or the default value:
 ~/.config/i3king/rules
 
 
+--no-restart  
+When i3 emits the restart event all IPC
+subscribers needs to be restarted. i3King does
+this automatically but with this option set, it
+will instead just die.
+
+--apply|-a  
+Match all existing windows against the rules and
+exit.
+
+
 --json JSON  
 Parse JSON instead of the output from: i3-msg -t
 subscribe
@@ -239,6 +167,7 @@ More verbose output to STDERR.
 
 --dryrun  
 Parse rules but don't execute commands.
+
 
 --log FILE  
 Same as verbose but the output is printed to FILE
@@ -255,6 +184,24 @@ Show version and exit.
 EOB
 }
 
+
+apply_rules() {
+	declare -a ids
+	declare -a wininfo
+	mapfile -t ids <<< "$(all_window_ids)"
+
+	# cid=$1 class=$2 instance=$3 title=$4 type=$5
+	for id in "${ids[@]}"; do
+		mapfile -t wininfo <<< "$(i3get -d "$id" -r ncityd)"
+		sleep .1
+		match_window "${wininfo[@]}"
+	done
+}
+
+all_window_ids() {
+  i3-msg -t get_tree \
+    | awk '$1 == "\"window\"" && $2 != "null" {print $2}' RS=, FS=:
+}#!/usr/bin/env bash
 
 ### createconf() function is automatically generated
 ### by bashbud based on the content of the conf/ directory
@@ -388,6 +335,107 @@ EOB
 echo "${re//$'\n'/}"
 }
 
+match_window() {
+
+  local cid=$1 class=$2 instance=$3 title=$4 wid=$6
+  # local type=$5 # unused
+  local last_cmd cmd rule
+  local identifier="class:$2:instance:$3:title:$4:window_type:$5:"
+
+  declare -a matches default_execute execute
+
+  [[ $cid =~ ^[0-9]{5,}$ ]] \
+    || ERX "match_window(): $cid is not a valid containerID"
+
+  # test default rules first
+  for rule in "${!default_rules[@]}"; do
+
+    cmd=${commands[$rule]}
+
+    [[ $identifier =~ ${default_rules[$rule]} ]] && {
+
+      [[ $cmd = "$last_cmd" ]] && {
+        unset 'default_execute[-1]'
+        unset 'matches[-1]'
+      }
+      last_cmd=$cmd
+      continue
+    }
+
+    [[ $cmd = "$last_cmd" ]] && continue
+    last_cmd=$cmd
+
+    default_execute+=("$cmd")
+    matches+=("DEFAULT: -"$'\n'$'\t'"$cmd")
+
+  done
+
+  unset last_cmd
+
+  # then global rules
+  for rule in "${!global_rules[@]}"; do
+
+    cmd=${commands[$rule]}
+
+    [[ $identifier =~ ${global_rules[$rule]} ]] && {
+
+      [[ $cmd = "${execute[-1]}" ]] && {
+        unset 'execute[-1]'
+        unset 'matches[-1]'
+      }
+      last_cmd=$cmd
+      continue
+    }
+
+    [[ $cmd = "$last_cmd" ]] && continue
+    last_cmd=$cmd
+
+    execute+=("$cmd")
+    matches+=("GLOBAL: -"$'\n'$'\t'"$cmd")
+  done
+
+  unset last_cmd
+
+  for rule in "${!rules[@]}"; do
+    [[ $identifier =~ ${rules[$rule]} ]] || continue
+    cmd=${commands[$rule]}
+    [[ $cmd = "$last_cmd" ]] && continue
+    last_cmd=$cmd
+
+    execute+=("$cmd")
+    matches+=("NORMAL: ${rules[$rule]}"$'\n'$'\t'"$cmd")
+  done
+
+  [[ -a $_file_log && ${#matches[@]} -gt 0 ]] && {
+    echo $'\n'"WINDOW: $identifier"$'\n'
+    for k in "${matches[@]}"; do
+      echo "$k"
+    done
+    echo
+    echo EXECUTE:
+  } >> "$_file_log"
+
+  ((${#execute[@]})) && unset 'default_execute[@]'
+  ((${#default_execute[@]})) && execute=("${default_execute[@]}")
+
+  ((${#execute[@]})) && {
+    
+    for k in "${execute[@]}"; do
+
+      cmd=$k
+      cmd=${cmd//\$INSTANCE/$instance}
+      cmd=${cmd//\$CLASS/$class}
+      cmd=${cmd//\$CONID/$cid}
+      cmd=${cmd//\$WINID/$wid}
+
+      [[ -a $_file_log ]] && echo $'\t'"$cmd" >> "$_file_log"
+
+      ((__o[dryrun])) || i3-msg "[con_id=$cid]" "$cmd"
+      
+    done
+  }
+}#!/bin/bash
+
 parse_rules() {
 
   declare -A vars
@@ -470,9 +518,9 @@ parse_rules() {
           rule=${rule/$key:.\*:/$key:$val:}
         done
 
-        [[ -a $_file_log ]] && {
-          echo "$rule" >> "$_file_log"
-        }
+        # [[ -a $_file_log ]] && {
+        #   echo "$rule" >> "$_file_log"
+        # }
 
         if [[ $is_global_rule = DEFAULT ]]; then
           default_rules[counter_criteria++]=$rule
@@ -492,8 +540,8 @@ parse_rules() {
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3king" \
-    --options "c:hv" \
-    --longoptions "config:,json:,verbose,dryrun,log:,help,version," \
+    --options "c:ahv" \
+    --longoptions "config:,no-restart,apply,json:,verbose,dryrun,log:,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -503,6 +551,8 @@ unset options
 while true; do
   case "$1" in
     --config     | -c ) __o[config]="${2:-}" ; shift ;;
+    --no-restart ) __o[no-restart]=1 ;; 
+    --apply      | -a ) __o[apply]=1 ;; 
     --json       ) __o[json]="${2:-}" ; shift ;;
     --verbose    ) __o[verbose]=1 ;; 
     --dryrun     ) __o[dryrun]=1 ;; 

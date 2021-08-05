@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.1
+i3fyra - version: 1.11
 updated: 2021-05-28 by budRich
 EOB
 }
@@ -65,7 +65,7 @@ i3fyra --show|-s CONTAINER [--force|-f]
 i3fyra --float|-a
 i3fyra --hide|-z CONTAINER [--force|-f]
 i3fyra --layout|-l LAYOUT [--force|-f] [--array ARRAY] [--verbose] [--dryrun]
-i3fyra --move|-m DIRECTION|CONTAINER [--force|-f] [--speed|-p INT]
+i3fyra --move|-m DIRECTION|CONTAINER [--conid ID] [--force|-f] [--speed|-p INT]
 i3fyra --help|-h
 i3fyra --version|-v
 
@@ -142,6 +142,10 @@ current window 30 pixels to the right, if it is
 floating.
 
 
+--conid|-m ID  
+To set the target window for operations. If not
+set the active window will be used.
+
 --speed|-p INT  
 Distance in pixels to move a floating window.
 Defaults to 30.
@@ -153,6 +157,7 @@ Show help and exit.
 
 --version|-v  
 Show version and exit
+
 EOB
 }
 
@@ -648,6 +653,7 @@ float_toggle(){
 
 initialize_globals() {
 
+  __o[verbose]=1
   # __o[dryrun]=1
 
   ((__o[verbose])) && {
@@ -685,7 +691,8 @@ initialize_globals() {
   # _qflag is option added to i3-msg (cleanup())
   ((__o[verbose])) || _qflag='-q'
 
-  eval "${_array:=${__o[array]:-$(i3list)}}"
+  : "${__o[array]:=$(i3list ${__o[conid]:+-n ${__o[conid]}})}"
+  eval "${_array:=${__o[array]}}"
 
   declare -gi _isvertical
 
@@ -923,8 +930,8 @@ virtual_position() {
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3fyra" \
-    --options "s:faz:l:m:p:hv" \
-    --longoptions "show:,force,float,hide:,layout:,array:,verbose,dryrun,move:,speed:,help,version," \
+    --options "s:faz:l:m:m:p:hv" \
+    --longoptions "show:,force,float,hide:,layout:,array:,verbose,dryrun,move:,conid:,speed:,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -942,6 +949,7 @@ while true; do
     --verbose    ) __o[verbose]=1 ;; 
     --dryrun     ) __o[dryrun]=1 ;; 
     --move       | -m ) __o[move]="${2:-}" ; shift ;;
+    --conid      | -m ) __o[conid]="${2:-}" ; shift ;;
     --speed      | -p ) __o[speed]="${2:-}" ; shift ;;
     --help       | -h ) ___printhelp && exit ;;
     --version    | -v ) ___printversion && exit ;;
