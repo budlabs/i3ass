@@ -1,17 +1,17 @@
 .nh
-.TH I3FLIP 1 2021\-05\-28 Linux "User Manuals"
+.TH I3FLIP 1 2021-05-28 Linux "User Manuals"
 .SH NAME
 .PP
-\fB\fCi3flip\fR \- Tabswitching done right
+\fB\fCi3flip\fR - Tabswitching done right
 
 .SH SYNOPSIS
 .PP
 .RS
 
 .nf
-i3flip [\-\-move|\-m] [\-\-json JSON] [\-\-verbose] [\-\-dryrun] DIRECTION
-i3flip \-\-help|\-h
-i3flip \-\-version|\-v
+i3flip [--move|-m] [--json JSON] [--verbose] [--dryrun] DIRECTION
+i3flip --help|-h
+i3flip --version|-v
 
 .fi
 .RE
@@ -35,48 +35,48 @@ which can be defined with different words:
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-move\fR|\fB\fC\-m\fR
+\fB\fC--move\fR|\fB\fC-m\fR
 .br
 Move the current container instead of changing
 focus.
 
 .PP
-\fB\fC\-\-json\fR JSON
+\fB\fC--json\fR JSON
 .br
-use JSON instead of output from  \fB\fCi3\-msg \-t
-get\_tree\fR
+use JSON instead of output from  \fB\fCi3-msg -t
+get_tree\fR
 
 .PP
-\fB\fC\-\-verbose\fR
+\fB\fC--verbose\fR
 .br
 Print more information to \fBstderr\fP\&.
 
 .PP
-\fB\fC\-\-dryrun\fR
+\fB\fC--dryrun\fR
 .br
 Don't execute any \fIi3 commands\fP\&.
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
 .SH EXAMPLES
 .PP
-\fB\fC\~/.config/i3/config\fR:
+\fB\fC~/.config/i3/config\fR:
 
 .PP
 .RS
 
 .nf
 \&...
-bindsym Mod4+Tab         exec \-\&\-\&no\-\&startup\-\&id i3flip next
-bindsym Mod4+Shift+Tab   exec \-\&\-\&no\-\&startup\-\&id i3flip prev
+bindsym Mod4+Tab         exec --no-startup-id i3flip next
+bindsym Mod4+Shift+Tab   exec --no-startup-id i3flip prev
 
 .fi
 .RE

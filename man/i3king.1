@@ -9,7 +9,7 @@
 .RS
 
 .nf
-i3king [--config|-c FILE] [--no-restart]
+i3king [--config|-c FILE] [--no-apply] [--no-restart]
 i3king --apply|-a [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
 i3king --help|-h
@@ -130,10 +130,11 @@ lost and other more or less strange things might
 happen to the layout. Another thing is that all
 open IPC sockets are closed and this means that
 any ipc subscriber would have to be restarted.
-\fBi3king\fP will when this happens match all known
-windows against the rules again, and automatically
-restart itself. If you for some reason don't want
-this behaviour, use the \fB\fC--no-restart\fR option.
+\fBi3king\fP will, when the socket is broken, match
+all known windows against the rules again, and
+automatically restart itself. If you for some
+reason don't want this behaviour, try \fB\fC--no-
+restart\fR and/or \fB\fC--no-apply\fR options.
 
 .SH OPTIONS
 .PP
@@ -145,12 +146,18 @@ Override the value of the Environment variable
 \fB\fC~/.config/i3king/rules\fR
 
 .PP
+\fB\fC--no-apply\fR
+.br
+If this option is set it will not automatically
+apply rules to all windows when the IPC socket is
+broken (happens on a crash or on \fB\fCrestart\fR). This
+option has no effect if \fB\fC--no-restart\fR is used.
+
+.PP
 \fB\fC--no-restart\fR
 .br
-When i3 emits the \fB\fCrestart\fR event all IPC
-subscribers needs to be restarted. i3King does
-this automatically but with this option set, it
-will instead just die.
+When the IPC socket is broken, i3king will
+automatically restart if this option is not set.
 
 .PP
 \fB\fC--apply\fR|\fB\fC-a\fR

@@ -87,22 +87,15 @@ about the command.
 
 ### [i3king]
 
-Added two new commandline options:  
-`--apply` and `--no-restart`  
-We now handle the restart signal from i3 IPC, when that
-happens, all windows are matched against the rules and
-i3king will automatically get restarted.
+Changed the resart behaviour. So i3king will now try to
+restart whenever the IPC socket is broken, which happens on
+f.i. i3 crashes.  
 
-### [i3get]
+New commandline option: `--no-apply`, if set i3king will
+not automatically try to apply rules when it restarts.
 
-
-added `y` as an argument for `--return`. It will print the
-**window_type** of the current window.
-
-### [i3fyra]
-
-
-New commanline option `--conid`
+This update was caught on tape, and can be seen at youtube:  
+[i3wm RED BOX OF DEATH ... DEFEATED!!!! TKO](https://www.youtube.com/watch?v=GQSZq6tC2AQ)
 
 ## known issues
 

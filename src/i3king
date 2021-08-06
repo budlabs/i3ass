@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3king - version: 0.2
+i3king - version: 0.22
 updated: 2021-08-06 by budRich
 EOB
 }
@@ -55,71 +55,65 @@ main(){
 
   re=$(make_regex)
   
-  while read -r json ; do
+  while :; do
+    while read -r json ; do
 
-    [[ ${json//\\\"/%DQ%} =~ $re ]] && {
+      if [[ ${json//\\\"/%DQ%} =~ $re ]]; then
 
-      i=1
-      ma=(
-        [change]="${BASH_REMATCH[++i]}"          # "num:"             - INT
-        [cid]="${BASH_REMATCH[++i]}"             # "id:"              - INT
-        [urgent]="${BASH_REMATCH[++i]}"          # "urgent:"          - false|true
-        [O]="${BASH_REMATCH[++i]}"               # ! optional group
-        [mrk]="${BASH_REMATCH[++i]}"             # "marks:"           - ["mark1","mark2"...]
-        [focused]="${BASH_REMATCH[++i]}"         # "focused:"         - false|true
-        [x]="${BASH_REMATCH[++i]}"               # rect
-        [y]="${BASH_REMATCH[++i]}"               # rect
-        [w]="${BASH_REMATCH[++i]}"               # rect
-        [h]="${BASH_REMATCH[++i]}"               # rect
-        [b]="${BASH_REMATCH[++i]}"               # deco_rect, height. i.e. titlebar height
-        [title]="${BASH_REMATCH[++i]//%DQ%/\"}"  # "name:"            - STRING
-        [O]="${BASH_REMATCH[++i]}"               # ! optional group
-        [frm]="${BASH_REMATCH[++i]//%DQ%/\"}"    # "title_format:"    - string
-        [wid]="${BASH_REMATCH[++i]}"             # "window:"          - INT
-        [typ]="${BASH_REMATCH[++i]}"             # "window_type:"     - STRING
-        [O]="${BASH_REMATCH[++i]}"               # ! optional group
-        [cls]="${BASH_REMATCH[++i]}"             # "class:"           - STRING
-        [O]="${BASH_REMATCH[++i]}"               # "instance:"        - STRING
-        [ins]="${BASH_REMATCH[++i]}"             # "instance:"        - STRING
-        [fullscreen]="${BASH_REMATCH[++i]}"      # "fullscreen_mode:" - 0|1
-        [sticky]="${BASH_REMATCH[++i]}"          # "sticky:"          - true|false
-        [floating]="${BASH_REMATCH[++i]}"        # "floating:"        - auto_off|auto_on|user_off|user_on
-        [O]="${BASH_REMATCH[++i]}"               # "swallows:"        - auto_off|auto_on|user_off|user_on
-      )
+        i=1
+        ma=(
+          [change]="${BASH_REMATCH[++i]}"          # "num:"             - INT
+          [cid]="${BASH_REMATCH[++i]}"             # "id:"              - INT
+          [urgent]="${BASH_REMATCH[++i]}"          # "urgent:"          - false|true
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [mrk]="${BASH_REMATCH[++i]}"             # "marks:"           - ["mark1","mark2"...]
+          [focused]="${BASH_REMATCH[++i]}"         # "focused:"         - false|true
+          [x]="${BASH_REMATCH[++i]}"               # rect
+          [y]="${BASH_REMATCH[++i]}"               # rect
+          [w]="${BASH_REMATCH[++i]}"               # rect
+          [h]="${BASH_REMATCH[++i]}"               # rect
+          [b]="${BASH_REMATCH[++i]}"               # deco_rect, height. i.e. titlebar height
+          [title]="${BASH_REMATCH[++i]//%DQ%/\"}"  # "name:"            - STRING
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [frm]="${BASH_REMATCH[++i]//%DQ%/\"}"    # "title_format:"    - string
+          [wid]="${BASH_REMATCH[++i]}"             # "window:"          - INT
+          [typ]="${BASH_REMATCH[++i]}"             # "window_type:"     - STRING
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [cls]="${BASH_REMATCH[++i]}"             # "class:"           - STRING
+          [O]="${BASH_REMATCH[++i]}"               # "instance:"        - STRING
+          [ins]="${BASH_REMATCH[++i]}"             # "instance:"        - STRING
+          [fullscreen]="${BASH_REMATCH[++i]}"      # "fullscreen_mode:" - 0|1
+          [sticky]="${BASH_REMATCH[++i]}"          # "sticky:"          - true|false
+          [floating]="${BASH_REMATCH[++i]}"        # "floating:"        - auto_off|auto_on|user_off|user_on
+          [O]="${BASH_REMATCH[++i]}"               # "swallows:"        - auto_off|auto_on|user_off|user_on
+        )
 
-      match_window "${ma[cid]}"       \
-                   "${ma[cls]:-.*}"   \
-                   "${ma[ins]:-.*}"   \
-                   "${ma[title]:-.*}" \
-                   "${ma[typ]:-.*}"   \
-                   "${ma[wid]}"
-      
-    }
+        match_window "${ma[cid]}"       \
+                     "${ma[cls]:-.*}"   \
+                     "${ma[ins]:-.*}"   \
+                     "${ma[title]:-.*}" \
+                     "${ma[typ]:-.*}"   \
+                     "${ma[wid]}"
+      fi
 
-    [[ $json = '{"change":"restart"}' ]] && restart=1
+    done < <(
+              if [[ ${__o[json]} ]]; then
+                echo "${__o[json]}"
+              else
+                i3-msg -mt subscribe '["window"]'
+                [[ ${__o[no-restart]} ]] || {
+                  while :; do
+                    sleep .1
+                    [[ -S $(i3 --get-socketpath) ]] && break
+                  done
 
-  done < <(
-            if [[ ${__o[json]} ]]; then
-              echo "${__o[json]}"
-            else
-              i3-msg -mt subscribe '["window","shutdown"]'
-            fi
-          )
+                  [[ ${__o[no-apply]} ]] || apply_rules
+                }
+              fi
+            )
 
-  [[ $restart = 1 && ${__o[no-restart]} != 1 ]] && {
-
-    echo "got restart event" >> "$_file_log"
-
-    while :; do
-      sleep .1
-      [[ -S $(i3 --get-socketpath) ]] && break
-    done
-
-    apply_rules
-
-    echo "restarting i3king" >> "$_file_log"
-    exec "${BASH_SOURCE[0]}" "${BASH_ARGV[@]}"
-  }
+    [[ ${__o[json]} || ${__o[no-restart]} ]] && break
+  done
 }
 
 ___printhelp(){
@@ -130,7 +124,7 @@ i3king - window ruler
 
 SYNOPSIS
 --------
-i3king [--config|-c FILE] [--no-restart]
+i3king [--config|-c FILE] [--no-apply] [--no-restart]
 i3king --apply|-a [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
 i3king --help|-h
@@ -145,11 +139,16 @@ I3_KING_RULE_FILE . Or the default value:
 ~/.config/i3king/rules
 
 
+--no-apply  
+If this option is set it will not automatically
+apply rules to all windows when the IPC socket is
+broken (happens on a crash or on restart). This
+option has no effect if --no-restart is used.
+
 --no-restart  
-When i3 emits the restart event all IPC
-subscribers needs to be restarted. i3King does
-this automatically but with this option set, it
-will instead just die.
+When the IPC socket is broken, i3king will
+automatically restart if this option is not set.
+
 
 --apply|-a  
 Match all existing windows against the rules and
@@ -539,7 +538,7 @@ declare -A __o
 options="$(
   getopt --name "[ERROR]:i3king" \
     --options "c:ahv" \
-    --longoptions "config:,no-restart,apply,json:,verbose,dryrun,log:,help,version," \
+    --longoptions "config:,no-apply,no-restart,apply,json:,verbose,dryrun,log:,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -549,6 +548,7 @@ unset options
 while true; do
   case "$1" in
     --config     | -c ) __o[config]="${2:-}" ; shift ;;
+    --no-apply   ) __o[no-apply]=1 ;; 
     --no-restart ) __o[no-restart]=1 ;; 
     --apply      | -a ) __o[apply]=1 ;; 
     --json       ) __o[json]="${2:-}" ; shift ;;
