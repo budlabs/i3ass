@@ -3,11 +3,17 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.1
+i3run - version: 0.12
 updated: 2021-05-28 by budRich
 EOB
 }
 
+
+# environment variables
+: "${I3RUN_BOTTOM_GAP:=10}"
+: "${I3RUN_TOP_GAP:=10}"
+: "${I3RUN_LEFT_GAP:=10}"
+: "${I3RUN_RIGHT_GAP:=10}"
 
 
 main(){
@@ -148,7 +154,8 @@ ERH(){
 
 focuswindow(){
 
-  declare -i forcing hvar
+  declare -i forcing
+  local hvar
 
   forcing=$((__o[FORCE] ? 2 : __o[force] ? 1 : 0))
   
