@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.12
+i3run - version: 0.13
 updated: 2021-05-28 by budRich
 EOB
 }
@@ -32,6 +32,12 @@ main(){
   _array=$(i3list "${acri[@]}")
   eval "$_array"
 
+  [[ ${__o[command]} ]] && ERR                 \
+    "i3run: --command|-e is being DEPRECATED." \
+    "the recommended way of launching"         \
+    "commands is to use: i3run ... -- COMMAND"
+
+  _command="${__o[command]:-${*:-}}"
   # if window doesn't exist, launch the command.
   if [[ -z ${i3list[TWC]} ]]; then
     launchcommand
@@ -48,11 +54,11 @@ i3run - Run, Raise or hide windows in i3wm
 
 SYNOPSIS
 --------
-i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --winid|-d CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] -- COMMAND
+i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] -- COMMAND
+i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] -- COMMAND
+i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] -- COMMAND
+i3run --winid|-d CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] -- COMMAND
 i3run --help|-h
 i3run --version|-v
 
@@ -85,7 +91,7 @@ instance name matching the criteria when it is
 created (needs xdotool).  
 
 
-   i3run --instance budswin --rename sublime_main -command subl
+   i3run --instance budswin --rename sublime_main -- subl
    
    # when the command above is executed:
    # a window with the instance name: "budswin" will be searched for.
@@ -102,18 +108,9 @@ Execute COMMAND (--command), even if the window
 already exist. But not when hiding a window.
 
 
---FORCE|-F  
+--FORCE|-F COMMAND  
 Execute COMMAND (--command), even if the window
 already exist.
-
-
---command|-e COMMAND  
-Command to run if no window is found. Complex
-commands can be written inside quotes:  
-
-   i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
-
-
 
 
 --class|-c CLASS  
@@ -174,13 +171,15 @@ focuswindow(){
         i3fyra --force --hide "${i3list[TWP]}" --array "$_array"
       fi
 
-     ((forcing == 2)) && [[ -n ${__o[command]} ]] \
-       && eval "${__o[command]}" > /dev/null 2>&1 & 
+     ((forcing == 2)) && [[ -n $_command ]] && {
+       eval "$_command" > /dev/null 2>&1 & 
+     }
 
     else
 
-     ((forcing > 0)) && [[ -n ${__o[command]} ]] \
-       && eval "${__o[command]}" > /dev/null 2>&1 &  
+     ((forcing > 0)) && [[ -n $_command ]] && {
+       eval "$_command" > /dev/null 2>&1 & 
+     }
     fi
 
   else # focus target window.
@@ -196,7 +195,7 @@ focuswindow(){
       ((i3list[TWF] == 1)) && fs=enable || fs=disable
     fi
     
-    if [[ -z ${i3list[TWP]} && ${i3list[WSA]} != ${i3list[WST]} ]]; then
+    if [[ -z ${i3list[TWP]} && ${i3list[WSA]} != "${i3list[WST]}" ]]; then
       # target is not handled by i3fyra and not active
       # TWP - target window parent container name
       # target is not on active workspace
@@ -234,8 +233,9 @@ focuswindow(){
 
     i3-msg -q "[con_id=${i3list[TWC]}]" focus
 
-   ((forcing > 0)) && [[ -n ${__o[command]} ]] \
-     && eval "${__o[command]}" > /dev/null 2>&1 & 
+   ((forcing > 0)) && [[ -n $_command ]] && {
+     eval "$_command" > /dev/null 2>&1 & 
+   }
   fi
 
   echo "${i3list[TWC]}"
@@ -245,9 +245,11 @@ launchcommand(){
 
   local windowid
 
-  [[ -z ${__o[command]} ]] && ERX i3run no command, no action
-  
-  eval "${__o[command]}" > /dev/null 2>&1 &
+  if [[ $_command ]]; then
+    eval "$_command" > /dev/null 2>&1 &
+  else
+    ERX i3run no command, no action
+  fi
 
   declare -a xdtopt # options passed to xdotool
 
@@ -269,7 +271,13 @@ launchcommand(){
       windowmap   "$windowid"                           
   }
   
-  i3list[TWC]=$(i3get -y "${acri[@]}")
+  # reason for possible two i3get, is that
+  # sometimes if the window spawns too fast
+  # the synk will get stuck waiting for the window
+  # even though it exist
+  unset 'i3list[TWC]'
+  i3list[TWC]=$(i3get "${acri[@]}")
+  [[ ${i3list[TWC]} ]] || i3list[TWC]=$(i3get -y "${acri[@]}")
   
   ((__o[mouse])) && sendtomouse
 
@@ -317,8 +325,8 @@ sendtomouse(){
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3run" \
-    --options "i:sgmx:fFe:c:t:n:d:hv" \
-    --longoptions "instance:,summon,nohide,mouse,rename:,force,FORCE,command:,class:,title:,conid:,winid:,help,version," \
+    --options "i:sgmx:fF:c:t:n:d:hv" \
+    --longoptions "instance:,summon,nohide,mouse,rename:,force,FORCE:,class:,title:,conid:,winid:,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -333,8 +341,7 @@ while true; do
     --mouse      | -m ) __o[mouse]=1 ;; 
     --rename     | -x ) __o[rename]="${2:-}" ; shift ;;
     --force      | -f ) __o[force]=1 ;; 
-    --FORCE      | -F ) __o[FORCE]=1 ;; 
-    --command    | -e ) __o[command]="${2:-}" ; shift ;;
+    --FORCE      | -F ) __o[FORCE]="${2:-}" ; shift ;;
     --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --title      | -t ) __o[title]="${2:-}" ; shift ;;
     --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
