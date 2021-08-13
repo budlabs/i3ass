@@ -13,16 +13,15 @@ EOB
 main(){
 
   result=$(get_window)
-
   timeout=$SECONDS
 
-  ((__o[synk])) && until [[ $result ]]; do
+  ((__o[synk])) && [[ ! $result ]] && sleep .1 && while :; do
     result=$(get_window)
     [[ $((SECONDS-timeout)) -gt 60 || $result ]] && break
     i3-msg -qt subscribe '["window"]'
   done
 
-  [[ $result ]] || ERX "no matching window"
+  [[ $result ]] || ERX "i3get: no matching window"
   echo "$result"
 }
 
