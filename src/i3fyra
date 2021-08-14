@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.11
+i3fyra - version: 1.12
 updated: 2021-05-28 by budRich
 EOB
 }
@@ -13,6 +13,8 @@ EOB
 : "${I3FYRA_MAIN_CONTAINER:=A}"
 : "${I3FYRA_WS:=}"
 : "${I3FYRA_ORIENTATION:=horizontal}"
+: "${XDG_RUNTIME_DIR:=/tmp}"
+: "${I3_KING_PID_FILE:=$XDG_RUNTIME_DIR/i3king.pid}"
 
 
 main(){
@@ -619,6 +621,18 @@ float_toggle(){
 
   # AWF - 1 = floating; 0 = tiled
   if ((i3list[AWF]==1)); then
+
+    [[ -f $I3_KING_PID_FILE ]] && {
+      mapfile -t king_commands <<< "$(i3king --print-commands --conid "${i3list[TWC]}")"
+      for command in "${!king_commands[@]}"; do
+        if [[ ${king_commands[command]} =~ floating\ enable ]]; then
+          unset 'king_commands[command]'
+        else
+          messy "${king_commands[command]}"
+        fi
+      done
+      [[ ${king_commands[*]} ]] && return
+    }
 
     # WSA != i3fyra && normal tiling
     if ((i3list[WSA]!=i3list[WSF])); then
