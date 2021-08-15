@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.12
+i3fyra - version: 1.13
 updated: 2021-05-28 by budRich
 EOB
 }
@@ -67,7 +67,7 @@ i3fyra --show|-s CONTAINER [--force|-f]
 i3fyra --float|-a
 i3fyra --hide|-z CONTAINER [--force|-f]
 i3fyra --layout|-l LAYOUT [--force|-f] [--array ARRAY] [--verbose] [--dryrun]
-i3fyra --move|-m DIRECTION|CONTAINER [--conid ID] [--force|-f] [--speed|-p INT]
+i3fyra --move|-m DIRECTION|CONTAINER [--conid|-n ID] [--force|-f] [--speed|-p INT]
 i3fyra --help|-h
 i3fyra --version|-v
 
@@ -144,7 +144,7 @@ current window 30 pixels to the right, if it is
 floating.
 
 
---conid|-m ID  
+--conid|-n ID  
 To set the target window for operations. If not
 set the active window will be used.
 
@@ -622,17 +622,14 @@ float_toggle(){
   # AWF - 1 = floating; 0 = tiled
   if ((i3list[AWF]==1)); then
 
-    # i3king --float-toggle && return
-
     [[ -f $I3_KING_PID_FILE ]] && {
 
       mapfile -t king_commands <<< "$(i3king --conid "${i3list[TWC]}" --print-commands)"
 
       for command in "${!king_commands[@]}"; do
-        if [[ ${king_commands[command]} =~ floating\ enable ]]; then
-          unset 'king_commands[command]'
-        else
-          messy "${king_commands[command]}"
+        if [[ ${king_commands[command]} =~ floating\ enable ]]
+          then unset 'king_commands[command]'
+          else messy "${king_commands[command]}"
         fi
       done
 
@@ -949,7 +946,7 @@ virtual_position() {
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3fyra" \
-    --options "s:faz:l:m:m:p:hv" \
+    --options "s:faz:l:m:n:p:hv" \
     --longoptions "show:,force,float,hide:,layout:,array:,verbose,dryrun,move:,conid:,speed:,help,version," \
     -- "$@" || exit 98
 )"
@@ -968,7 +965,7 @@ while true; do
     --verbose    ) __o[verbose]=1 ;; 
     --dryrun     ) __o[dryrun]=1 ;; 
     --move       | -m ) __o[move]="${2:-}" ; shift ;;
-    --conid      | -m ) __o[conid]="${2:-}" ; shift ;;
+    --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
     --speed      | -p ) __o[speed]="${2:-}" ; shift ;;
     --help       | -h ) ___printhelp && exit ;;
     --version    | -v ) ___printversion && exit ;;
