@@ -3,15 +3,17 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3king - version: 0.22
-updated: 2021-08-06 by budRich
+i3king - version: 0.23
+updated: 2021-08-15 by budRich
 EOB
 }
 
 
 # environment variables
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${XDG_RUNTIME_DIR:=/tmp}"
 : "${I3_KING_RULE_FILE:=$XDG_CONFIG_HOME/i3king/rules}"
+: "${I3_KING_PID_FILE:=$XDG_RUNTIME_DIR/i3king.pid}"
 
 
 main(){
@@ -48,10 +50,19 @@ main(){
 
   parse_rules "$_file_rules"
 
-  [[ ${__o[apply]} ]] && {
+  if [[ ${__o[apply]} ]]; then
     apply_rules
     exit
-  }
+  elif [[ ${__o[conid]} ]]; then
+    mapfile -t wininfo <<< "$(i3get -n "${__o[conid]}" -r ncityd)"
+    match_window "${wininfo[@]}"
+    exit
+  fi
+
+  # run as daemon
+
+  trap 'rm -rf "$I3_KING_PID_FILE"' HUP INT EXIT
+  echo "$$" > "$I3_KING_PID_FILE"
 
   re=$(make_regex)
   
@@ -101,18 +112,18 @@ main(){
                 echo "${__o[json]}"
               else
                 i3-msg -mt subscribe '["window"]'
-                [[ ${__o[no-restart]} ]] || {
-                  while :; do
-                    sleep .1
-                    [[ -S $(i3 --get-socketpath) ]] && break
-                  done
-
-                  [[ ${__o[no-apply]} ]] || apply_rules
-                }
               fi
             )
 
-    [[ ${__o[json]} || ${__o[no-restart]} ]] && break
+    [[ ${__o[no-restart]} || ! -f "$I3_KING_PID_FILE" || ${__o[json]} ]] \
+      && break
+
+    while :; do
+      sleep .1
+      [[ -S $(i3 --get-socketpath) ]] && break
+    done
+
+    [[ ${__o[no-apply]} ]] || apply_rules
   done
 }
 
@@ -126,6 +137,7 @@ SYNOPSIS
 --------
 i3king [--config|-c FILE] [--no-apply] [--no-restart]
 i3king --apply|-a [--config|-c FILE]
+i3king --conid|-n CONID [--print-commands] [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
 i3king --help|-h
 i3king --version|-v
@@ -153,6 +165,13 @@ automatically restart if this option is not set.
 --apply|-a  
 Match all existing windows against the rules and
 exit.
+
+
+--conid|-n CONID  
+
+--print-commands  
+Print commands to STDOUT instead of executing
+them.
 
 
 --json JSON  
@@ -185,16 +204,16 @@ EOB
 
 
 apply_rules() {
-	declare -a ids
-	declare -a wininfo
-	mapfile -t ids <<< "$(all_window_ids)"
+  declare -a ids
+  declare -a wininfo
+  mapfile -t ids <<< "$(all_window_ids)"
 
-	# cid=$1 class=$2 instance=$3 title=$4 type=$5
-	for id in "${ids[@]}"; do
-		mapfile -t wininfo <<< "$(i3get -d "$id" -r ncityd)"
-		sleep .1
-		match_window "${wininfo[@]}"
-	done
+  # cid=$1 class=$2 instance=$3 title=$4 type=$5
+  for id in "${ids[@]}"; do
+    mapfile -t wininfo <<< "$(i3get -d "$id" -r ncityd)"
+    sleep .1
+    match_window "${wininfo[@]}"
+  done
 }
 
 all_window_ids() {
@@ -426,10 +445,12 @@ match_window() {
       cmd=${cmd//\$CLASS/$class}
       cmd=${cmd//\$CONID/$cid}
       cmd=${cmd//\$WINID/$wid}
+      cmd=${cmd//\$TITLE/$title}
 
       [[ -a $_file_log ]] && echo $'\t'"$cmd" >> "$_file_log"
 
-      ((__o[dryrun])) || i3-msg "[con_id=$cid]" "$cmd"
+      ((__o[dryrun] || __o[print-commands])) || i3-msg "[con_id=$cid]" "$cmd"
+      ((__o[print-commands])) && echo "[con_id=$cid] $cmd"
       
     done
   }
@@ -537,8 +558,8 @@ parse_rules() {
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3king" \
-    --options "c:ahv" \
-    --longoptions "config:,no-apply,no-restart,apply,json:,verbose,dryrun,log:,help,version," \
+    --options "c:an:hv" \
+    --longoptions "config:,no-apply,no-restart,apply,conid:,print-commands,json:,verbose,dryrun,log:,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -551,6 +572,8 @@ while true; do
     --no-apply   ) __o[no-apply]=1 ;; 
     --no-restart ) __o[no-restart]=1 ;; 
     --apply      | -a ) __o[apply]=1 ;; 
+    --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
+    --print-commands ) __o[print-commands]=1 ;; 
     --json       ) __o[json]="${2:-}" ; shift ;;
     --verbose    ) __o[verbose]=1 ;; 
     --dryrun     ) __o[dryrun]=1 ;; 
