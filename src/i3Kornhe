@@ -3,18 +3,50 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3Kornhe - version: 0.5
+i3Kornhe - version: 0.665
 updated: 2021-05-28 by budRich
 EOB
 }
 
 
+# environment variables
+: "${XDG_RUNTIME_DIR:=/tmp}"
+: "${I3_KORNHE_FIFO_FILE:=$XDG_RUNTIME_DIR/i3ass/i3Kornhe.fifo}"
+
 
 main(){
 
-  local next_mode
+  declare -g  _next_mode
+  declare -g  _direction
+  declare -ig _speed
+
+  declare -g  _msgstring  # combined i3-msg
+  declare -g  _array      # output from i3list
+  declare -g  _qflag      # -q option passed to i3-msg
+  declare -g  _stamp      # millisecond timestamp
+  declare -Ag i3list      # i3list array
+  declare -Ag last        # array with last i3Kornhe info
 
   # __o[verbose]=1
+  ((__o[verbose])) || _qflag='-q'
+
+  # mode is first arg, size|move|x|0-9 -> s|m|x|0-9
+  _next_mode="${1:0:1}" ; _next_mode="${_next_mode,,}"
+  
+  # last arg is direction, left|right|up|down -> l|r|u|d
+  _direction=${__lastarg:0:1} ; _direction=${_direction,,}
+
+  # remove all none digits from --speed arg
+  _speed=${__o[speed]//[!0-9]}
+  ((_speed >= 0)) || _speed=10
+
+  [[ -p $I3_KORNHE_FIFO_FILE ]] && {
+    printf '%s %s %s\n' "$_direction" "$_next_mode" "$_speed" >> "$I3_KORNHE_FIFO_FILE" &
+    exit
+  }
+
+  [[ -f ${I3_KORNHE_FIFO_FILE}.lock ]] && exit
+  touch ${I3_KORNHE_FIFO_FILE}.lock
 
   ((__o[verbose])) && {
     declare -gi _stamp
@@ -22,58 +54,103 @@ main(){
     ERM $'\n'"---i3Kornhe $* start--- "
   }
 
-  trap 'cleanup' EXIT
-
-  declare -g  _msgstring  # combined i3-msg
-  declare -g  _array      # output from i3list
-  declare -Ag i3list      # i3list array
-  declare -Ag last        # array with last i3Kornhe info
-
-  # mode is first arg, size|move|x|0-9 -> s|m|x|0-9
-  next_mode="${1:0:1}" ; next_mode="${next_mode,,}"
-
-  # last arg is direction, left|right|up|down -> l|r|u|d
-  _direction=${__lastarg:0:1} ; _direction=${_direction,,}
-
-  # remove all none digits from --speed arg
-  : "${_speed:=${__o[speed]//[!0-9]}}"
-  (( _speed >= 0 )) || _speed=10
-
-  [[ ${_array:=${__o[array]}} ]] || {
-    _array=$(i3list ${__o[json]:+--json "${__o[json]}"})
-  }
+  [[ ${_array:=${__o[array]}} ]] \
+    || _array=$(i3list ${__o[json]:+--json "${__o[json]}"})
 
   eval "$_array"
 
-  # we store i3Korhne info a variable like this:
-  # MODE:con_id:corner:original_window_title
-  re='(s|m):([0-9]+):([^:]+):(.+)'
+  # if request is to move a tiled window
+  # on the i3fyra (WSF) workspace, we redirect
+  # the action to i3fyra
+  [[ $_next_mode = m ]] && (( i3list[AWF]!=1 && i3list[WSA]==i3list[WSF])) && {
+    rm -f "$I3_KORNHE_FIFO_FILE"*
+    exec i3fyra --move "$_direction" --array "$_array"
+  }
 
-  [[ $(i3var get i3Kornhe) =~ $re ]] && last=(
-    [mode]=${BASH_REMATCH[1]}
-    [conid]=${BASH_REMATCH[2]}
-    [corner]=${BASH_REMATCH[3]}
-    [title]=${BASH_REMATCH[4]}
-  )
+  rm -f "$I3_KORNHE_FIFO_FILE"
+  mkdir -p "${I3_KORNHE_FIFO_FILE%/*}"
+  mkfifo "$I3_KORNHE_FIFO_FILE"
 
-  if [[ $_direction =~ ^[1-9]$ ]]; then
-    next_mode=m
-  elif [[ $next_mode = s && ${last[mode]} = s ]]; then
-    last[corner]=""
-  elif [[ $next_mode != x && $next_mode = $_direction ]]; then
-    next_mode=${last[mode]:-x}
-  fi
+  printf '%s %s %s\n' "$_direction" "$_next_mode" "$_speed" >> "$I3_KORNHE_FIFO_FILE" &
+  trap 'cleanup' EXIT
 
-  # reset to default mode if its not the same window
-  # having focus as when we initiated i3Korhne.
-  [[ $next_mode = x ]] && exit_mode
-
-  # i3list[AWF] # active window floating (1|0)
+  # when modifying FLOATING windows we enter a i3
+  # binding mode, and change the title format of 
+  # the active window to display mode type and
+  # coordinates. We need to keep the original title
+  # and use i3var for that.
   if ((i3list[AWF])); then
-    modify_floating
+
+    last=(
+      [title]=$(i3get -r o)
+      [mode]=$_next_mode
+      [conid]=${i3list[AWC]}
+    )
+
+  # when i3Kornhe is used to modify a TILED window
+  # we don't enter a i3 binding mode, and it is
+  # only when we exit the binding mode that the
+  # fifo file is destroyed. Therefor we set this
+  # autodestruct timer in the background.
+  # It is not needed if the user have set up
+  # --release keybindings, but there is no good
+  # way to know if they have and in case they haven't
+  # we keep this.
   else
-    modify_tiled
+    (
+      sleep 1
+      [[ -p $I3_KORNHE_FIFO_FILE ]] \
+        && echo EXIT >> "$I3_KORNHE_FIFO_FILE"
+    ) &
   fi
+
+  rm ${I3_KORNHE_FIFO_FILE}.lock
+
+  while [[ -p $I3_KORNHE_FIFO_FILE ]]; do
+    while read -rst 0.5 _direction _next_mode _speed ; do
+
+      [[ $_direction ]] || continue
+
+      if [[ $_direction = EXIT || $_direction = RELEASE ]]; then
+        rm -f "$I3_KORNHE_FIFO_FILE"* ; break 2
+      elif [[ $_direction = x ]]; then
+        exit_mode
+        rm -f "$I3_KORNHE_FIFO_FILE"* ; break 2
+      elif [[ $_direction =~ ^[1-9]$ ]]; then
+        _next_mode=m
+      elif [[ $_next_mode = s && ${last[mode]} = s ]]; then
+          last[corner]=""
+      elif [[ $_next_mode != x && $_next_mode = "$_direction" ]]; then
+        _next_mode=${last[mode]:-x}
+      fi
+
+      # this is needed when we go from size mode
+      # to move mode, otherwise the coordinates
+      # from before the size operations will be used
+      [[ ${last[mode]} = "$_next_mode" ]] || eval "$(i3list)"
+
+      if ((i3list[AWF]))
+        then modify_floating
+        else modify_tiled
+      fi
+
+    done < "$I3_KORNHE_FIFO_FILE"
+
+    ((i3list[AWF])) && {
+      # we only append the window geometry to the 
+      # window title if the window is being moved.
+      # to correctly display geometry from a resize
+      # operation we need to query i3list every time.
+      [[ ${last[mode]} = m ]] \
+        && title_format+="x:${i3list[AWX]} y:${i3list[AWY]} w:${i3list[AWW]} h:${i3list[AWH]}"
+      messy "[con_id=${last[conid]}] title_format $title_format"
+      messy mode sizemode
+    }
+
+    [[ $_msgstring ]] && i3-msg "${_qflag:-}" "$_msgstring"
+    _msgstring=''
+
+  done
 }
 
 ___printhelp(){
@@ -143,11 +220,7 @@ cleanup() {
 
   ((__o[verbose])) && ERM "f ${FUNCNAME[0]}()"
 
-  local qflag
-
-  ((__o[verbose])) || qflag='-q'
-
-  [[ -n $_msgstring ]] && i3-msg "${qflag:-}" "$_msgstring"
+  [[ -n $_msgstring ]] && i3-msg "${_qflag:-}" "$_msgstring"
 
   ((__o[verbose])) && {
     local delta=$(( ($(date +%s%N)-_stamp) /1000 ))
@@ -169,14 +242,15 @@ ERH(){
 }
 
 exit_mode(){
-
   ((__o[verbose])) && ERM "f ${FUNCNAME[0]}()"
 
-  i3var set i3Kornhe
+  [[ ${last[conid]} ]] || last[conid]=$(i3get)
+  
   messy "mode default"
-  messy "[con_id=${last[conid]}] title_format ${last[title]:-%title}"
 
-  exit
+  # reset title to old title_format or actual title
+  messy "[con_id=${last[conid]}]" \
+        "title_format ${last[title]:-%title}"
 }
 
 messy() {
@@ -190,171 +264,103 @@ modify_floating() {
 
   ((__o[verbose])) && ERM "f ${FUNCNAME[0]}()"
 
-  local title_format corner mark last_title
+  local corner cv ch
+  declare -i margin_t margin_b margin_l margin_r conid
 
-  declare -i trgx trgy trgw trgh conid
-  declare -i margin_t margin_b margin_l margin_r
-
-  trgx=${i3list[AWX]} trgy=${i3list[AWY]}
-  trgw=${i3list[AWW]} trgh=${i3list[AWH]}
-
-  conid=${last[conid]:-${i3list[AWC]}}
+  conid=${last[conid]:=${i3list[AWC]}}
 
   # m - move
-  if [[ $next_mode = m ]]; then
+  if [[ $_next_mode = m ]]; then
 
     title_format="MOVE "
 
-    margin_t=${__o[margin-top]:-${__o[margin]:-5}} 
-    margin_b=${__o[margin-bottom]:-${__o[margin]:-5}}
-    margin_l=${__o[margin-left]:-${__o[margin]:-5}} 
-    margin_r=${__o[margin-right]:-${__o[margin]:-5}}
-
-    # else just move the container
     case "$_direction" in
-      l ) ((trgx-=_speed)) ;;
-      r ) ((trgx+=_speed)) ;;
-      u ) ((trgy-=_speed)) ;;
-      d ) ((trgy+=_speed)) ;;
-      1 )
-        trgx=$(( i3list[WAX]+margin_l ))
-        trgy=$(( i3list[WAY]+margin_t ))
-      ;;
+      l ) ((i3list[AWX]-=_speed)) ;;
+      r ) ((i3list[AWX]+=_speed)) ;;
+      u ) ((i3list[AWY]-=_speed)) ;;
+      d ) ((i3list[AWY]+=_speed)) ;;
+      1|2|3|4|5|6|7|8|9 )
 
-      2 )
-        trgx=$(( i3list[WAX]+(i3list[WAW]/2)-(i3list[AWW]/2) ))
-        trgy=$(( i3list[WAY]+margin_t ))
-      ;;
+        margin_t=${__o[margin-top]:-${__o[margin]:-5}} 
+        margin_b=${__o[margin-bottom]:-${__o[margin]:-5}}
+        margin_l=${__o[margin-left]:-${__o[margin]:-5}} 
+        margin_r=${__o[margin-right]:-${__o[margin]:-5}}
+        
+        case "$_direction" in
+          1|2|3 ) i3list[AWY]=$(( i3list[WAY]+margin_t )) ;;
+          4|5|6 ) i3list[AWY]=$(( i3list[WAY]+(i3list[WAH]/2)-(i3list[AWH]/2) )) ;;
+          7|8|9 ) i3list[AWY]=$(( i3list[WAY]+( i3list[WAH]-(i3list[AWH]+margin_b) ) )) ;;
+        esac
 
-      3 )
-        trgx=$(( i3list[WAX]+( i3list[WAW]-(i3list[AWW]+margin_r) ) ))
-        trgy=$(( i3list[WAY]+margin_t ))
-      ;;
-
-      4 )
-        trgx=$(( i3list[WAX]+margin_l ))
-        trgy=$(( i3list[WAY]+(i3list[WAH]/2)-(i3list[AWH]/2) ))
-      ;;
-
-      5 )
-        trgx=$(( i3list[WAX]+(i3list[WAW]/2)-(i3list[AWW]/2) ))
-        trgy=$(( i3list[WAY]+(i3list[WAH]/2)-(i3list[AWH]/2) ))
-      ;;
-
-      6 )
-        trgx=$(( i3list[WAX]+( i3list[WAW]-(i3list[AWW]+margin_r) ) ))
-        trgy=$(( i3list[WAY]+(i3list[WAH]/2)-(i3list[AWH]/2) ))
-      ;;
-
-      7 )
-        trgx=$(( i3list[WAX]+margin_l ))
-        trgy=$(( i3list[WAY]+( i3list[WAH]-(i3list[AWH]+margin_b) ) ))
-      ;;
-
-      8 )
-        trgx=$(( i3list[WAX]+(i3list[WAW]/2)-(i3list[AWW]/2) ))
-        trgy=$(( i3list[WAY]+( i3list[WAH]-(i3list[AWH]+margin_b) ) ))
-      ;;
-
-      9 )
-        trgx=$(( i3list[WAX]+( i3list[WAW]-(i3list[AWW]+margin_r) ) ))
-        trgy=$(( i3list[WAY]+( i3list[WAH]-(i3list[AWH]+margin_b) ) ))
+        case "$_direction" in
+          1|4|7 ) i3list[AWX]=$(( i3list[WAX]+margin_l )) ;;
+          2|5|8 ) i3list[AWX]=$(( i3list[WAX]+(i3list[WAW]/2)-(i3list[AWW]/2) )) ;;
+          3|6|9 ) i3list[AWX]=$(( i3list[WAX]+( i3list[WAW]-(i3list[AWW]+margin_r) ) )) ;;
+        esac
       ;;
 
     esac
 
-    messy "[con_id=$conid] move position $trgx $trgy"
     corner=move
+    messy "[con_id=$conid] move position ${i3list[AWX]} ${i3list[AWY]}"
 
-  # s - resize
-  elif [[ $next_mode = s ]]; then
+  elif [[ $_next_mode = s ]]; then
 
-    [[ ${last[corner]} = move ]] && last[corner]=""
-    
-    [[ ${corner:=${last[corner]}} ]] || {
+    if [[ ${last[corner]} =~ ^b|t ]]; then
+      corner=${last[corner]}
+    else
+      _speed=0
       case "$_direction" in
         l ) corner="topleft"     ;;
         r ) corner="bottomright" ;;
         u ) corner="topright"    ;;
         d ) corner="bottomleft"  ;;
       esac
-    }
+    fi
 
-    title_format="RESIZE $corner "
+    title_format="RESIZE $corner"
 
-    case "$corner" in
-      topleft )
-        case "$_direction" in
-          u ) floatsize="grow up"      ;;
-          d ) floatsize="shrink up"    ;;
-          l ) floatsize="grow left"    ;;
-          r ) floatsize="shrink left"  ;;
-        esac
-      ;;
+    [[ $corner =~ (top|bottom)(left|right) ]] \
+      && cv=${BASH_REMATCH[1]} ch=${BASH_REMATCH[2]} 
+      
+    if   [[ $cv = top && $_direction = u ]]; then
+      resize_as="grow up"
+    elif [[ $cv = top && $_direction = d ]]; then
+      resize_as="shrink up"
+    elif [[ $cv = bottom && $_direction = u ]]; then
+      resize_as="shrink down"
+    elif [[ $cv = bottom && $_direction = d ]]; then
+      resize_as="grow down"
+    fi
 
-      topright )
-        case "$_direction" in
-          u ) floatsize="grow up"      ;;
-          d ) floatsize="shrink up"    ;;
-          l ) floatsize="shrink right" ;;
-          r ) floatsize="grow right"   ;;
-        esac
-      ;;
+    if   [[ $ch = left && $_direction = l ]]; then
+      resize_as="grow left"
+    elif [[ $ch = left && $_direction = r ]]; then
+      resize_as="shrink left"
+    elif [[ $ch = right && $_direction = l ]]; then
+      resize_as="shrink right"
+    elif [[ $ch = right && $_direction = r ]]; then
+      resize_as="grow right"
+    fi
 
-      bottomleft )
-        case "$_direction" in
-          u ) floatsize="shrink down"   ;;
-          d ) floatsize="grow down"     ;;
-          l ) floatsize="grow left"     ;;
-          r ) floatsize="shrink left"   ;;
-        esac
-      ;;
-
-      bottomright )
-        case "$_direction" in
-          u ) floatsize="shrink down"   ;;
-          d ) floatsize="grow down"     ;;
-          l ) floatsize="shrink right"  ;;
-          r ) floatsize="grow right"    ;;
-        esac
-      ;;
-
-
-    esac
-    
-    i3-msg -q "resize $floatsize $_speed"
-    eval "$(i3list)"
-    trgx=${i3list[AWX]} trgy=${i3list[AWY]}
-    trgh=${i3list[AWH]} trgw=${i3list[AWW]}
+    ((_speed)) && messy "[con_id=$conid] resize $resize_as $_speed px"
 
   fi
 
-  title_format+="x:$trgx y:$trgy w:$trgw h:$trgh"
-
-  messy "[con_id=$conid] title_format $title_format"
-
-  # MODE:con_id:corner:original_window_title
-  last_title=${last[title]:-$(i3get -n "${i3list[AWC]}" -r o)}
-  mark="$next_mode:$conid:$corner:${last_title:-%title}"
-  i3var set i3Kornhe "$mark"
-  messy mode sizemode
-
+  last=(
+        [mode]=$_next_mode
+        [conid]=$conid
+        [corner]=$corner
+        [title]=${last[title]:-%title}
+       )
 }
 
 modify_tiled() {
 
-  local tilesize
-
   ((__o[verbose])) && ERM "f ${FUNCNAME[0]}()"
 
-  # m - move
-  if [[ $next_mode = m ]]; then
+  if [[ $_next_mode = m ]]; then
 
-    # if window is tiled and active workspace is i3fyra
-    (( i3list[AWF]!=1 && i3list[WSA]==i3list[WSF])) \
-      && exec i3fyra --move "$_direction" --array "$_array"
-
-    # else just move the container
     case "$_direction" in
       l ) _direction=left  ;;
       r ) _direction=right ;;
@@ -363,18 +369,17 @@ modify_tiled() {
     esac
 
     messy "move $_direction"
+    echo EXIT >> "$I3_KORNHE_FIFO_FILE" &
 
-  # s - resize
-  elif [[ $next_mode = s ]]; then
+  elif [[ $_next_mode = s ]]; then
 
     case "$_direction" in
-      l ) tilesize="shrink width"  ;;
-      r ) tilesize="grow width"    ;;
-      u ) tilesize="grow height"   ;;
-      d ) tilesize="shrink height" ;;
+      l ) messy "resize shrink width $_speed px" ;;
+      r ) messy "resize grow width $_speed px" ;;
+      u ) messy "resize grow height $_speed px" ;;
+      d ) messy "resize shrink height $_speed px" ;;
     esac
 
-    messy "resize $tilesize $_speed px"
   fi
 
 }
@@ -414,5 +419,3 @@ done
 
 
 main "${@:-}"
-
-
