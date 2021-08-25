@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3Kornhe - version: 0.665
+i3Kornhe - version: 0.666
 updated: 2021-05-28 by budRich
 EOB
 }
@@ -107,7 +107,7 @@ main(){
   rm ${I3_KORNHE_FIFO_FILE}.lock
 
   while [[ -p $I3_KORNHE_FIFO_FILE ]]; do
-    while read -rst 0.5 _direction _next_mode _speed ; do
+    while read -rst 1 _direction _next_mode _speed ; do
 
       [[ $_direction ]] || continue
 
@@ -124,14 +124,14 @@ main(){
         _next_mode=${last[mode]:-x}
       fi
 
-      # this is needed when we go from size mode
-      # to move mode, otherwise the coordinates
-      # from before the size operations will be used
-      [[ ${last[mode]} = "$_next_mode" ]] || eval "$(i3list)"
-
-      if ((i3list[AWF]))
-        then modify_floating
-        else modify_tiled
+      if ((i3list[AWF])); then
+        # this is needed when we go from size mode
+        # to move mode, otherwise the coordinates
+        # from before the size operations will be used
+        [[ ${last[mode]} = "$_next_mode" ]] || eval "$(i3list)"
+        modify_floating
+      else
+        modify_tiled
       fi
 
     done < "$I3_KORNHE_FIFO_FILE"
@@ -143,6 +143,7 @@ main(){
       # operation we need to query i3list every time.
       [[ ${last[mode]} = m ]] \
         && title_format+="x:${i3list[AWX]} y:${i3list[AWY]} w:${i3list[AWW]} h:${i3list[AWH]}"
+      
       messy "[con_id=${last[conid]}] title_format $title_format"
       messy mode sizemode
     }
