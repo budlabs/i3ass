@@ -2,8 +2,9 @@
 
 
 ![logo](https://github.com/i3ass-dev/i3ass/blob/dev/assets/i3ass-first-logo2021-05-26-300x200.png?raw=true)  
-This is a collection of scripts I have made to assist the
-usage of the windowmanager known as [i3wm].
+
+### a shellscript collection to assist the usage of the [i3wm] windowmanager.
+
 
 ## installation
 
@@ -20,22 +21,22 @@ $ git clone https://github.com/budlabs/i3ass.git
 $ cd i3ass
 # make install
 $ i3ass
-i3ass - version: 2021.08.04.3
-updated: 2021-08-04 by budRich
+i3ass - version: 2021.08.25.3
+updated: 2021-08-25 by budRich
 
 script   | version
 ------------------
 i3flip   | 0.101
-i3fyra   | 1.1
-i3get    | 0.7
+i3fyra   | 1.13
+i3get    | 0.72
 i3gw     | 2020.08.12.0
-i3king   | 0.1
-i3Kornhe | 0.5
-i3list   | 0.3
-i3menu   | 0.1
-i3run    | 0.1
+i3king   | 0.23
+i3Kornhe | 0.665
+i3list   | 0.33
+i3menu   | 0.11
+i3run    | 0.15
 i3var    | 0.050
-i3viswiz | 0.51
+i3viswiz | 0.52
 
 dependencies:
 bash     [INSTALLED]
@@ -164,22 +165,7 @@ fixed issue where `--synk` option caused the script to halt until a window event
 ## known issues
 
 **THERE IS NO SUPPORT FOR i3-gaps**  
-some scripts might still work with i3-gaps, but consider
-that *Happy little accidents™*  
-
-The latest version of i3 (**4.19**) introduced a new
-behaviour that triggers `for_window` directives when a
-window is sent to the scratchpad. This is very annoying if
-one would use something like:  
-`for_window [instance=Install_gentoo] exec i3fyra --move A`  
-I recommend anyone using `for_window` to stick with version
-**4.18.3**, till this is resolved..  
-
-`i3-msg restart` breaks [i3fyra], try to use `i3-msg
-reload` instead (*it's faster and usually works just as good
-as restart*).
-
-
+some scripts might still work with i3-gaps, but consider that *Happy little accidents™*
 
 [wiki]: https://github.com/budlabs/i3ass/wiki
 [Makefile]: https://github.com/budRich/i3ass/blob/master/Makefile
