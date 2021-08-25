@@ -133,6 +133,9 @@ being sent across workspaces (#99).
 ### [i3list]
 
 
+Added ABW and TBW keys to output, with active/target
+windows border width.
+
 Fixed issue where wrong workspace ID was reported on empty
 workspaces. Also if workspace is empty now container/window
 info will NOT get printed.
