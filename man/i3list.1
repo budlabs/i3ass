@@ -1,8 +1,8 @@
 .nh
-.TH I3LIST 1 2021\-05\-28 Linux "User Manuals"
+.TH I3LIST 1 2021-05-28 Linux "User Manuals"
 .SH NAME
 .PP
-\fB\fCi3list\fR \- list information about the current i3
+\fB\fCi3list\fR - list information about the current i3
 session.
 
 .SH SYNOPSIS
@@ -10,15 +10,15 @@ session.
 .RS
 
 .nf
-i3list [\-\-json JSON]
-i3list \-\-instance|\-i TARGET [\-\-json JSON]
-i3list \-\-class|\-c    TARGET [\-\-json JSON]
-i3list \-\-conid|\-n    TARGET [\-\-json JSON]
-i3list \-\-winid|\-d    TARGET [\-\-json JSON]
-i3list \-\-mark|\-m     TARGET [\-\-json JSON]
-i3list \-\-title|\-t    TARGET [\-\-json JSON]
-i3list \-\-help|\-h
-i3list \-\-version|\-v
+i3list [--json JSON]
+i3list --instance|-i TARGET [--json JSON]
+i3list --class|-c    TARGET [--json JSON]
+i3list --conid|-n    TARGET [--json JSON]
+i3list --winid|-d    TARGET [--json JSON]
+i3list --mark|-m     TARGET [--json JSON]
+i3list --title|-t    TARGET [--json JSON]
+i3list --help|-h
+i3list --version|-v
 
 .fi
 .RE
@@ -27,7 +27,7 @@ i3list \-\-version|\-v
 .PP
 \fB\fCi3list\fR prints a list in a \fIarray\fP formatted
 list.  If a search criteria is given
-(\fB\fC\-c\fR|\fB\fC\-i\fR|\fB\fC\-n\fR|\fB\fC\-d\fR|\fB\fC\-m\fR)  information about the
+(\fB\fC-c\fR|\fB\fC-i\fR|\fB\fC-n\fR|\fB\fC-d\fR|\fB\fC-m\fR)  information about the
 first window matching the criteria is displayed.
 Information about the active window is always
 displayed.  If no search criteria is given,  the
@@ -40,53 +40,53 @@ declared first.
 
 .SH OPTIONS
 .PP
-\fB\fC\-\-json\fR JSON
+\fB\fC--json\fR JSON
 .br
-use JSON instead of output from  \fB\fCi3\-msg \-t
-get\_tree\fR
+use JSON instead of output from  \fB\fCi3-msg -t
+get_tree\fR
 
 .PP
-\fB\fC\-\-instance\fR|\fB\fC\-i\fR TARGET
+\fB\fC--instance\fR|\fB\fC-i\fR TARGET
 .br
 Search for windows with a instance matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-class\fR|\fB\fC\-c\fR TARGET
+\fB\fC--class\fR|\fB\fC-c\fR TARGET
 .br
 Search for windows with a class matching \fITARGET\fP
 
 .PP
-\fB\fC\-\-conid\fR|\fB\fC\-n\fR TARGET
+\fB\fC--conid\fR|\fB\fC-n\fR TARGET
 .br
-Search for windows with a \fBCON\_ID\fP matching
+Search for windows with a \fBCON_ID\fP matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-winid\fR|\fB\fC\-d\fR TARGET
+\fB\fC--winid\fR|\fB\fC-d\fR TARGET
 .br
-Search for windows with a \fBWINDOW\_ID\fP matching
+Search for windows with a \fBWINDOW_ID\fP matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-mark\fR|\fB\fC\-m\fR TARGET
+\fB\fC--mark\fR|\fB\fC-m\fR TARGET
 .br
 Search for windows with a \fBmark\fP matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-title\fR|\fB\fC\-t\fR TARGET
+\fB\fC--title\fR|\fB\fC-t\fR TARGET
 .br
 Search for windows with a \fBtitle\fP matching
 \fITARGET\fP
 
 .PP
-\fB\fC\-\-help\fR|\fB\fC\-h\fR
+\fB\fC--help\fR|\fB\fC-h\fR
 .br
 Show help and exit.
 
 .PP
-\fB\fC\-\-version\fR|\fB\fC\-v\fR
+\fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
 
@@ -110,13 +110,13 @@ i3list[AFS]=D                  # Active Window sibling
 i3list[AWB]=20                 # Active Window titlebar height
 i3list[AFT]=A                  # Active Window twin
 i3list[AWP]=C                  # Active Window parent
-i3list[AWC]=94283162546096     # Active Window con\_id
+i3list[AWC]=94283162546096     # Active Window con_id
 i3list[TWB]=20                 # Target Window titlebar height
 i3list[TFS]=D                  # Target Window sibling
 i3list[TFF]=CD                 # Target Window family
 i3list[TWP]=C                  # Target Window Parent container
 i3list[TFT]=A                  # Target Window twin
-i3list[TWC]=94283162546096     # Target Window con\_id
+i3list[TWC]=94283162546096     # Target Window con_id
 i3list[TWF]=0                  # Target Window Floating
 i3list[TTW]=270                # Target Window tab width
 i3list[TWH]=1700               # Target Window height
@@ -149,7 +149,7 @@ i3list[LVI]=CBA                # Visible i3fyra containers
 i3list[FCD]=C                  # Family CD memory
 i3list[LAL]=ABCD               # All containers in family order
 i3list[WAH]=1920               # Active Workspace height
-i3list[WAI]=94283159180304     # Active Workspace con\_id
+i3list[WAI]=94283159180304     # Active Workspace con_id
 i3list[WAW]=1080               # Active Workspace width
 i3list[WSF]=1                  # i3fyra Workspace Number
 i3list[WAX]=0                  # Active Workspace x position
@@ -157,9 +157,9 @@ i3list[WST]=1                  # Target Workspace Number
 i3list[WAY]=0                  # Active Workspace y position
 i3list[WFH]=1920               # i3fyra Workspace Height
 i3list[WTH]=1920               # Target Workspace Height
-i3list[WFI]=94283159180304     # i3fyra Workspace con\_id
+i3list[WFI]=94283159180304     # i3fyra Workspace con_id
 i3list[WAN]='1'                # Active Workspace name
-i3list[WTI]=94283159180304     # Target Workspace con\_id
+i3list[WTI]=94283159180304     # Target Workspace con_id
 i3list[WFW]=1080               # i3fyra Workspace Width
 i3list[WTW]=1080               # Target Workspace Width
 i3list[WFX]=0                  # i3fyra Workspace X position
@@ -171,7 +171,7 @@ i3list[WSA]=1                  # Active Workspace number
 i3list[WTN]='1'                # Target Workspace name
 
 
-$ declare \-A i3list # declares associative array
+$ declare -A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080

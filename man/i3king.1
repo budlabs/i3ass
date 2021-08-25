@@ -1,5 +1,5 @@
 .nh
-.TH I3KING 1 2021-08-06 Linux "User Manuals"
+.TH I3KING 1 2021-08-25 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3king\fR - window ruler
@@ -11,6 +11,7 @@
 .nf
 i3king [--config|-c FILE] [--no-apply] [--no-restart]
 i3king --apply|-a [--config|-c FILE]
+i3king --conid|-n CONID [--print-commands] [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
 i3king --help|-h
 i3king --version|-v
@@ -43,10 +44,9 @@ are
 .RE
 
 .PP
-It is also possible to use \fBGLOBAL\fP rules which
-will match any windows. But each global rules can
-have a \fBblack\fPlist with windows that will not
-trigger that rule.
+Use \fBGLOBAL\fP rules to match any windows. global
+rules can have a \fBblack\fPlist for windows that
+will not trigger the rule.
 
 .PP
 A variant of the GLOBAL rule is \fBDEFAULT\fP
@@ -54,6 +54,10 @@ rules, which works exactly like GLOBAL rules,
 except they only get triggered if the window
 didn't match any \fI"normal"\fP rules (regular GLOBAL
 rules are normal).
+
+.PP
+\fBON_CLOSE\fP work like normal rules but will only
+trigger when a window is closed.
 
 .PP
 Just like in the i3 config the \fB\fCset\fR directive is
@@ -166,6 +170,18 @@ Match all existing windows against the rules and
 exit.
 
 .PP
+\fB\fC--conid\fR|\fB\fC-n\fR CONID
+.br
+will match window with CONID against the rules
+and exit.
+
+.PP
+\fB\fC--print-commands\fR
+.br
+Print commands to STDOUT instead of executing
+them.
+
+.PP
 \fB\fC--json\fR JSON
 .br
 Parse JSON instead of the output from: \fB\fCi3-msg -t
@@ -205,10 +221,26 @@ Show version and exit.
 defaults to: $HOME/.config
 
 .PP
+\fB\fCXDG_RUNTIME_DIR\fR
+
+.PP
+defaults to: /tmp
+
+.PP
 \fB\fCI3_KING_RULE_FILE\fR
 .br
 Path to file containing rules to be parsed.
 defaults to: $XDG_CONFIG_HOME/i3king/rules
+
+.PP
+\fB\fCI3_KING_PID_FILE\fR
+.br
+When i3king is running this file contains the pid
+of the i3king process. It is used by \fBi3fyra\fP to
+know if i3king is running, if it is, it will try
+to match windows against the rules when \fB\fC--float\fR
+option toggles the floating state to tiled.
+defaults to: $XDG_RUNTIME_DIR/i3king.pid
 
 .SH DEPENDENCIES
 .PP
