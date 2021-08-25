@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3viswiz - version: 0.51
+i3viswiz - version: 0.52
 updated: 2021-06-07 by budRich
 EOB
 }
@@ -212,6 +212,10 @@ units are:
    sh           | active workspace height
    sx           | active workspace x position
    sy           | active workspace y position
+   aw           | active window width
+   ah           | active window height
+   ax           | active window x position
+   ay           | active window y position
    trgx         | target windows x position
    trgy         | target windows y position
    grouplayout  | active windows parent container layout (tabbed|splitv|splith|stacked)
@@ -306,6 +310,7 @@ END{
 
       print_us["trgcon"]=target_container
       print_us["trgpar"]=ac[target_container]["i3fyracontainer"]
+      
     }
 
     if (arg_type == "direction") {
@@ -331,6 +336,16 @@ END{
   #   i3viswiz -i firefox d (arg_target=d arg_type=instance)
 
   print_us["gap"]=arg_gap
+
+  print_us["sw"]=ac[active_workspace_id]["w"]
+  print_us["sh"]=ac[active_workspace_id]["h"]
+  print_us["sx"]=ac[active_workspace_id]["x"]
+  print_us["sy"]=ac[active_workspace_id]["y"]
+
+  print_us["aw"]=ac[active_container_id]["w"]
+  print_us["ah"]=ac[active_container_id]["h"]
+  print_us["ax"]=ac[active_container_id]["x"]
+  print_us["ay"]=ac[active_container_id]["y"]
 
   if (arg_debug == "ALL") {
     for (k in print_us) {

@@ -1,5 +1,5 @@
 .nh
-.TH I3ASS 1 2021-08-06 Linux "User Manuals"
+.TH I3ASS 1 2021-08-25 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3ass\fR - i3 assistance scripts
@@ -101,7 +101,7 @@ i3fyra --show|-s CONTAINER [--force|-f]
 i3fyra --float|-a
 i3fyra --hide|-z CONTAINER [--force|-f]
 i3fyra --layout|-l LAYOUT [--force|-f] [--array ARRAY] [--verbose] [--dryrun]
-i3fyra --move|-m DIRECTION|CONTAINER [--conid ID] [--force|-f] [--speed|-p INT]
+i3fyra --move|-m DIRECTION|CONTAINER [--conid|-n ID] [--force|-f] [--speed|-p INT]
 i3fyra --help|-h
 i3fyra --version|-v
 
@@ -251,7 +251,7 @@ move current window 30 pixels to the right, if it
 is floating.
 
 .PP
-\fB\fC--conid\fR|\fB\fC-m\fR ID
+\fB\fC--conid\fR|\fB\fC-n\fR ID
 .br
 To set the target window for operations. If not
 set the active window will be used.
@@ -357,9 +357,26 @@ families will be \fB\fCAB\fR and \fB\fCCD\fR\&. Otherwise main
 split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and
 \fB\fCBD\fR\&. defaults to: horizontal
 
+.PP
+\fB\fCXDG_RUNTIME_DIR\fR
+
+.PP
+defaults to: /tmp
+
+.PP
+\fB\fCI3_KING_PID_FILE\fR
+.br
+When i3king is running this file contains the pid
+of the i3king process. It is used by \fBi3fyra\fP to
+know if i3king is running, if it is, it will try
+to match windows against the rules when \fB\fC--float\fR
+option toggles the floating state to tiled.
+defaults to: $XDG_RUNTIME_DIR/i3king.pid
+
 .SH DEPENDENCIES
 .PP
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3var\fR \fB\fCi3viswiz\fR
+\fB\fCi3king\fR
 
 
 .SH \fB\fCi3get\fR - prints info about a specific window to stdout
@@ -597,6 +614,7 @@ container.
 .nf
 i3king [--config|-c FILE] [--no-apply] [--no-restart]
 i3king --apply|-a [--config|-c FILE]
+i3king --conid|-n CONID [--print-commands] [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
 i3king --help|-h
 i3king --version|-v
@@ -629,10 +647,9 @@ are
 .RE
 
 .PP
-It is also possible to use \fBGLOBAL\fP rules which
-will match any windows. But each global rules can
-have a \fBblack\fPlist with windows that will not
-trigger that rule.
+Use \fBGLOBAL\fP rules to match any windows. global
+rules can have a \fBblack\fPlist for windows that
+will not trigger the rule.
 
 .PP
 A variant of the GLOBAL rule is \fBDEFAULT\fP
@@ -640,6 +657,10 @@ rules, which works exactly like GLOBAL rules,
 except they only get triggered if the window
 didn't match any \fI"normal"\fP rules (regular GLOBAL
 rules are normal).
+
+.PP
+\fBON_CLOSE\fP work like normal rules but will only
+trigger when a window is closed.
 
 .PP
 Just like in the i3 config the \fB\fCset\fR directive is
@@ -752,6 +773,18 @@ Match all existing windows against the rules and
 exit.
 
 .PP
+\fB\fC--conid\fR|\fB\fC-n\fR CONID
+.br
+will match window with CONID against the rules
+and exit.
+
+.PP
+\fB\fC--print-commands\fR
+.br
+Print commands to STDOUT instead of executing
+them.
+
+.PP
 \fB\fC--json\fR JSON
 .br
 Parse JSON instead of the output from: \fB\fCi3-msg -t
@@ -791,10 +824,26 @@ Show version and exit.
 defaults to: $HOME/.config
 
 .PP
+\fB\fCXDG_RUNTIME_DIR\fR
+
+.PP
+defaults to: /tmp
+
+.PP
 \fB\fCI3_KING_RULE_FILE\fR
 .br
 Path to file containing rules to be parsed.
 defaults to: $XDG_CONFIG_HOME/i3king/rules
+
+.PP
+\fB\fCI3_KING_PID_FILE\fR
+.br
+When i3king is running this file contains the pid
+of the i3king process. It is used by \fBi3fyra\fP to
+know if i3king is running, if it is, it will try
+to match windows against the rules when \fB\fC--float\fR
+option toggles the floating state to tiled.
+defaults to: $XDG_RUNTIME_DIR/i3king.pid
 
 .SH DEPENDENCIES
 .PP
@@ -825,10 +874,237 @@ resize windows in \fBi3\fP\&. It has some more
 functions then the defaults and is more
 streamlined. Resizing floating windows is done by
 first selecting a corner of the window, and then
-moving that corner. See the wiki or the manpage
-for details and how to add the required mode in
-the i3 config file that is needed to use
-\fBi3Kornhe\fP\&.
+moving that corner.
+
+.SH USAGE
+.PP
+To use this script a bindingmode
+\[la]https://i3wm.org/docs/userguide.html#binding_modes\[ra] named
+\fB\fCsizemode\fR needs to be set in your i3 config file.
+Below is how I have set up this mode:
+
+.PP
+\fB\fC~/.config/i3/config\fR
+
+.PP
+.RS
+
+.nf
+
+...
+
+# these keybindings are outside the mode definition
+
+# group A, enter size mode with direction:
+bindsym Mod4+Control+Left    exec --no-startup-id i3Kornhe size left
+bindsym Mod4+Control+Down    exec --no-startup-id i3Kornhe size down
+bindsym Mod4+Control+Up      exec --no-startup-id i3Kornhe size up
+bindsym Mod4+Control+Right   exec --no-startup-id i3Kornhe size right
+
+# group B, enter move mode with direction:
+# by using speed 0 (--speed 0), this will only enter the mode without
+# moving the window.
+bindsym Mod4+Left      exec --no-startup-id i3Kornhe move --speed 0 left
+bindsym Mod4+Down      exec --no-startup-id i3Kornhe move --speed 0 down
+bindsym Mod4+Up        exec --no-startup-id i3Kornhe move --speed 0 up
+bindsym Mod4+Right     exec --no-startup-id i3Kornhe move --speed 0 right
+
+...
+
+mode "sizemode" {
+  # group 1 only send direction speed 30:
+  bindsym Left          exec --no-startup-id i3Kornhe --speed 30 left
+  bindsym Down          exec --no-startup-id i3Kornhe --speed 30 down
+  bindsym Up            exec --no-startup-id i3Kornhe --speed 30 up
+  bindsym Right         exec --no-startup-id i3Kornhe --speed 30 right
+  
+  # group 2 only send direction speed 5:
+  bindsym Shift+Left    exec --no-startup-id i3Kornhe --speed 5 left
+  bindsym Shift+Down    exec --no-startup-id i3Kornhe --speed 5 down
+  bindsym Shift+Up      exec --no-startup-id i3Kornhe --speed 5 up
+  bindsym Shift+Right   exec --no-startup-id i3Kornhe --speed 5 right
+
+  # group 3 change size direction:
+  bindsym Mod4+Left     exec --no-startup-id i3Kornhe size left
+  bindsym Mod4+Down     exec --no-startup-id i3Kornhe size down
+  bindsym Mod4+Up       exec --no-startup-id i3Kornhe size up
+  bindsym Mod4+Right    exec --no-startup-id i3Kornhe size right
+
+  # group 4 enter move mode:
+  bindsym m exec --no-startup-id i3Kornhe move --speed 0 left
+
+  # group 5 move to absolute position 1-9:
+  bindsym 1 exec --no-startup-id i3Kornhe 1
+  bindsym 2 exec --no-startup-id i3Kornhe 2
+  bindsym 3 exec --no-startup-id i3Kornhe 3
+  bindsym 4 exec --no-startup-id i3Kornhe 4
+  bindsym 5 exec --no-startup-id i3Kornhe 5
+  bindsym 6 exec --no-startup-id i3Kornhe 6
+  bindsym 7 exec --no-startup-id i3Kornhe 7
+  bindsym 8 exec --no-startup-id i3Kornhe 8
+  bindsym 9 exec --no-startup-id i3Kornhe 9
+
+  # group 6 exit the mode
+  bindsym Escape exec --no-startup-id i3Kornhe x
+}
+
+.fi
+.RE
+
+.PP
+As you can see there are a lot of keybinding
+definitions, but keep in mind, without \fB\fCi3Kornhe\fR
+you would need, one mode for every direction and
+action (at least 8). And one reason i made this
+script was to unclutter and shrink my own config
+file.
+
+.PP
+A tip is also to use variables in the i3config:
+
+.PP
+.RS
+
+.nf
+set $super bindsym Mod4
+set $i3Kornhe exec --no-startup-id i3Kornhe
+
+.fi
+.RE
+
+.PP
+.RS
+
+.nf
+before:  
+bindsym Mod4+Right exec --no-startup-id i3Kornhe move --speed 0 right
+
+after:  
+$super+Right $i3Kornhe m -p 0 r
+
+.fi
+.RE
+
+.PP
+\fINotice that the first character of the
+mode/direction is enough.\fP
+
+.PP
+Let us go through the processes that will happen
+when the different actions are executed.
+
+.PP
+\fIgroup B:\fP
+.br
+\fB\fC$super+Left $i3Kornhe move --speed 0 left\fR
+
+.PP
+This will make i3Kornhe enter \fBmove mode\fP\&. (*it
+will actually activate the i3 mode sizemode,
+\fBmove\fP is a pseudo mode that only i3Korhne
+knows*) First thing i3Kornhe does is to store the
+current title_format of the window.
+
+.PP
+It will then set the \fB\fCtitle_format\fR to:
+.br
+\fB\fCMOVE w:WIDTH h:HEIGHT x:X y:Y\fR
+
+.PP
+Populated with the actual dimensions and position
+of the window. The first word, "MOVE", in the
+title means that we don't need to specify the mode
+(move|size|m|s)
+
+.PP
+So if a keybinding from \fBgroup 1\fP or \fBgroup
+2\fP is executed it will move the window in the
+specified direction with the specified speed
+(speed defaults to 10 if not set).
+
+.PP
+If we would execute a keybinding from \fBgroup
+3\fP, where the mode is specified (size), this
+would change the title to:
+
+.PP
+\fB\fCSIZE CORNER\fR
+
+.PP
+CORNER is which corner of the window that will
+get moved. The CORNER is set with a direction:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCdirection\fR	\fB\fCcorner\fR
+Left	topleft
+Down	bottomleft
+Up	topright
+Right	bottomright
+.TE
+
+.PP
+This might look strange at first, but if you look
+at the keys HJKL, you will see that there is some
+logic to it.
+
+.PP
+If we now execute a keybinding from \fB\fIgroup 1\fP\fP
+or \fB\fIgroup 2\fP\fP (without a mode definition), the
+named corner will \fIget moved\fP\&. To change corner
+execute a keybinding from \fBgroup 3\fP\&. To switch
+back to MOVE mode, we only need a single
+keybinding (\fBgroup 4\fP):  \fB\fCbindsym m $i3Kornhe m
+--speed 0 l\fR
+
+.PP
+The direction and speed is needed but will not
+have any visual effect. To exit back to default
+mode execute \fB\fCi3Kornhe\fR with \fB\fCx\fR as the only
+argument, (\fBgroup 6\fP), this will exit the mode
+and reset the title_format to what it was
+initially.
+
+.PP
+You can also execute \fB\fCi3Kornhe\fR with a number in
+the range 1-9 as a single argument. This will move
+the currently active window (if window is
+floating) to the position corresponding to the
+number:
+
+.PP
+.RS
+
+.nf
+123
+456
+789
+
+.fi
+.RE
+
+.PP
+One important note is that if the active window
+is tiled, \fB\fCi3Kornhe\fR will move it normally* or
+resize it according to this table:
+
+.TS
+allbox;
+l l 
+l l .
+\fB\fCdirection\fR	\fB\fCresize\fR
+Left	shrink width
+Down	shrink height
+Up	grow height
+Right	grow width
+.TE
+
+.PP
+* *except if the tiled window is on a \fBi3fyra\fP
+workspace, if it is, i3fyra --move operation will
+applied*.
 
 .SH OPTIONS
 .PP
@@ -883,9 +1159,22 @@ Show help and exit.
 .br
 Show version and exit.
 
+.SH ENVIRONMENT
+.PP
+\fB\fCXDG_RUNTIME_DIR\fR
+
+.PP
+defaults to: /tmp
+
+.PP
+\fB\fCI3_KORNHE_FIFO_FILE\fR
+
+.PP
+defaults to: $XDG_RUNTIME_DIR/i3ass/i3Kornhe.fifo
+
 .SH DEPENDENCIES
 .PP
-\fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3var\fR
+\fB\fCbash\fR \fB\fCi3\fR \fB\fCi3list\fR
 
 
 .SH \fB\fCi3list\fR - list information about the current i3 session.
@@ -1074,10 +1363,7 @@ $ echo ${i3list[WAW]}
 .RS
 
 .nf
-i3menu [--theme THEME] [--layout|-a LAYOUT] [--include|-i INCLUDESTRING] [--top|-t TOP] [--xpos|-x INT] [--xoffset INT] [--ypos|-y INT] [--yoffset INT] [--width|-w INT] [--options|-o OPTIONS] [--prompt|-p PROMPT]  [--filter|-f FILTER] [--show MODE] [--modi MODI] [--target TARGET] [--orientation ORIENTATION] [--anchor INT] [--height INT] [--fallback FALLBACK] [--no-auto-position] 
-i3menu --help|-h
-i3menu --version|-v
-i3menu [--verbose] [--dryrun]
+i3menu [OPTIONS] <stdin>
 
 .fi
 .RE
@@ -1448,6 +1734,12 @@ Show version and exit
 .PP
 \fB\fC--dryrun\fR
 
+.PP
+\fB\fC--list-directory\fR DIRECTORY
+.br
+This option will list filenames in DIRECORY. The
+selected item will be returned with the full path.
+
 .SH ENVIRONMENT
 .PP
 \fB\fCXDG_CONFIG_HOME\fR
@@ -1472,24 +1764,27 @@ $XDG_CONFIG_HOME/i3menu
 .RS
 
 .nf
-i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --winid|-d CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --help|-h
-i3run --version|-v
+CRITERIA [OPTIONS] [-- COMMAND]
 
 .fi
 .RE
 
 .SH DESCRIPTION
 .PP
-\fB\fCi3run\fR let's you use one command for multiple
-functions related to the same window identified by
-a given criteria.  \fB\fCi3run\fR will take different
-action depending on the state of the searched
-window:
+i3run will try to find a window matching a
+criteria. Criteria is specified with one or more
+command line options:
+.br
+\fB\fC--class , --instance , --title , --conid ,
+--winid\fR
+.br
+All criteria specified must match, if multiple
+windows match all criteria one will be chosen at
+random.
+
+.PP
+Depending on the state of target window different
+actions will apply:
 
 .TS
 allbox;
@@ -1499,15 +1794,21 @@ l l .
 T{
 Active and not handled by i3fyra
 T}
-	hide
-Active and handled by i3fyra	hide container, if not \fB\fC-g\fR is set
-Handled by i3fyra and hidden	show container, activate
+	send to scratchpad
+Active and handled by i3fyra	send container to scratchpad
+Handled by i3fyra and hidden	\fBshow\fP container
 T{
 Not handled by i3fyra and hidden
 T}
-	show window, activate
-Not on current workspace	goto workspace or show if \fB\fC-s\fR is set
-Not found	execute command (\fB\fC-e\fR)
+	\fBshow\fP window
+Not on current workspace	T{
+goto workspace and focus window
+T}
+T{
+Not active, not hidden, on workspace
+T}
+	focus window
+Not found	execute COMMAND
 .TE
 
 .PP
@@ -1516,15 +1817,17 @@ the scratchpad. Show in this context means,  move
 window to current workspace.
 
 .PP
-\fB\fC-e\fR is optional, if no \fICOMMAND\fP is passed and
-no window is found,  nothing happens.  It is
-important that \fB\fC-e\fR \fICOMMAND\fP is \fBthe last of the
-options\fP\&.  It is also important that \fICOMMAND\fP
-\fBwill spawn a window matching the criteria\fP,
-otherwise the script will get stuck in a loop
-waiting for the window to appear. (\fIit will stop
-waiting for the window to appear after 60
-seconds\fP)
+With \fB\fC--nohide\fR set windows/containers will not
+be sent to the scratchpad by \fBi3run\fP\&.
+
+.PP
+With \fB\fC--summon\fR windows not on current workspace
+will be sent to current workspace instead of
+switching workspace.
+
+.PP
+COMMAND is everything after -- , or the argument
+to \fB\fC--command\fR\&.
 
 .SH OPTIONS
 .PP
@@ -1544,25 +1847,33 @@ current workspace
 Don't hide window/container if it's active.
 
 .PP
-\fB\fC--mouse\fR|\fB\fC-m\fR
+\fB\fC--class\fR|\fB\fC-c\fR CLASS
 .br
-The window will be placed on the location of the
-mouse cursor when it is created or shown. (\fIneeds
-\fB\fCxdotool\fR\fP)
+Search for windows with the given CLASS
 
 .PP
 \fB\fC--rename\fR|\fB\fC-x\fR OLD_NAME
 .br
-If the search criteria is \fB\fC-i\fR (instance), the
-window with instance: \fIOLDNAME\fP will get a n new
+If the search criteria is \fB\fC--instance\fR, the
+window with instance: \fIOLDNAME\fP will get a new
 instance name matching the criteria when it is
 created (\fIneeds \fB\fCxdotool\fR\fP).
+
+.PP
+\fBNB\fP
+.br
+This option will not work reliably when using
+multiple search criteria. When you want to do that
+instead use:
+.br
+\fB\fC--rename-instance , --rename-class ,
+--rename-title\fR .
 
 .PP
 .RS
 
 .nf
-i3run --instance budswin --rename sublime_main -command subl
+i3run --instance budswin --rename sublime_main -- subl
 
 # when the command above is executed:
 # a window with the instance name: "budswin" will be searched for.
@@ -1570,8 +1881,43 @@ i3run --instance budswin --rename sublime_main -command subl
 # and when a window with the instance name: "sublime_main" is found,
 # the instance name of that window will get renamed to: "budswin"
 
+# the example below, will not work properly:  
+i3run --title bud --instance budswin --rename sublime_main -- subl
+
+# it will start like the first example, but if it
+# doesnt find the custom instance budswin, it will
+# try to search for a window with the TITLE sublime_main
+
+# do this instead:  
+i3run --title bud --instance budswin --rename-instance sublime_main -- subl
+
 .fi
 .RE
+
+.PP
+\fB\fC--title\fR|\fB\fC-t\fR TITLE
+.br
+Search for windows with the given TITLE
+
+.PP
+\fB\fC--rename-instance\fR OLD_NAME
+.br
+explicitly rename the instance.
+
+.PP
+\fB\fC--rename-class\fR OLD_NAME
+.br
+explicitly rename the class.
+
+.PP
+\fB\fC--rename-title\fR OLD_NAME
+.br
+explicitly rename the title.
+
+.PP
+\fB\fC--conid\fR|\fB\fC-n\fR CON_ID
+.br
+Search for windows with the given CON_ID
 
 .PP
 \fB\fC--force\fR|\fB\fC-f\fR
@@ -1586,37 +1932,39 @@ Execute COMMAND (\fB\fC--command\fR), even if the window
 already exist.
 
 .PP
+\fB\fC--winid\fR|\fB\fC-d\fR CON_ID
+
+.PP
 \fB\fC--command\fR|\fB\fC-e\fR COMMAND
 .br
-Command to run if no window is found. Complex
-commands can be written inside quotes:
+the recommended way of launching commands is to
+do: \fB\fCi3run ... -- COMMAND\fR
 
+.SH Example
 .PP
 .RS
 
 .nf
-i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
+# with --command:
+i3run --instance sublime_text --command 'subl && notify-send "sublime is started"'
+
+# with -- (recomended)
+i3run --instance sublime_text -- subl "&&"" notify-send "sublime is started"
 
 .fi
 .RE
 
 .PP
-\fB\fC--class\fR|\fB\fC-c\fR CLASS
-.br
-Search for windows with the given CLASS
+Notice that you will need to \fIescape\fP some shell
+builtins that effect the commandline (\fB\fC&&\fR, \fB\fC;\fR,
+\fB\fC&\fR, \fB\fC|\fR, \fB\fC||\fR ...) in the second example.
 
 .PP
-\fB\fC--title\fR|\fB\fC-t\fR TITLE
+\fB\fC--mouse\fR|\fB\fC-m\fR
 .br
-Search for windows with the given TITLE
-
-.PP
-\fB\fC--conid\fR|\fB\fC-n\fR CON_ID
-.br
-Search for windows with the given CON_ID
-
-.PP
-\fB\fC--winid\fR|\fB\fC-d\fR CON_ID
+The window will be placed on the location of the
+mouse cursor when it is created or shown. (\fIneeds
+\fB\fCxdotool\fR\fP)
 
 .PP
 \fB\fC--help\fR|\fB\fC-h\fR
@@ -1627,6 +1975,37 @@ Show help and exit.
 \fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
+
+.SH ENVIRONMENT
+.PP
+\fB\fCI3RUN_BOTTOM_GAP\fR
+.br
+Distance from the bottom edge of the screen to
+show floating windows. This only has effect When
+\fB\fC--mouse\fR option is used and the window needs to
+be autoadjusted not to be rendered \fIoutisde\fP the
+workspace with the mouse cursor on.
+
+.PP
+defaults to: 10
+
+.PP
+\fB\fCI3RUN_TOP_GAP\fR
+
+.PP
+defaults to: 10
+
+.PP
+\fB\fCI3RUN_LEFT_GAP\fR
+
+.PP
+defaults to: 10
+
+.PP
+\fB\fCI3RUN_RIGHT_GAP\fR
+
+.PP
+defaults to: 10
 
 .SH DEPENDENCIES
 .PP
@@ -1822,6 +2201,10 @@ sw           | active workspace width
 sh           | active workspace height
 sx           | active workspace x position
 sy           | active workspace y position
+aw           | active window width
+ah           | active window height
+ax           | active window x position
+ay           | active window y position
 trgx         | target windows x position
 trgy         | target windows y position
 grouplayout  | active windows parent container layout (tabbed|splitv|splith|stacked)

@@ -2,8 +2,9 @@
 
 
 ![logo](https://github.com/i3ass-dev/i3ass/blob/dev/assets/i3ass-first-logo2021-05-26-300x200.png?raw=true)  
-This is a collection of scripts I have made to assist the
-usage of the windowmanager known as [i3wm].
+
+### a shellscript collection to assist the usage of the [i3wm] windowmanager.
+
 
 ## installation
 
@@ -20,22 +21,22 @@ $ git clone https://github.com/budlabs/i3ass.git
 $ cd i3ass
 # make install
 $ i3ass
-i3ass - version: 2021.08.04.3
-updated: 2021-08-04 by budRich
+i3ass - version: 2021.08.25.3
+updated: 2021-08-25 by budRich
 
 script   | version
 ------------------
 i3flip   | 0.101
-i3fyra   | 1.1
-i3get    | 0.7
+i3fyra   | 1.13
+i3get    | 0.72
 i3gw     | 2020.08.12.0
-i3king   | 0.1
-i3Kornhe | 0.5
-i3list   | 0.3
-i3menu   | 0.1
-i3run    | 0.1
+i3king   | 0.23
+i3Kornhe | 0.665
+i3list   | 0.33
+i3menu   | 0.11
+i3run    | 0.15
 i3var    | 0.050
-i3viswiz | 0.51
+i3viswiz | 0.52
 
 dependencies:
 bash     [INSTALLED]
@@ -85,37 +86,86 @@ about the command.
 
 ## updates
 
+### [i3Kornhe]
+
+Reworked the script to now use a FIFO, which made moving
+and resizing a lot more responsive with no lag and much less
+stuttering.
+
+### [i3viswiz]
+
+
+Added debug vars for active window geometry
+(`ax,ay,aw,ah`). And active workspace geometry
+(`sx,sy,sw,sh`)
+
 ### [i3king]
 
-Changed the resart behaviour. So i3king will now try to
-restart whenever the IPC socket is broken, which happens on
-f.i. i3 crashes.  
 
-New commandline option: `--no-apply`, if set i3king will
-not automatically try to apply rules when it restarts.
+new options: `--conid`, `--print-commands`.  
+`--conid CONID` will match a single window against the
+rules and exit. `--print-commands` will print the commands
+instead of executing them.
 
-This update was caught on tape, and can be seen at youtube:  
-[i3wm RED BOX OF DEATH ... DEFEATED!!!! TKO](https://www.youtube.com/watch?v=GQSZq6tC2AQ)
+**ON_CLOSE** directive added. Rules prefixed like this will
+get triggered when windows are closed.
+
+### [i3run]
+
+
+Commands can now be entered after `--`. The old way of
+specifying the command: (`--command|-e`)
+
+``` shell
+# old way
+i3run --instance sublime_text --command 'subl && notify-send "sublime is started"'
+
+# new way
+i3run --instance sublime_text -- subl "&&" notify-send "sublime is started"
+```
+
+
+---
+
+
+Fixed issue where windows had the wrong floating state when
+being sent across workspaces (#99).
+
+### [i3list]
+
+
+Added ABW and TBW keys to output, with active/target
+windows border width.
+
+Fixed issue where wrong workspace ID was reported on empty
+workspaces. Also if workspace is empty now container/window
+info will NOT get printed.
+
+### [i3fyra]
+
+
+When using `--float` to toggle a floating window to be
+tiled, we check if i3king is running and if the window
+matches any of the rules. If a rule matches the
+corresponding command is executed instead of *just* making
+the window tiled.
+
+### [i3menu]
+
+
+Added `--list-directory DIRECTORY` option. It is a shortcut
+to make a menu listing the filenames in DIRECTORY and
+printing the full path to stdout.
+
+### [i3get]
+
+
+fixed issue where `--synk` option caused the script to halt until a window event occured.
 
 ## known issues
 
 **THERE IS NO SUPPORT FOR i3-gaps**  
-some scripts might still work with i3-gaps, but consider
-that *Happy little accidents™*  
-
-The latest version of i3 (**4.19**) introduced a new
-behaviour that triggers `for_window` directives when a
-window is sent to the scratchpad. This is very annoying if
-one would use something like:  
-`for_window [instance=Install_gentoo] exec i3fyra --move A`  
-I recommend anyone using `for_window` to stick with version
-**4.18.3**, till this is resolved..  
-
-`i3-msg restart` breaks [i3fyra], try to use `i3-msg
-reload` instead (*it's faster and usually works just as good
-as restart*).
-
-
+some scripts might still work with i3-gaps, but consider that *Happy little accidents™*
 
 [wiki]: https://github.com/budlabs/i3ass/wiki
 [Makefile]: https://github.com/budRich/i3ass/blob/master/Makefile

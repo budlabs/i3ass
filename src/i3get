@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3get - version: 0.71
+i3get - version: 0.72
 updated: 2021-06-07 by budRich
 EOB
 }
@@ -13,16 +13,15 @@ EOB
 main(){
 
   result=$(get_window)
-
   timeout=$SECONDS
 
-  ((__o[synk])) && until [[ $result ]]; do
-    i3-msg -qt subscribe '["window"]'
+  ((__o[synk])) && [[ ! $result ]] && sleep .1 && while :; do
     result=$(get_window)
-    ((SECONDS-timeout > 60)) && break
+    [[ $((SECONDS-timeout)) -gt 60 || $result ]] && break
+    i3-msg -qt subscribe '["window"]'
   done
 
-  [[ $result ]] || ERX "no matching window"
+  [[ $result ]] || ERX "i3get: no matching window"
   echo "$result"
 }
 

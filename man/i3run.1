@@ -9,24 +9,27 @@
 .RS
 
 .nf
-i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --winid|-d CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --help|-h
-i3run --version|-v
+CRITERIA [OPTIONS] [-- COMMAND]
 
 .fi
 .RE
 
 .SH DESCRIPTION
 .PP
-\fB\fCi3run\fR let's you use one command for multiple
-functions related to the same window identified by
-a given criteria.  \fB\fCi3run\fR will take different
-action depending on the state of the searched
-window:
+i3run will try to find a window matching a
+criteria. Criteria is specified with one or more
+command line options:
+.br
+\fB\fC--class , --instance , --title , --conid ,
+--winid\fR
+.br
+All criteria specified must match, if multiple
+windows match all criteria one will be chosen at
+random.
+
+.PP
+Depending on the state of target window different
+actions will apply:
 
 .TS
 allbox;
@@ -36,15 +39,21 @@ l l .
 T{
 Active and not handled by i3fyra
 T}
-	hide
-Active and handled by i3fyra	hide container, if not \fB\fC-g\fR is set
-Handled by i3fyra and hidden	show container, activate
+	send to scratchpad
+Active and handled by i3fyra	send container to scratchpad
+Handled by i3fyra and hidden	\fBshow\fP container
 T{
 Not handled by i3fyra and hidden
 T}
-	show window, activate
-Not on current workspace	goto workspace or show if \fB\fC-s\fR is set
-Not found	execute command (\fB\fC-e\fR)
+	\fBshow\fP window
+Not on current workspace	T{
+goto workspace and focus window
+T}
+T{
+Not active, not hidden, on workspace
+T}
+	focus window
+Not found	execute COMMAND
 .TE
 
 .PP
@@ -53,15 +62,17 @@ the scratchpad. Show in this context means,  move
 window to current workspace.
 
 .PP
-\fB\fC-e\fR is optional, if no \fICOMMAND\fP is passed and
-no window is found,  nothing happens.  It is
-important that \fB\fC-e\fR \fICOMMAND\fP is \fBthe last of the
-options\fP\&.  It is also important that \fICOMMAND\fP
-\fBwill spawn a window matching the criteria\fP,
-otherwise the script will get stuck in a loop
-waiting for the window to appear. (\fIit will stop
-waiting for the window to appear after 60
-seconds\fP)
+With \fB\fC--nohide\fR set windows/containers will not
+be sent to the scratchpad by \fBi3run\fP\&.
+
+.PP
+With \fB\fC--summon\fR windows not on current workspace
+will be sent to current workspace instead of
+switching workspace.
+
+.PP
+COMMAND is everything after -- , or the argument
+to \fB\fC--command\fR\&.
 
 .SH OPTIONS
 .PP
@@ -81,25 +92,33 @@ current workspace
 Don't hide window/container if it's active.
 
 .PP
-\fB\fC--mouse\fR|\fB\fC-m\fR
+\fB\fC--class\fR|\fB\fC-c\fR CLASS
 .br
-The window will be placed on the location of the
-mouse cursor when it is created or shown. (\fIneeds
-\fB\fCxdotool\fR\fP)
+Search for windows with the given CLASS
 
 .PP
 \fB\fC--rename\fR|\fB\fC-x\fR OLD_NAME
 .br
-If the search criteria is \fB\fC-i\fR (instance), the
-window with instance: \fIOLDNAME\fP will get a n new
+If the search criteria is \fB\fC--instance\fR, the
+window with instance: \fIOLDNAME\fP will get a new
 instance name matching the criteria when it is
 created (\fIneeds \fB\fCxdotool\fR\fP).
+
+.PP
+\fBNB\fP
+.br
+This option will not work reliably when using
+multiple search criteria. When you want to do that
+instead use:
+.br
+\fB\fC--rename-instance , --rename-class ,
+--rename-title\fR .
 
 .PP
 .RS
 
 .nf
-i3run --instance budswin --rename sublime_main -command subl
+i3run --instance budswin --rename sublime_main -- subl
 
 # when the command above is executed:
 # a window with the instance name: "budswin" will be searched for.
@@ -107,8 +126,43 @@ i3run --instance budswin --rename sublime_main -command subl
 # and when a window with the instance name: "sublime_main" is found,
 # the instance name of that window will get renamed to: "budswin"
 
+# the example below, will not work properly:  
+i3run --title bud --instance budswin --rename sublime_main -- subl
+
+# it will start like the first example, but if it
+# doesnt find the custom instance budswin, it will
+# try to search for a window with the TITLE sublime_main
+
+# do this instead:  
+i3run --title bud --instance budswin --rename-instance sublime_main -- subl
+
 .fi
 .RE
+
+.PP
+\fB\fC--title\fR|\fB\fC-t\fR TITLE
+.br
+Search for windows with the given TITLE
+
+.PP
+\fB\fC--rename-instance\fR OLD_NAME
+.br
+explicitly rename the instance.
+
+.PP
+\fB\fC--rename-class\fR OLD_NAME
+.br
+explicitly rename the class.
+
+.PP
+\fB\fC--rename-title\fR OLD_NAME
+.br
+explicitly rename the title.
+
+.PP
+\fB\fC--conid\fR|\fB\fC-n\fR CON_ID
+.br
+Search for windows with the given CON_ID
 
 .PP
 \fB\fC--force\fR|\fB\fC-f\fR
@@ -123,37 +177,39 @@ Execute COMMAND (\fB\fC--command\fR), even if the window
 already exist.
 
 .PP
+\fB\fC--winid\fR|\fB\fC-d\fR CON_ID
+
+.PP
 \fB\fC--command\fR|\fB\fC-e\fR COMMAND
 .br
-Command to run if no window is found. Complex
-commands can be written inside quotes:
+the recommended way of launching commands is to
+do: \fB\fCi3run ... -- COMMAND\fR
 
+.SH Example
 .PP
 .RS
 
 .nf
-i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
+# with --command:
+i3run --instance sublime_text --command 'subl && notify-send "sublime is started"'
+
+# with -- (recomended)
+i3run --instance sublime_text -- subl "&&"" notify-send "sublime is started"
 
 .fi
 .RE
 
 .PP
-\fB\fC--class\fR|\fB\fC-c\fR CLASS
-.br
-Search for windows with the given CLASS
+Notice that you will need to \fIescape\fP some shell
+builtins that effect the commandline (\fB\fC&&\fR, \fB\fC;\fR,
+\fB\fC&\fR, \fB\fC|\fR, \fB\fC||\fR ...) in the second example.
 
 .PP
-\fB\fC--title\fR|\fB\fC-t\fR TITLE
+\fB\fC--mouse\fR|\fB\fC-m\fR
 .br
-Search for windows with the given TITLE
-
-.PP
-\fB\fC--conid\fR|\fB\fC-n\fR CON_ID
-.br
-Search for windows with the given CON_ID
-
-.PP
-\fB\fC--winid\fR|\fB\fC-d\fR CON_ID
+The window will be placed on the location of the
+mouse cursor when it is created or shown. (\fIneeds
+\fB\fCxdotool\fR\fP)
 
 .PP
 \fB\fC--help\fR|\fB\fC-h\fR
@@ -164,6 +220,37 @@ Show help and exit.
 \fB\fC--version\fR|\fB\fC-v\fR
 .br
 Show version and exit.
+
+.SH ENVIRONMENT
+.PP
+\fB\fCI3RUN_BOTTOM_GAP\fR
+.br
+Distance from the bottom edge of the screen to
+show floating windows. This only has effect When
+\fB\fC--mouse\fR option is used and the window needs to
+be autoadjusted not to be rendered \fIoutisde\fP the
+workspace with the mouse cursor on.
+
+.PP
+defaults to: 10
+
+.PP
+\fB\fCI3RUN_TOP_GAP\fR
+
+.PP
+defaults to: 10
+
+.PP
+\fB\fCI3RUN_LEFT_GAP\fR
+
+.PP
+defaults to: 10
+
+.PP
+\fB\fCI3RUN_RIGHT_GAP\fR
+
+.PP
+defaults to: 10
 
 .SH DEPENDENCIES
 .PP

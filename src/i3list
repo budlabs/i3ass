@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.3
+i3list - version: 0.33
 updated: 2021-05-28 by budRich
 EOB
 }
@@ -47,10 +47,6 @@ main(){
 
   
 }
-
-
-
-
 
 ___printhelp(){
   
@@ -165,6 +161,7 @@ function descriptions() {
   desc["AWB"]="Active Window titlebar height"
   desc["ATX"]="Active Window tab x postion"
   desc["ATW"]="Active Window tab width"
+  desc["ABW"]="Active Window border width"
 
   desc["TWF"]="Target Window Floating"
   desc["TWC"]="Target Window con_id"
@@ -182,6 +179,7 @@ function descriptions() {
   desc["TWX"]="Target Window x position"
   desc["TWY"]="Target Window y position"
   desc["TWB"]="Target Window titlebar height"
+  desc["TBW"]="Target Window border width"
   
   desc["WAW"]="Active Workspace width"
   desc["WAH"]="Active Workspace height"
@@ -292,27 +290,35 @@ END {
   for (target in at) {
     id=at[target]
     if (id) {
-      print_window(target,id)
-      print ""
+      # if its not a con it is probably a workspace
+      # dont print window info on that id
+      if (ac[id]["type"] == "\"con\"")
+      {
+        print_window(target,id)
+        print ""
 
-      if (i3fyra_workspace_id) {
+        if (i3fyra_workspace_id) {
 
-        parent_id=ac[id]["parent"]
-        awp=ac[parent_id]["i3fyra_mark"]
-        grand_parent_id=ac[parent_id]["parent"]
-        gwp=ac[grand_parent_id]["i3fyra_mark"]
+          parent_id=ac[id]["parent"]
+          awp=ac[parent_id]["i3fyra_mark"]
+          grand_parent_id=ac[parent_id]["parent"]
+          gwp=ac[grand_parent_id]["i3fyra_mark"]
 
-        if (awp) {
-          print_fyra_window(target,id,awp)
-          print ""
-        } else if (gwp) {
-          print_fyra_window(target,id,gwp)
-          print ""
+          if (awp) {
+            print_fyra_window(target,id,awp)
+            print ""
+          } else if (gwp) {
+            print_fyra_window(target,id,gwp)
+            print ""
+          }
+
         }
-
       }
 
-      print_workspace(target,ac[id]["workspace"])
+      if (target == "A" || target_container_id == active_container_id)
+        print_workspace(target,active_workspace_id)
+      else
+        print_workspace(target,ac[id]["workspace"])
       print ""
     }
   }
@@ -383,7 +389,7 @@ END {
   print ""
   printf(strfrm, "RID", root_id, desc["RID"])
 }
-$(NF-1) ~ /"(type|id|window|name|num|x|floating|marks|layout|focused|instance|class|focus)"$/ {
+$(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layout|focused|instance|class|focus)"$/ {
   
   key=gensub(/.*"([^"]+)"$/,"\\1","g",$(NF-1))
     
@@ -391,6 +397,7 @@ $(NF-1) ~ /"(type|id|window|name|num|x|floating|marks|layout|focused|instance|cl
 
     case "layout":
     case "type":
+    case "current_border_width":
       ac[cid][key]=$NF
     break
 
@@ -464,7 +471,10 @@ $(NF-1) ~ /"(type|id|window|name|num|x|floating|marks|layout|focused|instance|cl
     case "focused":
       if ($NF == "true") {
         active_container_id=cid
-        active_workspace_id=cwsid
+        if (ac[cid]["type"] == "\"workspace\"")
+          active_workspace_id=cid
+        else
+          active_workspace_id=cwsid
       }
       ac[cid]["workspace"]=cwsid
       ac[cid]["parent"]=current_parent_id
@@ -609,6 +619,7 @@ function print_window(t, container_id, key) {
   key=t "WB"; printf(strfrm,key, ac[container_id]["deco_h"], desc[key])
   key=t "TX"; printf(strfrm,key, ac[container_id]["deco_x"], desc[key])
   key=t "TW"; printf(strfrm,key, ac[container_id]["deco_w"], desc[key])
+  key=t "BW"; printf(strfrm,key, ac[container_id]["current_border_width"], desc[key])
 }
 
 function print_workspace(t, container_id, key) {

@@ -14,7 +14,7 @@ i3fyra --show|-s CONTAINER [--force|-f]
 i3fyra --float|-a
 i3fyra --hide|-z CONTAINER [--force|-f]
 i3fyra --layout|-l LAYOUT [--force|-f] [--array ARRAY] [--verbose] [--dryrun]
-i3fyra --move|-m DIRECTION|CONTAINER [--conid ID] [--force|-f] [--speed|-p INT]
+i3fyra --move|-m DIRECTION|CONTAINER [--conid|-n ID] [--force|-f] [--speed|-p INT]
 i3fyra --help|-h
 i3fyra --version|-v
 
@@ -164,7 +164,7 @@ move current window 30 pixels to the right, if it
 is floating.
 
 .PP
-\fB\fC--conid\fR|\fB\fC-m\fR ID
+\fB\fC--conid\fR|\fB\fC-n\fR ID
 .br
 To set the target window for operations. If not
 set the active window will be used.
@@ -270,9 +270,26 @@ families will be \fB\fCAB\fR and \fB\fCCD\fR\&. Otherwise main
 split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and
 \fB\fCBD\fR\&. defaults to: horizontal
 
+.PP
+\fB\fCXDG_RUNTIME_DIR\fR
+
+.PP
+defaults to: /tmp
+
+.PP
+\fB\fCI3_KING_PID_FILE\fR
+.br
+When i3king is running this file contains the pid
+of the i3king process. It is used by \fBi3fyra\fP to
+know if i3king is running, if it is, it will try
+to match windows against the rules when \fB\fC--float\fR
+option toggles the floating state to tiled.
+defaults to: $XDG_RUNTIME_DIR/i3king.pid
+
 .SH DEPENDENCIES
 .PP
 \fB\fCbash\fR \fB\fCgawk\fR \fB\fCi3\fR \fB\fCi3list\fR \fB\fCi3var\fR \fB\fCi3viswiz\fR
+\fB\fCi3king\fR
 
 .PP
 budRich https://github.com/budlabs/i3ass

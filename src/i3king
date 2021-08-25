@@ -3,15 +3,17 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3king - version: 0.22
-updated: 2021-08-06 by budRich
+i3king - version: 0.23
+updated: 2021-08-25 by budRich
 EOB
 }
 
 
 # environment variables
 : "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${XDG_RUNTIME_DIR:=/tmp}"
 : "${I3_KING_RULE_FILE:=$XDG_CONFIG_HOME/i3king/rules}"
+: "${I3_KING_PID_FILE:=$XDG_RUNTIME_DIR/i3king.pid}"
 
 
 main(){
@@ -20,6 +22,7 @@ main(){
 
   declare -ag global_rules
   declare -ag default_rules
+  declare -ag close_rules
   declare -ag rules
   declare -ag commands
 
@@ -48,10 +51,17 @@ main(){
 
   parse_rules "$_file_rules"
 
-  [[ ${__o[apply]} ]] && {
+  if [[ ${__o[apply]} ]]; then
     apply_rules
     exit
-  }
+  elif [[ ${__o[conid]} ]]; then
+    mapfile -t wininfo <<< "$(i3get -n "${__o[conid]}" -r ncityd)"
+    match_window "${wininfo[@]}"
+    exit
+  fi
+
+  trap 'rm -rf "$I3_KING_PID_FILE"' HUP INT EXIT
+  echo "$$" > "$I3_KING_PID_FILE"
 
   re=$(make_regex)
   
@@ -62,7 +72,7 @@ main(){
 
         i=1
         ma=(
-          [change]="${BASH_REMATCH[++i]}"          # "num:"             - INT
+          [change]="${BASH_REMATCH[++i]}"          # "change:"          - STRING
           [cid]="${BASH_REMATCH[++i]}"             # "id:"              - INT
           [urgent]="${BASH_REMATCH[++i]}"          # "urgent:"          - false|true
           [O]="${BASH_REMATCH[++i]}"               # ! optional group
@@ -93,7 +103,8 @@ main(){
                      "${ma[ins]:-.*}"   \
                      "${ma[title]:-.*}" \
                      "${ma[typ]:-.*}"   \
-                     "${ma[wid]}"
+                     "${ma[wid]}"       \
+                     "${ma[change]}"
       fi
 
     done < <(
@@ -101,18 +112,18 @@ main(){
                 echo "${__o[json]}"
               else
                 i3-msg -mt subscribe '["window"]'
-                [[ ${__o[no-restart]} ]] || {
-                  while :; do
-                    sleep .1
-                    [[ -S $(i3 --get-socketpath) ]] && break
-                  done
-
-                  [[ ${__o[no-apply]} ]] || apply_rules
-                }
               fi
             )
 
-    [[ ${__o[json]} || ${__o[no-restart]} ]] && break
+    [[ ${__o[no-restart]} || ! -f "$I3_KING_PID_FILE" || ${__o[json]} ]] \
+      && break
+
+    while :; do
+      sleep .1
+      [[ -S $(i3 --get-socketpath) ]] && break
+    done
+
+    [[ ${__o[no-apply]} ]] || apply_rules
   done
 }
 
@@ -126,6 +137,7 @@ SYNOPSIS
 --------
 i3king [--config|-c FILE] [--no-apply] [--no-restart]
 i3king --apply|-a [--config|-c FILE]
+i3king --conid|-n CONID [--print-commands] [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
 i3king --help|-h
 i3king --version|-v
@@ -153,6 +165,16 @@ automatically restart if this option is not set.
 --apply|-a  
 Match all existing windows against the rules and
 exit.
+
+
+--conid|-n CONID  
+will match window with CONID against the rules
+and exit.
+
+
+--print-commands  
+Print commands to STDOUT instead of executing
+them.
 
 
 --json JSON  
@@ -185,16 +207,16 @@ EOB
 
 
 apply_rules() {
-	declare -a ids
-	declare -a wininfo
-	mapfile -t ids <<< "$(all_window_ids)"
+  declare -a ids
+  declare -a wininfo
+  mapfile -t ids <<< "$(all_window_ids)"
 
-	# cid=$1 class=$2 instance=$3 title=$4 type=$5
-	for id in "${ids[@]}"; do
-		mapfile -t wininfo <<< "$(i3get -d "$id" -r ncityd)"
-		sleep .1
-		match_window "${wininfo[@]}"
-	done
+  # cid=$1 class=$2 instance=$3 title=$4 type=$5
+  for id in "${ids[@]}"; do
+    mapfile -t wininfo <<< "$(i3get -d "$id" -r ncityd)"
+    sleep .1
+    match_window "${wininfo[@]}" apply
+  done
 }
 
 all_window_ids() {
@@ -264,6 +286,9 @@ GLOBAL \
   instance=firefox
     $MSG "this is NOT a URxvt or firefox window"
 
+ON_CLOSE instance=firefox
+  $MSG "the firefox window is now closed"
+
 # use semicolon to execute more then one command,
 # notice that we need exec after the semicolon ($X/$MSG)
 class=URxvt
@@ -292,7 +317,7 @@ local re
 
 re+=$(cat << EOB
 (\{)
-"change":"(new)",
+"change":"(new|close)",
 "container":[{]
 "id":([0-9]+),
 "type":"[^"]+",
@@ -336,7 +361,7 @@ echo "${re//$'\n'/}"
 
 match_window() {
 
-  local cid=$1 class=$2 instance=$3 title=$4 wid=$6
+  local cid=$1 class=$2 instance=$3 title=$4 wid=$6 change=$7
   # local type=$5 # unused
   local last_cmd cmd rule
   local identifier="class:$2:instance:$3:title:$4:window_type:$5:"
@@ -346,64 +371,76 @@ match_window() {
   [[ $cid =~ ^[0-9]{5,}$ ]] \
     || ERX "match_window(): $cid is not a valid containerID"
 
-  # test default rules first
-  for rule in "${!default_rules[@]}"; do
-
-    cmd=${commands[$rule]}
-
-    [[ $identifier =~ ${default_rules[$rule]} ]] && {
-
-      [[ $cmd = "$last_cmd" ]] && {
-        unset 'default_execute[-1]'
-        unset 'matches[-1]'
-      }
+  if [[ $change = close ]]; then
+    for rule in "${!close_rules[@]}"; do
+      [[ $identifier =~ ${close_rules[$rule]} ]] || continue
+      cmd=${commands[$rule]}
+      [[ $cmd = "$last_cmd" ]] && continue
       last_cmd=$cmd
-      continue
-    }
 
-    [[ $cmd = "$last_cmd" ]] && continue
-    last_cmd=$cmd
+      execute+=("$cmd")
+      matches+=("ON_CLOSE: ${close_rules[$rule]}"$'\n'$'\t'"$cmd")
+    done
+  else
+    # test default rules first
+    for rule in "${!default_rules[@]}"; do
 
-    default_execute+=("$cmd")
-    matches+=("DEFAULT: -"$'\n'$'\t'"$cmd")
+      cmd=${commands[$rule]}
 
-  done
+      [[ $identifier =~ ${default_rules[$rule]} ]] && {
 
-  unset last_cmd
-
-  # then global rules
-  for rule in "${!global_rules[@]}"; do
-
-    cmd=${commands[$rule]}
-
-    [[ $identifier =~ ${global_rules[$rule]} ]] && {
-
-      [[ $cmd = "${execute[-1]}" ]] && {
-        unset 'execute[-1]'
-        unset 'matches[-1]'
+        [[ $cmd = "$last_cmd" ]] && {
+          unset 'default_execute[-1]'
+          unset 'matches[-1]'
+        }
+        last_cmd=$cmd
+        continue
       }
+
+      [[ $cmd = "$last_cmd" ]] && continue
       last_cmd=$cmd
-      continue
-    }
 
-    [[ $cmd = "$last_cmd" ]] && continue
-    last_cmd=$cmd
+      default_execute+=("$cmd")
+      matches+=("DEFAULT: -"$'\n'$'\t'"$cmd")
 
-    execute+=("$cmd")
-    matches+=("GLOBAL: -"$'\n'$'\t'"$cmd")
-  done
+    done
 
-  unset last_cmd
+    unset last_cmd
 
-  for rule in "${!rules[@]}"; do
-    [[ $identifier =~ ${rules[$rule]} ]] || continue
-    cmd=${commands[$rule]}
-    [[ $cmd = "$last_cmd" ]] && continue
-    last_cmd=$cmd
+    # then global rules
+    for rule in "${!global_rules[@]}"; do
 
-    execute+=("$cmd")
-    matches+=("NORMAL: ${rules[$rule]}"$'\n'$'\t'"$cmd")
-  done
+      cmd=${commands[$rule]}
+
+      [[ $identifier =~ ${global_rules[$rule]} ]] && {
+
+        [[ $cmd = "${execute[-1]}" ]] && {
+          unset 'execute[-1]'
+          unset 'matches[-1]'
+        }
+        last_cmd=$cmd
+        continue
+      }
+
+      [[ $cmd = "$last_cmd" ]] && continue
+      last_cmd=$cmd
+
+      execute+=("$cmd")
+      matches+=("GLOBAL: -"$'\n'$'\t'"$cmd")
+    done
+
+    unset last_cmd
+
+    for rule in "${!rules[@]}"; do
+      [[ $identifier =~ ${rules[$rule]} ]] || continue
+      cmd=${commands[$rule]}
+      [[ $cmd = "$last_cmd" ]] && continue
+      last_cmd=$cmd
+
+      execute+=("$cmd")
+      matches+=("NORMAL: ${rules[$rule]}"$'\n'$'\t'"$cmd")
+    done
+  fi
 
   [[ -a $_file_log && ${#matches[@]} -gt 0 ]] && {
     echo $'\n'"WINDOW: $identifier"$'\n'
@@ -426,10 +463,23 @@ match_window() {
       cmd=${cmd//\$CLASS/$class}
       cmd=${cmd//\$CONID/$cid}
       cmd=${cmd//\$WINID/$wid}
+      cmd=${cmd//\$TITLE/$title}
 
       [[ -a $_file_log ]] && echo $'\t'"$cmd" >> "$_file_log"
 
-      ((__o[dryrun])) || i3-msg "[con_id=$cid]" "$cmd"
+      if [[ $change = close ]]; then
+        # without prefixing command with ; 
+        # the command is not executed everytime.
+        # not sure why, but it works like this
+        prefix=";"
+      else
+        # cant prefix with conid when we close
+        # since the window doesn't exist
+        prefix="[con_id=$cid]"
+      fi
+
+      ((__o[print-commands] || __o[dryrun])) || i3-msg "${prefix:-} $cmd"
+      ((__o[print-commands])) && echo "${prefix:-} $cmd"
       
     done
   }
@@ -438,11 +488,11 @@ match_window() {
 parse_rules() {
 
   declare -A vars
-  local re_set re_group re_rule
+  local re_set re_group re_rule rule_type
 
   re_set='^\s*set\s+[$](\S+)\s+(.+)$'
   re_group='(\s*([^=[:space:]]+)=([^=]+\S)\s*)$'
-  re_rule='^(GLOBAL|DEFAULT)?((\s+)?(.+)\s*)?$'
+  re_rule='^(GLOBAL|DEFAULT|ON_CLOSE)?((\s+)?(.+)\s*)?$'
 
   declare -i counter_criteria counter_commands
   
@@ -477,8 +527,11 @@ parse_rules() {
       done
 
     elif [[ $line =~ $re_rule ]]; then
-      # re_rules=^(GLOBAL|DEFAULT)?((\s+)?(.+)\s*)?$
-      is_global_rule=${BASH_REMATCH[1]}
+      # re_rules=^(GLOBAL|DEFAULT|ON_CLOSE)?((\s+)?(.+)\s*)?$
+      rule_type=${BASH_REMATCH[1]:-NORMAL}
+
+      [[ $rule_type = ON_CLOSE && ! ${BASH_REMATCH[4]} ]] \
+        && continue # criteria mandatory
 
       # group by comma
       mapfile -t ignore_combined <<< "${BASH_REMATCH[4]//,/$'\n'}"
@@ -519,13 +572,13 @@ parse_rules() {
 
         [[ -a $_file_log ]] && echo "$rule" >> "$_file_log"
 
-        if [[ $is_global_rule = DEFAULT ]]; then
-          default_rules[counter_criteria++]=$rule
-        elif [[ $is_global_rule = GLOBAL ]]; then
-          global_rules[counter_criteria++]=$rule
-        else
-          rules[counter_criteria++]=$rule
-        fi
+        case "$rule_type" in
+          DEFAULT  ) default_rules[counter_criteria++]=$rule ;;
+          GLOBAL   ) global_rules[counter_criteria++]=$rule  ;;
+          ON_CLOSE ) close_rules[counter_criteria++]=$rule   ;;
+          *        ) rules[counter_criteria++]=$rule         ;;
+        esac
+
       done
     fi
 
@@ -537,8 +590,8 @@ parse_rules() {
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3king" \
-    --options "c:ahv" \
-    --longoptions "config:,no-apply,no-restart,apply,json:,verbose,dryrun,log:,help,version," \
+    --options "c:an:hv" \
+    --longoptions "config:,no-apply,no-restart,apply,conid:,print-commands,json:,verbose,dryrun,log:,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -551,6 +604,8 @@ while true; do
     --no-apply   ) __o[no-apply]=1 ;; 
     --no-restart ) __o[no-restart]=1 ;; 
     --apply      | -a ) __o[apply]=1 ;; 
+    --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
+    --print-commands ) __o[print-commands]=1 ;; 
     --json       ) __o[json]="${2:-}" ; shift ;;
     --verbose    ) __o[verbose]=1 ;; 
     --dryrun     ) __o[dryrun]=1 ;; 

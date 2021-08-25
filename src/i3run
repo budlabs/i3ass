@@ -3,21 +3,27 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.1
+i3run - version: 0.15
 updated: 2021-05-28 by budRich
 EOB
 }
 
 
+# environment variables
+: "${I3RUN_BOTTOM_GAP:=10}"
+: "${I3RUN_TOP_GAP:=10}"
+: "${I3RUN_LEFT_GAP:=10}"
+: "${I3RUN_RIGHT_GAP:=10}"
+
 
 main(){
 
-  declare -a acri   # options passed to i3list
+  declare -a acri   # options passed to i3list/i3get
   declare -A i3list # globals array
 
   for k in instance class title conid winid; do
     [[ -n ${__o[$k]} ]] \
-      && acri=("--$k" "${__o[$k]}") && break
+      && acri+=("--$k" "${__o[$k]}")
   done ; unset k
 
   [[ -z ${acri[*]} ]] \
@@ -26,11 +32,13 @@ main(){
   _array=$(i3list "${acri[@]}")
   eval "$_array"
 
+  _command=${__o[command]:-$*}
+
   # if window doesn't exist, launch the command.
   if [[ -z ${i3list[TWC]} ]]; then
-    launchcommand
+    launchcommand "$@"
   else
-    focuswindow
+    focuswindow "$@"
   fi
 }
 
@@ -42,11 +50,11 @@ i3run - Run, Raise or hide windows in i3wm
 
 SYNOPSIS
 --------
-i3run --instance|-i INSTANCE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --class|-c CLASS [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --title|-t  TITLE [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --conid|-n CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
-i3run --winid|-d CON_ID [--summon|-s] [--nohide|-g] [--mouse|-m] [--rename|-x OLD_NAME] [--force|-f] [--FORCE|-F] [--command|-e COMMAND]
+i3run --instance|-i INSTANCE  [--summon|-s] [--nohide|-g]
+i3run --class|-c    CLASS     [--rename|-x OLD_NAME] 
+i3run --title|-t    TITLE     [--rename-instance OLD_NAME] [--rename-class OLD_NAME] [--rename-title OLD_NAME]
+i3run --conid|-n    CON_ID    [--force|-f] [--FORCE|-F] 
+i3run --winid|-d    CON_ID    [--command|-e COMMAND] [--mouse|-m]
 i3run --help|-h
 i3run --version|-v
 
@@ -66,29 +74,63 @@ current workspace
 Don't hide window/container if it's active.
 
 
---mouse|-m  
-The window will be placed on the location of the
-mouse cursor when it is created or shown. (needs
-xdotool)  
+--class|-c CLASS  
+Search for windows with the given CLASS
 
 
 --rename|-x OLD_NAME  
-If the search criteria is -i (instance), the
-window with instance: OLDNAME will get a n new
-instance name matching the criteria when it is
-created (needs xdotool).  
+If the search criteria is --instance, the window
+with instance: OLDNAME will get a new instance
+name matching the criteria when it is created
+(needs xdotool).
+
+NB  
+This option will not work reliably when using
+multiple search criteria. When you want to do that
+instead use:  
+--rename-instance , --rename-class ,
+--rename-title .
 
 
-   i3run --instance budswin --rename sublime_main -command subl
+   i3run --instance budswin --rename sublime_main -- subl
    
    # when the command above is executed:
    # a window with the instance name: "budswin" will be searched for.
    # if no window is found the command: "subl" will get executed,
    # and when a window with the instance name: "sublime_main" is found,
    # the instance name of that window will get renamed to: "budswin"
+   
+   # the example below, will not work properly:  
+   i3run --title bud --instance budswin --rename sublime_main -- subl
+   
+   # it will start like the first example, but if it
+   # doesnt find the custom instance budswin, it will
+   # try to search for a window with the TITLE sublime_main
+   
+   # do this instead:  
+   i3run --title bud --instance budswin --rename-instance sublime_main -- subl
 
 
 
+
+--title|-t TITLE  
+Search for windows with the given TITLE
+
+
+--rename-instance OLD_NAME  
+explicitly rename the instance.
+
+
+--rename-class OLD_NAME  
+explicitly rename the class.
+
+
+--rename-title OLD_NAME  
+explicitly rename the title.
+
+
+--conid|-n CON_ID  
+Search for windows with the given CON_ID
 
 
 --force|-f  
@@ -101,28 +143,35 @@ Execute COMMAND (--command), even if the window
 already exist.
 
 
---command|-e COMMAND  
-Command to run if no window is found. Complex
-commands can be written inside quotes:  
-
-   i3run -i sublime_text -e 'subl && notify-send "sublime is started"'
-
-
-
-
---class|-c CLASS  
-Search for windows with the given CLASS
-
-
---title|-t TITLE  
-Search for windows with the given TITLE
-
-
---conid|-n CON_ID  
-Search for windows with the given CON_ID
-
-
 --winid|-d CON_ID  
+
+--command|-e COMMAND  
+the recommended way of launching commands is to
+do: i3run ... -- COMMAND
+
+Example
+-------
+
+
+
+   # with --command:
+   i3run --instance sublime_text --command 'subl && notify-send "sublime is started"'
+   
+   # with -- (recomended)
+   i3run --instance sublime_text -- subl "&&"" notify-send "sublime is started"
+
+
+
+Notice that you will need to escape some shell
+builtins that effect the commandline (&&, ;, &, |,
+|| ...) in the second example.
+
+
+--mouse|-m  
+The window will be placed on the location of the
+mouse cursor when it is created or shown. (needs
+xdotool)  
+
 
 --help|-h  
 Show help and exit.
@@ -148,7 +197,8 @@ ERH(){
 
 focuswindow(){
 
-  declare -i forcing hvar
+  declare -i forcing
+  local hvar
 
   forcing=$((__o[FORCE] ? 2 : __o[force] ? 1 : 0))
   
@@ -167,13 +217,15 @@ focuswindow(){
         i3fyra --force --hide "${i3list[TWP]}" --array "$_array"
       fi
 
-     ((forcing == 2)) && [[ -n ${__o[command]} ]] \
-       && eval "${__o[command]}" > /dev/null 2>&1 & 
+     ((forcing == 2)) && [[ $_command ]] && {
+       eval "$_command" > /dev/null 2>&1 & 
+     }
 
     else
 
-     ((forcing > 0)) && [[ -n ${__o[command]} ]] \
-       && eval "${__o[command]}" > /dev/null 2>&1 &  
+     ((forcing > 0)) && [[ $_command ]] && {
+       eval "$_command" > /dev/null 2>&1 & 
+     } 
     fi
 
   else # focus target window.
@@ -189,7 +241,7 @@ focuswindow(){
       ((i3list[TWF] == 1)) && fs=enable || fs=disable
     fi
     
-    if [[ -z ${i3list[TWP]} && ${i3list[WSA]} != ${i3list[WST]} ]]; then
+    if [[ -z ${i3list[TWP]} && ${i3list[WSA]} != "${i3list[WST]}" ]]; then
       # target is not handled by i3fyra and not active
       # TWP - target window parent container name
       # target is not on active workspace
@@ -227,8 +279,9 @@ focuswindow(){
 
     i3-msg -q "[con_id=${i3list[TWC]}]" focus
 
-   ((forcing > 0)) && [[ -n ${__o[command]} ]] \
-     && eval "${__o[command]}" > /dev/null 2>&1 & 
+   ((forcing > 0)) && [[ $_command ]] && {
+     eval "$_command" > /dev/null 2>&1 & 
+   }
   fi
 
   echo "${i3list[TWC]}"
@@ -236,38 +289,67 @@ focuswindow(){
 
 launchcommand(){
 
-  local windowid
+  local winid conid k l
+  declare -a xdtopt got
 
-  [[ -z ${__o[command]} ]] && ERX i3run no command, no action
-  
-  eval "${__o[command]}" > /dev/null 2>&1 &
+  if [[ $_command ]]; then
+    eval "$_command" > /dev/null 2>&1 &
+  else
+    ERX i3run no command, no action
+  fi
 
-  declare -a xdtopt # options passed to xdotool
-
-  [[ -n ${__o[rename]} ]] && {
+  if   [[ -n ${__o[rename]} ]]; then
 
     [[ ${acri[0]} = '--class'    ]] && xdtopt=("--class")
     [[ ${acri[0]} = '--instance' ]] && xdtopt=("--classname")
     [[ ${acri[0]} = '--title   ' ]] && xdtopt=("--name")
 
     xdtopt+=("${acri[1]}")
+    acri[1]=${__o[rename]}
 
-    windowid="$(i3get "${acri[0]}" "${__o[rename]}" -r d -y)"
+  elif [[ -n "${__o[rename-title]}${__o[rename-class]}${__o[rename-instance]}" ]]; then
+
+    for k in title class instance ; do
+      [[ ${__o[rename-$k]} ]] && {
+        case "$k" in
+          title    ) xdtopt+=(--name "${__o[$k]}")      ;;
+          class    ) xdtopt+=(--class "${__o[$k]}")     ;;
+          instance ) xdtopt+=(--classname "${__o[$k]}") ;;
+        esac
+
+        # when renaming, replace the criteria arg (--? + 1)
+        # with the argument to the replace (OLD_NAME)
+        for l in "${!acri[@]}"; do
+          [[ ${acri[$l]} = --$k ]] && {
+            acri[l+1]=${__o[rename-$k]} 
+            break
+          }
+        done
+      }
+
+    done
+
+  fi
+
+  [[ -n "${xdtopt[*]}" ]] && {
+
+    mapfile -t got <<< "$(i3get "${acri[@]}" -yr dn)"
+    read -rs winid conid <<< "${got[@]}"
 
     xdotool \
-      set_window "${xdtopt[@]}" "$windowid"       \
-      set_window --overrideredirect 1 "$windowid" \
-      set_window --overrideredirect 0 "$windowid" \
-      windowunmap "$windowid"                     \
-      windowmap   "$windowid"                           
+      set_window "${xdtopt[@]}" "$winid"       \
+      set_window --overrideredirect 1 "$winid" \
+      set_window --overrideredirect 0 "$winid" \
+      windowunmap "$winid"                     \
+      windowmap   "$winid"                           
   }
   
-  i3list[TWC]=$(i3get -y "${acri[@]}")
+  : "${conid:=$(i3get -y "${acri[@]}")}"
   
   ((__o[mouse])) && sendtomouse
 
-  i3-msg -q "[id=${i3list[TWC]}]" focus
-  echo "${i3list[TWC]}"
+  i3-msg -q "[con_id=$conid]" focus
+  echo "$conid"
 }
 
 sendtomouse(){
@@ -310,8 +392,8 @@ sendtomouse(){
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3run" \
-    --options "i:sgmx:fFe:c:t:n:d:hv" \
-    --longoptions "instance:,summon,nohide,mouse,rename:,force,FORCE,command:,class:,title:,conid:,winid:,help,version," \
+    --options "i:sgc:x:t:n:fFd:e:mhv" \
+    --longoptions "instance:,summon,nohide,class:,rename:,title:,rename-instance:,rename-class:,rename-title:,conid:,force,FORCE,winid:,command:,mouse,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -323,15 +405,18 @@ while true; do
     --instance   | -i ) __o[instance]="${2:-}" ; shift ;;
     --summon     | -s ) __o[summon]=1 ;; 
     --nohide     | -g ) __o[nohide]=1 ;; 
-    --mouse      | -m ) __o[mouse]=1 ;; 
+    --class      | -c ) __o[class]="${2:-}" ; shift ;;
     --rename     | -x ) __o[rename]="${2:-}" ; shift ;;
+    --title      | -t ) __o[title]="${2:-}" ; shift ;;
+    --rename-instance ) __o[rename-instance]="${2:-}" ; shift ;;
+    --rename-class ) __o[rename-class]="${2:-}" ; shift ;;
+    --rename-title ) __o[rename-title]="${2:-}" ; shift ;;
+    --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
     --force      | -f ) __o[force]=1 ;; 
     --FORCE      | -F ) __o[FORCE]=1 ;; 
-    --command    | -e ) __o[command]="${2:-}" ; shift ;;
-    --class      | -c ) __o[class]="${2:-}" ; shift ;;
-    --title      | -t ) __o[title]="${2:-}" ; shift ;;
-    --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
     --winid      | -d ) __o[winid]="${2:-}" ; shift ;;
+    --command    | -e ) __o[command]="${2:-}" ; shift ;;
+    --mouse      | -m ) __o[mouse]=1 ;; 
     --help       | -h ) ___printhelp && exit ;;
     --version    | -v ) ___printversion && exit ;;
     -- ) shift ; break ;;

@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3menu - version: 0.1
-updated: 2021-05-28 by budRich
+i3menu - version: 0.11
+updated: 2021-08-15 by budRich
 EOB
 }
 
@@ -15,9 +15,6 @@ EOB
 
 
 main(){
-
-  
-  # __o[verbose]=1
 
   ((__o[verbose])) && {
     declare -gi _stamp
@@ -43,11 +40,19 @@ main(){
     # if we have stuff on stdin, put
     # that in a tempfile that way we can do stuff ( wc in setincludes() )
     # without worrying that we close and lose whats in stdin
-    [[ ! -t 0 ]] && {
-      _tmp_list_file=$(mktemp)
-      trap 'rm "$_tmp_list_file"' EXIT INT
+    _tmp_list_file=$(mktemp)
+    trap 'rm -f "$_tmp_list_file"' EXIT INT
+
+    if [[ -d ${__o[list-directory]} ]]; then
+      l=("${__o[list-directory]%/}/"*)
+      printf "%s\n" "${l[@]##*/}" > "$_tmp_list_file"
+    elif [[ ! -t 0 ]]; then
       cp /dev/stdin "$_tmp_list_file"
-    }
+      # if STDIN was empty, delete tmp file
+      [[ $(< "$_tmp_list_file") ]] || rm "$_tmp_list_file"
+    else
+      rm "$_tmp_list_file"
+    fi
   }
 
   # default includes
@@ -62,7 +67,10 @@ main(){
   setgeometry "${__o[layout]:-default}"
   setincludes
 
-  if [[ -f $_tmp_list_file && ${__o[top]} ]];then
+  [[ -d ${__o[list-directory]} ]] \
+    && _menu_command+=' | echo "${__o[list-directory]%/}/$(cat)"'
+
+  if [[ -f $_tmp_list_file && ${__o[top]} ]]; then
     awk -f <(topsort) "$_tmp_list_file"
   elif [[ -f $_tmp_list_file ]]; then
     cat "$_tmp_list_file"
@@ -81,10 +89,7 @@ i3menu - Adds more features to rofi when used in i3wm
 
 SYNOPSIS
 --------
-i3menu [--theme THEME] [--layout|-a LAYOUT] [--include|-i INCLUDESTRING] [--top|-t TOP] [--xpos|-x INT] [--xoffset INT] [--ypos|-y INT] [--yoffset INT] [--width|-w INT] [--options|-o OPTIONS] [--prompt|-p PROMPT]  [--filter|-f FILTER] [--show MODE] [--modi MODI] [--target TARGET] [--orientation ORIENTATION] [--anchor INT] [--height INT] [--fallback FALLBACK] [--no-auto-position] 
-i3menu --help|-h
-i3menu --version|-v
-i3menu [--verbose] [--dryrun]
+i3menu [OPTIONS] <stdin>
 
 OPTIONS
 -------
@@ -344,6 +349,11 @@ Show version and exit
 --verbose  
 
 --dryrun  
+
+--list-directory DIRECTORY  
+This option will list filenames in DIRECORY. The
+selected item will be returned with the full path.
+
 EOB
 }
 
@@ -707,7 +717,7 @@ setgeometry(){
     window    )
         __xpos=$((i3list[TWX]+i3list[WAX]))
         __ypos=$((i3list[TWY]+i3list[WAY]))
-        __o[width]=${i3list[TWW]}
+        : "${__o[width]:=${i3list[TWW]}}"
         __height=${i3list[TWH]}
         __orientation=vertical
         __o[orientation]=""
@@ -868,8 +878,7 @@ setincludes(){
   # TODO: why this test for negative zero???
   if [[ $__layout = mouse ]] || { [[ $__ypos -lt 0 || $__ypos = -0 ]] && ((__o[anchor]<7)) ;}; then
 
-    ERM "$__ypos ${__o[width]}"
-    adjustposition "$__ypos" &
+    ((__o[no-auto-position])) || adjustposition "$__ypos" &
     
     # move window offscreen if:
     { 
@@ -965,7 +974,7 @@ declare -A __o
 options="$(
   getopt --name "[ERROR]:i3menu" \
     --options "a:i:t:x:y:w:o:p:f:hv" \
-    --longoptions "theme:,layout:,include:,top:,xpos:,xoffset:,ypos:,yoffset:,width:,options:,prompt:,filter:,show:,modi:,target:,orientation:,anchor:,height:,fallback:,no-auto-position,help,version,verbose,dryrun," \
+    --longoptions "theme:,layout:,include:,top:,xpos:,xoffset:,ypos:,yoffset:,width:,options:,prompt:,filter:,show:,modi:,target:,orientation:,anchor:,height:,fallback:,no-auto-position,help,version,verbose,dryrun,list-directory:," \
     -- "$@" || exit 98
 )"
 
@@ -998,6 +1007,7 @@ while true; do
     --version    | -v ) ___printversion && exit ;;
     --verbose    ) __o[verbose]=1 ;; 
     --dryrun     ) __o[dryrun]=1 ;; 
+    --list-directory ) __o[list-directory]="${2:-}" ; shift ;;
     -- ) shift ; break ;;
     *  ) break ;;
   esac
