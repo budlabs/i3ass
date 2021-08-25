@@ -179,7 +179,7 @@ function descriptions() {
   desc["TWX"]="Target Window x position"
   desc["TWY"]="Target Window y position"
   desc["TWB"]="Target Window titlebar height"
-  desc["TBW"]="Active Window border width"
+  desc["TBW"]="Target Window border width"
   
   desc["WAW"]="Active Workspace width"
   desc["WAH"]="Active Workspace height"
