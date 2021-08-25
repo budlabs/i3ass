@@ -161,6 +161,7 @@ function descriptions() {
   desc["AWB"]="Active Window titlebar height"
   desc["ATX"]="Active Window tab x postion"
   desc["ATW"]="Active Window tab width"
+  desc["ABW"]="Active Window border width"
 
   desc["TWF"]="Target Window Floating"
   desc["TWC"]="Target Window con_id"
@@ -178,6 +179,7 @@ function descriptions() {
   desc["TWX"]="Target Window x position"
   desc["TWY"]="Target Window y position"
   desc["TWB"]="Target Window titlebar height"
+  desc["TBW"]="Active Window border width"
   
   desc["WAW"]="Active Workspace width"
   desc["WAH"]="Active Workspace height"
@@ -387,7 +389,7 @@ END {
   print ""
   printf(strfrm, "RID", root_id, desc["RID"])
 }
-$(NF-1) ~ /"(type|id|window|name|num|x|floating|marks|layout|focused|instance|class|focus)"$/ {
+$(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layout|focused|instance|class|focus)"$/ {
   
   key=gensub(/.*"([^"]+)"$/,"\\1","g",$(NF-1))
     
@@ -395,6 +397,7 @@ $(NF-1) ~ /"(type|id|window|name|num|x|floating|marks|layout|focused|instance|cl
 
     case "layout":
     case "type":
+    case "current_border_width":
       ac[cid][key]=$NF
     break
 
@@ -616,6 +619,7 @@ function print_window(t, container_id, key) {
   key=t "WB"; printf(strfrm,key, ac[container_id]["deco_h"], desc[key])
   key=t "TX"; printf(strfrm,key, ac[container_id]["deco_x"], desc[key])
   key=t "TW"; printf(strfrm,key, ac[container_id]["deco_w"], desc[key])
+  key=t "BW"; printf(strfrm,key, ac[container_id]["current_border_width"], desc[key])
 }
 
 function print_workspace(t, container_id, key) {

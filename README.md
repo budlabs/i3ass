@@ -85,17 +85,78 @@ about the command.
 
 ## updates
 
+### [i3Kornhe]
+
+Reworked the script to now use a FIFO, which made moving
+and resizing a lot more responsive with no lag and much less
+stuttering.
+
+### [i3viswiz]
+
+
+Added debug vars for active window geometry
+(`ax,ay,aw,ah`). And active workspace geometry
+(`sx,sy,sw,sh`)
+
 ### [i3king]
 
-Changed the resart behaviour. So i3king will now try to
-restart whenever the IPC socket is broken, which happens on
-f.i. i3 crashes.  
 
-New commandline option: `--no-apply`, if set i3king will
-not automatically try to apply rules when it restarts.
+new options: `--conid`, `--print-commands`.  
+`--conid CONID` will match a single window against the
+rules and exit. `--print-commands` will print the commands
+instead of executing them.
 
-This update was caught on tape, and can be seen at youtube:  
-[i3wm RED BOX OF DEATH ... DEFEATED!!!! TKO](https://www.youtube.com/watch?v=GQSZq6tC2AQ)
+**ON_CLOSE** directive added. Rules prefixed like this will
+get triggered when windows are closed.
+
+### [i3run]
+
+
+Commands can now be entered after `--`. The old way of
+specifying the command: (`--command|-e`)
+
+``` shell
+# old way
+i3run --instance sublime_text --command 'subl && notify-send "sublime is started"'
+
+# new way
+i3run --instance sublime_text -- subl "&&" notify-send "sublime is started"
+```
+
+
+---
+
+
+Fixed issue where windows had the wrong floating state when
+being sent across workspaces (#99).
+
+### [i3list]
+
+
+Fixed issue where wrong workspace ID was reported on empty
+workspaces. Also if workspace is empty now container/window
+info will NOT get printed.
+
+### [i3fyra]
+
+
+When using `--float` to toggle a floating window to be
+tiled, we check if i3king is running and if the window
+matches any of the rules. If a rule matches the
+corresponding command is executed instead of *just* making
+the window tiled.
+
+### [i3menu]
+
+
+Added `--list-directory DIRECTORY` option. It is a shortcut
+to make a menu listing the filenames in DIRECTORY and
+printing the full path to stdout.
+
+### [i3get]
+
+
+fixed issue where `--synk` option caused the script to halt until a window event occured.
 
 ## known issues
 
