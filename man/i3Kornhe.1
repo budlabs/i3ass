@@ -43,24 +43,21 @@ Below is how I have set up this mode:
 .RS
 
 .nf
-
-...
-
 # these keybindings are outside the mode definition
 
 # group A, enter size mode with direction:
-bindsym Mod4+Control+Left    exec --no-startup-id i3Kornhe size left
-bindsym Mod4+Control+Down    exec --no-startup-id i3Kornhe size down
-bindsym Mod4+Control+Up      exec --no-startup-id i3Kornhe size up
-bindsym Mod4+Control+Right   exec --no-startup-id i3Kornhe size right
+bindsym $mod+Control+Left    exec --no-startup-id i3Kornhe --speed 30 size left
+bindsym $mod+Control+Down    exec --no-startup-id i3Kornhe --speed 30 size down
+bindsym $mod+Control+Up      exec --no-startup-id i3Kornhe --speed 30 size up
+bindsym $mod+Control+Right   exec --no-startup-id i3Kornhe --speed 30 size right
 
 # group B, enter move mode with direction:
 # by using speed 0 (--speed 0), this will only enter the mode without
 # moving the window.
-bindsym Mod4+Left      exec --no-startup-id i3Kornhe move --speed 0 left
-bindsym Mod4+Down      exec --no-startup-id i3Kornhe move --speed 0 down
-bindsym Mod4+Up        exec --no-startup-id i3Kornhe move --speed 0 up
-bindsym Mod4+Right     exec --no-startup-id i3Kornhe move --speed 0 right
+bindsym $mod+Shift+Left      exec --no-startup-id i3Kornhe move --speed 0 left
+bindsym $mod+Shift+Down      exec --no-startup-id i3Kornhe move --speed 0 down
+bindsym $mod+Shift+Up        exec --no-startup-id i3Kornhe move --speed 0 up
+bindsym $mod+Shift+Right     exec --no-startup-id i3Kornhe move --speed 0 right
 
 ...
 
@@ -78,10 +75,10 @@ mode "sizemode" {
   bindsym Shift+Right   exec --no-startup-id i3Kornhe --speed 5 right
 
   # group 3 change size direction:
-  bindsym Mod4+Left     exec --no-startup-id i3Kornhe size left
-  bindsym Mod4+Down     exec --no-startup-id i3Kornhe size down
-  bindsym Mod4+Up       exec --no-startup-id i3Kornhe size up
-  bindsym Mod4+Right    exec --no-startup-id i3Kornhe size right
+  bindsym $mod+Left     exec --no-startup-id i3Kornhe size left
+  bindsym $mod+Down     exec --no-startup-id i3Kornhe size down
+  bindsym $mod+Up       exec --no-startup-id i3Kornhe size up
+  bindsym $mod+Right    exec --no-startup-id i3Kornhe size right
 
   # group 4 enter move mode:
   bindsym m exec --no-startup-id i3Kornhe move --speed 0 left
@@ -130,7 +127,7 @@ set $i3Kornhe exec --no-startup-id i3Kornhe
 
 .nf
 before:  
-bindsym Mod4+Right exec --no-startup-id i3Kornhe move --speed 0 right
+bindsym $mod+Right exec --no-startup-id i3Kornhe move --speed 0 right
 
 after:  
 $super+Right $i3Kornhe m -p 0 r
@@ -191,11 +188,11 @@ get moved. The CORNER is set with a direction:
 allbox;
 l l 
 l l .
-\fB\fCdirection\fR	\fB\fCcorner\fR
-Left	topleft
-Down	bottomleft
-Up	topright
-Right	bottomright
+\fB\fCdirection\fR  \fB\fCcorner\fR
+Left  topleft
+Down  bottomleft
+Up  topright
+Right  bottomright
 .TE
 
 .PP
@@ -247,11 +244,11 @@ resize it according to this table:
 allbox;
 l l 
 l l .
-\fB\fCdirection\fR	\fB\fCresize\fR
-Left	shrink width
-Down	shrink height
-Up	grow height
-Right	grow width
+\fB\fCdirection\fR  \fB\fCresize\fR
+Left  shrink width
+Down  shrink height
+Up  grow height
+Right  grow width
 .TE
 
 .PP
