@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3Kornhe - version: 0.666
-updated: 2021-05-28 by budRich
+i3Kornhe - version: 0.667
+updated: 2021-08-28 by budRich
 EOB
 }
 
@@ -26,6 +26,16 @@ main(){
   declare -g  _stamp      # millisecond timestamp
   declare -Ag i3list      # i3list array
   declare -Ag last        # array with last i3Kornhe info
+
+  # suffix the FIFO filename with the same suffix
+  # as the i3-socketpath to ensure we are not
+  # sending commands to a fifo being created in
+  # a different session.
+  until [[ ${sp:=$(i3 --get-socketpath)} ]]
+    do sleep .1
+  done
+
+  I3_KORNHE_FIFO_FILE+=${sp##*.}
 
   # __o[verbose]=1
   ((__o[verbose])) || _qflag='-q'
