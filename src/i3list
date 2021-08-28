@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.33
-updated: 2021-05-28 by budRich
+i3list - version: 0.35
+updated: 2021-08-28 by budRich
 EOB
 }
 
@@ -547,6 +547,10 @@ $(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layou
       # "hidden93845635698816="]
       else if (cid == root_id) {
         while (1) {
+          # remove escaped doublequotes so things like
+          # i3fyra_ws=\"Control Panel\"  , works
+          # as expected.
+          gsub(/\\"/,"",$0)
           match($0,/"(i34)?([^"=]+)=([^"]*)"([]])?$/,ma)
 
           if (ma[2] == "i3fyra_ws") {
