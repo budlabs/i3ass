@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.13
-updated: 2021-05-28 by budRich
+i3fyra - version: 1.15
+updated: 2021-08-28 by budRich
 EOB
 }
 
@@ -237,8 +237,14 @@ active_move_in_direction() {
           && swap_move "i34X$relatives" "i34X$family"
       elif ((vw_groupsize > 1)); then # no other family exist
         active_move_to_container "${relatives:0:1}"
-        [[ ${swapon[$direction]} =~ [${relatives}] ]] \
-          && swap_move "i34X$relatives" "i34X$family"
+
+        # hor: AC    vert: AB
+        [[ $direction =~ u|l && $relatives = ${ori[fam1]} ]] \
+          || swap_move "i34X$relatives" "i34X$family"
+        # moving left|up && $relatives = fam1 ||
+        # ori=([main]=AB [fam1]=AC [fam2]=BD)
+        # [[ ${swapon[$direction]} =~ [${relatives}] ]] \
+        #   && swap_move "i34X$relatives" "i34X$family"
         messy "[con_id=${i3list[TWC]}]" focus
       fi
     fi
@@ -320,7 +326,6 @@ apply_splits(){
       target=${tsn:0:1} sibling=${tsn:1:1}
       dir=${ori[resizefam]} size=${ori[sizefam]}
 
-      ERM "$tsn $target $sibling ${i3list[LVI]}"
       [[ ${i3list[LVI]} =~ $target && ${i3list[LVI]} =~ $sibling ]] \
         && splitexist=1
     fi
@@ -461,6 +466,7 @@ container_show() {
 
   i3list[LHI]=${i3list[LHI]/$target/}
   i3list[LVI]+=$target
+  i3list[LEX]+=$target
 
   ((new_family)) || {
     messy "[con_mark=i34$target]" \
@@ -669,7 +675,7 @@ float_toggle(){
 
 initialize_globals() {
 
-  # __o[verbose]=1
+  __o[verbose]=1
   # __o[dryrun]=1
 
   ((__o[verbose])) && {
