@@ -86,81 +86,20 @@ about the command.
 
 ## updates
 
-### [i3Kornhe]
+Corrected a typo in i3viswiz that prevented focus switching
+with floating windows to work properly.
 
-Reworked the script to now use a FIFO, which made moving
-and resizing a lot more responsive with no lag and much less
-stuttering.
+i3Kornhe bugfix patch applied. resizing tiled windows
+should now work fine.
 
-### [i3viswiz]
+Fixes an issue that made i3viswiz to get stuck and not
+working if there was no mark on the rootcontainer.
 
+Discovered that in rare cases a fifo could be left from
+i3Kornhe when the i3session terminates. This caused i3Kornhe
+to not work on the next start, and this should be fixed now.
 
-Added debug vars for active window geometry
-(`ax,ay,aw,ah`). And active workspace geometry
-(`sx,sy,sw,sh`)
-
-### [i3king]
-
-
-new options: `--conid`, `--print-commands`.  
-`--conid CONID` will match a single window against the
-rules and exit. `--print-commands` will print the commands
-instead of executing them.
-
-**ON_CLOSE** directive added. Rules prefixed like this will
-get triggered when windows are closed.
-
-### [i3run]
-
-
-Commands can now be entered after `--`. The old way of
-specifying the command: (`--command|-e`)
-
-``` shell
-# old way
-i3run --instance sublime_text --command 'subl && notify-send "sublime is started"'
-
-# new way
-i3run --instance sublime_text -- subl "&&" notify-send "sublime is started"
-```
-
-
----
-
-
-Fixed issue where windows had the wrong floating state when
-being sent across workspaces (#99).
-
-### [i3list]
-
-
-Added ABW and TBW keys to output, with active/target
-windows border width.
-
-Fixed issue where wrong workspace ID was reported on empty
-workspaces. Also if workspace is empty now container/window
-info will NOT get printed.
-
-### [i3fyra]
-
-
-When using `--float` to toggle a floating window to be
-tiled, we check if i3king is running and if the window
-matches any of the rules. If a rule matches the
-corresponding command is executed instead of *just* making
-the window tiled.
-
-### [i3menu]
-
-
-Added `--list-directory DIRECTORY` option. It is a shortcut
-to make a menu listing the filenames in DIRECTORY and
-printing the full path to stdout.
-
-### [i3get]
-
-
-fixed issue where `--synk` option caused the script to halt until a window event occured.
+Fixes two issues related to i3fyra. There where some issues recognising the i3fyra workspace if the workspace had escaped double quotes. When a new container (A|B|C|D) was created by moving a window from an already existing container. the new container was not marked and placed correctly. Its fixed now.
 
 ## known issues
 
