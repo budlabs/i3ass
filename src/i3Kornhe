@@ -4,7 +4,7 @@ ___printversion(){
   
 cat << 'EOB' >&2
 i3Kornhe - version: 0.667
-updated: 2021-08-28 by budRich
+updated: 2021-08-29 by budRich
 EOB
 }
 
