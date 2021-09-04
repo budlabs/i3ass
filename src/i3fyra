@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.16
+i3fyra - version: 1.17
 updated: 2021-09-04 by budRich
 EOB
 }
@@ -227,7 +227,7 @@ active_move_in_direction() {
     # when triggered on a tiled window on the i3fyra ws
     # that for some reason isn't part of the layout
     move_normal "$direction"
-  if [[ $vw_wall != none ]]; then # hit wall, toggle something
+  elif [[ $vw_wall != none ]]; then # hit wall, toggle something
 
     if [[ $sibdir =~ $direction ]]; then # sibling toggling
       
