@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.15
-updated: 2021-08-28 by budRich
+i3fyra - version: 1.16
+updated: 2021-09-04 by budRich
 EOB
 }
 
@@ -164,6 +164,19 @@ EOB
 }
 
 
+move_normal() {
+  local ldir
+
+  case "${1:0:1}" in
+    l ) ldir=left  ;;
+    d ) ldir=down  ;;
+    u ) ldir=up    ;;
+    r ) ldir=right ;;
+  esac
+
+  messy "[con_id=${i3list[TWC]}]" move "$ldir"
+}
+
 active_move_in_direction() {
   local direction=$1
 
@@ -183,9 +196,9 @@ active_move_in_direction() {
   if [[ ${__o[dryrun]} && -z ${wizoutput:=${i3list[VISWIZ]}} ]]; then
     wizoutput='vw_target=3333 vw_wall=up vw_parent=C vw_groupsize=1' 
   else
-    read -r vw_wall vw_parent vw_groupsize vw_target < <(
+    read -r vw_wall vw_groupsize vw_target vw_parent < <(
       i3viswiz --parent "$direction" \
-               --debug "wall,trgpar,groupsize,trgcon" \
+               --debug "wall,groupsize,trgcon,trgpar" \
                --debug-format "%v "
     )
 
@@ -210,6 +223,10 @@ active_move_in_direction() {
   sibling=${i3list[TFS]}
   relatives=${i3list[TFO]}
 
+  if   [[ ! $vw_parent ]]; then
+    # when triggered on a tiled window on the i3fyra ws
+    # that for some reason isn't part of the layout
+    move_normal "$direction"
   if [[ $vw_wall != none ]]; then # hit wall, toggle something
 
     if [[ $sibdir =~ $direction ]]; then # sibling toggling
@@ -253,14 +270,7 @@ active_move_in_direction() {
     # target and current container is the same
     # which indicates it is also not in a tabbed|stacked
     # container -> move normally
-    local ldir
-    case "$direction" in
-      l ) ldir=left  ;;
-      d ) ldir=down  ;;
-      u ) ldir=up    ;;
-      r ) ldir=right ;;
-    esac
-    messy "[con_id=${i3list[TWC]}]" move "$ldir"
+    move_normal "$direction"
   else
 
     if [[ ${i3list[C${vw_parent}L]} =~ splitv|splith && $direction =~ r|d ]]; then

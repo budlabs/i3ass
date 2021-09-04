@@ -86,20 +86,37 @@ about the command.
 
 ## updates
 
-Corrected a typo in i3viswiz that prevented focus switching
-with floating windows to work properly.
+#### [i3fyra]
 
-i3Kornhe bugfix patch applied. resizing tiled windows
-should now work fine.
+issue where moving tiled windows on the i3fyra workspace
+that wasn't part of the layout (ABCD), didn't work.
 
-Fixes an issue that made i3viswiz to get stuck and not
-working if there was no mark on the rootcontainer.
+There where some issues recognising the i3fyra workspace if
+the workspace had escaped double quotes. When a new
+container (A|B|C|D) was created by moving a window from an
+already existing container. the new container was not marked
+and placed correctly.
+
+#### [i3viswiz]
+
+
+Corrected a typo that prevented focus switching with
+floating windows to work properly.
+
+got stuck and not working if there was no mark on the
+rootcontainer.
+
+#### [i3Kornhe]
+
 
 Discovered that in rare cases a fifo could be left from
 i3Kornhe when the i3session terminates. This caused i3Kornhe
 to not work on the next start, and this should be fixed now.
 
-Fixes two issues related to i3fyra. There where some issues recognising the i3fyra workspace if the workspace had escaped double quotes. When a new container (A|B|C|D) was created by moving a window from an already existing container. the new container was not marked and placed correctly. Its fixed now.
+i3Kornhe bugfix patch applied. resizing tiled windows
+should now work fine.
+
+
 
 ## known issues
 
