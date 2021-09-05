@@ -88,6 +88,9 @@ about the command.
 
 #### [i3fyra]
 
+prevent i3fyra_ws variable getting set when making a tiled
+window floating with `--float`.
+
 issue where moving tiled windows on the i3fyra workspace
 that wasn't part of the layout (ABCD), didn't work.
 
