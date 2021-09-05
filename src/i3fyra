@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.17
+i3fyra - version: 1.18
 updated: 2021-09-04 by budRich
 EOB
 }
@@ -716,8 +716,11 @@ initialize_globals() {
       I3FYRA_WS=\"${i3list[WAN]}\"
     }
 
-    i3var set i3fyra_ws "$I3FYRA_WS"
-    i3var set i34ORI "$I3FYRA_ORIENTATION"
+    (( __o[float] && i3list[AWF]==0 )) || {
+      i3var set i3fyra_ws "$I3FYRA_WS"
+      i3var set i34ORI "$I3FYRA_ORIENTATION"
+    }
+
   }
 
   # _qflag is option added to i3-msg (cleanup())
