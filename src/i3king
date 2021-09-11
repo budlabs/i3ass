@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3king - version: 0.27
+i3king - version: 0.29
 updated: 2021-09-11 by budRich
 EOB
 }
@@ -94,8 +94,10 @@ main(){
           [typ]="${BASH_REMATCH[++i]}"             # "window_type:"     - STRING
           [O]="${BASH_REMATCH[++i]}"               # ! optional group
           [cls]="${BASH_REMATCH[++i]}"             # "class:"           - STRING
-          [O]="${BASH_REMATCH[++i]}"               # "instance:"        - STRING
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
           [ins]="${BASH_REMATCH[++i]}"             # "instance:"        - STRING
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [rol]="${BASH_REMATCH[++i]:-unknown}"             # "window_role:"     - STRING
           [fullscreen]="${BASH_REMATCH[++i]}"      # "fullscreen_mode:" - 0|1
           [sticky]="${BASH_REMATCH[++i]}"          # "sticky:"          - true|false
           [floating]="${BASH_REMATCH[++i]}"        # "floating:"        - auto_off|auto_on|user_off|user_on
@@ -103,10 +105,11 @@ main(){
         )
 
         match_window "${ma[cid]}"       \
-                     "${ma[cls]:-.*}"   \
-                     "${ma[ins]:-.*}"   \
-                     "${ma[title]:-.*}" \
-                     "${ma[typ]:-.*}"   \
+                     "${ma[cls]:-[^${_fs}]*}"   \
+                     "${ma[ins]:-[^${_fs}]*}"   \
+                     "${ma[title]:-[^${_fs}]*}" \
+                     "${ma[typ]:-[^${_fs}]*}"   \
+                     "${ma[rol]:-[^${_fs}]*}"   \
                      "${ma[wid]}"       \
                      "${ma[change]}"
       fi
@@ -348,6 +351,7 @@ re+=$(cat << EOB
 "window_properties":\{
 ("class":"([^"]+)",)?
 ("instance":"([^"]+)",)?
+("window_role":"([^"]+)",)?
 [^}]+\},
 "nodes":[^,]+,
 "floating_nodes":[^,]+,
@@ -363,9 +367,73 @@ EOB
 echo "${re//$'\n'/}"
 }
 
+
+
+
+# {
+#   "change": "focus",
+#   "container": {
+#     "id": 94269359288400,
+#     "type": "con",
+#     "orientation": "none",
+#     "scratchpad_state": "none",
+#     "percent": 1,
+#     "urgent": false,
+#     "marks": [],
+#     "focused": true,
+#     "output": "eDP1",
+#     "layout": "splith",
+#     "workspace_layout": "default",
+#     "last_split_layout": "splith",
+#     "border": "normal",
+#     "current_border_width": 2,
+#     "rect": {
+#       "x": 408,
+#       "y": 464,
+#       "width": 653,
+#       "height": 454
+#     },
+#     "deco_rect": {
+#       "x": 0,
+#       "y": 0,
+#       "width": 653,
+#       "height": 20
+#     },
+#     "window_rect": {
+#       "x": 2,
+#       "y": 0,
+#       "width": 649,
+#       "height": 452
+#     },
+#     "geometry": {
+#       "x": 408,
+#       "y": 464,
+#       "width": 649,
+#       "height": 452
+#     },
+#     "name": "Open File",
+#     "window": 4231047,
+#     "window_type": "dialog",
+#     "window_properties": {
+#       "class": "Subl",
+#       "instance": "subl",
+#       "window_role": "GtkFileChooserDialog",
+#       "title": "Open File",
+#       "transient_for": 4194307
+#     },
+#     "nodes": [],
+#     "floating_nodes": [],
+#     "focus": [],
+#     "fullscreen_mode": 0,
+#     "sticky": false,
+#     "floating": "auto_on",
+#     "swallows": []
+#   }
+# }
+
 match_window() {
 
-  local cid=$1 class=$2 instance=$3 title=$4 wid=$6 change=$7
+  local cid=$1 class=$2 instance=$3 title=$4 role=$6 wid=$7 change=$8
   # local type=$5 # unused
   local last_cmd cmd rule
 
@@ -375,6 +443,7 @@ match_window() {
   identifier+="instance$_fs$3$_fs"
   identifier+="title$_fs$4$_fs"
   identifier+="window_type$_fs$5$_fs"
+  identifier+="window_role$_fs$6$_fs"
 
   declare -a matches default_execute execute
 
@@ -555,7 +624,7 @@ parse_rules() {
         # to make sure it never matches
         if [[ $crit ]]; then
           wc="$_fs[^${_fs}]*$_fs" # wildcard :.*:
-          rule="class${wc}instance${wc}title${wc}window_type${wc}"
+          rule="class${wc}instance${wc}title${wc}window_type${wc}window_role${wc}"
         else
           rule=^-$
         fi
