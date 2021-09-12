@@ -86,40 +86,21 @@ about the command.
 
 ## updates
 
-#### [i3fyra]
+#### [i3king]
 
-prevent i3fyra_ws variable getting set when making a tiled
-window floating with `--float`.
+Added support for **window_role** criteria.
 
-issue where moving tiled windows on the i3fyra workspace
-that wasn't part of the layout (ABCD), didn't work.
+Changed internal field separator to US (x1F). This will fix
+issues related to windows with properties containg the old
+field separator (`:`).
 
-There where some issues recognising the i3fyra workspace if
-the workspace had escaped double quotes. When a new
-container (A|B|C|D) was created by moving a window from an
-already existing container. the new container was not marked
-and placed correctly.
+Fixed issue where windows whose target properties contained
+a hyphen (`-`) wasn't recognized by  GLOBAL or DEFAULT
+rules.
 
-#### [i3viswiz]
-
-
-Corrected a typo that prevented focus switching with
-floating windows to work properly.
-
-got stuck and not working if there was no mark on the
-rootcontainer.
-
-#### [i3Kornhe]
-
-
-Discovered that in rare cases a fifo could be left from
-i3Kornhe when the i3session terminates. This caused i3Kornhe
-to not work on the next start, and this should be fixed now.
-
-i3Kornhe bugfix patch applied. resizing tiled windows
-should now work fine.
-
-
+Sending USR1 to the i3king process will restart i3king.
+Hint:  
+`kill -USR1 $(< "$XDG_RUNTIME_DIR/i3ass/i3king.pid")`
 
 ## known issues
 
