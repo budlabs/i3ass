@@ -21,22 +21,22 @@ $ git clone https://github.com/budlabs/i3ass.git
 $ cd i3ass
 # make install
 $ i3ass
-i3ass - version: 2021.08.25.3
-updated: 2021-08-25 by budRich
+i3ass - version: 2021.09.12.3
+updated: 2021-09-12 by budRich
 
 script   | version
 ------------------
 i3flip   | 0.101
-i3fyra   | 1.13
-i3get    | 0.72
+i3fyra   | 1.21
+i3get    | 0.8
 i3gw     | 2020.08.12.0
-i3king   | 0.23
-i3Kornhe | 0.665
-i3list   | 0.33
+i3king   | 0.3
+i3Kornhe | 0.667
+i3list   | 0.35
 i3menu   | 0.11
 i3run    | 0.15
 i3var    | 0.050
-i3viswiz | 0.52
+i3viswiz | 0.55
 
 dependencies:
 bash     [INSTALLED]
