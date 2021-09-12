@@ -1,5 +1,5 @@
 .nh
-.TH I3KING 1 2021-08-25 Linux "User Manuals"
+.TH I3KING 1 2021-09-11 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3king\fR - window ruler
@@ -40,6 +40,8 @@ are
 \fBtitle\fP
 .IP \(bu 2
 \fBwindow_type\fP
+.IP \(bu 2
+\fBwindow_role\fP
 
 .RE
 
@@ -240,7 +242,7 @@ of the i3king process. It is used by \fBi3fyra\fP to
 know if i3king is running, if it is, it will try
 to match windows against the rules when \fB\fC--float\fR
 option toggles the floating state to tiled.
-defaults to: $XDG_RUNTIME_DIR/i3king.pid
+defaults to: $XDG_RUNTIME_DIR/i3ass/i3king.pid
 
 .SH DEPENDENCIES
 .PP
