@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3king - version: 0.29
-updated: 2021-09-11 by budRich
+i3king - version: 0.3
+updated: 2021-09-12 by budRich
 EOB
 }
 
@@ -56,7 +56,7 @@ main(){
     apply_rules
     exit
   elif [[ ${__o[conid]} ]]; then
-    mapfile -t wininfo <<< "$(i3get -n "${__o[conid]}" -r ncityd)"
+    mapfile -t wininfo <<< "$(i3get -n "${__o[conid]}" -r ncityrd)"
     match_window "${wininfo[@]}"
     exit
   fi
@@ -369,8 +369,9 @@ echo "${re//$'\n'/}"
 
 match_window() {
 
-  local cid=$1 class=$2 instance=$3 title=$4 role=$6 wid=$7 change=$8
-  # local type=$5 # unused
+  local cid=$1 class=$2 instance=$3 title=$4 
+  local type=$5 role=$6 wid=$7 change=$8
+
   local last_cmd cmd rule
 
   local identifier=""
@@ -378,8 +379,8 @@ match_window() {
   identifier+="class$_fs$2$_fs"
   identifier+="instance$_fs$3$_fs"
   identifier+="title$_fs$4$_fs"
-  identifier+="window_type$_fs$5$_fs"
-  identifier+="window_role$_fs$6$_fs"
+  identifier+="window_type$_fs$type$_fs"
+  identifier+="window_role$_fs$role$_fs"
 
   declare -a matches default_execute execute
 
@@ -452,8 +453,11 @@ match_window() {
       [[ $cmd = "$last_cmd" ]] && continue
       last_cmd=$cmd
 
+      rule_out=${rules[$rule]//$_fs/:}
+      rule_out=${rule_out//\[^:]/.}
+
       execute+=("$cmd")
-      matches+=("NORMAL: ${rules[$rule]}"$'\n'$'\t'"$cmd")
+      matches+=("NORMAL: $rule_out"$'\n'$'\t'"$cmd")
     done
   fi
 
@@ -562,7 +566,8 @@ parse_rules() {
           wc="$_fs[^${_fs}]*$_fs" # wildcard :.*:
           rule="class${wc}instance${wc}title${wc}window_type${wc}window_role${wc}"
         else
-          rule=^-$
+          # this rule should never match
+          rule="-$_fs$_fs$_fs"
         fi
 
         while [[ $crit =~ $re_group ]]; do

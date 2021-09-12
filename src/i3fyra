@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.18
-updated: 2021-09-04 by budRich
+i3fyra - version: 1.21
+updated: 2021-09-12 by budRich
 EOB
 }
 
@@ -457,26 +457,26 @@ container_show() {
     return
   }
 
-  if [[ ${i3list[LVI]} =~ $target ]]; then
-    return
-  elif [[ ${i3list[LEX]} =~ $target ]]; then
-    messy "[con_mark=i34${target}]" \
-      move to workspace "${i3list[WSF]}", \
-      floating disable
-  else
-    container_create "$target"
-  fi
-
   [[ ${ori[fam1]} =~ $target ]] \
     && target_family=${ori[fam1]} \
     || target_family=${ori[fam2]}
+
+  if [[ ${i3list[LVI]} =~ $target ]]; then
+    return
+  elif [[ ! ${i3list[LHI]} =~ $target ]]; then
+    container_create "$target"
+  elif ((i3list[X$target_family] == i3list[WSF])); then
+    messy "[con_mark=i34${target}]"       \
+      move to workspace "${i3list[WSF]}", \
+      floating disable
+  fi
 
   [[ ${i3list[X$target_family]} ]] || new_family=1
   family_show "$target_family" "$target"
 
   i3list[LHI]=${i3list[LHI]/$target/}
   i3list[LVI]+=$target
-  i3list[LEX]+=$target
+  i3list[LEX]="${i3list[LHI]}${i3list[LVI]}"
 
   ((new_family)) || {
     messy "[con_mark=i34$target]" \
@@ -548,6 +548,7 @@ family_hide(){
   local child childs
 
   declare -i famw famh famx famy split_size
+  declare -a visible_children
 
   split_size=$(( ( _isvertical ? i3list[WFH] : i3list[WFW] ) - i3list["S${ori[main]}"] ))
   ((split_size < 0)) && ((split_size *= -1))
@@ -557,22 +558,40 @@ family_hide(){
   famx=$((_isvertical ? 0 : i3list["S${ori[main]}"]))
   famy=$((_isvertical ? i3list["S${ori[main]}"] : 0))
 
-  messy "[con_mark=i34X${family}]"                \
-    floating enable,                              \
-    resize set "$famw" "$famh",                   \
-    move absolute position "$famx" px "$famy" px, \
-    move scratchpad
-
   for child in "${family:0:1}" "${family:1:1}"; do
-    [[ ${i3list[LVI]} =~ $child ]] || continue
-    i3list[LVI]=${i3list[LVI]/$child/}
-    i3list[LHI]+=$child
-    childs+=$child
+    [[ ${i3list[LVI]} =~ $child ]] \
+      && visible_children+=("$child")
   done
 
-  mark_vars["i34F${family}"]=$childs
+  if ((${#visible_children[@]} == 1)); then
+    child=${visible_children[0]}
+    messy "[con_mark=i34$child]" \
+      move scratchpad
+
+    i3list[LVI]=${i3list[LVI]/$child/}
+    i3list[LHI]+=$child
+
+    unset 'i3list[X$family]'
+    i3list[F$family]=$child
+    mark_vars["i34F${family}"]=$child
+  else
+    messy "[con_mark=i34X${family}]"                \
+      floating enable,                              \
+      resize set "$famw" "$famh",                   \
+      move absolute position "$famx" px "$famy" px, \
+      move scratchpad
+
+    for child in "${visible_children[@]}"; do
+      i3list[LVI]=${i3list[LVI]/$child/}
+      i3list[LHI]+=$child
+      childs+=$child
+    done
+
+    mark_vars["i34F${family}"]=$childs
+    mark_vars["i34M${family}"]=${i3list[S${family}]:=0}
+  fi
+
   mark_vars["i34M${ori[main]}"]=${i3list[S${ori[main]}]:=0}
-  mark_vars["i34M${family}"]=${i3list[S${family}]:=0}
 
 }
 
@@ -586,10 +605,21 @@ family_show() {
   ((i3list["X${target_family}"] == i3list[WSF])) \
     && return
 
+  
   if [[ -z ${i3list[X${target_family}]} ]]; then
-    [[ $target_container ]] && {
+    # when family_hide and family contains only
+    # one container. The family is destroyed and
+    # the container is moved to the scratchpad
+    # but noted in [F$family]
+    last_in_fam=${i3list[F$target_family]:0:1}
+
+    if [[ ! $target_container ]]; then
+     [[ $last_in_fam =~ ${i3list[LEX]} ]] \
+       && family_create "$target_family" "$last_in_fam"
+    else
       family_create "$target_family" "$target_container"
-    }
+    fi
+
   elif ((i3list["X${target_family}"] != i3list[WSF])); then
 
     messy "[con_mark=i34X${target_family}]" \
