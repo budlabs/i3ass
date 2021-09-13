@@ -1,5 +1,5 @@
 .nh
-.TH I3KING 1 2021-09-12 Linux "User Manuals"
+.TH I3KING 1 2021-09-13 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3king\fR - window ruler
@@ -141,6 +141,12 @@ all known windows against the rules again, and
 automatically restart itself. If you for some
 reason don't want this behaviour, try \fB\fC--no-
 restart\fR and/or \fB\fC--no-apply\fR options.
+
+.SH protip
+.PP
+Sending USR1 to the i3king process will restart
+i3king. Hint: \fB\fCkill -USR1 $(<
+"$XDG_RUNTIME_DIR/i3ass/i3king.pid")\fR
 
 .SH OPTIONS
 .PP

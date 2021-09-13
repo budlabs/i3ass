@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3fyra - version: 1.21
-updated: 2021-09-12 by budRich
+i3fyra - version: 1.22
+updated: 2021-09-13 by budRich
 EOB
 }
 
@@ -614,8 +614,9 @@ family_show() {
     last_in_fam=${i3list[F$target_family]:0:1}
 
     if [[ ! $target_container ]]; then
-     [[ $last_in_fam =~ ${i3list[LEX]} ]] \
-       && family_create "$target_family" "$last_in_fam"
+     [[ ${i3list[LEX]} =~ $last_in_fam ]] && {
+       family_create "$target_family" "$last_in_fam"
+     }
     else
       family_create "$target_family" "$target_container"
     fi
