@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3king - version: 0.31
+i3king - version: 0.32
 updated: 2021-09-13 by budRich
 EOB
 }
@@ -104,13 +104,13 @@ main(){
           [O]="${BASH_REMATCH[++i]}"               # "swallows:"        - auto_off|auto_on|user_off|user_on
         )
 
-        match_window "${ma[cid]}"       \
-                     "${ma[cls]:-[^${_fs}]*}"   \
-                     "${ma[ins]:-[^${_fs}]*}"   \
-                     "${ma[title]:-[^${_fs}]*}" \
-                     "${ma[typ]:-[^${_fs}]*}"   \
-                     "${ma[rol]:-[^${_fs}]*}"   \
-                     "${ma[wid]}"       \
+        match_window "${ma[cid]}"            \
+                     "${ma[cls]:-unknown}"   \
+                     "${ma[ins]:-unknown}"   \
+                     "${ma[title]:-unknown}" \
+                     "${ma[typ]:-unknown}"   \
+                     "${ma[rol]:-unknown}"   \
+                     "${ma[wid]}"            \
                      "${ma[change]}"
       fi
 
