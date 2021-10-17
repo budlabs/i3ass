@@ -84,24 +84,6 @@ about the command.
 `man i3get` show [i3get] man page  
 `i3ass` show version info for all scripts and dependencies.
 
-## updates
-
-#### [i3king]
-
-Added support for **window_role** criteria.
-
-Changed internal field separator to US (x1F). This will fix
-issues related to windows with properties containg the old
-field separator (`:`).
-
-Fixed issue where windows whose target properties contained
-a hyphen (`-`) wasn't recognized by  GLOBAL or DEFAULT
-rules.
-
-Sending USR1 to the i3king process will restart i3king.
-Hint:  
-`kill -USR1 $(< "$XDG_RUNTIME_DIR/i3ass/i3king.pid")`
-
 ## known issues
 
 **THERE IS NO SUPPORT FOR i3-gaps**  

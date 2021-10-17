@@ -4,7 +4,7 @@ ___printversion(){
   
 cat << 'EOB' >&2
 i3king - version: 0.32
-updated: 2021-09-13 by budRich
+updated: 2021-09-15 by budRich
 EOB
 }
 
@@ -26,6 +26,11 @@ main(){
   declare -ag rules
   declare -ag commands
   declare -g  _fs=$'\x1f' # field separator, US
+
+  [[ ${__o[reload]} && -f $I3_KING_PID_FILE ]] && {
+    kill -USR1 $(< "$I3_KING_PID_FILE")
+    exit
+  }
 
   ((__o[verbose])) && {
     ERM "i3king start"
@@ -145,7 +150,9 @@ SYNOPSIS
 i3king [--config|-c FILE] [--no-apply] [--no-restart]
 i3king --apply|-a [--config|-c FILE]
 i3king --conid|-n CONID [--print-commands] [--config|-c FILE]
+i3king --winid|-d WINID [--print-commands] [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
+i3king --reload
 i3king --help|-h
 i3king --version|-v
 
@@ -184,6 +191,8 @@ Print commands to STDOUT instead of executing
 them.
 
 
+--winid|-d WINID  
+
 --json JSON  
 Parse JSON instead of the output from: i3-msg -t
 subscribe
@@ -201,6 +210,8 @@ Parse rules but don't execute commands.
 Same as verbose but the output is printed to FILE
 instead.
 
+
+--reload  
 
 --help|-h  
 Show help and exit.
@@ -618,8 +629,8 @@ parse_rules() {
 declare -A __o
 options="$(
   getopt --name "[ERROR]:i3king" \
-    --options "c:an:hv" \
-    --longoptions "config:,no-apply,no-restart,apply,conid:,print-commands,json:,verbose,dryrun,log:,help,version," \
+    --options "c:an:d:hv" \
+    --longoptions "config:,no-apply,no-restart,apply,conid:,print-commands,winid:,json:,verbose,dryrun,log:,reload,help,version," \
     -- "$@" || exit 98
 )"
 
@@ -634,10 +645,12 @@ while true; do
     --apply      | -a ) __o[apply]=1 ;; 
     --conid      | -n ) __o[conid]="${2:-}" ; shift ;;
     --print-commands ) __o[print-commands]=1 ;; 
+    --winid      | -d ) __o[winid]="${2:-}" ; shift ;;
     --json       ) __o[json]="${2:-}" ; shift ;;
     --verbose    ) __o[verbose]=1 ;; 
     --dryrun     ) __o[dryrun]=1 ;; 
     --log        ) __o[log]="${2:-}" ; shift ;;
+    --reload     ) __o[reload]=1 ;; 
     --help       | -h ) ___printhelp && exit ;;
     --version    | -v ) ___printversion && exit ;;
     -- ) shift ; break ;;
