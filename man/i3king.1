@@ -1,5 +1,5 @@
 .nh
-.TH I3KING 1 2021-09-13 Linux "User Manuals"
+.TH I3KING 1 2021-09-15 Linux "User Manuals"
 .SH NAME
 .PP
 \fB\fCi3king\fR - window ruler
@@ -12,7 +12,9 @@
 i3king [--config|-c FILE] [--no-apply] [--no-restart]
 i3king --apply|-a [--config|-c FILE]
 i3king --conid|-n CONID [--print-commands] [--config|-c FILE]
+i3king --winid|-d WINID [--print-commands] [--config|-c FILE]
 i3king --json JSON [--verbose] [--dryrun] [--log FILE]
+i3king --reload
 i3king --help|-h
 i3king --version|-v
 
@@ -78,6 +80,8 @@ $CLASS
 $CONID
 .IP \(bu 2
 $WINID
+.IP \(bu 2
+$TITLE
 
 .RE
 
@@ -190,6 +194,9 @@ Print commands to STDOUT instead of executing
 them.
 
 .PP
+\fB\fC--winid\fR|\fB\fC-d\fR WINID
+
+.PP
 \fB\fC--json\fR JSON
 .br
 Parse JSON instead of the output from: \fB\fCi3-msg -t
@@ -210,6 +217,9 @@ Parse rules but don't execute commands.
 .br
 Same as verbose but the output is printed to FILE
 instead.
+
+.PP
+\fB\fC--reload\fR
 
 .PP
 \fB\fC--help\fR|\fB\fC-h\fR

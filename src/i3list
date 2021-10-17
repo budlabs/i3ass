@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.35
-updated: 2021-08-28 by budRich
+i3list - version: 0.37
+updated: 2021-10-16 by budRich
 EOB
 }
 
@@ -515,6 +515,8 @@ $(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layou
 
       if ($NF == "[]")
         break
+
+      ac[cid][key]=$NF
 
       if ( key == arg_target && match($NF, arg_search[key]) )
         suspect_targets[cid]=1
