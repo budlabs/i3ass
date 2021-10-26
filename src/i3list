@@ -17,30 +17,12 @@ main(){
   awk -f <(
     echo "
     BEGIN {
-      ${__o[instance]:+
-        arg_target=\"instance\"
-        arg_search[arg_target]=\"${__o[instance]}\"
-      }
-      ${__o[class]:+
-        arg_target=\"class\"
-        arg_search[arg_target]=\"${__o[class]}\"
-      }
-      ${__o[conid]:+
-        arg_target=\"id\"
-        arg_search[arg_target]=\"${__o[conid]}\"
-      }
-      ${__o[winid]:+
-        arg_target=\"window\"
-        arg_search[arg_target]=\"${__o[winid]}\"
-      }
-      ${__o[mark]:+
-        arg_target=\"marks\"
-        arg_search[arg_target]=\"${__o[mark]}\"
-      }
-      ${__o[title]:+
-        arg_target=\"name\"
-        arg_search[arg_target]=\"${__o[title]}\"
-      }
+      ${__o[instance]:+arg_search[\"instance\"]=\"${__o[instance]}\"}
+      ${__o[class]:+arg_search[\"class\"]=\"${__o[class]}\"}
+      ${__o[conid]:+arg_search[\"id\"]=\"${__o[conid]}\"}
+      ${__o[winid]:+arg_search[\"window\"]=\"${__o[winid]}\"}
+      ${__o[mark]:+arg_search[\"marks\"]=\"${__o[mark]}\"}
+      ${__o[title]:+arg_search[\"name\"]=\"${__o[title]}\"}
     }"
     awklib
   ) FS=: RS=, <<< "$_json"
@@ -162,6 +144,7 @@ function descriptions() {
   desc["ATX"]="Active Window tab x postion"
   desc["ATW"]="Active Window tab width"
   desc["ABW"]="Active Window border width"
+  desc["APA"]="Active Window parent ID"
 
   desc["TWF"]="Target Window Floating"
   desc["TWC"]="Target Window con_id"
@@ -180,6 +163,7 @@ function descriptions() {
   desc["TWY"]="Target Window y position"
   desc["TWB"]="Target Window titlebar height"
   desc["TBW"]="Target Window border width"
+  desc["TPA"]="Target Window parent ID"
   
   desc["WAW"]="Active Workspace width"
   desc["WAH"]="Active Workspace height"
@@ -224,7 +208,7 @@ END {
   strfrm="i3list[%s]=%-17s# %s\n"
 
   # determine target container ID
-  if ( !arg_target ) {
+  if ( length(arg_search) == 0 ) {
     target_container_id=active_container_id
   } else {
 
@@ -404,13 +388,13 @@ $(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layou
     case "class":
     case "instance":
       ac[cid][key]=$NF
-      if ( key == arg_target && $NF == "\"" arg_search[key] "\"" )
+      if ( key in arg_search && match($NF, arg_search[key]) )
         suspect_targets[cid]=1
     break
 
     case "name":
       ac[cid][key]=$NF
-      if ( key == arg_target && match($NF, arg_search[key]) )
+      if ( key in arg_search && match($NF, arg_search[key]) )
         suspect_targets[cid]=1
 
       if (ac[cid]["type"] == "\"workspace\"" && $NF == "\"" i3fyra_workspace_name "\"") {
@@ -435,7 +419,7 @@ $(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layou
       cid=$NF
       ac[cid][key]=$NF
 
-      if ( key == arg_target && match($NF, arg_search[key]) )
+      if ( key in arg_search && match($NF, arg_search[key]) )
         suspect_targets[cid]=1
     break
 
@@ -483,7 +467,7 @@ $(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layou
     case "window":
       if ($NF != "null") {
         ac[cid]["window"]=$NF
-        if ( key == arg_target && match($NF, arg_search[key]) )
+        if ( key in arg_search && match($NF, arg_search[key]) )
           suspect_targets[cid]=1
       }
     break
@@ -518,7 +502,7 @@ $(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layou
 
       ac[cid][key]=$NF
 
-      if ( key == arg_target && match($NF, arg_search[key]) )
+      if ( key in arg_search && match($NF, arg_search[key]) )
         suspect_targets[cid]=1
 
       else if ( match($NF,/"i34([ABCD])"/,ma) ) {
@@ -626,6 +610,7 @@ function print_window(t, container_id, key) {
   key=t "TX"; printf(strfrm,key, ac[container_id]["deco_x"], desc[key])
   key=t "TW"; printf(strfrm,key, ac[container_id]["deco_w"], desc[key])
   key=t "BW"; printf(strfrm,key, ac[container_id]["current_border_width"], desc[key])
+  key=t "PA"; printf(strfrm,key, ac[container_id]["parent"], desc[key])
 }
 
 function print_workspace(t, container_id, key) {
