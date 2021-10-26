@@ -4,7 +4,7 @@ ___printversion(){
   
 cat << 'EOB' >&2
 i3king - version: 0.32
-updated: 2021-09-15 by budRich
+updated: 2021-10-26 by budRich
 EOB
 }
 
@@ -62,6 +62,10 @@ main(){
     exit
   elif [[ ${__o[conid]} ]]; then
     mapfile -t wininfo <<< "$(i3get -n "${__o[conid]}" -r ncityrd)"
+    match_window "${wininfo[@]}"
+    exit
+  elif [[ ${__o[winid]} ]]; then
+    mapfile -t wininfo <<< "$(i3get -d "${__o[winid]}" -r ncityrd)"
     match_window "${wininfo[@]}"
     exit
   fi
@@ -357,6 +361,7 @@ re+=$(cat << EOB
 "geometry":[^}]+},
 "name":"?([^\"]+)"?,
 ("title_format":"([^"]+)",)?
+"window_icon_padding":[^,]+,
 "window":(${_c[id]:-[0-9]+}),
 "window_type":"([^"]+)",
 "window_properties":\{
