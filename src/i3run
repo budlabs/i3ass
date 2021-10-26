@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3run - version: 0.15
+i3run - version: 0.2
 updated: 2021-05-28 by budRich
 EOB
 }
@@ -41,13 +41,11 @@ main(){
   eval "$_array"
 
   _command=${__o[command]:-$*}
-  kk=ll
 
   # if window doesn't exist, launch the command.
-  if [[ -z ${i3list[TWC]} ]]; then
-    launchcommand
-  else
-    focuswindow
+  if [[ ${i3list[TWC]} ]]
+    then focuswindow
+    else launchcommand
   fi
 
   ((__o[verbose])) || qflag=-q
@@ -55,7 +53,8 @@ main(){
 
   ((__o[verbose])) && {
     ERM "======================"
-    ERM "i3run STOP - $(( (10#${EPOCHREALTIME//[!0-9]} - _t) / 1000 ))ms"
+    ERM "i3run STOP - "\
+        "$(( (10#${EPOCHREALTIME//[!0-9]} - _t) / 1000 ))ms"
     ERM "======================"
   } 
 }
