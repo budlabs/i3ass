@@ -3,7 +3,7 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3list - version: 0.5
+i3list - version: 0.51
 updated: 2021-10-16 by budRich
 EOB
 }
@@ -397,8 +397,13 @@ $(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layou
       if ( key in arg_search && match($NF, arg_search[key]) )
         suspect_targets[cid]=1
 
-      if (ac[cid]["type"] == "\"workspace\"" && $NF == "\"" i3fyra_workspace_name "\"") {
-        i3fyra_workspace_id = cid
+      if (ac[cid]["type"] == "\"workspace\"") {
+
+        if ($NF == "\"" i3fyra_workspace_name "\"")
+          i3fyra_workspace_id = cid
+
+        else if ($NF == "\"__i3_scratch\"")
+          scratchpad_id = cid
       }
     break
 
@@ -510,7 +515,7 @@ $(NF-1) ~ /"(current_border_width|type|id|window|name|num|x|floating|marks|layou
         fyra_containers[ma[1]]["workspace"]=cwsid
         ac[cid]["i3fyra_mark"]=ma[1]
 
-        if (ac[cwsid]["num"] != -1) {
+        if (cwsid != scratchpad_id) {
           fyra_containers[ma[1]]["visible"]=1
           fyra_containers[ma[1]]["family"]=current_fyra_family
         }
