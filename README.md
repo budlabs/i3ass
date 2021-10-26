@@ -115,7 +115,8 @@ Added `--verbose` option.
 #### [i3list]
 
 
-Multiple search criteria works well now.
+Use scratchpad ID instead of scratchpad number. Multiple
+search criteria works well now.
 
 Added new keys:  
 
