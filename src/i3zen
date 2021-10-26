@@ -1,0 +1,314 @@
+#!/usr/bin/env bash
+
+___printversion(){
+  
+cat << 'EOB' >&2
+i3zen - version: 2021.10.26.7
+updated: 2021-10-26 by budRich
+EOB
+}
+
+
+# environment variables
+: "${XDG_RUNTIME_DIR:=/tmp}"
+: "${I3_KING_PID_FILE:=$XDG_RUNTIME_DIR/i3ass/i3king.pid}"
+
+
+main(){
+
+  ((__o[verbose])) && {
+    ERM "i3zen START"
+    ERM "-----------"
+    _t=$(( (10#${EPOCHREALTIME//[!0-9]} - _t) ))
+  }
+
+  declare -g _msgstring
+  declare -A i3list
+
+  _json=$(i3-msg -t get_tree)
+  _mark=${__o[mark]:-centerzen}
+
+  eval "$(i3list -m "$_mark" --json "$_json")"
+
+  var_data=$(i3var get "zen${i3list[AWC]}")
+
+  ((i3list[AWF])) \
+    && var="${i3list[AWW]}x${i3list[AWH]}+${i3list[AWX]}+${i3list[AWY]}:" \
+    || var="tiled:"
+
+  var+=${i3list[WAN]}
+
+  ws_zen=${i3list[WTN]}
+
+  ws_json=$(i3-msg -t get_workspaces)
+  re=',"name":"([^"]+)"'
+
+  while read -rs ; do
+    if [[ $REPLY =~ \"num\":([0-9-]+) ]]; then
+      ws_temp=${BASH_REMATCH[1]}
+      ((ws_temp > ws_free)) && ws_free=$ws_temp
+    elif [[ ${__o[workspace]} && $REPLY =~ \"name\":\"${__o[workspace]} ]]; then
+      unset '__o[workspace]'
+    fi
+  done <<< "${ws_json//,/$'\n'}"
+
+  # ws_free is a vacant workspace (highest ws number + 1)
+  if ((++ws_free)) && [[ ! $ws_zen ]]; then
+
+    [[ ${__o[workspace]} ]] \
+      && ws_zen=${__o[workspace]}          \
+      || ws_zen=$ws_free
+
+    messy "[con_id=${i3list[AWC]}]"    \
+          move to workspace "$ws_zen," \
+          floating disable,            \
+          split v, layout tabbed,      \
+          focus, focus parent
+
+    messy "mark $_mark"
+
+    ((__o[width]  > 0 && __o[width]  < 100)) || __o[width]=75
+    ((__o[height] > 0 && __o[height] < 100)) || __o[height]=90
+
+    width=$((  (i3list[WAW] * __o[width])  / 100 ))
+    height=$(( (i3list[WAH] * __o[height]) / 100 ))
+
+    ((__o[xpos] < 0)) && __o[xpos]=$(( i3list[WAW]-(width  - __o[xpos]) ))
+    ((__o[ypos] < 0)) && __o[ypos]=$(( i3list[WAH]-(height - __o[ypos]) ))
+
+    x=${__o[xpos]:-$(( (i3list[WAW]-width)  / 2 ))}
+    y=${__o[ypos]:-$(( (i3list[WAH]-height) / 2 ))}
+
+    x=$((x + i3list[WAX])) y=$((y + i3list[WAY]))
+
+    messy "[con_mark=$_mark]" \
+          floating enable,    \
+          workspace "$ws_zen"
+
+    # if the focus action below isn't included, the
+    # container will not resize properly..
+    messy "[con_id=${i3list[AWC]}] focus"
+
+    messy "[con_mark=$_mark]"           \
+          "resize set $width $height ," \
+          "move absolute position $x $y"
+
+    [[ $var_data ]] || i3var set "zen${i3list[AWC]}" "$var"
+
+  elif ((i3list[APA] == i3list[TWC])); then
+    
+    [[ $var_data =~ ([^:]+):(.+) ]] && {
+      # trg_geo is "tiled" if the window was tiled before
+      # getting zen. If it was tiled trg_geo is:
+      # WIDTHxHEIGHT+X+Y
+      trg_geo=${BASH_REMATCH[1]}
+      trg_ws=${BASH_REMATCH[2]}
+    }
+
+    re='([0-9]+)x([0-9]+)\+([0-9-]+)\+([0-9-]+)'
+    if [[ $trg_geo =~ $re ]]; then
+      tmpw=${BASH_REMATCH[1]} tmph=${BASH_REMATCH[2]}
+      tmpx=${BASH_REMATCH[3]} tmpy=${BASH_REMATCH[4]}
+      float_as="floating enable, resize set $tmpw $tmph, move position $tmpx $tmpy"
+    else
+      float_as="floating disable"
+    fi
+
+    messy "[con_id=${i3list[AWC]}]"    \
+          floating enable,             \
+          move to workspace "$trg_ws", \
+          "$float_as" ,                \
+          workspace "$trg_ws"
+
+    i3var set "zen${i3list[AWC]}"
+    
+
+  else
+    messy "[con_id=${i3list[AWC]}]"     \
+          move to workspace "$ws_free", \
+          "floating disable,"           \
+          "move to mark $_mark,"        \
+          "focus, workspace $ws_zen"
+
+    [[ $var_data ]] || i3var set "zen${i3list[AWC]}" "$var"
+  fi
+
+  (( __o[verbose] )) || qflag=-q
+
+  [[ $float_as = "floating disable" && -f $I3_KING_PID_FILE ]] && {
+
+    ((__o[verbose])) && ERM "i3zen -> i3king --conid ${i3list[AWC]}"
+
+    mapfile -t king_commands <<< "$(i3king --conid "${i3list[AWC]}" \
+                                           --print-commands         \
+                                           --json "$_json")"
+
+    for command in "${!king_commands[@]}"; do
+      if [[ ${king_commands[command]} =~ floating\ enable ]]
+        then unset 'king_commands[command]'
+        else messy "${king_commands[command]}"
+      fi
+    done
+
+  }
+
+  [[ $_msgstring ]] && i3-msg ${qflag:-} "$_msgstring"
+  unset _msgstring
+
+  # if origin workspace doesn't exist after zen
+  # container is created. we move zen container
+  # back to that workspace.
+  ((width)) && [[ ! ${__o[workspace]} ]] && {
+    re='"name":"'"${i3list[WAN]}"'",'
+    [[ $(i3-msg -t get_workspaces) =~ $re ]] || {
+
+      messy "[con_mark=$_mark]"                 \
+            move to workspace "${i3list[WAN]}", \
+            workspace "${i3list[WAN]}"
+
+      i3-msg ${qflag:-} "$_msgstring"
+    }
+  }
+
+  ((__o[verbose])) && {
+    ERM "==================="
+    ERM "i3zen STOP - " \
+        "$(( (10#${EPOCHREALTIME//[!0-9]} - _t) / 1000 ))ms"
+    ERM "==================="
+  }
+}
+
+___printhelp(){
+  
+cat << 'EOB' >&2
+i3zen - zentered container, full focus
+
+
+SYNOPSIS
+--------
+i3zen [--width INT] [--height INT] [--xpos|-x INT] [--ypos|-y INT] [--mark|-m MARK] [--workspace|-w WORKSPACE]
+i3zen --verbose [--dryrun]
+i3zen --help|-h
+i3zen --version|-v
+
+OPTIONS
+-------
+
+--width INT  
+Sets the width of the zen container to INT
+percent of the workspace width when it is created.
+
+
+--height INT  
+Sets the height of the zen container to INT
+percent of the workspace height when it is
+created.
+
+
+--xpos|-x INT  
+If set the zen container will be placed at INT
+pixels to the right of the left edge of the
+workspace instead of the center when it is
+created. If INT is negative, it will be placed INT
+pixels to the left of the right edge.
+
+
+--ypos|-y INT  
+If set the zen container will be placed at INT
+pixels to the below the top edge of the workspace
+instead of the center when it is created. If INT
+is negative, it will be placed INT pixels to above
+of the bottom edge.
+
+
+--mark|-m MARK  
+If not set the zen container will be marked
+centerzen. If set it will instead be marked MARK
+when it is created. This option can be used to
+create multiple zen containers.
+
+
+--workspace|-w WORKSPACE  
+If this option is not set the zen container will
+be created on a vacant workspace (the highest
+numbered workspace + 1).
+
+
+--verbose  
+Show verbose output on stderr during execution
+
+
+--dryrun  
+Don't execute any commands
+
+--help|-h  
+Show help and exit.
+
+
+--version|-v  
+Show version and exit.
+
+EOB
+}
+
+
+set -E
+trap '[ "$?" -ne 98 ] || exit 98' ERR
+
+ERX() { >&2 echo  "[ERROR] $*" ; exit 98 ;}
+ERR() { >&2 echo  "[WARNING] $*"  ;}
+ERM() { >&2 echo  "$*"  ;}
+ERH(){
+  ___printhelp >&2
+  [[ -n "$*" ]] && printf '\n%s\n' "$*" >&2
+  exit 98
+}
+
+
+messy() {
+
+  # arguments are valid i3-msg arguments
+  # separate resize commands and execute
+  # all commands at once in cleanup()
+  (( __o[verbose] )) && ERM "m $*"
+  (( __o[dryrun]  )) || _msgstring+="$*;"
+}
+
+# SC2034 __o appears unused.
+# shellcheck disable=2034
+declare -A __o
+options="$(
+  getopt --name "[ERROR]:i3zen" \
+    --options "x:y:m:w:hv" \
+    --longoptions "width:,height:,xpos:,ypos:,mark:,workspace:,verbose,dryrun,help,version," \
+    -- "$@" || exit 98
+)"
+
+eval set -- "$options"
+unset options
+
+while true; do
+  case "$1" in
+    --width      ) __o[width]="${2:-}" ; shift ;;
+    --height     ) __o[height]="${2:-}" ; shift ;;
+    --xpos       | -x ) __o[xpos]="${2:-}" ; shift ;;
+    --ypos       | -y ) __o[ypos]="${2:-}" ; shift ;;
+    --mark       | -m ) __o[mark]="${2:-}" ; shift ;;
+    --workspace  | -w ) __o[workspace]="${2:-}" ; shift ;;
+    --verbose    ) __o[verbose]=1 ;; 
+    --dryrun     ) __o[dryrun]=1 ;; 
+    --help       | -h ) ___printhelp && exit ;;
+    --version    | -v ) ___printversion && exit ;;
+    -- ) shift ; break ;;
+    *  ) break ;;
+  esac
+  shift
+done
+
+[[ ${__lastarg:="${!#:-}"} =~ ^--$|${0}$ ]] \
+  && __lastarg="" 
+
+
+main "${@:-}"
+
+
