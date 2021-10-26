@@ -3,8 +3,8 @@
 ___printversion(){
   
 cat << 'EOB' >&2
-i3ass - version: 2021.10.17.0
-updated: 2021-10-17 by budRich
+i3ass - version: 2021.10.26.1
+updated: 2021-10-26 by budRich
 EOB
 }
 
@@ -44,6 +44,7 @@ i3menu
 i3run
 i3var
 i3viswiz
+i3zen
 EOB
 }
 
