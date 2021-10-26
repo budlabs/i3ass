@@ -21,22 +21,23 @@ $ git clone https://github.com/budlabs/i3ass.git
 $ cd i3ass
 # make install
 $ i3ass
-i3ass - version: 2021.09.12.3
-updated: 2021-09-12 by budRich
+i3ass - version: 2021.10.26.0
+updated: 2021-10-26 by budRich
 
 script   | version
 ------------------
 i3flip   | 0.101
-i3fyra   | 1.21
+i3fyra   | 1.22
 i3get    | 0.8
 i3gw     | 2020.08.12.0
-i3king   | 0.3
+i3king   | 0.32
 i3Kornhe | 0.667
-i3list   | 0.35
+i3list   | 0.4
 i3menu   | 0.11
-i3run    | 0.15
+i3run    | 0.2
 i3var    | 0.050
 i3viswiz | 0.55
+i3zen    | 0.1
 
 dependencies:
 bash     [INSTALLED]
@@ -72,6 +73,7 @@ table below, will take you to the wiki page for the script.
 |[i3run] | Run, Raise or hide windows in i3wm
 |[i3var] | Set or get a i3 variable
 |[i3viswiz] | Professional window focus for i3wm
+|[i3zen] | zentered container, full focus
 
 EXAMPLES
 --------
@@ -83,6 +85,45 @@ about the command.
 `i3get --version` display [i3get] version  
 `man i3get` show [i3get] man page  
 `i3ass` show version info for all scripts and dependencies.
+
+## updates
+
+#### [i3zen]
+
+Re-worked and re-added this script. It puts the currently
+focused window in a floating, but tabbed container on a
+*fresh* workspace. No ghostwindows, works good with multiple
+workspaces. See the
+[wiki](https://github.com/budlabs/i3ass/wiki/i3zen) or
+manpage for more info.
+
+#### [i3king]
+
+
+Added `--winid` option.  
+The new `window_icon_padding` property is now handled so it
+works with the latest version of i3wm (4.20).
+
+#### [i3run]
+
+
+Fixed issues related to named workspaces always having the
+same workspace number (-1) as the scratchpad.
+
+Added `--verbose` option.
+
+#### [i3list]
+
+
+Multiple search criteria works well now.
+
+Added new keys:  
+
+``` shell
+i3list[APA] # Active Window parent ID
+i3list[TPA] # Target Window parent ID
+```
+
 
 ## known issues
 
@@ -108,6 +149,7 @@ some scripts might still work with i3-gaps, but consider that *Happy little acci
 [i3menu]: https://github.com/budlabs/i3ass/wiki/i3menu
 [i3viswiz]: https://github.com/budlabs/i3ass/wiki/i3viswiz
 [i3king]: https://github.com/budlabs/i3ass/wiki/i3king
+[i3zen]: https://github.com/budlabs/i3ass/wiki/i3zen
 
 
 
