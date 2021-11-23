@@ -1,0 +1,7 @@
+ass/*/*.1
+ass/*/func/_*
+ass/*/.cache/
+ass/*/_*
+
+wiki/
+notes.md
