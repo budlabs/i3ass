@@ -1,0 +1,7 @@
+--instance|-i INSTANCE  [--summon|-s] [--nohide|-g] [--verbose]
+--class|-c    CLASS     [--rename|-x OLD_NAME] 
+--title|-t    TITLE     [--rename-instance OLD_NAME] [--rename-class OLD_NAME] [--rename-title OLD_NAME]
+--conid|-n    CON_ID    [--force|-f] [--FORCE|-F] 
+--winid|-d    WIN_ID    [--command|-e COMMAND] [--mouse|-m]
+--help|-h
+--version|-v

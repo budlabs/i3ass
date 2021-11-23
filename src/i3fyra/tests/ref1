@@ -1,0 +1,8 @@
+ 
+f windowmove(Up)
+f containerhide(C)
+m [con_mark=i34C] move scratchpad
+m [con_mark=i34A] focus child
+f varset(i34MAB 1520 i34MAC 220)
+m [con_mark=i34MAB] mark i34MAB=1520
+m [con_mark=i34MAC] mark i34MAC=220

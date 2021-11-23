@@ -1,0 +1,45 @@
+#!/bin/bash
+
+: "${I3RUN_BOTTOM_GAP:=10}"
+: "${I3RUN_TOP_GAP:=10}"
+: "${I3RUN_LEFT_GAP:=10}"
+: "${I3RUN_RIGHT_GAP:=10}"
+
+main(){
+
+  declare -a acri       # options passed to i3list/i3get
+  declare -A i3list     # globals array
+  declare -g _msgstring # passed to i3-msg ( messy() )
+
+  ((_o[verbose] && ! _o[dryrun])) && timer start i3run
+
+  for k in instance class title conid winid; do
+    [[ ${_o[$k]} ]] || continue
+    acri+=("--$k" "${_o[$k]}")
+  done ; unset k
+
+  [[ -z ${acri[*]} ]] \
+    && ERH "please specify a criteria"
+
+  ((_o[verbose])) && ERM "i3run -> i3list ${acri[*]}"
+  _array=$(i3list "${acri[@]}")
+  eval "$_array"
+
+  _command=${_o[command]:-$*}
+
+  # if window doesn't exist, launch the command.
+  if [[ ${i3list[TWC]} ]]
+    then focuswindow
+    else launchcommand
+  fi
+
+  ((_o[verbose])) || qflag=-q
+  [[ $_msgstring ]] && i3-msg ${qflag:-} "$_msgstring"
+
+  ((_o[verbose] && ! _o[dryrun])) && timer stop i3run
+}
+
+__dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
+source "$__dir/_init.sh"                              #bashbud
+main "$@"                                             #bashbud
+

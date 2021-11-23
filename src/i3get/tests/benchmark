@@ -1,0 +1,72 @@
+21/06/07 (rewrote back to AWK)
+========
+time(while ((++i<100));do i3get -i typiskt -r tcidamow >/dev/null ; done)
+real  0m1.684s
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamo --json "$(< test.json)" >/dev/null ; done)
+real  0m2.107s
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamow --json "$(< test.json)" >/dev/null ; done)
+real  0m2.112s
+
+cat main.sh awklib/* lib/get_window.sh | grep -E '^\s*[^#].+$' | wc -l
+238
+
+
+20/07/12
+========
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamow  >/dev/null ; done)
+real  0m3.260s
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamo  >/dev/null ; done)
+real  0m2.379s
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamo --json test.json >/dev/null ; done)
+real  0m1.865s
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamow --json test.json >/dev/null ; done)
+real  0m2.737s
+
+cat main.sh lib/* | grep -E '^\s*[^#].+$' | wc -l
+126
+
+---
+
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamo >/dev/null ; done)
+real  0m2.370s
+user  0m1.744s
+sys   0m0.564s
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamo >/dev/null ; done)
+real  0m2.338s
+user  0m1.697s
+sys  0m0.574s
+
+
+## slower when using w
+time(while ((++i<100));do i3get -i typiskt -r tcidamow --json test.json >/dev/null ; done)
+real  0m3.802s
+user  0m3.042s
+sys   0m0.864s
+
+time(while ((++i<100));do i3get -i typiskt -r tcidamow >/dev/null ; done)
+real  0m4.176s
+user  0m3.299s
+sys   0m0.815s
+
+---
+
+awk version:
+time(while ((++i<100));do i3get -i typiskt -r tcidamo >/dev/null ; done)
+
+real  0m3.848s
+user  0m3.379s
+sys   0m0.736s
+
+wc -l program.sh 
+331 program.sh
+
+
+----

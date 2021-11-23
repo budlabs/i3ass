@@ -1,0 +1,9 @@
+    [--json JSON]
+    --instance|-i TARGET [--json JSON] [--verbose]
+    --class|-c    TARGET [--json JSON] [--verbose]
+    --conid|-n    TARGET [--json JSON] [--verbose]
+    --winid|-d    TARGET [--json JSON] [--verbose]
+    --mark|-m     TARGET [--json JSON] [--verbose]
+    --title|-t    TARGET [--json JSON] [--verbose]
+    --help|-h
+    --version|-v

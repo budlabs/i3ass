@@ -1,0 +1,1 @@
+`-f`, `--force`            | Execute COMMAND (`--command`), even if the window already exist. But not when hiding a window.

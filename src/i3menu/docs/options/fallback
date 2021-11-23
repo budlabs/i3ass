@@ -1,0 +1,22 @@
+`--fallback`         FALLBACK | if layout fails, use FALLBACK  
+
+FALLBACK can be a string of optional options the will be tried if the *first layout* fails. A layout can fail of three reasons:
+
+1. layout is window or container, but no list is passed. If no fallback is set, **titlebar** layout will get tried.
+2. layout is container but container is not visible. If no fallback is set, **default** layout will get tried.
+3. layout is window, tab or titlebar but no target window is found. If no fallback is set, **default** layout will get tried.
+
+**Example**  
+```text
+$ echo -e "one\ntwo\nthree" | i3menu --layout A --fallback '--layout mouse --width 300'
+```
+
+The example above will display a menu at the mouse pointer if container A isn't visible.
+
+Fallbacks can be nested, but make sure to alternate quotes:  
+
+```text
+$ echo -e "one\ntwo\nthree" | i3menu --layout A --fallback '--layout window --fallback "--layout mouse --width 300"'
+```
+
+The example above would first try to display a menu with `--layout A` if that fails, it will try a menu with `--layout window` and last if no target window can be found, the menu will get displayed at the mouse pointer.

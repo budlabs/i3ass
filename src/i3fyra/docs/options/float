@@ -1,0 +1,10 @@
+`-a`, `--float`    | toggle floating state of a window  
+
+Autolayout. If current window is tiled: floating
+enabled If window is floating, it will be put in a
+visible container. If there is no visible
+containers. The window will be placed in a hidden
+container. If no containers exist, container
+'A'will be created and the window will be put
+there.
+

@@ -1,0 +1,8 @@
+    [--config|-c FILE] [--no-apply] [--no-restart]
+    --apply|-a [--config|-c FILE] 
+    --conid|-n CONID [--print-commands] [--config|-c FILE]
+    --winid|-d WINID [--print-commands] [--config|-c FILE]
+    --json JSON [--verbose] [--dryrun] [--log FILE]
+    --reload
+    --help|-h
+    --version|-v

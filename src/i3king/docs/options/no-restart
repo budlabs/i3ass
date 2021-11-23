@@ -1,0 +1,4 @@
+`--no-restart`      | dont restart on i3 crash  
+
+When the IPC socket is broken, i3king will automatically
+restart if this option is not set.

@@ -1,0 +1,10 @@
+*{
+  background-color:    @light;
+  border-color:        @light;
+  text-color:          @dark;
+  selbg:               @dark;
+  selfg:               @light;
+  promptbg:            @dark;
+  promptfg:            @light;
+  font:                @font1; 
+}

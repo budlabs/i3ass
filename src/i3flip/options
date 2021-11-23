@@ -1,0 +1,3 @@
+[--move|-m] [--json JSON] [--verbose] [--dryrun]
+--help|-h
+--version|-v

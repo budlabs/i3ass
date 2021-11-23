@@ -1,0 +1,17 @@
+`-m`, `--move`    DIRECTION\|CONTAINER | move window/create container  
+
+Moves current window to target container, either
+defined by it's name or it's position relative to
+the current container with a direction:
+[`l`|`left`][`r`|`right`][`u`|`up`][`d`|`down`] If
+the container doesnt exist it is created. If
+argument is a direction and there is no container
+in that direction, Connected container(s)
+visibility is toggled. If current window is
+floating or not inside ABCD, normal movement is
+performed. Distance for moving floating windows
+with this action can be defined with the `--speed`
+option. Example: `$ i3fyra --speed 30 -m r` Will
+move current window 30 pixels to the right, if it
+is floating.
+

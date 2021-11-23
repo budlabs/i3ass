@@ -1,0 +1,9 @@
+`--margin`        INT | Defaults to 5 if not set  
+
+This is only used when
+moving a window and the direction is a number.
+INT is the number of pixels from the screen
+edge the window will be positioned at.
+
+The default value is 5 and it applies to all
+margins of the screen.

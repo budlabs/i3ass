@@ -1,0 +1,42 @@
+removed match in favour for classic pattern
+===========================================
+time(while ((++i<50));do i3list -i typiskt --json t/tree.json  >/dev/null ; done)
+real  0m1.711s -400
+
+time(while ((++i<100));do i3list -i typiskt --json t/tree.json  >/dev/null ; done)
+real  0m3.410s
+
+
+Hardcoded name for all relevant keys
+====================================
+time(while ((++i<100));do i3list -i typiskt --json t/tree.json  >/dev/null ; done)
+real  0m4.469s
+
+time(while ((++i<50));do i3list -i typiskt --json t/tree.json  >/dev/null ; done)
+real  0m2.157s -800
+
+
+FD instead of pipe to start awk
+===============================
+
+time(while ((++i<50));do i3list -i typiskt --json t/tree.json  >/dev/null ; done)
+real  0m2.932s
+
+time(while ((++i<50));do i3list -i typiskt  >/dev/null ; done)
+real  0m2.899s
+
+time(while ((++i<100));do i3list -i typiskt  >/dev/null ; done)
+real  0m5.880s
+
+cat main.sh lib/* | grep -E '^\s*[^#].+$' | wc -l
+404
+
+
+20/07/12 - before anything
+==========================
+
+time(while ((++i<100));do i3list -i typiskt  >/dev/null ; done)
+real  0m5.962s
+
+cat main.sh lib/* awklib/* | grep -E '^\s*[^#].+$' | wc -l
+766

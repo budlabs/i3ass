@@ -1,0 +1,23 @@
+#!/bin/bash
+
+main(){
+
+  ((_o[verbose] && ! _o[dryrun])) && timer start i3get
+
+  result=$(get_window)
+  timeout=$SECONDS
+
+  ((_o[synk])) && [[ ! $result ]] && sleep .1 && while :; do
+    result=$(get_window)
+    [[ $((SECONDS-timeout)) -gt 60 || $result ]] && break
+    i3-msg -qt subscribe '["window"]'
+  done
+
+  [[ $result ]] && echo "$result"
+
+  ((_o[verbose] && ! _o[dryrun])) && timer stop i3get
+}
+
+__dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
+source "$__dir/_init.sh"                            #bashbud
+main "$@"                                           #bashbud

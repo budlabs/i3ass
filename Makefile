@@ -1,25 +1,45 @@
-PROGNM  ?= i3ass
-PREFIX  ?= /usr
-BINDIR  ?= $(PREFIX)/bin
-SHRDIR  ?= $(PREFIX)/share
-MANDIR  ?= $(SHRDIR)/man/man1
+.PHONY: wiki install-dev install all clean readme uninstall-dev
 
-.PHONY: install
-install:
+default: all
 
-	install -Dm755 src/*   -t $(DESTDIR)$(BINDIR)
-	install -Dm644 man/*   -t $(DESTDIR)$(MANDIR)
-	install -Dm644 LICENSE -t $(DESTDIR)$(SHRDIR)/licenses/$(PROGNM)
+.ONESHELL:
+SHELL     := /bin/bash
 
-.PHONY: uninstall
-uninstall:
+ass_dirs  := $(wildcard src/*)
+wiki_mds  := $(ass_dirs:src/%=wiki/doc/%.md)
 
-	@for manpage in man/*.1 ; do \
-		rm $(DESTDIR)$(MANDIR)/$${manpage##*/}; \
+README_LAYOUT  =         \
+	docs/readme_header.md  \
+	docs/readme_install.md \
+	docs/readme_about.md   \
+	docs/readme_table.md   \
+	docs/readme_issues.md  \
+	docs/readme_license.md \
+	docs/readme_links.md   \
+
+
+install install-dev all clean uninstall-dev:
+	for dir in $(ass_dirs); do
+		$(MAKE) -C "$$dir" $@
 	done
 
-	@for script in src/* ; do \
-		rm $(DESTDIR)$(BINDIR)/$${script##*/}; \
-	done
+wiki: $(wiki_mds)
 
-	rm -rf $(DESTDIR)$(SHRDIR)/licenses/$(PROGNM)
+$(wiki_mds): wiki/doc/%.md : ass/%/.cache/manpage.md
+	cat $< > $@	
+
+readme: README.md
+
+README.md: $(README_LAYOUT)
+	cat $^ > $@
+
+docs/readme_table.md: $(addsuffix /config.mak,$(ass_dirs))
+	@{
+		echo
+		printf '%s\n' "script | description" "|:-|:-|"
+		awk '
+			$$1 == "NAME" {name=$$3}
+			$$1 == "DESCRIPTION" {
+				printf ("[%s] | %s  \n", name , gensub(".+:= ","",1,$$0))
+			}' $^ 
+	} > $@

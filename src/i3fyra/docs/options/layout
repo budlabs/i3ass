@@ -1,0 +1,8 @@
+`-l`, `--layout`  LAYOUT | update the size of the layout  
+
+AB is on X axis from the left side if INT is
+positive, from the right side if it is negative.
+AC and BD is on Y axis from the top if INT is
+positive, from the bottom if it is negative. The
+whole argument needs to be quoted. Example:   `$
+i3fyra --layout 'AB=-300 BD=420'

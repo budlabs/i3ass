@@ -1,0 +1,57 @@
+# if the first nonblank character is "#", the line is ignored (comment)
+# blank lines are also ignored.
+
+# rules are always declared before the commands:
+instance=firefox title="a window title|tab"
+# the commands need to be on one line and indented with whitespace:
+# the commands are sent to i3-msg, so to execute
+# "other" commands you need to use 'exec' just as in 
+# the i3 config.
+  exec --no-startup-id notify-send "a firefox window was created"
+
+# it is also possible to use 'set' like in the i3 config
+# to make variables.
+set $X   exec --no-startup-id
+set $MSG exec --no-startup-id notify-send
+
+# global rules will apply to all windows
+GLOBAL
+  $MSG "a new window was created"
+
+# default rules applies to any window that does
+# not match a "normal" rule
+# in this file it will never get triggered, since
+# the above GLOBAL rule is considered normal and
+# will always trigger.
+DEFAULT
+  $MSG "no other rules matched"
+
+# global rule declarations can be followed by a rule.
+# windows matching such a rule will be ignored.
+GLOBAL class=URxvt
+  $MSG "this is NOT a URxvt window"
+
+# use comma to group rules to the same command
+class=URxvt , instance=firefox
+  $MSG "this is a terminal or browser window"
+
+# this also works for global rules
+GLOBAL class=URxvt , instance=firefox
+  $MSG "this is NOT a URxvt or firefox window"
+
+# lines ending with backslash (\)
+# will get added to the beginning of the next line
+# the rule below is equivalent to the one above:
+GLOBAL \
+  class=URxvt ,\
+  instance=firefox
+    $MSG "this is NOT a URxvt or firefox window"
+
+ON_CLOSE instance=firefox
+  $MSG "the firefox window is now closed"
+
+# use semicolon to execute more then one command,
+# notice that we need exec after the semicolon ($X/$MSG)
+class=URxvt
+  $MSG "this is a terminal window" ;\
+  $MSG "the instance name is $INSTANCE"

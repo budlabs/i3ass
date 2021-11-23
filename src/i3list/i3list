@@ -1,0 +1,28 @@
+#!/bin/bash
+
+main(){
+
+  ((_o[verbose])) && timer start i3list
+
+  : "${_json:=${_o[json]:-$(i3-msg -t get_tree)}}"
+
+  awk -f <(
+    echo "
+    BEGIN {
+      ${_o[instance]:+arg_search[\"instance\"]=\"${_o[instance]}\"}
+      ${_o[class]:+arg_search[\"class\"]=\"${_o[class]}\"}
+      ${_o[conid]:+arg_search[\"id\"]=\"${_o[conid]}\"}
+      ${_o[winid]:+arg_search[\"window\"]=\"${_o[winid]}\"}
+      ${_o[mark]:+arg_search[\"marks\"]=\"${_o[mark]}\"}
+      ${_o[title]:+arg_search[\"name\"]=\"${_o[title]}\"}
+    }"
+    _awklib
+  ) FS=: RS=, <<< "$_json"
+
+  ((_o[verbose])) && timer stop i3list
+  
+}
+
+__dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
+source "$__dir/_init.sh"                            #bashbud
+main "$@"                                           #bashbud

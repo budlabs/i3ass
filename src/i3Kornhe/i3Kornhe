@@ -1,0 +1,155 @@
+#!/bin/bash
+
+: "${XDG_RUNTIME_DIR:=/tmp}"
+: "${I3_KORNHE_FIFO_FILE:=$XDG_RUNTIME_DIR/i3ass/i3Kornhe.fifo}"
+
+main(){
+
+  declare -g  _next_mode
+  declare -g  _direction
+  declare -ig _speed
+
+  declare -g  _msgstring  # combined i3-msg
+  declare -g  _array      # output from i3list
+  declare -g  _qflag      # -q option passed to i3-msg
+  declare -g  _stamp      # millisecond timestamp
+  declare -Ag i3list      # i3list array
+  declare -Ag last        # array with last i3Kornhe info
+
+  # suffix the FIFO filename with the same suffix
+  # as the i3-socketpath to ensure we are not
+  # sending commands to a fifo being created in
+  # a different session.
+  until [[ ${sp:=$(i3 --get-socketpath)} ]]
+    do sleep .1
+  done
+
+  I3_KORNHE_FIFO_FILE+=${sp##*.}
+
+  # _o[verbose]=1
+  ((_o[verbose])) || _qflag='-q'
+
+  # mode is first arg, size|move|x|0-9 -> s|m|x|0-9
+  _next_mode="${1:0:1}" ; _next_mode="${_next_mode,,}"
+  
+  __lastarg=${!#}
+  # last arg is direction, left|right|up|down -> l|r|u|d
+  _direction=${__lastarg:0:1} ; _direction=${_direction,,}
+
+  # remove all none digits from --speed arg
+  _speed=${_o[speed]//[!0-9]}
+  ((_speed >= 0)) || _speed=10
+
+  [[ -p $I3_KORNHE_FIFO_FILE ]] && {
+    printf '%s %s %s\n' "$_direction" "$_next_mode" "$_speed" >> "$I3_KORNHE_FIFO_FILE" &
+    exit
+  }
+
+  [[ -f ${I3_KORNHE_FIFO_FILE}.lock ]] && exit
+  touch "${I3_KORNHE_FIFO_FILE}.lock"
+
+  ((_o[verbose] && ! _o[dryrun])) && timer start i3Kornhe
+
+  [[ ${_array:=${_o[array]}} ]] \
+    || _array=$(i3list ${_o[json]:+--json "${_o[json]}"})
+
+  eval "$_array"
+
+  # if request is to move a tiled window
+  # on the i3fyra (WSF) workspace, we redirect
+  # the action to i3fyra
+  [[ $_next_mode = m ]] && (( i3list[AWF]!=1 && i3list[WSA]==i3list[WSF])) && {
+    rm -f "$I3_KORNHE_FIFO_FILE"*
+    exec i3fyra --move "$_direction" --array "$_array" "${_o[verbose]:+--verbose}"
+  }
+
+  rm -f "$I3_KORNHE_FIFO_FILE"
+  mkdir -p "${I3_KORNHE_FIFO_FILE%/*}"
+  mkfifo "$I3_KORNHE_FIFO_FILE"
+
+  printf '%s %s %s\n' "$_direction" "$_next_mode" "$_speed" >> "$I3_KORNHE_FIFO_FILE" &
+  trap 'cleanup' EXIT
+
+  # when modifying FLOATING windows we enter a i3
+  # binding mode, and change the title format of 
+  # the active window to display mode type and
+  # coordinates. We need to keep the original title
+  # and use i3var for that.
+  if ((i3list[AWF])); then
+
+    last=(
+      [title]=$(i3get -r o)
+      [mode]=$_next_mode
+      [conid]=${i3list[AWC]}
+    )
+
+  # when i3Kornhe is used to modify a TILED window
+  # we don't enter a i3 binding mode, and it is
+  # only when we exit the binding mode that the
+  # fifo file is destroyed. Therefor we set this
+  # autodestruct timer in the background.
+  # It is not needed if the user have set up
+  # --release keybindings, but there is no good
+  # way to know if they have and in case they haven't
+  # we keep this.
+  else
+    (
+      sleep 1
+      [[ -p $I3_KORNHE_FIFO_FILE ]] \
+        && echo EXIT >> "$I3_KORNHE_FIFO_FILE"
+    ) &
+  fi
+
+  rm "${I3_KORNHE_FIFO_FILE}.lock"
+
+  while [[ -p $I3_KORNHE_FIFO_FILE ]]; do
+    while read -rst 1 _direction _next_mode _speed ; do
+
+      [[ $_direction ]] || continue
+
+      if [[ $_direction = EXIT || $_direction = RELEASE ]]; then
+        rm -f "$I3_KORNHE_FIFO_FILE"* ; break 2
+      elif [[ $_direction = x ]]; then
+        exit_mode
+        rm -f "$I3_KORNHE_FIFO_FILE"* ; break 2
+      elif [[ $_direction =~ ^[1-9]$ ]]; then
+        _next_mode=m
+      elif [[ $_next_mode = s && ${last[mode]} = s ]]; then
+          last[corner]=""
+      elif [[ $_next_mode != x && $_next_mode = "$_direction" ]]; then
+        _next_mode=${last[mode]:-x}
+      fi
+
+      if ((i3list[AWF])); then
+        # this is needed when we go from size mode
+        # to move mode, otherwise the coordinates
+        # from before the size operations will be used
+        [[ ${last[mode]} = "$_next_mode" ]] || eval "$(i3list)"
+        modify_floating
+      else
+        modify_tiled
+      fi
+
+    done < "$I3_KORNHE_FIFO_FILE"
+
+    ((i3list[AWF])) && {
+      # we only append the window geometry to the 
+      # window title if the window is being moved.
+      # to correctly display geometry from a resize
+      # operation we need to query i3list every time.
+      [[ ${last[mode]} = m ]] \
+        && title_format+="x:${i3list[AWX]} y:${i3list[AWY]} w:${i3list[AWW]} h:${i3list[AWH]}"
+      
+      messy "[con_id=${last[conid]}] title_format $title_format"
+      messy mode sizemode
+    }
+
+    [[ $_msgstring ]] && i3-msg "${_qflag:-}" "$_msgstring"
+    _msgstring=''
+
+  done
+}
+
+__dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
+source "$__dir/_init.sh"                            #bashbud
+main "$@"                                           #bashbud

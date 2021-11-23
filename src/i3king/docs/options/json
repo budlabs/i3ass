@@ -1,0 +1,1 @@
+`--json`           JSON | use JSON instead of output from: `i3-msg -t subscribe`

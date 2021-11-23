@@ -1,0 +1,87 @@
+#!/bin/bash
+
+main(){
+
+  ((_o[dryrun])) || {
+    [[ -f /tmp/i3flip_lock ]] && exit
+    touch /tmp/i3flip_lock
+    trap 'rm /tmp/i3flip_lock' EXIT HUP INT
+  }
+
+  declare -g _msgstring
+  declare -i next prev
+
+  _dir=$1
+
+  ((_o[verbose] && ! _o[dryrun])) && timer start i3flip
+
+  ((_o[verbose])) && ERM $'\n'"target direction: $_dir"
+  _dir=${_dir,,}
+
+  read -r layout last first pos size < <(
+    i3viswiz --parent ${_o[json]:+--json "${_o[json]}"} \
+             --debug grouplayout,lastingroup,firstingroup,grouppos,groupsize \
+             --debug-format "%v "
+    )            
+  
+  ((_o[verbose])) && ERM "w" "layout:$layout" "last:$last" \
+                             "first:$first" "pos:$pos" "size:$size"
+
+  ((size < 2)) && ERX only container in group
+
+  case "${_dir:0:1}" in
+
+    r|d|n ) 
+      next=1 prev=0
+      [[ $layout =~ tabbed|splith ]] \
+        && ldir=right || ldir=down
+    ;;
+
+    l|u|p )
+      prev=1 next=0
+      [[ $layout =~ tabbed|splith ]] \
+        && ldir=left || ldir=up
+    ;;
+
+    *     ) ERX "$1 is not a valid direction" ;;
+  esac
+
+  # focus/move normally
+  if (( (pos  > 1 && pos < size)       
+   || ( (pos == 1 && next)
+   ||   (pos == size && prev) ) )); then
+   
+   ((_o[move])) && cmd=move || cmd=focus
+   messy "$cmd  $ldir"
+  
+  # warp focus/move to end of group
+  elif ((pos == 1)); then
+    if ((_o[move])); then
+      messy "[con_id=$last] mark --add --toggle fliptmp"
+      messy "move to mark fliptmp"
+      messy "[con_id=$last] mark --add --toggle fliptmp"
+    else
+      messy "[con_id=$last] focus"
+    fi
+
+  # warp focus/move to start of group, (move+swap)
+  else
+    if ((_o[move])); then
+      messy "[con_id=$first] mark --add --toggle fliptmp"
+      messy "move to mark fliptmp, swap container with mark fliptmp"
+      messy "[con_id=$first] mark --add --toggle fliptmp"
+    else
+      messy "[con_id=$first] focus"
+    fi
+  fi
+
+  ((_o[verbose])) || qflag='-q'
+  [[ -n $_msgstring ]] && i3-msg "${qflag:-}" "$_msgstring"
+
+  ((_o[verbose] && ! _o[dryrun])) && timer stop i3flip
+}
+
+
+__dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
+source "$__dir/_init.sh"                              #bashbud
+main "$@"                                             #bashbud

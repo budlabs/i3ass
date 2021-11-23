@@ -1,0 +1,15 @@
+`-e`, `--command`         COMMAND | execute COMMAND if window is not found  
+
+**Example**
+
+``` shell
+# with --command:
+i3run --instance sublime_text --command 'subl && notify-send "sublime is started"'
+
+# with -- (recomended)
+i3run --instance sublime_text -- subl "&&"" notify-send "sublime is started"
+```
+
+Notice that you will need to *escape* some shell
+builtins that effect the commandline (`&&`, `;`,
+`&`, `|`, `||` ...) in the second example.

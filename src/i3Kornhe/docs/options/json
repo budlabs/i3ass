@@ -1,0 +1,1 @@
+`--json`          JSON | use ARRAY instead of output of `i3-msg -t get_tree`  

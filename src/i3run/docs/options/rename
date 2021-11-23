@@ -1,0 +1,31 @@
+`-x`, `--rename`          OLD_NAME | rename window properties on creation  
+
+If the search criteria is `--instance`, the window
+with instance: *OLDNAME* will get a new instance
+name matching the criteria when it is created
+(*needs `xdotool`*).
+
+**NB**  
+This option will not work reliably when using multiple
+search criteria. When you want to do that instead use:  
+`--rename-instance , --rename-class , --rename-title` .
+
+```shell
+i3run --instance budswin --rename sublime_main -- subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+
+# the example below, will not work properly:  
+i3run --title bud --instance budswin --rename sublime_main -- subl
+
+# it will start like the first example, but if it
+# doesnt find the custom instance budswin, it will
+# try to search for a window with the TITLE sublime_main
+
+# do this instead:  
+i3run --title bud --instance budswin --rename-instance sublime_main -- subl
+```

@@ -1,0 +1,5 @@
+`--scratchpad`    | this will treat the scratchpad as the active workspace.
+
+This is useful if you have a f.i. a tabbed container
+on the scratchpad, and you want to get the id of the
+window that have focus in that container.  

@@ -1,0 +1,124 @@
+#!/bin/bash
+
+main(){
+
+  # _o[verbose]=1
+
+  ((_o[verbose] && ! _o[dryrun])) && timer start i3viswiz
+
+  trap 'cleanup' EXIT
+
+  ((_o[p] == 1 || _o[parent] == 1)) && _o[parent]=${!#:-X}
+
+    if [[ ${arg_target:=${_o[title]}} ]];       then arg_type=name
+  elif [[ ${arg_target:=${_o[titleformat]}} ]]; then arg_type=title_format
+  elif [[ ${arg_target:=${_o[parent]}} ]];      then arg_type=i3fyracontainer
+  elif [[ ${arg_target:=${_o[class]}} ]];       then arg_type=class
+  elif [[ ${arg_target:=${_o[winid]}} ]];       then arg_type=winid
+  elif [[ ${arg_target:=${_o[role]}} ]];        then arg_type=window_role
+  elif [[ ${arg_target:=${_o[type]}} ]];        then arg_type=window_type
+
+  elif [[ ${_o[instance]} || ! ${arg_target:=${!#}} ]]; then
+    arg_type=instance
+    : "${arg_target:=X}"
+  else
+    arg_type="direction"
+
+    arg_target=${!#}
+    arg_target="${arg_target,,}"
+    arg_target="${arg_target:0:1}"
+
+    [[ $arg_target =~ l|r|u|d ]] || {
+      __print_help
+      ERM $'\n'"${!#} not valid direction (l|r|u|d)"
+      exit 1
+    }
+  fi
+
+
+  : "${_o[json]:=$(i3-msg -t get_tree)}"
+  : "${_o[debug]:=LIST}"
+  : "${_o[debug-format]:=%k=%v }"
+  arg_gap=$((_o[gap] > 0 ? _o[gap] : 5))
+
+  # check if focus_wrap workspace is set
+  # by looking for a mark on root container (i3var)
+  # if no mark exist, check config, set the mark
+  re='^\{"id":([0-9]+)[^[]+\[([^]]*"focus_wrap=([^"]*)"[^]]*)?\]'
+  [[ ${_o[json]} =~ $re ]] || {
+    i3-msg -t get_config | grep -E 'focus_wrapping\s+workspace' > /dev/null \
+      && wrapping=workspace
+
+    i3var set focus_wrap "${wrapping:-normal}"
+  }
+
+  result=$(
+    # <<<    - content of string _o[json] will be input  to command awk
+    # -f <() - output of awklib will be interpreted as file containg AWK script
+    # FS     - change Field  Separator to ":" (from whitespace)
+    # RS     - change Record Separator to "," (from linebreak)
+    # arg_   - these variables is available in the AWK script
+
+    <<< "${_o[json]}" awk -f <(
+      echo "
+      BEGIN {
+        ${_o[instance]:+    arg_search[\"instance\"] = \"${_o[instance]}\"}
+        ${_o[class]:+       arg_search[\"class\"] = \"${_o[class]}\"}
+        ${_o[conid]:+       arg_search[\"id\"] = \"${_o[conid]}\"}
+        ${_o[winid]:+       arg_search[\"window\"] = \"${_o[winid]}\"}
+        ${_o[mark]:+        arg_search[\"marks\"] = \"${_o[mark]}\"}
+        ${_o[title]:+       arg_search[\"name\"] = \"${_o[title]}\"}
+        ${_o[titleformat]:+ arg_search[\"title_format\"] = \"${_o[titleformat]}\"}
+        ${_o[type]:+        arg_search[\"window_type\"] = \"${_o[type]}\"}
+        ${_o[role]:+        arg_search[\"window_role\"] = \"${_o[role]}\"}
+      }"
+      _awklib
+    ) FS=: RS=, \
+    arg_type="$arg_type" arg_gap="$arg_gap" arg_target="$arg_target"  \
+    arg_debug="${_o[debug]}" arg_debug_format="${_o[debug-format]}" \
+    arg_scratchpad=${_o[scratchpad]}
+  )
+  
+  if [[ $result =~ ^floating ]]; then
+
+    case "$arg_target" in
+      l|u ) direction=prev   ;;
+      r|d ) direction=next   ;;
+      *   ) ERX "$arg_target not valid direction (l|r|u|d)" ;;
+    esac
+
+    messy focus $direction
+
+  elif [[ $arg_type != direction && ! ${_o[focus]} ]]; then
+    [[ $result ]] && echo "$result"
+  elif [[ $result =~ ^[0-9]+ ]]; then
+
+    read -r target_id active_id root_id marked_id <<< "$result"
+
+    [[ $arg_type = direction ]] && {
+
+      # i3var set viswiz-last-direction "$active_id"
+      # manually update i3vars for performance reasons
+      variable_name=i3viswiz-last-direction
+      new_mark="${variable_name}=$active_id"
+
+      # this will remove the old mark
+      [[ $marked_id ]] && {
+        old_mark="${variable_name}=$marked_id"
+        messy "[con_mark=$old_mark] mark --toggle --add $old_mark"
+      }
+
+      messy "[con_id=$root_id] mark --add $new_mark"
+
+    }
+
+    messy "[con_id=$target_id]" focus
+  else
+    ERX "focus failed. '$result' doesn't make any sense"
+  fi
+}
+
+__dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
+source "$__dir/_init.sh"                              #bashbud
+main "$@"                                             #bashbud
+

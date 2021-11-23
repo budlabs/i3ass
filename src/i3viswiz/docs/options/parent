@@ -1,0 +1,6 @@
+`--parent`=[A|B|C|D]  | list windows visible in the i3fyra containers 
+
+this takes an optional argument , but it must be
+given like this: `--parent=ARG`. `--parent ARG`,
+without equal sign, will not work. This is due to
+how getops treat optional arguments.

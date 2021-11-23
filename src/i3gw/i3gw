@@ -1,0 +1,30 @@
+#!/bin/bash
+
+main(){
+
+  local tmark w
+
+  ((_o[verbose] && ! _o[dryrun])) && timer start i3gw
+
+  IFS=$'\n\t'
+
+  tmark="${1:-}"
+
+  [[ -z $tmark ]] && {
+    ___printhelp
+    ERX "no name specified"
+  }
+
+  # w=$(i3-msg open | sed 's/[^0-9]//g')
+  w="$(i3-msg open)"
+  w="${w//[^0-9]/}"
+
+  i3-msg -q "[con_id=$w]" floating disable, mark "$tmark"
+
+  ((_o[verbose] && ! _o[dryrun])) && timer start i3gw
+  
+}
+
+__dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
+source "$__dir/_init.sh"                            #bashbud
+main "$@"                                           #bashbud

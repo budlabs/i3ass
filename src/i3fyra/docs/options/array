@@ -1,0 +1,5 @@
+`--array`   ARRAY | ARRAY should be the output of `i3list`  
+
+Use `--array ARRAY` to improve speed when
+**i3fyra** is executed from a script that already
+have the array, f.i. **i3run** and **i3Kornhe**.

@@ -1,0 +1,38 @@
+`--debug`        VARLIST | detailed output   
+
+VARLIST is used to determine what to output. By
+default the value of VARLIST is: `LIST` .
+Available units are:  
+
+```text
+wall         | none|(up|left|down|right-)(workspace|area)
+trgcon       | container id of the window to be focused
+trgpar       | name of i3fyra container target container is located in
+gap          | internal gap value used
+sw           | active workspace width
+sh           | active workspace height
+sx           | active workspace x position
+sy           | active workspace y position
+aw           | active window width
+ah           | active window height
+ax           | active window x position
+ay           | active window y position
+trgx         | target windows x position
+trgy         | target windows y position
+grouplayout  | active windows parent container layout (tabbed|splitv|splith|stacked)
+groupid      | active windows parent container ID
+grouppos     | active windows position relative to its sibling containers
+groupsize    | number of child containers in active windows parent container
+firstingroup | container ID of the first child in active windows parent container
+lastingroup  | container ID of the last child in active windows parent container
+LIST         | prints a table with all visible windows
+ALL          | all the above combined
+```
+
+Multiple units can be used if comma separated.
+
+Example:  
+```text
+$ i3viswiz --instance u --debug gap,wall,grouppos
+gap=5 wall=up-area grouppos=1 
+```

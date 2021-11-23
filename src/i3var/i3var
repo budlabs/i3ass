@@ -1,0 +1,46 @@
+#!/bin/bash
+
+main(){
+
+  ((_o[verbose] && ! _o[dryrun])) && timer start i3var
+
+  action=$1 variable_name=$2 value_to_set=$3
+
+  [[ $action =~ get|set && ${#@} -gt 1 ]] \
+    || ERX "$* not a valid command"
+
+  : "${json:=${_o[json]:-$(i3-msg -t get_tree)}}"
+
+  re='^\{"id":([0-9]+)[^[]+\[([^]]*"'"${variable_name}"'=([^"]*)"[^]]*)?'
+  [[ $json =~ $re ]] || ERX "no vars found"
+
+  root_id=${BASH_REMATCH[1]}
+  current_value=${BASH_REMATCH[3]}
+
+  if [[ $action = set ]]; then
+
+    new_mark="${variable_name}=$value_to_set"
+    old_mark="${variable_name}=$current_value"
+
+    # this will remove the old mark
+    [[ $current_value ]] \
+      && messy "[con_id=$root_id] mark --toggle --add $old_mark"
+
+    [[ $value_to_set ]] \
+      && messy "[con_id=$root_id] mark --add $new_mark"
+
+    ((_o[verbose])) || qflag=-q
+    [[ $_msgstring ]] && i3-msg ${qflag:-} "$_msgstring"
+
+  elif [[ $current_value ]]; then
+
+    echo "$current_value"
+  fi
+
+  ((_o[verbose] && ! _o[dryrun])) && timer stop i3var
+}
+
+__dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
+source "$__dir/_init.sh"                              #bashbud
+main "$@"                                             #bashbud
+

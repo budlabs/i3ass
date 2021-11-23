@@ -1,0 +1,137 @@
+#!/bin/bash
+
+: "${XDG_CONFIG_HOME:=$HOME/.config}"
+: "${XDG_RUNTIME_DIR:=/tmp}"
+: "${I3_KING_RULE_FILE:=$XDG_CONFIG_HOME/i3king/rules}"
+: "${I3_KING_PID_FILE:=$XDG_RUNTIME_DIR/i3ass/i3king.pid}"
+
+main(){
+
+  declare -Ag ma
+
+  declare -ag global_rules
+  declare -ag default_rules
+  declare -ag close_rules
+  declare -ag rules
+  declare -ag commands
+  declare -g  _fs=$'\x1f' # field separator, US
+
+  [[ ${_o[reload]} && -f $I3_KING_PID_FILE ]] && {
+    kill -USR1 "$(< "$I3_KING_PID_FILE")"
+    exit
+  }
+
+  ((_o[verbose])) && {
+    ERM "i3king start"
+    _file_log=/dev/stderr
+  }
+
+  [[ ${_o[log]} ]] && {
+    _file_log=${_o[log]}
+    mkdir -p "${_file_log%/*}"
+    {
+      date
+      echo ---------------------------------
+    } >> "$_file_log"
+  }
+
+  _file_rules=${_o[config]:-$I3_KING_RULE_FILE}
+
+  # create default config file if it doesn't exist
+  [[ -f $_file_rules ]] || {
+    [[ -f $I3_KING_RULE_FILE ]] \
+      || _createconf "${I3_KING_RULE_FILE%/*}"
+    _file_rules=$I3_KING_RULE_FILE
+  }
+
+  parse_rules "$_file_rules"
+
+  if [[ ${_o[apply]} ]]; then
+    apply_rules
+    exit
+  elif [[ ${_o[conid]} ]]; then
+    mapfile -t wininfo <<< "$(i3get -n "${_o[conid]}" -r ncityrd)"
+    match_window "${wininfo[@]}"
+    exit
+  elif [[ ${_o[winid]} ]]; then
+    mapfile -t wininfo <<< "$(i3get -d "${_o[winid]}" -r ncityrd)"
+    match_window "${wininfo[@]}"
+    exit
+  fi
+
+  trap 'rm -rf "$I3_KING_PID_FILE"' HUP INT EXIT
+  trap 'exec $0 "${BASH_ARGV[@]}"' USR1
+
+  mkdir -p "${I3_KING_PID_FILE%/*}"
+  echo "$$" > "$I3_KING_PID_FILE"
+
+  re=$(make_regex)
+  
+  while :; do
+    while read -r json ; do
+
+      if [[ ${json//\\\"/%DQ%} =~ $re ]]; then
+
+        i=1
+        ma=(
+          [change]="${BASH_REMATCH[++i]}"          # "change:"          - STRING
+          [cid]="${BASH_REMATCH[++i]}"             # "id:"              - INT
+          [urgent]="${BASH_REMATCH[++i]}"          # "urgent:"          - false|true
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [mrk]="${BASH_REMATCH[++i]}"             # "marks:"           - ["mark1","mark2"...]
+          [focused]="${BASH_REMATCH[++i]}"         # "focused:"         - false|true
+          [x]="${BASH_REMATCH[++i]}"               # rect
+          [y]="${BASH_REMATCH[++i]}"               # rect
+          [w]="${BASH_REMATCH[++i]}"               # rect
+          [h]="${BASH_REMATCH[++i]}"               # rect
+          [b]="${BASH_REMATCH[++i]}"               # deco_rect, height. i.e. titlebar height
+          [title]="${BASH_REMATCH[++i]//%DQ%/\"}"  # "name:"            - STRING
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [frm]="${BASH_REMATCH[++i]//%DQ%/\"}"    # "title_format:"    - string
+          [wid]="${BASH_REMATCH[++i]}"             # "window:"          - INT
+          [typ]="${BASH_REMATCH[++i]}"             # "window_type:"     - STRING
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [cls]="${BASH_REMATCH[++i]}"             # "class:"           - STRING
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [ins]="${BASH_REMATCH[++i]}"             # "instance:"        - STRING
+          [O]="${BASH_REMATCH[++i]}"               # ! optional group
+          [rol]="${BASH_REMATCH[++i]:-unknown}"             # "window_role:"     - STRING
+          [fullscreen]="${BASH_REMATCH[++i]}"      # "fullscreen_mode:" - 0|1
+          [sticky]="${BASH_REMATCH[++i]}"          # "sticky:"          - true|false
+          [floating]="${BASH_REMATCH[++i]}"        # "floating:"        - auto_off|auto_on|user_off|user_on
+          [O]="${BASH_REMATCH[++i]}"               # "swallows:"        - auto_off|auto_on|user_off|user_on
+        )
+
+        match_window "${ma[cid]}"            \
+                     "${ma[cls]:-unknown}"   \
+                     "${ma[ins]:-unknown}"   \
+                     "${ma[title]:-unknown}" \
+                     "${ma[typ]:-unknown}"   \
+                     "${ma[rol]:-unknown}"   \
+                     "${ma[wid]}"            \
+                     "${ma[change]}"
+      fi
+
+    done < <(
+              if [[ ${_o[json]} ]]; then
+                echo "${_o[json]}"
+              else
+                i3-msg -mt subscribe '["window"]'
+              fi
+            )
+
+    [[ ${_o[no-restart]} || ! -f "$I3_KING_PID_FILE" || ${_o[json]} ]] \
+      && break
+
+    while :; do
+      sleep .1
+      [[ -S $(i3 --get-socketpath) ]] && break
+    done
+
+    [[ ${_o[no-apply]} ]] || apply_rules
+  done
+}
+
+__dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
+source "$__dir/_init.sh"                              #bashbud
+main "$@"                                             #bashbud

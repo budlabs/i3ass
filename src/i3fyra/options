@@ -1,0 +1,8 @@
+--show|-s CONTAINER
+--float|-a
+--hide|-z CONTAINER
+--layout|-l LAYOUT [--array ARRAY]
+--move|-m DIRECTION|CONTAINER [--conid|-n CON_ID] [--speed|-p INT]
+[--verbose] [--dryrun] [--force|-f] 
+--help|-h
+--version|-v
