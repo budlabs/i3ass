@@ -2,7 +2,7 @@
 
 commands to assist and extend the use of i3wm.
 
-![logo](https://github.com/i3ass-dev/i3ass/blob/dev/assets/i3ass-first-logo2021-05-26-300x200.png?raw=true)    
+![logo](assets/i3ass-first-logo2021-05-26-300x200.png?raw=true)    
 
 ### installation
 
@@ -36,7 +36,7 @@ script | description
 [i3list] | list information about the current i3 session.  
 [i3menu] | Adds more features to rofi when used in i3wm  
 [i3run] | Run, Raise or hide windows in i3wm  
-[i3var] | Set or get a i3 variable  
+[i3var] | get or get a i3 variable  
 [i3viswiz] | Professional window focus for i3wm  
 [i3zen] | zentered container, full focus  
 
