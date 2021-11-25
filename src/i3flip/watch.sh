@@ -1,32 +1,47 @@
 #!/bin/bash
 
+trap 'tput clear' SIGWINCH
+
 _source=$(readlink -f "${BASH_SOURCE[0]}")
 _dir=${_source%/*}
 
+name="_${_dir##*/}.sh"
+
 loops=20
-cmd1a+=("$_dir/_i3flip.sh" --move next)
-cmd1b+=(--json "$(< "$_dir/tests/tree.json")" --dryrun)
+
+source_files=("$_dir/${_dir##*/}")
+
+for f in "$_dir/func"/* ; do
+  [[ ${f##*/} =~ ^[a-z] ]] && source_files+=("$f")
+done
+
+[[ -d "$_dir/awklib" ]] && source_files+=("$_dir/awklib"/*)
+
+cmd_base+=("$_dir/$name" --json "$(< "$_dir/tests/tree.json")" --dryrun --verbose)
+cmd1+=(--move next)
+
 while read -r ; do
   clear
   make
-  shellcheck "$_dir/_i3flip.sh" && {
+  shellcheck "$_dir/$name" && {
 
-    "${cmd1a[@]}" "${cmd1b[@]}" --verbose
-    "${cmd1a[@]}" "${cmd1b[@]}" --verbose  2> "$_dir/tests/results"
+    "${cmd_base[@]}" "${cmd1[@]}"
+    "${cmd_base[@]}" "${cmd1[@]}" 2> "$_dir/tests/results"
     
     diff "$_dir/tests/results" "$_dir/tests/ref1"
 
-    echo $'\n'"loop ${cmd1a[*]} ; x$loops:"
+    echo $'\n'"loop: $name ${cmd1[*]} ; x$loops:"
     time(
       while ((++i<loops));do 
-        "${cmd1a[@]}" "${cmd1b[@]}"
+        "${cmd_base[@]}" "${cmd1[@]}"
       done > /dev/null 2>&1
     )
 
     echo -n $'\n'"LOC: "
-    cat "$_dir/i3flip" "$_dir/func/"* | grep -E '^\s*[^#].+$' | wc -l
+    cat "${source_files[@]}" | grep -E '^\s*[^#].+$' | wc -l
   }
 done < <(
-  inotifywait --event close_write --monitor --recursive \
-              --exclude '^[.]/((func/)?_.*)|([.]cache.+)|(tests.+)|(.+[.]1)' .
+  inotifywait \
+    --event close_write --monitor --recursive \
+    --exclude '^[.]/((func/)?_.*)|([.]cache.+)|(tests.+)|(.+[.]1)' .
 )
