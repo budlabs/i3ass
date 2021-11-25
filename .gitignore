@@ -1,7 +1,7 @@
-ass/*/*.1
-ass/*/func/_*
-ass/*/.cache/
-ass/*/_*
+src/*/*.1
+src/*/func/_*
+src/*/.cache/
+src/*/_*
 
 wiki/
 notes.md

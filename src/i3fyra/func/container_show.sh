@@ -19,7 +19,7 @@ container_show() {
     return
   elif [[ ! ${i3list[LHI]} =~ $target ]]; then
     container_create "$target"
-  elif ((i3list[X$target_family] == i3list[WSF])); then
+  elif ((i3list["X$target_family"] == i3list[WSF])); then
     messy "[con_mark=i34${target}]"       \
       move to workspace "${i3list[WSF]}", \
       floating disable

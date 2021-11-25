@@ -32,8 +32,9 @@ active_move_in_direction() {
   local vw_wall vw_parent wizoutput
   declare -i vw_groupsize vw_target
 
-  if [[ ${_o[dryrun]} && -z ${wizoutput:=${i3list[VISWIZ]}} ]]; then
-    wizoutput='vw_target=3333 vw_wall=up vw_parent=C vw_groupsize=1' 
+  if [[ ${_o[dryrun]} ]]; then
+    wizoutput=${i3list[VISWIZ]:=vw_target=3333 vw_wall=up vw_parent=C vw_groupsize=1}
+    eval "$wizoutput"
   else
     read -r vw_wall vw_groupsize vw_target vw_parent < <(
       i3viswiz --parent "$direction" \
@@ -95,7 +96,7 @@ active_move_in_direction() {
         active_move_to_container "${relatives:0:1}"
 
         # hor: AC    vert: AB
-        [[ $direction =~ u|l && $relatives = ${ori[fam1]} ]] \
+        [[ $direction =~ u|l && $relatives = "${ori[fam1]}" ]] \
           || swap_move "i34X$relatives" "i34X$family"
         # moving left|up && $relatives = fam1 ||
         # ori=([main]=AB [fam1]=AC [fam2]=BD)
