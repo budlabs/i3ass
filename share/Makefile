@@ -36,11 +36,12 @@ MANPAGE         ?=
 LICENSE         ?= LICENSE
 README          ?=
 
-MANPAGE_LAYOUT  ?=             \
-	$(DOCS_DIR)/readme_banner.md \
-	$(CACHE_DIR)/short_help.md   \
-	$(DOCS_DIR)/description.md   \
-	$(CACHE_DIR)/long_help.md
+MANPAGE_LAYOUT  ?=                \
+	$(DOCS_DIR)/readme_banner.md    \
+	$(CACHE_DIR)/short_help.md      \
+	$(DOCS_DIR)/description.md      \
+	$(CACHE_DIR)/long_help.md       \
+	$(DOCS_DIR)/manpage_footer.md
 
 README_LAYOUT  ?=              \
 	$(DOCS_DIR)/readme_banner.md \
@@ -167,6 +168,20 @@ $(function_createconf): $(conf_files) | $(FUNCS_DIR)/
 
 $(README): $(README_LAYOUT)
 	@cat $^ > $@
+
+$(DOCS_DIR)/manpage_footer.md:
+	@cat <<-'EOB' > $@
+	# SEE ALSO
+	Project site: <$(CONTACT)>
+
+	# CONTACT
+	File bugs and feature requests at the following URL:  
+	<$(CONTACT)>
+
+	# AUTHOR
+	$(NAME) was written by budRich of budlabs
+	EOB
+
 
 $(DOCS_DIR)/readme_banner.md:
 	@printf '%s\n' "# $(NAME)" "" "$(DESCRIPTION)" "" "---" "" > $@
