@@ -5,12 +5,12 @@ _dir=${_source%/*}
 
 while read -r ; do
   clear
-  bashbud --bump "$_dir"
+  make -C "$_dir"
   shellcheck "$_dir/program.sh" && {
-    "$_dir/program.sh" -p --json "$(< "$_dir/tests/tree.json")"
+    "$_dir/program.sh" -p LIST --json "$(< "$_dir/tests/tree.json")"
     time(
       while ((++i<50));do 
-        "$_dir/program.sh" -p --json "$(< "$_dir/tests/tree.json")"
+        "$_dir/program.sh" -p LIST --json "$(< "$_dir/tests/tree.json")"
       done >/dev/null
     )
   }

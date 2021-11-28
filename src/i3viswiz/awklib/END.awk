@@ -28,18 +28,6 @@ END{
     exit
   }
 
-
-  if (arg_target ~ /^[ABCD]$/)
-  {
-    for (conid in visible_containers) {
-
-      if (ac[conid]["i3fyracontainer"] == arg_target)
-        print conid
-      
-    }
-    exit
-  }
-
   # commandline example:
   #   i3viswiz down  (arg_target=d arg_type=direction)
   #   i3viswiz -i d  (arg_target=d arg_type=instance)
@@ -51,13 +39,13 @@ END{
       print_us["trgpar"]="floating"
     } else {
 
-      target_container=find_window(arg_target)
+      target_container=find_window(arg_direction)
 
       # if we cannot find a window in the given direction
       # try again with increased gapsize.
       if (target_container == "") {
         arg_gap=arg_gap+30
-        target_container=find_window(arg_target)
+        target_container=find_window(arg_direction)
       }
 
       print_us["trgcon"]=target_container
@@ -65,7 +53,7 @@ END{
       
     }
 
-    if (arg_type == "direction") {
+    if (arg_direction ~ /^([urld])$/ && arg_list !~ /./) {
       print target_container, active_container_id, root_id, last_direction_id
       exit
     }
@@ -122,8 +110,8 @@ END{
     printf("ws: %d ", ws=ac[cop]["num"]) # workspace on current output
     for (s in geo) { printf("%2s %-6s", geo[s] ":", ac[conid][geo[s]]) }
 
-    print (arg_type ~ /(window_role|window_type|title_format|class|i3fyracontainer|instance|name|winid)$/ ?
-          "| " gensub(/"/,"","g",ac[conid][arg_type]) : "") 
+    print (arg_list ~ /(window_role|window_type|title_format|class|i3fyracontainer|instance|name|window)$/ ?
+          "| " gensub(/"/,"","g",ac[conid][arg_list]) : "") 
   }
 
   # example output:
