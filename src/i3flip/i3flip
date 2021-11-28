@@ -19,7 +19,7 @@ main(){
   _dir=${_dir,,}
 
   read -r layout last first pos size < <(
-    i3viswiz --parent ${_o[json]:+--json "${_o[json]}"} \
+    i3viswiz --parent LIST ${_o[json]:+--json "${_o[json]}"} \
              --debug grouplayout,lastingroup,firstingroup,grouppos,groupsize \
              --debug-format "%v "
     )            

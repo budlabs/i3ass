@@ -37,7 +37,7 @@ active_move_in_direction() {
     eval "$wizoutput"
   else
     read -r vw_wall vw_groupsize vw_target vw_parent < <(
-      i3viswiz --parent "$direction" \
+      i3viswiz --parent=LIST "$direction" \
                --debug "wall,groupsize,trgcon,trgpar" \
                --debug-format "%v "
     )
