@@ -5,7 +5,6 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
   switch (key) {
 
     case "layout":
-    case "type":
     case "current_border_width":
     case "fullscreen_mode":
     case "sticky":
@@ -18,6 +17,7 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
     case "class":
     case "instance":
     case "title_format":
+    case "type":
       ac[cid][key]=$NF
       if ( key in arg_search && match($NF, arg_search[key]) )
         suspect_targets[cid]=1
@@ -35,7 +35,7 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
 
       ac[cid][key]=title
 
-      if ( key == arg_target && match(title, arg_search[key]) )
+      if ( key in arg_search && match(title, arg_search[key]) )
         suspect_targets[cid]=1
 
       # store output container id in separate array
@@ -128,10 +128,15 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
 
     case "window":
       if ($NF != "null") {
+
         ac[cid]["window"]=$NF
         ac[cid]["i3fyracontainer"]=current_i3fyra_container
-        if ( key in arg_search && $NF == arg_search[key] )
+
+        if ( (key in arg_search && $NF == arg_search[key]) || 
+             ("i3fyracontainer" in arg_search && arg_search["i3fyracontainer"] == current_i3fyra_container) )
+        {
           suspect_targets[cid]=1
+        }
       }
     break
 
@@ -140,6 +145,12 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
       # is this necessary?
       ac[cid]["floating-i3get"]=$NF
       ac[cid]["floating"]=($NF ~ /_on"$/ ? 1 : 0)
+
+      if ( current_i3fyra_container in fyra_containers && fyra_containers[current_i3fyra_container]["id"] == cid)
+      {
+        current_i3fyra_container=""
+      }
+        
     break
 
     case "focus":
