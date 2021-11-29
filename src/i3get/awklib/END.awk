@@ -24,72 +24,135 @@ END {
     exit
 
   split(arg_print,toprint,"")
+  format = arg_print_format
 
   for (k in toprint) {
     switch(toprint[k]) {
 
       case "t":
-        print gensub(/^"|"$/,"","g",ac[target_container_id]["name"])
+        k = "title"
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["name"])
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "c":
-        print gensub(/^"|"$/,"","g",ac[target_container_id]["class"])
+        k = "class"
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["class"])
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "i":
-        print gensub(/^"|"$/,"","g",ac[target_container_id]["instance"])
+        k = "instance"
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["instance"])
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out) 
       break
 
       case "d":
-        print ac[target_container_id]["window"]
+        k = "win_id"
+        v = ac[target_container_id]["window"]
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "n":
-        print target_container_id
+        k = "con_id"
+        v = target_container_id
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "m":
-        print ac[target_container_id]["marks"]
+        k = "marks"
+        v = ac[target_container_id]["marks"]
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "w":
         target_workspace_id = ac[target_container_id]["workspace"]
-        print ac[target_workspace_id]["num"]
+        k = "workspace"
+        v = ac[target_workspace_id]["num"]
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "a":
-        print gensub(/^"|"$/,"","g",ac[target_container_id]["focused"])
+        k = "focused"
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["focused"])
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "f":
-        print gensub(/^"|"$/,"","g",ac[target_container_id]["floating-i3get"])
+        k = "floating"
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["floating-i3get"])
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "o":
-        print gensub(/^"|"$/,"","g",ac[target_container_id]["title_format"])
+        k = "title-format"
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["title_format"])
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "e":
-        print ac[target_container_id]["fullscreen_mode"]
+        k = "fullscreen"
+        v = ac[target_container_id]["fullscreen_mode"]
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "s":
-        print ac[target_container_id]["sticky"]
+        k = "sticky"
+        v = ac[target_container_id]["sticky"]
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out) 
       break
 
       case "u":
-        print ac[target_container_id]["urgent"]
+        k = "urgent"
+        v = ac[target_container_id]["urgent"]
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "y":
-        print gensub(/^"|"$/,"","g",ac[target_container_id]["window_type"])
+        k = "type"
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["window_type"])
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
 
       case "r":
+        k = "role"
+
         if ("window_role" in ac[target_container_id])
-          print gensub(/^"|"$/,"","g",ac[target_container_id]["window_role"])
+          v = gensub(/^"|"$/,"","g",ac[target_container_id]["window_role"])
         else
-          print "unknown"
+          v = "unknown"
+
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
       break
     }
   }

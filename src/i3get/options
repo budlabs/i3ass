@@ -10,6 +10,7 @@
 [--type TYPE]
 [--synk|-y]
 [--print|-r OUTPUT]
+[--print-format FORMAT_STRING]
 [--json TREE]
 --help|-h
 --version|-v

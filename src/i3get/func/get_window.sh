@@ -24,8 +24,10 @@ get_window() {
 
   done
 
-  awk -f <(
+  <<< "$json" awk -f <(
     echo "BEGIN { $begin_block }"
     _awklib
-  ) FS=: RS=, arg_print="${_o[print]:-n}" <<< "$json"
+  ) FS=: RS=, \
+    arg_print="${_o[print]:-n}" \
+    arg_print_format="${_o[print-format]:-%v\n}"
 }
