@@ -1,9 +1,7 @@
 END {
 
-  if ( !arg_target ) {
-    target_container_id=active_container_id
-  } else {
-
+  if (length(arg_search))
+  {
     for (suspect_id in suspect_targets) {
 
       search_match=0
@@ -19,6 +17,8 @@ END {
       }
     }
   }
+  else
+    target_container_id=active_container_id
 
   if (! target_container_id)
     exit

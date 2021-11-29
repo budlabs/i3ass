@@ -5,47 +5,27 @@ get_window() {
   local json
   json=${_o[json]:-$(i3-msg -t get_tree)}
 
+  for o in instance class conid winid mark title titleformat type role parent; do
+
+    [[ ${_o[$o]} ]] || continue
+
+    case "$o" in
+      role        ) json_key=window_role     ;;
+      type        ) json_key=window_type     ;;
+      titleformat ) json_key=title_format    ;;
+      parent      ) json_key=i3fyracontainer ;;
+      title       ) json_key=name            ;;
+      winid       ) json_key=window          ;;
+      mark        ) json_key=marks           ;;
+      *           ) json_key=$o              ;;
+    esac
+
+    begin_block+="arg_search[\"$json_key\"]=\"${_o[$o]}\";"
+
+  done
+
   awk -f <(
-    echo "
-    BEGIN {
-      ${_o[instance]:+
-        arg_target=\"instance\"
-        arg_search[arg_target]=\"${_o[instance]}\"
-      }
-      ${_o[class]:+
-        arg_target=\"class\"
-        arg_search[arg_target]=\"${_o[class]}\"
-      }
-      ${_o[conid]:+
-        arg_target=\"id\"
-        arg_search[arg_target]=\"${_o[conid]}\"
-      }
-      ${_o[id]:+
-        arg_target=\"window\"
-        arg_search[arg_target]=\"${_o[id]}\"
-      }
-      ${_o[mark]:+
-        arg_target=\"marks\"
-        arg_search[arg_target]=\"${_o[mark]}\"
-      }
-      ${_o[title]:+
-        arg_target=\"name\"
-        arg_search[arg_target]=\"${_o[title]}\"
-      }
-      ${_o[titleformat]:+
-        arg_target=\"title_format\"
-        arg_search[arg_target]=\"${_o[titleformat]}\"
-      }
-      ${_o[role]:+
-        arg_target=\"window_role\"
-        arg_search[arg_target]=\"${_o[role]}\"
-      }
-      ${_o[type]:+
-        arg_target=\"window_type\"
-        arg_search[arg_target]=\"${_o[type]}\"
-      }
-      arg_print=\"${_o[print]:-n}\"
-    }"
+    echo "BEGIN { $begin_block }"
     _awklib
-  ) FS=: RS=, <<< "$json"
+  ) FS=: RS=, arg_print="${_o[print]:-n}" <<< "$json"
 }
