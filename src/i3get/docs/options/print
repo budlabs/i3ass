@@ -5,21 +5,22 @@ characters:
 
 |character | print            | return
 |:---------|:-----------------|:------
-|`t`         | title            | string
-|`c`         | class            | string
-|`i`         | instance         | string
-|`d`         | Window ID        | INT
-|`n`         | Con_Id (default) | INT
-|`m`         | mark             | JSON list
-|`w`         | workspace        | INT
-|`a`         | is active        | true or false
-|`f`         | floating state   | string
-|`o`         | title format     | string
-|`e`         | fullscreen       | 1 or 0
-|`s`         | sticky           | true or false
-|`u`         | urgent           | true or false
-|`y`         | window_type      | string
-|`r`         | window_role      | string
+|`t`       | title            | string
+|`c`       | class            | string
+|`i`       | instance         | string
+|`d`       | Window ID        | INT
+|`n`       | Con_Id (default) | INT
+|`m`       | mark             | JSON list
+|`w`       | workspace number | INT
+|`W`       | workspace name   | STRING
+|`a`       | is active        | true or false
+|`f`       | floating state   | string
+|`o`       | title format     | string
+|`e`       | fullscreen       | 1 or 0
+|`s`       | sticky           | true or false
+|`u`       | urgent           | true or false
+|`y`       | window_type      | string
+|`r`       | window_role      | string
 
 Each character in OUTPUT will be tested and the return value will be printed on a new line. If no value is found, `--i3get could not find: CHARACTER` will get printed.
 

@@ -16,6 +16,7 @@ get_window() {
       parent      ) json_key=i3fyracontainer ;;
       title       ) json_key=name            ;;
       winid       ) json_key=window          ;;
+      conid       ) json_key=id              ;;
       mark        ) json_key=marks           ;;
       *           ) json_key=$o              ;;
     esac
