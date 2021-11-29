@@ -2,6 +2,8 @@
 
 main(){
 
+  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
+
   ((_o[verbose])) && timer start i3list
 
   : "${_json:=${_o[json]:-$(i3-msg -t get_tree)}}"

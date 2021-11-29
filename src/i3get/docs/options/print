@@ -22,7 +22,10 @@ characters:
 |`y`       | window_type      | string
 |`r`       | window_role      | string
 
-Each character in OUTPUT will be tested and the return value will be printed on a new line. If no value is found, `--i3get could not find: CHARACTER` will get printed.
+Each character in OUTPUT will be tested and the
+return value will be printed on a new line. If no
+value is found, `--i3get could not find:
+CHARACTER` will get printed.
 
 In the example below, the target window did not have a mark:  
 

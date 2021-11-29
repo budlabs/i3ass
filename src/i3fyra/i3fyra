@@ -10,6 +10,8 @@ main(){
 
   local arg
 
+  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
+
   for _action in assign-to move show hide layout float; do
     [[ ${arg:=${_o[$_action]}} ]] && break
   done

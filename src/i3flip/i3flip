@@ -8,6 +8,8 @@ main(){
     trap 'rm /tmp/i3flip_lock' EXIT HUP INT
   }
 
+  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
+
   declare -g _msgstring
   declare -i next prev
 

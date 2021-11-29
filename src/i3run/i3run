@@ -11,6 +11,8 @@ main(){
   declare -A i3list     # globals array
   declare -g _msgstring # passed to i3-msg ( messy() )
 
+  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
+
   ((_o[verbose] && ! _o[dryrun])) && timer start i3run
 
   for k in instance class title conid winid; do

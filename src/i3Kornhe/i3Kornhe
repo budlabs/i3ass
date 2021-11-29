@@ -16,6 +16,8 @@ main(){
   declare -Ag i3list      # i3list array
   declare -Ag last        # array with last i3Kornhe info
 
+  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
+
   # suffix the FIFO filename with the same suffix
   # as the i3-socketpath to ensure we are not
   # sending commands to a fifo being created in
@@ -26,7 +28,6 @@ main(){
 
   I3_KORNHE_FIFO_FILE+=${sp##*.}
 
-  # _o[verbose]=1
   ((_o[verbose])) || _qflag='-q'
 
   # mode is first arg, size|move|x|0-9 -> s|m|x|0-9
@@ -150,6 +151,6 @@ main(){
   done
 }
 
-__dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
-source "$__dir/_init.sh"                            #bashbud
-main "$@"                                           #bashbud
+__dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
+source "$__dir/_init.sh"                              #bashbud
+main "$@"                                             #bashbud

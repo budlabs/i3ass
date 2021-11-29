@@ -2,6 +2,7 @@
 
 main(){
 
+  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
   ((_o[verbose] && ! _o[dryrun])) && timer start i3get
 
   : "${_o[winid]:-${_o[id]}}"

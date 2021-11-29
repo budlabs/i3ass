@@ -10,6 +10,7 @@ float_toggle(){
   if ((i3list[AWF]==1)); then
 
     [[ -f $I3_KING_PID_FILE ]] && {
+      ERM "hhh"
 
       mapfile -t king_commands <<< "$(i3king --conid "${i3list[TWC]}" --print-commands)"
 

@@ -4,6 +4,8 @@ main(){
 
   local tmark w
 
+  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
+
   ((_o[verbose] && ! _o[dryrun])) && timer start i3gw
 
   IFS=$'\n\t'
