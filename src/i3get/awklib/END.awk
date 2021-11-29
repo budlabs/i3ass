@@ -79,8 +79,17 @@ END {
 
       case "w":
         target_workspace_id = ac[target_container_id]["workspace"]
-        k = "workspace"
+        k = "ws number"
         v = ac[target_workspace_id]["num"]
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
+      break
+
+      case "W":
+        target_workspace_id = ac[target_container_id]["workspace"]
+        k = "ws name"
+        v = gensub(/^"|"$/,"","g",ac[target_workspace_id]["name"])
         out = gensub(/%v/,v,"g",format)
         out = gensub(/%k/,k,"g",out)
         printf ("%s", out)
