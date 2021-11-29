@@ -1,7 +1,7 @@
 #!/bin/bash
 
-: "${XDG_RUNTIME_DIR:-/tmp}"
-: "${I3_KING_PID_FILE:-$XDG_RUNTIME_DIR/i3ass/i3king.pid}"
+: "${XDG_RUNTIME_DIR:=/tmp}"
+: "${I3_KING_PID_FILE:=$XDG_RUNTIME_DIR/i3ass/i3king.pid}"
 
 main(){
 
