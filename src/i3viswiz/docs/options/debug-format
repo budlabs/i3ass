@@ -2,11 +2,11 @@
 
 The default value of FORMAT is "%k=%v ".  `%k` is
 translated to the key/unit name, and `%v` to the
-value.  
+value.
 
 Example:  
 ```text
-$ i3viswiz --instance u --debug gap,wall,grouppos --debug-format "%v\n"
+$ i3viswiz --instance LIST u --debug gap,wall,grouppos --debug-format "%v\n"
 5
 up-area
 1 

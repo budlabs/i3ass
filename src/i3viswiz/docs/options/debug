@@ -31,8 +31,12 @@ ALL          | all the above combined
 
 Multiple units can be used if comma separated.
 
+**NB**  
+For this option to be usefule LIST must be the
+search criterion.
+
 Example:  
 ```text
-$ i3viswiz --instance u --debug gap,wall,grouppos
+$ i3viswiz --instance LIST up --debug gap,wall,grouppos
 gap=5 wall=up-area grouppos=1 
 ```

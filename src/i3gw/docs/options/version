@@ -1,1 +1,1 @@
-`-v`, `--version`  | print version info and exit  
+`-v`, `--version`  | print messages to stderr  

@@ -4,7 +4,7 @@
     --class|-c CLASS      [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
     --titleformat|-o FORMAT [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
     --winid|-d  WINID     [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
-    --parent|-p  A|B|C|D   [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+    --parent|-p  CONTAINER   [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
     --role|-r ROLE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
     --type|-y TYPE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
     --scratchpad

@@ -21,7 +21,7 @@ bindsym Mod4+Left   exec --no-startup-id i3viswiz left
 
 example output:  
 ```text
-$ i3viswiz --instance
+$ i3viswiz --instance LIST
 
 * 94475856575600 ws: 1 x: 0     y: 0     w: 1558  h: 410   | termsmall
 - 94475856763248 ws: 1 x: 1558  y: 0     w: 362   h: 272   | gl
@@ -31,20 +31,22 @@ $ i3viswiz --instance
 
 If `--class` , `--instance`, `--title`,
 `--titleformat`, `--winid` or `--parent` is used
-together with a DIRECTION or no argument.
+together with the argument **LIST**.
 i3viswiz will print this output, with the type in
 the last column of the table (class in the
 example above).  
 
-If argument is present and not a
-DIRECTION option will be a criteria and the
-argument the search string.  
+If the argument is not LIST the container ID of
+a visible window matching the criteria will be printed.  
 
 Assuming the same scenario as the example above,
 the following command:  
 `$ i3viswiz --instance termsmall`  
 will output the container_id (`94475856575600`).  
-If now window is matching output will be blank.  
+If no window is matching output will be blank.  
+
+Multiple criteria is allowed:  
+`$ i3viswiz --instance termsmall --class URxvt`   
 
 **focus wrapping**  
 

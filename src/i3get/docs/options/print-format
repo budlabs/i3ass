@@ -1,1 +1,1 @@
-`--print-format` FORMAT_STRING | short description  
+`--print-format` FORMAT_STRING | %v is value, %k is name. default: '%v\n'  
