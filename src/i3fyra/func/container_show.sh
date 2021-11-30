@@ -4,7 +4,7 @@ container_show() {
 
   ((_o[verbose])) && ERM "f ${FUNCNAME[0]}($*)"
   
-  local target=$1 target_family new_family
+  local target=$1 target_family
 
   [[ ${#target} -gt 1 ]] && {
     multi_show "$target"
@@ -19,20 +19,19 @@ container_show() {
     return
   elif [[ ! ${i3list[LHI]} =~ $target ]]; then
     container_create "$target"
-  elif ((i3list["X$target_family"] == i3list[WSF])); then
+  elif [[ ${i3list["N$target_family"]} = "${i3list[WFN]}" ]]; then
     messy "[con_mark=i34${target}]"       \
-      move to workspace "${i3list[WSF]}", \
+      move to workspace "${i3list[WFN]}", \
       floating disable
   fi
 
-  [[ ${i3list[X$target_family]} ]] || new_family=1
   family_show "$target_family" "$target"
 
   i3list[LHI]=${i3list[LHI]/$target/}
   i3list[LVI]+=$target
   i3list[LEX]="${i3list[LHI]}${i3list[LVI]}"
 
-  ((new_family)) || {
+  [[ ${i3list["N${target_family}"]} = "${i3list[WFN]}" ]] && {
     messy "[con_mark=i34$target]" \
       move to mark "i34X$target_family"
 

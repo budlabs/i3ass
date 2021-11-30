@@ -18,8 +18,8 @@ active_move_in_direction() {
   ((_o[verbose])) && ERM "f ${FUNCNAME[0]}($*)"
   
   local direction=$1
-
-  ((i3list[TWF] || i3list[WST] != i3list[WSF])) \
+  ERM "TWF ${i3list[TWF]} WTN ${i3list[WTN]} WFN ${i3list[WFN]}"
+  ((i3list[TWF])) || [[ ${i3list[WTN]} != "${i3list[WFN]}" ]] \
     && exec i3Kornhe --array "$_array" m "$direction"
 
   # get visible info from i3viswiz

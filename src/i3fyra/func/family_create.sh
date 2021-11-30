@@ -10,7 +10,7 @@ family_create() {
     messy "[con_mark=i34X${ori[main]}]" \
       split h
     messy "[con_mark=i34$target_container]" \
-      move to workspace "${i3list[WSF]}", \
+      move to workspace "${i3list[WFN]}", \
       floating disable, \
       move to mark "i34X${ori[main]}", split h, \
       layout splitv, \
@@ -18,7 +18,7 @@ family_create() {
     messy mark "i34X$target_family"
   else
     messy "[con_mark=i34$target_container]" \
-      move to workspace "${i3list[WSF]}", \
+      move to workspace "${i3list[WFN]}", \
       floating disable, \
       layout splitv, \
       focus, focus parent
