@@ -259,7 +259,7 @@ $(CACHE_DIR)/short_help.md $(CACHE_DIR)/print_help.sh &: $(CACHE_DIR)/help_table
 				echo
 				sed 's/^/    $(NAME) /g;s/$$/  /g' $(OPTIONS_FILE)
 			else echo "usage: $(USAGE)"
-		fi | tee -a $(CACHE_DIR)/short_help.md
+		fi | tee $(CACHE_DIR)/short_help.md
 
 		printf '%s\n' '' | tee -a $(CACHE_DIR)/short_help.md
 
