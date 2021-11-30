@@ -246,6 +246,7 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
         fyra_splits[ma[1]]=cid
         current_fyra_family=ma[1]
         fyra_vars["X" ma[1]]=ac[cwsid]["num"]
+        fyra_vars["N" ma[1]]=ac[cwsid]["name"]
       }
 
       # marks set by i3var all are at the root_id.
