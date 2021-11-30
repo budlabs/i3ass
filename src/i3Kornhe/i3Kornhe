@@ -8,6 +8,7 @@ main(){
   declare -g  _next_mode
   declare -g  _direction
   declare -ig _speed
+  declare -ig _margin
 
   declare -g  _msgstring  # combined i3-msg
   declare -g  _array      # output from i3list
@@ -41,8 +42,12 @@ main(){
   _speed=${_o[speed]//[!0-9]}
   ((_speed >= 0)) || _speed=10
 
+
+  _margin=${_o[margin]//[!0-9]}
+  ((_margin >= 0)) || _margin=5
+
   [[ -p $I3_KORNHE_FIFO_FILE ]] && {
-    printf '%s %s %s\n' "$_direction" "$_next_mode" "$_speed" >> "$I3_KORNHE_FIFO_FILE" &
+    echo "$_direction $_next_mode $_speed $_margin" >> "$I3_KORNHE_FIFO_FILE" &
     exit
   }
 
@@ -68,7 +73,7 @@ main(){
   mkdir -p "${I3_KORNHE_FIFO_FILE%/*}"
   mkfifo "$I3_KORNHE_FIFO_FILE"
 
-  printf '%s %s %s\n' "$_direction" "$_next_mode" "$_speed" >> "$I3_KORNHE_FIFO_FILE" &
+  echo "$_direction $_next_mode $_speed $_margin" >> "$I3_KORNHE_FIFO_FILE" &
   trap 'cleanup' EXIT
 
   # when modifying FLOATING windows we enter a i3
@@ -104,7 +109,7 @@ main(){
   rm "${I3_KORNHE_FIFO_FILE}.lock"
 
   while [[ -p $I3_KORNHE_FIFO_FILE ]]; do
-    while read -rst 1 _direction _next_mode _speed ; do
+    while read -rst 1 _direction _next_mode _speed _margin ; do
 
       [[ $_direction ]] || continue
 
@@ -130,6 +135,8 @@ main(){
       else
         modify_tiled
       fi
+
+      [[ ${_o[oneshot]} ]] && echo EXIT >> "$I3_KORNHE_FIFO_FILE"
 
     done < "$I3_KORNHE_FIFO_FILE"
 

@@ -1,7 +1,7 @@
     DIRECTION [--verbose] [--array ARRAY] [--json JSON]
     move [--speed|-p SPEED] [DIRECTION]
     size [--speed|-p SPEED] [DIRECTION]
-    1-9 [--margin INT] [--margin-top INT] [--margin-bottom INT] [--margin-left INT] [--margin-right INT]
-    x
+    1-9 [--margin INT] [--oneshot]
     --help|-h
     --version|-v
+    x
