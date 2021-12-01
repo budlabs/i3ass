@@ -18,7 +18,7 @@ active_move_in_direction() {
   ((_o[verbose])) && ERM "f ${FUNCNAME[0]}($*)"
   
   local direction=$1
-  ERM "TWF ${i3list[TWF]} WTN ${i3list[WTN]} WFN ${i3list[WFN]}"
+
   ((i3list[TWF])) || [[ ${i3list[WTN]} != "${i3list[WFN]}" ]] \
     && exec i3Kornhe --array "$_array" m "$direction"
 
@@ -37,18 +37,18 @@ active_move_in_direction() {
     eval "$wizoutput"
   else
     read -r vw_wall vw_groupsize vw_target vw_parent < <(
-      i3viswiz --parent=LIST "$direction" \
+      i3viswiz --parent=LIST  \
                --debug "wall,groupsize,trgcon,trgpar" \
-               --debug-format "%v "
+               --debug-format "%v " "$direction"
     )
 
-    wizoutput+="vw_target=$vw_target "
-    wizoutput+="vw_wall=$vw_wall "
-    wizoutput+="vw_parent=$vw_parent "
-    wizoutput+="vw_groupsize=$vw_groupsize"
   fi
 
-  ((_o[verbose])) && ERM "w $wizoutput"
+  ((_o[verbose])) && ERM "w "                         \
+                         "vw_target=$vw_target "      \
+                         "vw_wall=$vw_wall "          \
+                         "vw_parent=$vw_parent "      \
+                         "vw_groupsize=$vw_groupsize" \
 
   declare -A swapon
 
@@ -96,12 +96,9 @@ active_move_in_direction() {
         active_move_to_container "${relatives:0:1}"
 
         # hor: AC    vert: AB
-        [[ $direction =~ u|l && $relatives = "${ori[fam1]}" ]] \
-          || swap_move "i34X$relatives" "i34X$family"
-        # moving left|up && $relatives = fam1 ||
-        # ori=([main]=AB [fam1]=AC [fam2]=BD)
-        # [[ ${swapon[$direction]} =~ [${relatives}] ]] \
-        #   && swap_move "i34X$relatives" "i34X$family"
+        [[ $direction =~ u|l && $relatives = "${ori[fam2]}" ]] \
+          && swap_move "i34X$relatives" "i34X$family"
+
         messy "[con_id=${i3list[TWC]}]" focus
       fi
     fi
