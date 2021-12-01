@@ -46,7 +46,7 @@ main(){
 
     if [[ ${_o[$o]} = LIST ]]; 
       then arg_list=$json_key
-      else begin_block+="arg_search[\"$json_key\"]=\"${_o[$o]}\" "
+      else begin_block+="arg_search[\"$json_key\"]=\"${_o[$o]}\"; "
     fi
 
   done
