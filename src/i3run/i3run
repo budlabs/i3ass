@@ -32,7 +32,7 @@ main(){
   # if window doesn't exist, launch the command.
   if [[ ${i3list[TWC]} ]]
     then focuswindow
-    else launchcommand
+    else [[ ${_o[hide]} ]] || launchcommand
   fi
 
   ((_o[verbose])) || qflag=-q
