@@ -18,7 +18,7 @@ main(){
   for k in instance class title conid winid; do
     [[ ${_o[$k]} ]] || continue
     acri+=("--$k" "${_o[$k]}")
-  done ; unset k
+  done ; unset -v k
 
   [[ -z ${acri[*]} ]] \
     && ERH "please specify a criteria"
