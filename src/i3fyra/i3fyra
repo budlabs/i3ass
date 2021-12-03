@@ -12,7 +12,7 @@ main(){
 
   : "${_o[verbose]:=$I3_ASS_VERBOSE}"
 
-  for _action in assign-to move show hide layout float; do
+  for _action in assign-to move show hide layout float orientation; do
     [[ ${arg:=${_o[$_action]}} ]] && break
   done
 
@@ -34,11 +34,11 @@ main(){
         ERX "'$arg' is not a valid argument for --move"
       fi
     ;;
-
-    show   ) container_show "$arg" ;;
-    hide   ) container_hide "$arg" ;;
-    layout ) apply_splits "$arg"   ;;
-    float  ) float_toggle          ;;
+    show        ) container_show "$arg" ;;
+    hide        ) container_hide "$arg" ;;
+    layout      ) apply_splits "$arg"   ;;
+    float       ) float_toggle          ;;
+    orientation ) orientation "$arg"    ;;
 
   esac
 

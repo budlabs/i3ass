@@ -3,6 +3,7 @@
 --hide|-z CONTAINER
 --layout|-l LAYOUT [--array ARRAY]
 --move|-m DIRECTION|CONTAINER [--conid|-n CON_ID] [--speed|-p INT]
+--orientation ORIENTATION
 [--verbose] [--dryrun] [--force|-f] 
 --help|-h
 --version|-v
