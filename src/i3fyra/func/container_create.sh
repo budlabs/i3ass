@@ -9,16 +9,15 @@ container_create() {
   messy "[con_id=${i3list[TWC]}]"       \
     floating disable,                   \
     move to workspace "${i3list[WFN]}"
-
   [[ ${i3list["X${ori[main]}"]} ]] && {
     messy "[con_mark=i34X${ori[main]}]" \
-      split h
+      split "${ori[charmain]}"
     messy "[con_id=${i3list[TWC]}]" \
       move to mark "i34X${ori[main]}"
   }
 
   messy "[con_id=${i3list[TWC]}]" \
-    split h,                      \
+    split "${ori[charmain]}",       \
     layout tabbed,                \
     focus, focus parent
 

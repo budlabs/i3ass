@@ -35,13 +35,13 @@ family_show() {
     if [[ ${i3list["X${ori[main]}"]} ]]; then
 
       messy "[con_mark=i34X${ori[main]}]"     \
-        split h
+        split "${ori[charmain]}"
       messy "[con_mark=i34X${target_family}]" \
         move to mark "i34X${ori[main]}"
 
     else
       messy "[con_mark=i34X${target_family}]" \
-        layout splith, \
+        layout split"${ori[charmain]}", \
         focus, focus parent
       messy mark "i34X${ori[main]}"
     fi
