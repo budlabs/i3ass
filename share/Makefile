@@ -179,7 +179,7 @@ $(DOCS_DIR)/manpage_footer.md:
 	<$(CONTACT)>
 
 	# AUTHOR
-	$(NAME) was written by budRich of budlabs
+	$(NAME) was written by $(AUHTOR) of $(ORGANISATION)
 	EOB
 
 
