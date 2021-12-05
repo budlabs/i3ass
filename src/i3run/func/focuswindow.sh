@@ -33,7 +33,7 @@ focuswindow(){
               floating "$fs"
           ((i3list[TWF] && _o[mouse])) && sendtomouse
       else
-        messy workspace "${i3list[WTN]}"
+        messy workspace --no-auto-back-and-forth "${i3list[WTN]}"
       fi
         
     elif [[ ${i3list[WAN]} != "${i3list[WTN]}" ]]; then
@@ -56,7 +56,7 @@ focuswindow(){
           ((hvar && _o[mouse])) && sendtomouse
         else # got to target windows workspace
           # WTN == name (string) of workspace
-          messy workspace "${i3list[WTN]}"
+          messy workspace --no-auto-back-and-forth "${i3list[WTN]}"
         fi
       fi
     fi

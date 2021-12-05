@@ -70,7 +70,7 @@ main(){
 
     messy "[con_mark=$_mark]" \
           floating enable,    \
-          workspace "$ws_zen"
+          workspace --no-auto-back-and-forth "$ws_zen"
 
     # if the focus action below isn't included, the
     # container will not resize properly..
@@ -105,7 +105,7 @@ main(){
           floating enable,             \
           move --no-auto-back-and-forth to workspace "$trg_ws", \
           "$float_as" ,                \
-          workspace "$trg_ws"
+          workspace --no-auto-back-and-forth "$trg_ws"
 
     i3var set "zen${i3list[AWC]}"
     
@@ -115,7 +115,7 @@ main(){
           move --no-auto-back-and-forth to workspace "$ws_free", \
           "floating disable,"           \
           "move to mark $_mark,"        \
-          "focus, workspace $ws_zen"
+          "focus, workspace --no-auto-back-and-forth $ws_zen"
 
     [[ $var_data ]] || i3var set "zen${i3list[AWC]}" "$var"
   fi
@@ -151,7 +151,7 @@ main(){
 
       messy "[con_mark=$_mark]"                 \
             move --no-auto-back-and-forth to workspace "${i3list[WAN]}", \
-            workspace "${i3list[WAN]}"
+            workspace --no-auto-back-and-forth "${i3list[WAN]}"
 
       i3-msg ${qflag:-} "$_msgstring"
     }
