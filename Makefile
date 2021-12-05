@@ -1,4 +1,4 @@
-.PHONY: wiki install-dev install all clean readme uninstall-dev
+.PHONY: wiki install-dev install all clean readme uninstall-dev check
 
 default: all
 
@@ -18,7 +18,7 @@ README_LAYOUT  =         \
 	docs/readme_links.md   \
 
 
-install install-dev all clean uninstall-dev:
+install install-dev all clean uninstall-dev check:
 	for dir in $(ass_dirs); do
 		$(MAKE) -C "$$dir" $@
 	done
