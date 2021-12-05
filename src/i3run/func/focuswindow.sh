@@ -29,7 +29,7 @@ focuswindow(){
       # target is not on active workspace
       if [[ ${i3list[WTN]} = __i3_scratch || ${_o[summon]} ]]; then
         messy "[con_id=${i3list[TWC]}]"           \
-              move to workspace "${i3list[WAN]}", \
+              move --no-auto-back-and-forth to workspace "${i3list[WAN]}", \
               floating "$fs"
           ((i3list[TWF] && _o[mouse])) && sendtomouse
       else
@@ -50,7 +50,7 @@ focuswindow(){
         if [[ ${i3list[WTN]} = __i3_scratch || ${_o[summon]} ]]; then
 
           messy "[con_id=${i3list[TWC]}]"           \
-                move to workspace "${i3list[WAN]}", \
+                move --no-auto-back-and-forth to workspace "${i3list[WAN]}", \
                 floating $fs
 
           ((hvar && _o[mouse])) && sendtomouse

@@ -21,7 +21,7 @@ container_show() {
     container_create "$target"
   elif [[ ${i3list["N$target_family"]} = "${i3list[WFN]}" ]]; then
     messy "[con_mark=i34${target}]"       \
-      move to workspace "${i3list[WFN]}", \
+      move --no-auto-back-and-forth to workspace "${i3list[WFN]}", \
       floating disable
   fi
 

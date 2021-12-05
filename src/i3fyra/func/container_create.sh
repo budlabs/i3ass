@@ -8,7 +8,7 @@ container_create() {
 
   messy "[con_id=${i3list[TWC]}]"       \
     floating disable,                   \
-    move to workspace "${i3list[WFN]}"
+    move --no-auto-back-and-forth to workspace "${i3list[WFN]}"
   [[ ${i3list["X${ori[main]}"]} ]] && {
     messy "[con_mark=i34X${ori[main]}]" \
       split "${ori[charmain]}"

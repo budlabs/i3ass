@@ -47,7 +47,7 @@ main(){
       || ws_zen=$ws_free
 
     messy "[con_id=${i3list[AWC]}]"    \
-          move to workspace "$ws_zen," \
+          move --no-auto-back-and-forth to workspace "$ws_zen," \
           floating disable,            \
           split v, layout tabbed,      \
           focus, focus parent
@@ -103,7 +103,7 @@ main(){
 
     messy "[con_id=${i3list[AWC]}]"    \
           floating enable,             \
-          move to workspace "$trg_ws", \
+          move --no-auto-back-and-forth to workspace "$trg_ws", \
           "$float_as" ,                \
           workspace "$trg_ws"
 
@@ -112,7 +112,7 @@ main(){
 
   else
     messy "[con_id=${i3list[AWC]}]"     \
-          move to workspace "$ws_free", \
+          move --no-auto-back-and-forth to workspace "$ws_free", \
           "floating disable,"           \
           "move to mark $_mark,"        \
           "focus, workspace $ws_zen"
@@ -150,7 +150,7 @@ main(){
     [[ $(i3-msg -t get_workspaces) =~ $re ]] || {
 
       messy "[con_mark=$_mark]"                 \
-            move to workspace "${i3list[WAN]}", \
+            move --no-auto-back-and-forth to workspace "${i3list[WAN]}", \
             workspace "${i3list[WAN]}"
 
       i3-msg ${qflag:-} "$_msgstring"
