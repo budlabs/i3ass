@@ -17,6 +17,9 @@ $ cd i3ass
 $ make
 # make install
 ```
+### changelog
+
+See the [last releasenote](docs/releasenotes/0next.md).
 
 ### usage
 
