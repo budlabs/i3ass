@@ -13,6 +13,8 @@ varset() {
 
     [[ $_marks_json =~ $re ]] && current_value=${BASH_REMATCH[1]}
 
+    [[ $current_value = $val ]] && continue
+
     new_mark="${key}=$val"
     old_mark="${key}=$current_value"
 
