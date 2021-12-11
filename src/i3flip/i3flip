@@ -8,14 +8,12 @@ main(){
     trap 'rm /tmp/i3flip_lock' EXIT HUP INT
   }
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
   declare -g _msgstring
   declare -i next prev
 
   _dir=$1
 
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3flip
+  
 
   ((_o[verbose])) && ERM $'\n'"target direction: $_dir"
   _dir=${_dir,,}
@@ -80,10 +78,7 @@ main(){
   ((_o[verbose])) || qflag='-q'
   [[ -n $_msgstring ]] && i3-msg "${qflag:-}" "$_msgstring"
 
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3flip
 }
-
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud

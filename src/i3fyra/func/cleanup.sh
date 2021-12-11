@@ -15,6 +15,4 @@ cleanup() {
     done
     i3-msg "${qflag:-}" "${_sizestring%;}"
   }
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3fyra
 }

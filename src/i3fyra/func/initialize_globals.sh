@@ -2,8 +2,6 @@
 
 initialize_globals() {
 
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3fyra
-
   trap 'cleanup' EXIT
 
   declare -Ag i3list

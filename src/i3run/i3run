@@ -11,10 +11,6 @@ main(){
   declare -A i3list     # globals array
   declare -g _msgstring # passed to i3-msg ( messy() )
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3run
-
   for k in instance class title conid winid; do
     [[ ${_o[$k]} ]] || continue
     acri+=("--$k" "${_o[$k]}")
@@ -43,5 +39,3 @@ main(){
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud
-

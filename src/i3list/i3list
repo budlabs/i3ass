@@ -2,10 +2,6 @@
 
 main(){
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose])) && timer start i3list
-
   for o in instance class conid winid mark title titleformat type role parent; do
 
     [[ ${_o[$o]} ]] || continue
@@ -31,10 +27,7 @@ main(){
     _awklib
   ) FS=: RS=, <<< "${_o[json]:-$(i3-msg -t get_tree)}}"
 
-  ((_o[verbose])) && timer stop i3list
-  
 }
 
 __dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
 source "$__dir/_init.sh"                            #bashbud
-main "$@"                                           #bashbud

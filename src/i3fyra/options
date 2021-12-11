@@ -6,4 +6,4 @@
 --orientation ORIENTATION
 [--verbose] [--dryrun] [--force|-f] 
 --help|-h
---version|-v
+--version|-v 

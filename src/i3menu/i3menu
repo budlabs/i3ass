@@ -5,10 +5,6 @@
 
 main(){
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3Kornhe
-
   _menu_command="
     rofi -theme <(themefile)
     ${_o[options]:+${_o[options]}}
@@ -71,4 +67,3 @@ main(){
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud

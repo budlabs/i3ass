@@ -2,10 +2,6 @@
 
 main(){
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3var
-
   action=$1 variable_name=$2 value_to_set=$3
 
   [[ $action =~ get|set && ${#@} -gt 1 ]] \
@@ -44,5 +40,3 @@ main(){
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud
-
