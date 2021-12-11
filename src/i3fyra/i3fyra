@@ -42,8 +42,8 @@ main(){
 
   esac
 
-  [[ $_action =~ layout|hide ]] \
-    || messy "[con_id=${i3list[TWC]}]" focus
+  [[ $_action =~ move|show|float && ${i3list[TWC]} ]] \
+    && messy "[con_id=${i3list[TWC]}]" focus
 }
 
 __dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
