@@ -151,7 +151,8 @@ main(){
       messy mode sizemode
     }
 
-    [[ $_msgstring ]] && i3-msg "${_qflag:-}" "$_msgstring"
+    [[ $_msgstring ]] && \
+      >&2 i3-msg "${_qflag:-}" "$_msgstring"
     _msgstring=''
 
   done

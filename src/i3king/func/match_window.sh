@@ -131,8 +131,11 @@ match_window() {
         prefix="[con_id=$cid]"
       fi
 
-      ((_o[print-commands] || _o[dryrun])) || i3-msg "${prefix:-} $cmd"
-      ((_o[print-commands])) && echo "${prefix:-} $cmd"
+      ((_o[print-commands] || _o[dryrun])) \
+        || >&2 i3-msg "${prefix:-} $cmd"
+
+      ((_o[print-commands])) \
+        && echo "${prefix:-} $cmd"
       
     done
   }

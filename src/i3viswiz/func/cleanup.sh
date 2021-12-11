@@ -8,5 +8,6 @@ cleanup() {
 
   ((_o[verbose])) || qflag='-q'
 
-  [[ -n $_msgstring ]] && i3-msg "${qflag:-}" "$_msgstring"
+  [[ -n $_msgstring ]] \
+    && >&2 i3-msg "${qflag:-}" "$_msgstring"
 }
