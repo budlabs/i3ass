@@ -34,8 +34,6 @@ main(){
 
     echo "$current_value"
   fi
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3var
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
