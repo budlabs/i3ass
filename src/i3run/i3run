@@ -33,8 +33,6 @@ main(){
 
   ((_o[verbose])) || qflag=-q
   [[ $_msgstring ]] && i3-msg ${qflag:-} "$_msgstring"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3run
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
