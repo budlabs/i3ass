@@ -1,4 +1,4 @@
-#!/bin/env bash
+#!/bin/bash
 
 sendtomouse(){
   declare -i X Y newy newx tmpx tmpy breakx breaky
