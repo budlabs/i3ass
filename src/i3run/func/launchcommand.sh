@@ -5,10 +5,9 @@ launchcommand(){
   local winid conid k l
   declare -a xdtopt
 
-  if [[ $_command ]]
-    then run_command
-    else ERX i3run no command, no action
-  fi
+  [[ $_command ]] || ERX i3run no command, no action
+  
+  run_command
 
   if   [[ -n ${_o[rename]} ]]; then
 
