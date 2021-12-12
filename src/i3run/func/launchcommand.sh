@@ -3,7 +3,7 @@
 launchcommand(){
 
   local winid conid k l
-  declare -a xdtopt got
+  declare -a xdtopt
 
   if [[ $_command ]]; then
     run_command
@@ -46,8 +46,8 @@ launchcommand(){
 
   [[ -n "${xdtopt[*]}" ]] && {
 
-    mapfile -t got <<< "$(i3get "${acri[@]}" -yr dn)"
-    read -rs winid conid <<< "${got[@]}"
+    read -rs winid conid \
+      <<< "$(i3get "${acri[@]}" -yr dn --print-format '%v ')"
 
     ((_o[verbose])) \
       && ERM "i3run -> xdotool set_window ${xdtopt[*]} $winid"
