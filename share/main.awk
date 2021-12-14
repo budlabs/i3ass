@@ -19,7 +19,7 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
     case "title_format":
     case "type":
       ac[cid][key]=$NF
-      if ( key in arg_search && match($NF, arg_search[key]) )
+      if ( key in arg_search && $NF == "\""arg_search[key]"\"" )
         suspect_targets[cid]=1
     break
 
