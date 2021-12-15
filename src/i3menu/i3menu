@@ -57,12 +57,11 @@ main(){
   # list-directory prefixed. But it is important
   # to check that we have selected something, before
   # adding the prefix, therefor tee.
-  [[ -d ${_o[list-directory]} ]] && _menu_command+='
-    | tee /tmp/i3menu-jank \
-    | [[ $(cat) ]] && { 
+  [[ -d ${_o[list-directory]} ]] && _menu_command+='\
+    | tee /tmp/i3menu-jank | read -rd "" -N 1 _ && { 
         echo -n "${_o[list-directory]%/}/" 
         cat /tmp/i3menu-jank
-      } ; rm /tmp/i3menu-jank'
+      }; rm /tmp/i3menu-jank'
 
   if [[ -f $_tmp_list_file && ${_o[top]} ]]; then
     awk -f <(topsort) "$_tmp_list_file"

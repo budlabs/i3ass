@@ -1,5 +1,10 @@
 ## 2021.12.07
 
+#### [i3menu]  
+
+Fixed issue where directory was printed even if
+nothing was selected with `--list-directory`.
+
 #### [i3get]
 
 New commandline option `--print-format` . The default
