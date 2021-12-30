@@ -1,5 +1,9 @@
 ## 2021.12.07
 
+#### [i3Kornhe]
+
+`--oneshot` option
+
 #### [i3menu]  
 
 Fixed issue where directory was printed even if
