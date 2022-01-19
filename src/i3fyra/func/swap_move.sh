@@ -63,7 +63,7 @@ swap_move(){
 
     c1=${m1#i34}        c2=${m2#i34}
     i1=${iip[$c1]}      i2=${iip[$c2]}
-    v1=${ivp[$i1]:-$i1} v2=${ivp[$i2]:-$i2}
+    v1=${ivp[$i1]:-$c1} v2=${ivp[$i2]:-$c2}
 
     mark_vars[i34VP$v1]=$i2
     mark_vars[i34VP$v2]=$i1
