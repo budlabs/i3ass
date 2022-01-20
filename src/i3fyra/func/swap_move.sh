@@ -24,7 +24,6 @@ swap_move(){
   #       -> ik_current=([0]=C [1]=B [2]=A [3]=D)
   for k in A B C D; do
     current_val=${i3list[VP${k}]:=${ck_default[$k]}}
-    ERM "cccc $current_val"
     ik_current[${current_val}]=$k
   done
 
@@ -49,19 +48,9 @@ swap_move(){
     ERM "VPA=${i3list[VPA]}; VPB=${i3list[VPB]}; VPC=${i3list[VPC]}; VPD=${i3list[VPD]}"
     for k in A B C D; do
 
-      # VPA=1; VPB=0; VPC=3; VPD=2
-
-      # c1=A , c2=B , i1=0 , i2=1
-      # v1=B , v2=A -> VPB=1 ; VPA=0
-      
       c1=${k}                     c2=${ck_target[$k]}
       i1=${ck_default[$c1]}       i2=${ck_default[$c2]}
       v1=${ik_current[$i1]:=$c1}  v2=${ik_current[$i2]:=$c2}
-
-        ERM "KKK: $k"
-        ERM "c1=$c1 , c2=$c2 , i1=$i1 , i2=$i2"
-        ERM "v1=$v1 , v2=$v2 -> VP${v1}=$i2 ; VP${v2}=$i1"
-        ERM "-------------"
 
       mark_vars[i34VP$v1]=$i2
       mark_vars[i34VP$v2]=$i1
