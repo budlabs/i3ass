@@ -7,6 +7,7 @@ varset() {
   local key val re  current_value
 
   for key in "${!mark_vars[@]}"; do
+    unset current_value
     val=${mark_vars[$key]}
 
     re="\"${key}=([^\"]*)\""
