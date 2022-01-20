@@ -12,6 +12,11 @@ main(){
 
   : "${_o[verbose]:=$I3_ASS_VERBOSE}"
 
+  [[ ${_o[clear-virtuals]} ]] && {
+    for k in A B C D; do i3var set "i34VP${k}" ; done
+    exit
+  }
+
   for _action in assign-to move show hide layout float orientation; do
     [[ ${arg:=${_o[$_action]}} ]] && break
   done
