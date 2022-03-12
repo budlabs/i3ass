@@ -374,7 +374,7 @@ endef
 
 
 define parse_options =
-@awk '
+@gawk '
 BEGIN { RS=" |\\n" }
 
 /./ {
