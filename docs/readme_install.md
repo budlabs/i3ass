@@ -12,3 +12,10 @@ $ cd i3ass
 $ make
 # make install
 ```
+
+#### build dependencies
+[GNU make], [Gawk], [bash], [lowdown]  
+
+#### runtime dependencies
+[bash], [i3wm], [xdotool], [Gawk]  
+[rofi] (*only used by [i3menu]*)  

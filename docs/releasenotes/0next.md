@@ -9,6 +9,10 @@
 Fixed issue where directory was printed even if
 nothing was selected with `--list-directory`.
 
+Minimize the use of **eval** in the script. Remove
+functionality of `--fallback` option.
+
+
 #### [i3get]
 
 New commandline option `--print-format` . The default
@@ -36,6 +40,10 @@ user_off
 
 ```
 
+#### [i3fyra]
+Fixed a bug with virtual positions getting the wrong names.
+Added option `--clear-virtuals` to force clear virtual positions.
+
 #### [i3run]
 
 New commandline option `--hide` . When used target
@@ -44,6 +52,8 @@ window will be sent to the scratchpad.
 #### [i3list]
 
 Better support for multiple criteria.
+Fixed issue where the wrong workspace was reported
+if the workspace was empty.
 
 #### [i3viswiz]
 
