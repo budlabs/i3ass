@@ -88,3 +88,4 @@ i3ass is licensed under the **MIT** license
 [bash]: https://www.gnu.org/software/bash/
 [lowdown]: https://kristaps.bsd.lv/lowdown/
 [GNU make]: https://www.gnu.org/software/make/
+[xdotool]: https://www.semicomplete.com/projects/xdotool/
