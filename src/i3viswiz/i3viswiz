@@ -53,7 +53,7 @@ main(){
     # FS     - change Field  Separator to ":" (from whitespace)
     # RS     - change Record Separator to "," (from linebreak)
     # arg_   - these variables are available in the AWK script
-    <<< "${_o[json]}" awk -f <(
+    <<< "${_o[json]}" gawk -f <(
 
       echo "BEGIN {$begin_block}"
       _awklib

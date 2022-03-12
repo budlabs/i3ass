@@ -127,8 +127,6 @@ uninstall:
 
 
 $(function_awklib): $(awk_files) | $(FUNCS_DIR)/
-	@echo hello
-
 	@printf '%s\n' \
 		'#!/bin/bash'                                                           \
 		''                                                                      \

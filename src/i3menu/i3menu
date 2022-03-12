@@ -54,7 +54,7 @@ main(){
 
   selected=$(
     if [[ -f $_tmp_list_file && ${_o[top]} ]]; then
-      awk -f <(topsort) "$_tmp_list_file"
+      gawk -f <(topsort) "$_tmp_list_file"
     elif [[ -f $_tmp_list_file ]]; then
       cat "$_tmp_list_file"
     else
