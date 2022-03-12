@@ -37,7 +37,7 @@ docs/readme_table.md: $(addsuffix /config.mak,$(ass_dirs))
 	@{
 		echo
 		printf '%s\n' "script | description" "|:-|:-|"
-		awk '
+		gawk '
 			$$1 == "NAME" {name=$$3}
 			$$1 == "DESCRIPTION" {
 				printf ("[%s] | %s  \n", name , gensub(".+:= ","",1,$$0))
