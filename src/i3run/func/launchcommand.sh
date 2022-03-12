@@ -21,22 +21,23 @@ launchcommand(){
   elif [[ -n "${_o[rename-title]}${_o[rename-class]}${_o[rename-instance]}" ]]; then
 
     for k in title class instance ; do
-      [[ ${_o[rename-$k]} ]] && {
-        case "$k" in
-          title    ) xdtopt+=(--name "${_o[$k]}")      ;;
-          class    ) xdtopt+=(--class "${_o[$k]}")     ;;
-          instance ) xdtopt+=(--classname "${_o[$k]}") ;;
-        esac
 
-        # when renaming, replace the criteria arg (--? + 1)
-        # with the argument to the replace (OLD_NAME)
-        for l in "${!_criteria[@]}"; do
-          [[ ${_criteria[$l]} = --$k ]] && {
-            _criteria[l+1]=${_o[rename-$k]} 
-            break
-          }
-        done
-      }
+      [[ ${_o[rename-$k]} ]] || continue
+      
+      case "$k" in
+        title    ) xdtopt+=(--name "${_o[$k]}")      ;;
+        class    ) xdtopt+=(--class "${_o[$k]}")     ;;
+        instance ) xdtopt+=(--classname "${_o[$k]}") ;;
+      esac
+
+      # when renaming, replace the criteria arg (--? + 1)
+      # with the argument to the replace (OLD_NAME)
+      for l in "${!_criteria[@]}"; do
+        [[ ${_criteria[$l]} = --$k ]] && {
+          _criteria[l+1]=${_o[rename-$k]} 
+          break
+        }
+      done
 
     done
 
