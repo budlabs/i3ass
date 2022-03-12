@@ -18,6 +18,17 @@ $ make
 # make install
 ```
 
+#### build dependencies
+[GNU make], [Gawk], [bash], [lowdown]  
+
+#### runtime dependencies
+[bash], [i3wm], [xdotool], [Gawk]  
+[rofi] (*only used by [i3menu]*)  
+
+### changelog
+
+See the [last releasenote](docs/releasenotes/0next.md).
+
 ### usage
 
 The table below lists the included commands. The
@@ -72,3 +83,9 @@ i3ass is licensed under the **MIT** license
 [i3king]: https://github.com/budlabs/i3ass/wiki/i3king
 [i3zen]: https://github.com/budlabs/i3ass/wiki/i3zen
 [youtube channel]: https://youtube.com/c/dubbeltumme
+[rofi]: https://github.com/davatorium/rofi
+[Gawk]: https://www.gnu.org/software/gawk/
+[bash]: https://www.gnu.org/software/bash/
+[lowdown]: https://kristaps.bsd.lv/lowdown/
+[GNU make]: https://www.gnu.org/software/make/
+[xdotool]: https://www.semicomplete.com/projects/xdotool/

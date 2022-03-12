@@ -13,7 +13,7 @@ virtual_position() {
   # if target is A && i3list[VPA] == 2
   # then target=@@2 -> target=C
 
-  [[ $target =~ [ABCD] ]] && {
+  [[ $target =~ ^[ABCD=[:space:]]+$ ]] && {
     
     q=([0]=A [1]=B [2]=C [3]=D)
 

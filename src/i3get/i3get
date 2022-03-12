@@ -2,9 +2,6 @@
 
 main(){
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3get
-
   : "${_o[winid]:-${_o[id]}}"
 
   result=$(get_window)
@@ -17,10 +14,7 @@ main(){
   done
 
   [[ $result ]] && echo "$result"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3get
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud

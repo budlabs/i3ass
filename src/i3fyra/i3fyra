@@ -12,7 +12,12 @@ main(){
 
   : "${_o[verbose]:=$I3_ASS_VERBOSE}"
 
-  for _action in assign-to move show hide layout float; do
+  [[ ${_o[clear-virtuals]} ]] && {
+    for k in A B C D; do i3var set "i34VP${k}" ; done
+    exit
+  }
+
+  for _action in assign-to move show hide layout float orientation; do
     [[ ${arg:=${_o[$_action]}} ]] && break
   done
 
@@ -34,18 +39,17 @@ main(){
         ERX "'$arg' is not a valid argument for --move"
       fi
     ;;
-
-    show   ) container_show "$arg" ;;
-    hide   ) container_hide "$arg" ;;
-    layout ) apply_splits "$arg"   ;;
-    float  ) float_toggle          ;;
+    show        ) container_show "$arg" ;;
+    hide        ) container_hide "$arg" ;;
+    layout      ) apply_splits "$arg"   ;;
+    float       ) float_toggle          ;;
+    orientation ) orientation "$arg"    ;;
 
   esac
 
-  [[ $_action =~ layout|hide ]] \
-    || messy "[con_id=${i3list[TWC]}]" focus
+  [[ $_action =~ move|show|float && ${i3list[TWC]} ]] \
+    && messy "[con_id=${i3list[TWC]}]" focus
 }
 
 __dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
 source "$__dir/_init.sh"                            #bashbud
-main "$@"                                           #bashbud

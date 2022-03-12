@@ -4,10 +4,6 @@ main(){
 
   local tmark w
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3gw
-
   IFS=$'\n\t'
 
   tmark="${1:-}"
@@ -22,11 +18,7 @@ main(){
   w="${w//[^0-9]/}"
 
   i3-msg -q "[con_id=$w]" floating disable, mark "$tmark"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3gw
-  
 }
 
 __dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
 source "$__dir/_init.sh"                            #bashbud
-main "$@"                                           #bashbud

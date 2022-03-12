@@ -29,40 +29,19 @@ setgeometry(){
   # if layout is window or container, but no list -> titlebar
   [[ $__layout =~ A|B|C|D|window && ! -f $_tmp_list_file ]] && {
     defaultoffset
-    if [[ -n ${_o[fallback]:-} ]]; then
-      __layout=fallback
-      setfallback "${_o[fallback]}"
-      setgeometry "${_o[layout]:-default}"
-      return
-    else
-      __layout=titlebar
-    fi
+    __layout=titlebar
   }
 
   # if layout is container but container is not visible -> default
   [[ $__layout =~ A|B|C|D ]] && [[ ! ${i3list[LVI]} =~ [${__layout}] ]] && {
     defaultoffset
-    if [[ -n ${_o[fallback]:-} ]]; then
-      __layout=fallback
-      setfallback "${_o[fallback]}"
-      setgeometry "${_o[layout]:-default}"
-      return
-    else
-      __layout=default
-    fi
+    __layout=default
   }
 
   # if layout is window, tab or titlebar but no target window -> default
   [[ $__layout =~ window|tab|titlebar ]] && [[ -z ${i3list[TWC]} ]] && {
     defaultoffset
-    if [[ -n ${_o[fallback]:-} ]]; then
-      __layout=fallback
-      setfallback "${_o[fallback]}"
-      setgeometry "${_o[layout]:-default}"
-      return
-    else
-      __layout=default
-    fi
+    __layout=default
   }
 
   case "$__layout" in
@@ -140,21 +119,12 @@ setgeometry(){
 
     mouse )
 
-      # xdotool getmouselocation --shell ; example:
-      # X=667
-      # Y=175
-      # SCREEN=0
-      # WINDOW=6291526
-
-      eval "$(xdotool getmouselocation --shell)"
+      < <(xdotool getmouselocation --shell \
+         | sed -r 's/^.+=//g') read -rd '' __xpos __ypos _
 
       __width=300
       __height=400
-      __xpos=$X
-      __ypos=$Y
       __orientation=vertical
-
-      unset X Y SCREEN WINDOW
     ;;
 
   esac

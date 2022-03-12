@@ -17,7 +17,7 @@ adjustposition() {
   # before it's evaluated
 
   eval "$(xdotool search --sync --classname rofi getwindowgeometry --shell | \
-    awk '{printf("geo[%s]=%s\n",$1,$2)}' FS='='
+    gawk '{printf("geo[%s]=%s\n",$1,$2)}' FS='='
   )"
 
   opty=$(( ${1:-0} <= -0 ? i3list[WAH]-( (opty*-1)+geo[HEIGHT] ) : $1 ))

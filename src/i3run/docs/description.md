@@ -26,4 +26,10 @@ With `--summon` windows not on current workspace
 will be sent to current workspace instead of switching
 workspace.
 
-COMMAND is everything after -- , or the argument to `--command`.
+COMMAND is everything after -- , or the argument to `--command`.  
+
+If COMMAND doesn't result in a window that matches the criteria
+**i3run** will *get stuck* waiting for such a window, and it can
+lead to undesired behavior.  
+Don't do this: `i3run --class Google-chrome -- firefox`
+

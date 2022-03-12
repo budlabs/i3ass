@@ -25,6 +25,7 @@ CONF_DIR        ?= ./conf
 AWK_DIR         ?= ./awklib
 FUNCS_DIR       ?= ./func
 INDENT          ?= $(shell echo -e "  ")
+NEWLINE         := $(shell printf '%s\n' "")
 USAGE           ?= $(NAME) [OPTIONS]
 DESCRIPTION     ?= short description of the script
 OPTIONS_FILE    ?= options
@@ -126,8 +127,6 @@ uninstall:
 
 
 $(function_awklib): $(awk_files) | $(FUNCS_DIR)/
-	@echo hello
-
 	@printf '%s\n' \
 		'#!/bin/bash'                                                           \
 		''                                                                      \
@@ -179,7 +178,7 @@ $(DOCS_DIR)/manpage_footer.md:
 	<$(CONTACT)>
 
 	# AUTHOR
-	$(NAME) was written by budRich of budlabs
+	$(NAME) was written by $(AUHTOR) of $(ORGANISATION)
 	EOB
 
 
@@ -209,13 +208,13 @@ $(CACHE_DIR)/long_help.md: $(CACHE_DIR)/options_in_use $(option_docs)
 		tail -qn +3 "$$f"
 	done >> $@
 
-$(MONOLITH): $(NAME) $(CACHE_DIR)/print_help.sh $(function_files) $(CACHE_DIR)/getopt
+$(MONOLITH): $(NAME) $(CACHE_DIR)/print_help.sh $(function_files) $(CACHE_DIR)/timer_start $(CACHE_DIR)/getopt
 	@$(info making $@)
 	printf '%s\n' '$(SHBANG)' '' > $@
 	$(print_version)
 	grep -vhE -e '^#!/' -e '#bashbud$$' $^ >> $@
-	printf "\n%s\n" 'main "$$@"' >> $@
-
+	
+	$(main_timer)
 	chmod +x $@
 
 $(NAME):
@@ -229,7 +228,6 @@ $(NAME):
 	''                                                                \
 	'__dir=$$(dirname "$$(readlink -f "$${BASH_SOURCE[0]}")") #bashbud' \
 	'source "$$__dir/$(BASE)"                               #bashbud'   \
-	'main "$$@"                                             #bashbud'   \
 	> $@
 
 	chmod +x $@
@@ -282,11 +280,11 @@ $(CACHE_DIR)/help_table.md : $(CACHE_DIR)/long_help.md
 	} > $@ 
 
 
-$(BASE): config.mak $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh
+$(BASE): config.mak $(CACHE_DIR)/timer_start $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh
 	@$(info making $@)
 	printf '%s\n' '$(SHBANG)' '' > $@
 	$(print_version)
-	cat $(CACHE_DIR)/print_help.sh >> $@
+	grep -vhE -e '^#!/' $(CACHE_DIR)/print_help.sh >> $@
 
 	echo "" >> $@
 
@@ -296,7 +294,10 @@ $(BASE): config.mak $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh
 		'$(INDENT). "$$___f" ; done ; unset -v ___f' >> $@
 	}
 
+	cat $(CACHE_DIR)/timer_start >> $@
 	cat $(CACHE_DIR)/getopt >> $@
+
+	$(main_timer)
 
 check: all
 	shellcheck $(MONOLITH)
@@ -309,6 +310,26 @@ $(OPTIONS_FILE):
 $(CACHE_DIR)/options_in_use $(CACHE_DIR)/getopt &: $(OPTIONS_FILE) | $(CACHE_DIR)/
 	@$(info parsing $(OPTIONS_FILE))
 	$(parse_options) > $(CACHE_DIR)/getopt
+
+$(CACHE_DIR)/timer_start:
+	@$(info making $@)
+	> $@ printf '%s\n' \
+		'' \
+		'declare -A _o' \
+		'' \
+		'[[ $$* =~ --verbose ]] && _o[verbose]=1' \
+		'[[ $$* =~ --dryrun ]]  && _o[dryrun]=1' \
+		': "$${_o[verbose]:=$$BASHBUD_VERBOSE}"' \
+		'((_o[verbose] && ! _o[dryrun])) && {' \
+		'$(INDENT)___t=$$(( 10#$${EPOCHREALTIME//[!0-9]} ))' \
+		'$(INDENT)for ((___arg=0; ___arg<$${#@}+1;___arg++)); do' \
+		'$(INDENT)$(INDENT)[[ $${!___arg} == --verbose ]] && break' \
+		'$(INDENT)done' \
+		'$(INDENT)printf -v ___cmd "%s " "$(NAME)" "$${@:1:___arg}"' \
+		'$(INDENT)unset -v ___arg' \
+		'$(INDENT)>&2 echo ">>> $$___cmd"' \
+		'}' \
+		''
 
 $(CACHE_DIR)/:
 	@$(info creating $(CACHE_DIR)/ dir)
@@ -338,10 +359,20 @@ endef
 
 
 
+define main_timer =
+printf '%s\n' \
+	'timer_stop() {' \
+  '$(INDENT)>&2 echo "<<< $$___cmd" \' \
+  '$(INDENT)"$$(( (10#$${EPOCHREALTIME//[!0-9]} - ___t) / 1000 ))ms"' \
+  '}' \
+  '' \
+  'main "$$@"' \
+  '((_o[verbose] && ! _o[dryrun])) && timer_stop' >> $@
+endef
 
 
 define parse_options =
-@awk '
+@gawk '
 BEGIN { RS=" |\\n" }
 
 /./ {
@@ -446,14 +477,12 @@ END {
 
 	print options_in_use > "$(CACHE_DIR)/options_in_use"
 
-	print ""
-	print "declare -A _o"
-	print "options=\"$$(getopt \\"
+	print "options=$$(getopt \\"
 	print "  --name \"[ERROR]:" name "\" \\"
 	if (short_options ~ /./)
 		printf ("  --options \"%s\" \\\n", gensub(/^,/,"",1,short_options))
-	printf ("  --longoptions \"%s\" \\\n", gensub(/^,/,"",1,long_options))
-	print "  -- \"$$@\")\" || exit 98"
+	printf ("  --longoptions \"%s\"  -- \"$$@\"\n", gensub(/^,/,"",1,long_options))
+	print ") || exit 98"
 	print ""
 	print "eval set -- \"$$options\""
 	print "unset options"

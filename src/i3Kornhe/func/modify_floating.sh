@@ -4,8 +4,7 @@ modify_floating() {
 
   ((_o[verbose])) && ERM "f ${FUNCNAME[0]}()"
 
-  local corner cv ch
-  declare -i margin_t margin_b margin_l margin_r conid
+  local corner cv ch conid
 
   conid=${last[conid]:=${i3list[AWC]}}
 
@@ -20,22 +19,17 @@ modify_floating() {
       u ) ((i3list[AWY]-=_speed)) ;;
       d ) ((i3list[AWY]+=_speed)) ;;
       1|2|3|4|5|6|7|8|9 )
-
-        margin_t=${_o[margin-top]:-${_o[margin]:-5}} 
-        margin_b=${_o[margin-bottom]:-${_o[margin]:-5}}
-        margin_l=${_o[margin-left]:-${_o[margin]:-5}} 
-        margin_r=${_o[margin-right]:-${_o[margin]:-5}}
         
         case "$_direction" in
-          1|2|3 ) i3list[AWY]=$(( i3list[WAY]+margin_t )) ;;
+          1|2|3 ) i3list[AWY]=$(( i3list[WAY]+_margin )) ;;
           4|5|6 ) i3list[AWY]=$(( i3list[WAY]+(i3list[WAH]/2)-(i3list[AWH]/2) )) ;;
-          7|8|9 ) i3list[AWY]=$(( i3list[WAY]+( i3list[WAH]-(i3list[AWH]+margin_b) ) )) ;;
+          7|8|9 ) i3list[AWY]=$(( i3list[WAY]+( i3list[WAH]-(i3list[AWH]+_margin) ) )) ;;
         esac
 
         case "$_direction" in
-          1|4|7 ) i3list[AWX]=$(( i3list[WAX]+margin_l )) ;;
+          1|4|7 ) i3list[AWX]=$(( i3list[WAX]+_margin )) ;;
           2|5|8 ) i3list[AWX]=$(( i3list[WAX]+(i3list[WAW]/2)-(i3list[AWW]/2) )) ;;
-          3|6|9 ) i3list[AWX]=$(( i3list[WAX]+( i3list[WAW]-(i3list[AWW]+margin_r) ) )) ;;
+          3|6|9 ) i3list[AWX]=$(( i3list[WAX]+( i3list[WAW]-(i3list[AWW]+_margin) ) )) ;;
         esac
       ;;
 

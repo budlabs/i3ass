@@ -25,7 +25,7 @@ get_window() {
 
   done
 
-  <<< "$json" awk -f <(
+  <<< "$json" gawk -f <(
     echo "BEGIN { $begin_block }"
     _awklib
   ) FS=: RS=, \

@@ -5,8 +5,7 @@ _dir=${_source%/*}
 
 while read -r ; do
   clear
-  bashbud --bump "$_dir"
-  shellcheck "$_dir/program.sh" 
+  make check
   # && {
   #   "$_dir/program.sh" -p --json "$(< "$_dir/tests/tree.json")"
   #   time(
@@ -19,8 +18,9 @@ done < <(
   inotifywait --event close_write          \
               --recursive --monitor        \
               --exclude 'createconf[.]sh$'     \
-              "$_dir"/lib/*.sh             \
-              "$_dir/main.sh"              \
-              "$_dir/watch.sh"             \
-              "$_dir/manifest.md"
+              "$_dir"/func/*.sh             \
+              "$_dir"/docs/*.md             \
+              "$_dir"/docs/options/*             \
+              "$_dir/i3menu"              \
+              "$_dir/watch.sh"             
 )

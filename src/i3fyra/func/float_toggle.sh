@@ -25,7 +25,7 @@ float_toggle(){
     }
 
     # WSA != i3fyra && normal tiling
-    if ((i3list[WSA]!=i3list[WSF])); then
+    if [[ ${i3list[WAN]} != "${i3list[WFN]}" ]]; then
       messy "[con_id=${i3list[AWC]}]" floating disable
       return
     fi

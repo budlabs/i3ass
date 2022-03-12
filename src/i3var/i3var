@@ -2,10 +2,6 @@
 
 main(){
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3var
-
   action=$1 variable_name=$2 value_to_set=$3
 
   [[ $action =~ get|set && ${#@} -gt 1 ]] \
@@ -32,17 +28,13 @@ main(){
       && messy "[con_id=$root_id] mark --add $new_mark"
 
     ((_o[verbose])) || qflag=-q
-    [[ $_msgstring ]] && i3-msg ${qflag:-} "$_msgstring"
+    [[ $_msgstring ]] \
+      && >&2 i3-msg ${qflag:-} "$_msgstring"
 
   elif [[ $current_value ]]; then
-
     echo "$current_value"
   fi
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3var
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud
-

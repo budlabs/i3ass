@@ -5,10 +5,6 @@
 
 main(){
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3zen
-
   declare -g _msgstring
   declare -A i3list
 
@@ -47,7 +43,7 @@ main(){
       || ws_zen=$ws_free
 
     messy "[con_id=${i3list[AWC]}]"    \
-          move to workspace "$ws_zen," \
+          move --no-auto-back-and-forth to workspace "$ws_zen," \
           floating disable,            \
           split v, layout tabbed,      \
           focus, focus parent
@@ -70,7 +66,7 @@ main(){
 
     messy "[con_mark=$_mark]" \
           floating enable,    \
-          workspace "$ws_zen"
+          workspace --no-auto-back-and-forth "$ws_zen"
 
     # if the focus action below isn't included, the
     # container will not resize properly..
@@ -103,19 +99,19 @@ main(){
 
     messy "[con_id=${i3list[AWC]}]"    \
           floating enable,             \
-          move to workspace "$trg_ws", \
+          move --no-auto-back-and-forth to workspace "$trg_ws", \
           "$float_as" ,                \
-          workspace "$trg_ws"
+          workspace --no-auto-back-and-forth "$trg_ws"
 
     i3var set "zen${i3list[AWC]}"
     
 
   else
     messy "[con_id=${i3list[AWC]}]"     \
-          move to workspace "$ws_free", \
+          move --no-auto-back-and-forth to workspace "$ws_free", \
           "floating disable,"           \
           "move to mark $_mark,"        \
-          "focus, workspace $ws_zen"
+          "focus, workspace --no-auto-back-and-forth $ws_zen"
 
     [[ $var_data ]] || i3var set "zen${i3list[AWC]}" "$var"
   fi
@@ -139,7 +135,8 @@ main(){
 
   }
 
-  [[ $_msgstring ]] && i3-msg ${qflag:-} "$_msgstring"
+  [[ $_msgstring ]] \
+    && >&2 i3-msg ${qflag:-} "$_msgstring"
   unset _msgstring
 
   # if origin workspace doesn't exist after zen
@@ -150,17 +147,13 @@ main(){
     [[ $(i3-msg -t get_workspaces) =~ $re ]] || {
 
       messy "[con_mark=$_mark]"                 \
-            move to workspace "${i3list[WAN]}", \
-            workspace "${i3list[WAN]}"
+            move --no-auto-back-and-forth to workspace "${i3list[WAN]}", \
+            workspace --no-auto-back-and-forth "${i3list[WAN]}"
 
-      i3-msg ${qflag:-} "$_msgstring"
+      >&2 i3-msg ${qflag:-} "$_msgstring"
     }
   }
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3zen
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud
-

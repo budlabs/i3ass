@@ -8,7 +8,6 @@ cleanup() {
 
   ((_o[verbose])) || qflag='-q'
 
-  [[ -n $_msgstring ]] && i3-msg "${qflag:-}" "$_msgstring"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3viswiz
+  [[ -n $_msgstring ]] \
+    && >&2 i3-msg "${qflag:-}" "$_msgstring"
 }

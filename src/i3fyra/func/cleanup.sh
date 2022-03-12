@@ -7,14 +7,12 @@ cleanup() {
   ((${#mark_vars[@]})) && varset
 
   [[ -n $_msgstring ]] \
-    && i3-msg "$_qflag" "${_msgstring%;}"
+    && >&2 i3-msg "$_qflag" "${_msgstring%;}"
 
   ((${#new_size[@]})) && {
-    for k in "${!new_size[@]}"; do 
+    for k in "${!new_size[@]}"; do
       _sizestring+="[$k] ${new_size[$k]};"
     done
-    i3-msg "${qflag:-}" "${_sizestring%;}"
+    i3-msg >&2 "${qflag:-}" "${_sizestring%;}"
   }
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3fyra
 }

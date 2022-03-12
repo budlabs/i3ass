@@ -1,4 +1,8 @@
 
+### changelog
+
+See the [last releasenote](docs/releasenotes/0next.md).
+
 ### usage
 
 The table below lists the included commands. The

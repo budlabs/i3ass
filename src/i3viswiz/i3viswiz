@@ -2,10 +2,6 @@
 
 main(){
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3viswiz
-
   trap 'cleanup' EXIT
 
   (($#)) && {
@@ -46,7 +42,7 @@ main(){
 
     if [[ ${_o[$o]} = LIST ]]; 
       then arg_list=$json_key
-      else begin_block+="arg_search[\"$json_key\"]=\"${_o[$o]}\" "
+      else begin_block+="arg_search[\"$json_key\"]=\"${_o[$o]}\"; "
     fi
 
   done
@@ -57,7 +53,7 @@ main(){
     # FS     - change Field  Separator to ":" (from whitespace)
     # RS     - change Record Separator to "," (from linebreak)
     # arg_   - these variables are available in the AWK script
-    <<< "${_o[json]}" awk -f <(
+    <<< "${_o[json]}" gawk -f <(
 
       echo "BEGIN {$begin_block}"
       _awklib
@@ -109,5 +105,3 @@ main(){
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud
-

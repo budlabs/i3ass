@@ -8,6 +8,7 @@ main(){
   declare -g  _next_mode
   declare -g  _direction
   declare -ig _speed
+  declare -ig _margin
 
   declare -g  _msgstring  # combined i3-msg
   declare -g  _array      # output from i3list
@@ -41,15 +42,18 @@ main(){
   _speed=${_o[speed]//[!0-9]}
   ((_speed >= 0)) || _speed=10
 
+
+  _margin=${_o[margin]//[!0-9]}
+  ((_margin >= 0)) || _margin=5
+
   [[ -p $I3_KORNHE_FIFO_FILE ]] && {
-    printf '%s %s %s\n' "$_direction" "$_next_mode" "$_speed" >> "$I3_KORNHE_FIFO_FILE" &
+    echo "$_direction $_next_mode $_speed $_margin" >> "$I3_KORNHE_FIFO_FILE" &
+    ((_o[verbose] && ! _o[dryrun])) && timer_stop
     exit
   }
 
   [[ -f ${I3_KORNHE_FIFO_FILE}.lock ]] && exit
   touch "${I3_KORNHE_FIFO_FILE}.lock"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3Kornhe
 
   [[ ${_array:=${_o[array]}} ]] \
     || _array=$(i3list ${_o[json]:+--json "${_o[json]}"})
@@ -61,14 +65,14 @@ main(){
   # the action to i3fyra
   [[ $_next_mode = m ]] && (( i3list[AWF]!=1 && i3list[WSA]==i3list[WSF])) && {
     rm -f "$I3_KORNHE_FIFO_FILE"*
-    exec i3fyra --move "$_direction" --array "$_array" "${_o[verbose]:+--verbose}"
+    exec i3fyra --move "$_direction" "${_o[verbose]:+--verbose}" --array "$_array"
   }
 
   rm -f "$I3_KORNHE_FIFO_FILE"
   mkdir -p "${I3_KORNHE_FIFO_FILE%/*}"
   mkfifo "$I3_KORNHE_FIFO_FILE"
 
-  printf '%s %s %s\n' "$_direction" "$_next_mode" "$_speed" >> "$I3_KORNHE_FIFO_FILE" &
+  echo "$_direction $_next_mode $_speed $_margin" >> "$I3_KORNHE_FIFO_FILE" &
   trap 'cleanup' EXIT
 
   # when modifying FLOATING windows we enter a i3
@@ -104,7 +108,7 @@ main(){
   rm "${I3_KORNHE_FIFO_FILE}.lock"
 
   while [[ -p $I3_KORNHE_FIFO_FILE ]]; do
-    while read -rst 1 _direction _next_mode _speed ; do
+    while read -rst 1 _direction _next_mode _speed _margin ; do
 
       [[ $_direction ]] || continue
 
@@ -131,6 +135,8 @@ main(){
         modify_tiled
       fi
 
+      [[ ${_o[oneshot]} ]] && echo EXIT >> "$I3_KORNHE_FIFO_FILE"
+
     done < "$I3_KORNHE_FIFO_FILE"
 
     ((i3list[AWF])) && {
@@ -145,7 +151,8 @@ main(){
       messy mode sizemode
     }
 
-    [[ $_msgstring ]] && i3-msg "${_qflag:-}" "$_msgstring"
+    [[ $_msgstring ]] && \
+      >&2 i3-msg "${_qflag:-}" "$_msgstring"
     _msgstring=''
 
   done
@@ -153,4 +160,3 @@ main(){
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud

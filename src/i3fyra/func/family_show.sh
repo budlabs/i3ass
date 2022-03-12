@@ -7,7 +7,7 @@ family_show() {
   local target_family=$1 target_container=${2:-}
   local other_family
 
-  ((i3list["X${target_family}"] == i3list[WSF])) \
+  [[ ${i3list["N${target_family}"]} = "${i3list[WFN]}" ]] \
     && return
 
   
@@ -26,22 +26,22 @@ family_show() {
       family_create "$target_family" "$target_container"
     fi
 
-  elif ((i3list["X${target_family}"] != i3list[WSF])); then
+  elif [[ ${i3list["N${target_family}"]} != "${i3list[WFN]}" ]]; then
 
     messy "[con_mark=i34X${target_family}]" \
-      move to workspace "${i3list[WSF]}", \
+      move --no-auto-back-and-forth to workspace "${i3list[WFN]}", \
       floating disable
 
     if [[ ${i3list["X${ori[main]}"]} ]]; then
 
       messy "[con_mark=i34X${ori[main]}]"     \
-        split h
+        split "${ori[charmain]}"
       messy "[con_mark=i34X${target_family}]" \
         move to mark "i34X${ori[main]}"
 
     else
       messy "[con_mark=i34X${target_family}]" \
-        layout splith, \
+        layout split"${ori[charmain]}", \
         focus, focus parent
       messy mark "i34X${ori[main]}"
     fi
@@ -57,7 +57,7 @@ family_show() {
       && other_family=${ori[fam2]} \
       || other_family=${ori[fam1]}
 
-    ((i3list["X${other_family}"] == i3list[WSF])) \
+    [[ ${i3list["N${other_family}"]} = "${i3list[WFN]}" ]] \
       && messy "[con_mark=i34X${target_family}]"  \
            swap mark "i34X${other_family}"
   }

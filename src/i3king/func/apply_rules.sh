@@ -15,5 +15,5 @@ apply_rules() {
 
 all_window_ids() {
   i3-msg -t get_tree \
-    | awk '$1 == "\"window\"" && $2 != "null" {print $2}' RS=, FS=:
+    | gawk '$1 == "\"window\"" && $2 != "null" {print $2}' RS=, FS=:
 }

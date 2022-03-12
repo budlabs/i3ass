@@ -7,24 +7,20 @@
 
 main(){
 
-  declare -a acri       # options passed to i3list/i3get
-  declare -A i3list     # globals array
-  declare -g _msgstring # passed to i3-msg ( messy() )
-
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3run
+  declare -ag _criteria  # options passed to i3list/i3get/i3viswiz
+  declare -A  i3list     # globals array
+  declare -g  _msgstring # passed to i3-msg ( messy() )
 
   for k in instance class title conid winid; do
     [[ ${_o[$k]} ]] || continue
-    acri+=("--$k" "${_o[$k]}")
-  done ; unset k
+    _criteria+=("--$k" "${_o[$k]}")
+  done ; unset -v k
 
-  [[ -z ${acri[*]} ]] \
-    && ERH "please specify a criteria"
+  [[ -z ${_criteria[*]} ]] \
+    && ERX "please specify a criteria"
 
-  ((_o[verbose])) && ERM "i3run -> i3list ${acri[*]}"
-  _array=$(i3list "${acri[@]}")
+  ((_o[verbose])) && ERM "i3run -> i3list ${_criteria[*]}"
+  _array=$(i3list "${_criteria[@]}")
   eval "$_array"
 
   _command=${_o[command]:-$*}
@@ -32,16 +28,12 @@ main(){
   # if window doesn't exist, launch the command.
   if [[ ${i3list[TWC]} ]]
     then focuswindow
-    else launchcommand
+    else [[ ${_o[hide]} ]] || launchcommand
   fi
 
   ((_o[verbose])) || qflag=-q
-  [[ $_msgstring ]] && i3-msg ${qflag:-} "$_msgstring"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer stop i3run
+  [[ $_msgstring ]] && >&2 i3-msg ${qflag:-} "$_msgstring"
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud
-

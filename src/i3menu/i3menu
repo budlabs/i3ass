@@ -5,24 +5,22 @@
 
 main(){
 
-  : "${_o[verbose]:=$I3_ASS_VERBOSE}"
-
-  ((_o[verbose] && ! _o[dryrun])) && timer start i3Kornhe
-
-  _menu_command="
-    rofi -theme <(themefile)
+  _menu_command=(
+    rofi 
     ${_o[options]:+${_o[options]}}
-    ${_o[filter]:+-filter \"${_o[filter]}\"}
-    ${_o[show]:+-show \"${_o[show]}\"}
-    ${_o[modi]:+-modi \"${_o[modi]}\"}
-    ${_o[prompt]:+-p \"${_o[prompt]} \"}
-  "
+    ${_o[filter]:+-filter "${_o[filter]}"}
+    ${_o[show]:+-show "${_o[show]}"}
+    ${_o[modi]:+-modi "${_o[modi]}"}
+    ${_o[prompt]:+-p "${_o[prompt]} "}
+  )
 
-  _menu_command=${_menu_command//$'\n'/ }
+  [[ ${_o[fallback]} ]] \
+    && ERR "--fallback option is deprecated"$'\n' \
+           "its functionality has been removed from i3list"
 
   [[ -n ${_o[modi]}${_o[show]} ]] || {
 
-    _menu_command+="-dmenu "
+    _menu_command+=(-dmenu)
 
     # if we have stuff on stdin, put
     # that in a tempfile that way we can do stuff ( wc in setincludes() )
@@ -54,21 +52,26 @@ main(){
   setgeometry "${_o[layout]:-default}"
   setincludes
 
-  # SC2016  Expressions don't expand in single quotes
-  # shellcheck disable=SC2016
-  [[ -d ${_o[list-directory]} ]] \
-    && _menu_command+=' | echo "${_o[list-directory]%/}/$(cat)"'
+  selected=$(
+    if [[ -f $_tmp_list_file && ${_o[top]} ]]; then
+      gawk -f <(topsort) "$_tmp_list_file"
+    elif [[ -f $_tmp_list_file ]]; then
+      cat "$_tmp_list_file"
+    else
+      : echo # use this if menu is dmenu (needs stdin)
+    fi | {
+      ((_o[verbose])) && verbose_outro
+      ((_o[dryrun]))  || "${_menu_command[@]}" -theme <(themefile)
+    }
+  )
 
-  if [[ -f $_tmp_list_file && ${_o[top]} ]]; then
-    awk -f <(topsort) "$_tmp_list_file"
-  elif [[ -f $_tmp_list_file ]]; then
-    cat "$_tmp_list_file"
-  fi | {
-    ((_o[verbose])) && verbose_outro
-    ((_o[dryrun]))  || eval "$_menu_command"
-  }
+  [[ $selected ]] || exit
+
+  [[ -d ${_o[list-directory]} ]] \
+    && echo -n "${_o[list-directory]%/}/"
+  
+  echo "$selected"
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
 source "$__dir/_init.sh"                              #bashbud
-main "$@"                                             #bashbud
