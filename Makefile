@@ -25,7 +25,7 @@ install install-dev all clean uninstall-dev check:
 
 wiki: $(wiki_mds)
 
-$(wiki_mds): wiki/doc/%.md : ass/%/.cache/manpage.md
+$(wiki_mds): wiki/doc/%.md : src/%/.cache/manpage.md
 	cat $< > $@	
 
 readme: README.md
