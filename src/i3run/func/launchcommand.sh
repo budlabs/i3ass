@@ -11,12 +11,12 @@ launchcommand(){
 
   if   [[ -n ${_o[rename]} ]]; then
 
-    [[ ${acri[0]} = '--class'    ]] && xdtopt=("--class")
-    [[ ${acri[0]} = '--instance' ]] && xdtopt=("--classname")
-    [[ ${acri[0]} = '--title   ' ]] && xdtopt=("--name")
+    [[ ${_criteria[0]} = '--class'    ]] && xdtopt=("--class")
+    [[ ${_criteria[0]} = '--instance' ]] && xdtopt=("--classname")
+    [[ ${_criteria[0]} = '--title   ' ]] && xdtopt=("--name")
 
-    xdtopt+=("${acri[1]}")
-    acri[1]=${_o[rename]}
+    xdtopt+=("${_criteria[1]}")
+    _criteria[1]=${_o[rename]}
 
   elif [[ -n "${_o[rename-title]}${_o[rename-class]}${_o[rename-instance]}" ]]; then
 
@@ -30,9 +30,9 @@ launchcommand(){
 
         # when renaming, replace the criteria arg (--? + 1)
         # with the argument to the replace (OLD_NAME)
-        for l in "${!acri[@]}"; do
-          [[ ${acri[$l]} = --$k ]] && {
-            acri[l+1]=${_o[rename-$k]} 
+        for l in "${!_criteria[@]}"; do
+          [[ ${_criteria[$l]} = --$k ]] && {
+            _criteria[l+1]=${_o[rename-$k]} 
             break
           }
         done
@@ -45,7 +45,7 @@ launchcommand(){
   [[ -n "${xdtopt[*]}" ]] && {
 
     read -rs winid conid \
-      <<< "$(i3get "${acri[@]}" -yr dn --print-format '%v ')"
+      <<< "$(i3get "${_criteria[@]}" -yr dn --print-format '%v ')"
 
     ((_o[verbose])) \
       && ERM "i3run -> xdotool set_window ${xdtopt[*]} $winid"
@@ -58,7 +58,7 @@ launchcommand(){
       windowmap   "$winid"                           
   }
   
-  : "${conid:=$(i3get -y "${acri[@]}")}"
+  : "${conid:=$(i3get -y "${_criteria[@]}")}"
   
   ((_o[mouse])) && sendtomouse
 

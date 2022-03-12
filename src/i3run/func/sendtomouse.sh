@@ -3,7 +3,7 @@
 sendtomouse(){
   declare -i X Y newy newx tmpx tmpy breakx breaky
 
-  eval "$(i3list "${acri[@]}")"
+  eval "$(i3list "${_criteria[@]}")"
 
   messy "[con_id=${i3list[TWC]}]" focus
 

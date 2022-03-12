@@ -17,11 +17,11 @@ focuswindow(){
       target_container=${_o[conid]}
     elif [[ ${i3list[WTN]} = __i3_scratch ]]; then 
       target_container=$(i3viswiz --scratchpad "${_criteria[@]}")
-    elif [[ ${i3list[WTN]} = ${i3list[WAN]} ]]; then
+    elif [[ ${i3list[WTN]} = "${i3list[WAN]}" ]]; then
       target_container=$(i3viswiz "${_criteria[@]}")
-    else
-      target_container=${i3list[TWC]}
     fi
+    
+    : "${target_container:=${i3list[TWC]}}"
 
     # hvar can contain floating state of target
     hvar=$(i3var get "hidden${target_container}")
