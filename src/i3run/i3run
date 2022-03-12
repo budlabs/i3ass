@@ -7,20 +7,20 @@
 
 main(){
 
-  declare -a acri       # options passed to i3list/i3get
-  declare -A i3list     # globals array
-  declare -g _msgstring # passed to i3-msg ( messy() )
+  declare -ag _criteria  # options passed to i3list/i3get/i3viswiz
+  declare -A  i3list     # globals array
+  declare -g  _msgstring # passed to i3-msg ( messy() )
 
   for k in instance class title conid winid; do
     [[ ${_o[$k]} ]] || continue
-    acri+=("--$k" "${_o[$k]}")
+    _criteria+=("--$k" "${_o[$k]}")
   done ; unset -v k
 
-  [[ -z ${acri[*]} ]] \
-    && ERH "please specify a criteria"
+  [[ -z ${_criteria[*]} ]] \
+    && ERX "please specify a criteria"
 
-  ((_o[verbose])) && ERM "i3run -> i3list ${acri[*]}"
-  _array=$(i3list "${acri[@]}")
+  ((_o[verbose])) && ERM "i3run -> i3list ${_criteria[*]}"
+  _array=$(i3list "${_criteria[@]}")
   eval "$_array"
 
   _command=${_o[command]:-$*}
