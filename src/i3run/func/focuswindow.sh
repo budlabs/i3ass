@@ -13,8 +13,8 @@ focuswindow(){
   else # focus target window.
   
     # prioritize visible containers
-    if [[ ${_o[conid]} ]]; then
-      target_container=${_o[conid]}
+    if [[ ${_o[conid]} || ${_o[winid]} ]]; then
+      target_container=${i3list[AWC]}
     elif [[ ${i3list[WTN]} = __i3_scratch ]]; then 
       target_container=$(i3viswiz --scratchpad "${_criteria[@]}")
     elif [[ ${i3list[WTN]} = "${i3list[WAN]}" ]]; then
