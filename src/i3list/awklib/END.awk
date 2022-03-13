@@ -19,8 +19,9 @@ END {
       }
 
       if (search_match == length(arg_search)) {
-        target_container_id=suspect_id
-        break
+        SUS++
+        if (length(target_container) == 0)
+          target_container_id=suspect_id
       }
     }
   }
@@ -170,4 +171,5 @@ END {
 
   print ""
   printf(strfrm, "RID", root_id, desc["RID"])
+  printf(strfrm, "SUS", SUS, desc["SUS"])
 }
