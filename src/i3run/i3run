@@ -7,9 +7,13 @@
 
 main(){
 
-  declare -ag _criteria  # options passed to i3list/i3get/i3viswiz
-  declare -A  i3list     # globals array
-  declare -g  _msgstring # passed to i3-msg ( messy() )
+  declare -ag _criteria   # options passed to i3list/i3get/i3viswiz
+  declare -A  i3list      # globals array
+  declare -g  _msgstring  # passed to i3-msg ( messy() )
+  declare -g  _json       # result of i3-msg -t get_tree
+  declare -ag _pass_json  # helper var for storing --json option
+  declare -ag _pass_array # helper var for storing --array option
+  declare -g  _array      # result of i3list
 
   for k in instance class title conid winid; do
     [[ ${_o[$k]} ]] || continue
@@ -19,8 +23,10 @@ main(){
   [[ -z ${_criteria[*]} ]] \
     && ERX "please specify a criteria"
 
-  ((_o[verbose])) && ERM "i3run -> i3list ${_criteria[*]}"
-  _array=$(i3list "${_criteria[@]}")
+  _json=$(i3-msg -t get_tree)
+  _pass_json=("${_o[verbose]:+--verbose}" --json "$_json")
+  _array=$(i3list "${_criteria[@]}" "${_pass_json[@]}")
+  _pass_array=("${_o[verbose]:+--verbose}" --array "$_array")
   eval "$_array"
 
   _command=${_o[command]:-$*}
