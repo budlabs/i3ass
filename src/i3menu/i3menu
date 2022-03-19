@@ -65,12 +65,12 @@ main(){
     }
   )
 
-  [[ $selected ]] || exit
-
-  [[ -d ${_o[list-directory]} ]] \
-    && echo -n "${_o[list-directory]%/}/"
-  
-  echo "$selected"
+  [[ $selected ]] && {
+    [[ -d ${_o[list-directory]} ]] \
+      && echo -n "${_o[list-directory]%/}/"
+    
+    echo "$selected"
+  }
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud
