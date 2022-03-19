@@ -320,6 +320,15 @@ $(CACHE_DIR)/timer_start:
 		'[[ $$* =~ --verbose ]] && _o[verbose]=1' \
 		'[[ $$* =~ --dryrun ]]  && _o[dryrun]=1' \
 		': "$${_o[verbose]:=$$BASHBUD_VERBOSE}"' \
+		'' \
+		'[[ $$BASHBUD_LOG ]] && {' \
+		'$(INDENT)[[ -f $$BASHBUD_LOG ]] || {' \
+		'$(INDENT)$(INDENT)mkdir -p "$${BASHBUD_LOG%/*}"' \
+		'$(INDENT)$(INDENT)touch "$$BASHBUD_LOG"' \
+		'$(INDENT)}' \
+		'$(INDENT)exec 2>> "$$BASHBUD_LOG"' \
+		'}' \
+		'' \
 		'((_o[verbose] && ! _o[dryrun])) && {' \
 		'$(INDENT)___t=$$(( 10#$${EPOCHREALTIME//[!0-9]} ))' \
 		'$(INDENT)for ((___arg=0; ___arg<$${#@}+1;___arg++)); do' \
