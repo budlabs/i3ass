@@ -1,1 +1,1 @@
-`-d`, `--winid`           CON_ID | Search for windows with CON_ID  
+`-d`, `--winid`           WIN_ID | Search for windows with WIN_ID  
