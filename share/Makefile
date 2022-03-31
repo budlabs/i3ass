@@ -210,7 +210,7 @@ $(CACHE_DIR)/long_help.md: $(CACHE_DIR)/options_in_use $(option_docs)
 
 $(MONOLITH): $(NAME) $(CACHE_DIR)/print_help.sh $(function_files) $(CACHE_DIR)/timer_start $(CACHE_DIR)/getopt
 	@$(info making $@)
-	printf '%s\n' '$(SHBANG)' '' > $@
+	printf '%s\n' '$(SHBANG)' '' 'exec 3>&2' '' > $@
 	$(print_version)
 	grep -vhE -e '^#!/' -e '#bashbud$$' $^ >> $@
 	
@@ -249,7 +249,7 @@ $(CACHE_DIR)/short_help.md $(CACHE_DIR)/print_help.sh &: $(CACHE_DIR)/help_table
 	@$(info making $@)
 	{
 		printf '%s\n' '$(SHBANG)' '' "__print_help()" "{" \
-			"  cat << 'EOB' >&2  " \
+			"  cat << 'EOB' >&3  " \
 		
 		if [[ options = "$(USAGE)" ]]
 			then
@@ -282,7 +282,7 @@ $(CACHE_DIR)/help_table.md : $(CACHE_DIR)/long_help.md
 
 $(BASE): config.mak $(CACHE_DIR)/timer_start $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh
 	@$(info making $@)
-	printf '%s\n' '$(SHBANG)' '' > $@
+	printf '%s\n' '$(SHBANG)' '' 'exec 3>&2' '' > $@
 	$(print_version)
 	grep -vhE -e '^#!/' $(CACHE_DIR)/print_help.sh >> $@
 
@@ -322,10 +322,7 @@ $(CACHE_DIR)/timer_start:
 		': "$${_o[verbose]:=$$BASHBUD_VERBOSE}"' \
 		'' \
 		'[[ $$BASHBUD_LOG ]] && {' \
-		'$(INDENT)[[ -f $$BASHBUD_LOG ]] || {' \
-		'$(INDENT)$(INDENT)mkdir -p "$${BASHBUD_LOG%/*}"' \
-		'$(INDENT)$(INDENT)touch "$$BASHBUD_LOG"' \
-		'$(INDENT)}' \
+		'$(INDENT)[[ -f $$BASHBUD_LOG ]] || mkdir -p "$${BASHBUD_LOG%/*}"' \
 		'$(INDENT)exec 2>> "$$BASHBUD_LOG"' \
 		'}' \
 		'' \
@@ -352,7 +349,7 @@ define print_version =
 @printf '%s\n'                                \
 	"__print_version()"                         \
 	"{"                                         \
-	"$(INDENT)>&2 printf '%s\n' \\"                    \
+	"$(INDENT)>&3 printf '%s\n' \\"                    \
 	"$(INDENT)$(INDENT)'$(NAME) - version: $(VERSION)' \\"    \
 	"$(INDENT)$(INDENT)'updated: $(UPDATED) by $(AUTHOR)'"    \
 	"}"                                                       \
