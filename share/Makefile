@@ -161,6 +161,7 @@ $(function_createconf): $(conf_files) | $(FUNCS_DIR)/
 		cat "$$f" >> $@
 		echo "EOCONF" >> $@
 		echo 'fi #bashbud' >> $@
+		[[ -x $$f ]] && echo "chmod +x \"$${f/$(subst /,\/,$(CONF_DIR))/\$$trgdir}\"" >> $@
 	done
 
 	echo '}' >> $@
