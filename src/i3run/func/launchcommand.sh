@@ -57,6 +57,8 @@ launchcommand(){
       set_window --overrideredirect 0 "$winid" \
       windowunmap "$winid"                     \
       windowmap   "$winid"                           
+
+    conid=$(i3get -d "$winid")
   }
   
   : "${conid:=$(i3get -y "${_criteria[@]}")}"

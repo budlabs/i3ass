@@ -3,3 +3,8 @@
 ### [i3list]
 NEW KEY: `i3list[SUS]`  
 contains the number of containers matching all criteria
+
+### [i3run]
+When xdotool is used to rename a window class/instance
+the window gets a new `container_id`, and now that
+new id is reported instead of the old.
