@@ -12,10 +12,10 @@ hidewindow() {
       i3fyra --force --hide "${i3list[TWP]}" "${_pass_array[@]}" 
     fi
 
-   ((_o[FORCE])) && [[ $_command ]] && run_command
+   ((_o[FORCE])) && [[ ${_command[*]} ]] && run_command
 
   else
 
-   ((_o[force] + _o[FORCE] > 0)) && [[ $_command ]] && run_command
+   ((_o[force] + _o[FORCE] > 0)) && [[ ${_command[*]} ]] && run_command
   fi
 }

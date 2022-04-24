@@ -8,11 +8,12 @@
 main(){
 
   declare -ag _criteria   # options passed to i3list/i3get/i3viswiz
-  declare -A  i3list      # globals array
+  declare -A   i3list     # globals array
   declare -g  _msgstring  # passed to i3-msg ( messy() )
   declare -g  _json       # result of i3-msg -t get_tree
   declare -ag _pass_json  # helper var for storing --json option
   declare -ag _pass_array # helper var for storing --array option
+  declare -ag _command    # command to execute
   declare -g  _array      # result of i3list
 
   for k in instance class title conid winid; do
@@ -29,7 +30,14 @@ main(){
   _pass_array=("${_o[verbose]:+--verbose}" --array "$_array")
   eval "$_array"
 
-  _command=${_o[command]:-$*}
+  # shellcheck disable=SC2206
+  # SC2206:  Quote to prevent word splitting/globbin.
+  # the only way to win, regarding i3run --command COMMAND
+  # is to not use it and do: i3run -- COMMAND , instead 
+  if [[ ${_o[command]} ]] 
+    then _command=(${_o[command]})
+    else _command=("$@")
+  fi
 
   # if window doesn't exist, launch the command.
   if [[ ${i3list[TWC]} ]]

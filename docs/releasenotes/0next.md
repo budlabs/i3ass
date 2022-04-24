@@ -8,3 +8,5 @@ contains the number of containers matching all criteria
 When xdotool is used to rename a window class/instance
 the window gets a new `container_id`, and now that
 new id is reported instead of the old.
+
+don't use eval when executing commands. 

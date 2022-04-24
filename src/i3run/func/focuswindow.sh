@@ -78,7 +78,7 @@ focuswindow(){
 
     messy "[con_id=${target_container}]" focus
 
-   ((_o[force] + _o[FORCE] > 0)) && [[ $_command ]] && run_command
+   ((_o[force] + _o[FORCE] > 0)) && [[ ${_command[*]} ]] && run_command
   fi
 
   echo "${target_container}"
