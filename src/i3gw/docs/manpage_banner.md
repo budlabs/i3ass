@@ -1,4 +1,4 @@
-i3gw - short description of the script
+i3gw - a ghost window wrapper for i3wm
 
 ## SYNOPSIS
 
