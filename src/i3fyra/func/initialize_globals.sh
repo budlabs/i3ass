@@ -2,8 +2,6 @@
 
 initialize_globals() {
 
-  trap 'cleanup' EXIT
-
   declare -Ag i3list
   declare -Ag mark_vars
   declare -Ag new_size
