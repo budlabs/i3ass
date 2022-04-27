@@ -1,3 +1,5 @@
+## USAGE
+
 `i3viswiz` either prints a list of the currently
 visible tiled windows to `stdout` or shifts the
 focus depending on the arguments.  
@@ -65,3 +67,5 @@ command:
 
 Or to disable it:  
 `i3var set focus_wrap normal`
+
+## OPTIONS

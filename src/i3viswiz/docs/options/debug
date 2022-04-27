@@ -1,4 +1,4 @@
-`--debug`        VARLIST | detailed output   
+detailed output   
 
 VARLIST is used to determine what to output. By
 default the value of VARLIST is: `LIST` .
