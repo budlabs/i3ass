@@ -1,3 +1,5 @@
+## USAGE
+
 `i3-msg` has an undocumented function: *open*, 
 it creates empty containers, 
 or as I call them: ghosts. 
@@ -10,7 +12,7 @@ That is what this script does,
 it creates a ghost, 
 get its `con_id` and marks it.
 
-# EXAMPLES
+## EXAMPLES
 
 `$ i3gw casper`  
 
