@@ -1,3 +1,4 @@
+## USAGE
 `i3list` prints a list in a *array* formatted list. 
 If a search criteria is given 
 (`-c`|`-i`|`-n`|`-d`|`-m`) 
@@ -10,7 +11,7 @@ By using eval,
 the output can be used as an array in bash scripts, 
 but the array needs to be declared first.
 
-# EXAMPLE
+## EXAMPLE
 
 ```text
 $ i3list
@@ -95,3 +96,5 @@ $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
 ```
+
+## OPTIONS

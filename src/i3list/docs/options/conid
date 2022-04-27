@@ -1,1 +1,1 @@
-`-n`, `--conid`    TARGET | Search for windows with a **CON_ID** matching *TARGET*  
+Search for windows with a CON_ID matching TARGET  
