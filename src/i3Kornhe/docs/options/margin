@@ -1,4 +1,4 @@
-`--margin`        INT | Defaults to 5 if not set  
+Defaults to 5 if not set  
 
 This is only used when
 moving a window and the direction is a number.
