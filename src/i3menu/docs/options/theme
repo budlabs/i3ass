@@ -1,4 +1,4 @@
-`--theme`            THEME | change appearance of the menu  
+change appearance of the menu  
 
 If a **.rasi** file with same name as THEME exist in `I3MENU_DIR/themes`, it's content will get appended to theme file before showing the menu.  
 

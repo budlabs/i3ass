@@ -1,4 +1,4 @@
-`--anchor`           INT | Sets the "*anchor*" point of the menu.  
+Sets the "*anchor*" point of the menu.  
 
 The default is **1**. **1** means the top left
 corner, **9** means the bottom right corner.

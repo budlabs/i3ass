@@ -1,4 +1,4 @@
-`--modi`             MODI | set rofi -modi option 
+set rofi -modi option 
 
 This is a short hand for the **rofi** option `-modi`. So instead of doing this:  
 `$ i3menu -o '-modi run,drun -show run'` , you can do this:  

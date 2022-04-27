@@ -1,4 +1,4 @@
-`-o`, `--options`          OPTIONS | extra rofi options  
+extra rofi options  
 
 The argument is a string of aditional options to pass to **rofi**.  
 
