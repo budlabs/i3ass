@@ -44,9 +44,6 @@ main(){
     then focuswindow
     else [[ ${_o[hide]} ]] || launchcommand
   fi
-
-  ((_o[verbose])) || qflag=-q
-  [[ $_msgstring ]] && >&2 i3-msg ${qflag:-} "$_msgstring"
 }
 
 __dir=$(dirname "$(readlink -f "${BASH_SOURCE[0]}")") #bashbud

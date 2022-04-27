@@ -1,4 +1,4 @@
-`-x`, `--rename`          OLD_NAME | rename window properties on creation  
+rename window properties on creation  
 
 If the search criteria is `--instance`, the window
 with instance: *OLDNAME* will get a new instance
