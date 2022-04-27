@@ -1,4 +1,4 @@
-`-r`, `--print`       OUTPUT | what to print. defaults to 'n'  
+what to print. defaults to 'n'  
 
 *OUTPUT* can be one or more of the following 
 characters:   

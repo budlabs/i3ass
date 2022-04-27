@@ -1,1 +1,1 @@
-`--role`        ROLE | match ROLE against window_role  
+match ROLE against window_role  
