@@ -1,3 +1,5 @@
+## USAGE
+
 `i3var` is used to get or set a "variable" that is bound to the current i3wm session. 
 The variable is actually the mark on the **root container**.
 
@@ -11,3 +13,5 @@ If *VALUE* is not defined,
 `get`  
 if *VARNAME* exists, 
 its value will be printed to **STDOUT**.  
+
+## OPTIONS
