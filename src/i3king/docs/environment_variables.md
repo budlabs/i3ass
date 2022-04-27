@@ -1,16 +1,16 @@
 
 
-# ENVIRONMENT
+## ENVIRONMENT
 
-## BASHBUD_DIR
+### BASHBUD_DIR
 
 bashbud config dir location.
 
-## I3\_KING\_RULE\_FILE
+### I3_KING_RULE_FILE
 
 Path to file containing rules to be parsed.
 
-## I3\_KING\_PID\_FILE
+### I3_KING_PID_FILE
 
 When i3king is running this file contains the pid
 of the i3king process. It is used by **i3fyra** to

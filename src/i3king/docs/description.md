@@ -1,3 +1,5 @@
+## USAGE
+
 i3king will match all **new** windows against the
 rules defined in **I3_KING_RULE_FILE**
 (*`~/.config/i3king/rules`*). If a rule matches

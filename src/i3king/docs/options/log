@@ -1,1 +1,1 @@
-`--log`            FILE | print messages to FILE instead of STDERR  
+print messages to FILE instead of STDERR  
