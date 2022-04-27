@@ -5,17 +5,14 @@ main(){
   ((_o[dryrun])) || {
     [[ -f /tmp/i3flip_lock ]] && exit
     touch /tmp/i3flip_lock
-    trap 'rm /tmp/i3flip_lock' EXIT HUP INT
   }
 
   declare -g _msgstring
   declare -i next prev
 
   _dir=$1
-
   
-
-  ((_o[verbose])) && ERM $'\n'"target direction: $_dir"
+  ((_o[verbose])) && ERM "target direction: $_dir"
   _dir=${_dir,,}
 
   read -r layout last first pos size < <(
@@ -74,9 +71,6 @@ main(){
       messy "[con_id=$first] focus"
     fi
   fi
-
-  ((_o[verbose])) || qflag='-q'
-  [[ -n $_msgstring ]] && >&2 i3-msg "${qflag:-}" "$_msgstring"
 
 }
 

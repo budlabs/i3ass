@@ -1,9 +1,11 @@
-# SEE ALSO
-Project site: <https://github.com/budlabs/i3ass>
 
-# CONTACT
+## CONTACT
 File bugs and feature requests at the following URL:  
-<https://github.com/budlabs/i3ass/issues>
+https://github.com/budlabs/i3ass/issues
 
-# AUTHOR
+## AUTHOR
 i3flip was written by budRich of budlabs
+
+## COPYRIGHT
+
+
