@@ -1,6 +1,3 @@
-
-## USAGE
-
 `i3flip` switch containers without leaving the
 parent. Perfect for tabbed or stacked layout, but
 works on all layouts. If direction is `next` and

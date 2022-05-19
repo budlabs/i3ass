@@ -6,28 +6,34 @@ CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := i3get [OPTIONS]
 DESCRIPTION  := prints info about a specific window to stdout
 ORGANISATION := budlabs
+LICENSE      := MIT
 
-MANPAGE      := $(NAME).1
-README       :=
+MANPAGE_LAYOUT =                \
+	$(CACHE_DIR)/help_table.txt   \
+	$(CACHE_DIR)/long_help.md     \
+	$(DOCS_DIR)/description.md    \
+	$(CACHE_DIR)/copyright.txt
 
-MANPAGE_LAYOUT =               \
- $(DOCS_DIR)/manpage_banner.md \
- $(CACHE_DIR)/help_table.txt   \
- $(CACHE_DIR)/long_help.md   \
- $(DOCS_DIR)/description.md    \
- $(DOCS_DIR)/manpage_footer.md \
- ../../LICENSE
 
-installed_manpage    = $(DESTDIR)$(PREFIX)/share/man/man$(manpage_section)/$(MANPAGE)
-installed_script    := $(DESTDIR)$(PREFIX)/bin/$(NAME)
+$(CACHE_DIR)/wiki.md: config.mak $(MANPAGE_LAYOUT)
+	@$(info making $@)
+	{
+	  printf '%s\n' '## NAME' '$(NAME) - $(DESCRIPTION)' \
+	                '## SYNOPSIS' '`$(USAGE)`'           \
+	                '## OPTIONS'
 
-install: all
-	install -Dm644 $(MANPAGE_OUT) $(installed_manpage)
-	install -Dm755 $(MONOLITH) $(installed_script)
+	  sed 's/^/    /g' $(CACHE_DIR)/help_table.txt
+	  cat $(CACHE_DIR)/long_help.md
+	  
+	  echo "## USAGE"
+	  cat $(DOCS_DIR)/description.md
+	  
+	  printf '%s\n' \
+		  '## CONTACT' \
+			"Send bugs and feature requests to:  " \
+			"$(CONTACT)/issues" \
+			'## COPYRIGHT'
 
-uninstall:
-	@for f in $(installed_script) $(installed_manpage); do
-		[[ -f $$f ]] || continue
-		echo "rm $$f"
-		rm "$$f"
-	done
+		cat $(CACHE_DIR)/copyright.txt
+
+	} > $@

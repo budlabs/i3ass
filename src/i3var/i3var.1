@@ -1,0 +1,63 @@
+.nh
+.TH I3VAR  1 2022-05-19 budlabs "User Manuals"
+.SH NAME
+.PP
+i3var - get or get a i3 variable
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3var     set VARNAME [VALUE] [--json JSON]
+i3var     get VARNAME [--json JSON]
+i3var     --help|-h --version|-v --verbose
+
+.fi
+.RE
+
+.SH OPTIONS
+.PP
+.RS
+
+.nf
+-h, --help         | print help and exit  
+--json        JSON | Use JSON instead of the output of `i3-msg -t get_tree`  
+--verbose          | print messages to stderr  
+-v, --version      | print version info and exit  
+
+.fi
+.RE
+
+.SH USAGE
+.PP
+\fB\fCi3var\fR is used to get or set a "variable" that is bound to the current i3wm session.
+The variable is actually the mark on the \fBroot container\fP\&.
+
+.PP
+\fB\fCset\fR  [VALUE]
+.br
+If \fIVARNAME\fP doesn't exist,
+a new window and mark will be created.
+If \fIVARNAME\fP exists, it's value will be replaced with \fIVALUE\fP\&.
+.br
+If \fIVALUE\fP is not defined,
+\fIVARNAME\fP will get unset (the mark is removed).
+
+.PP
+\fB\fCget\fR
+.br
+if \fIVARNAME\fP exists,
+its value will be printed to \fBSTDOUT\fP\&.
+
+.SH CONTACT
+.PP
+Send bugs and feature requests to:
+.br
+https://github.com/budlabs/i3ass/issues
+
+.SH COPYRIGHT
+.PP
+Copyright (c) 2017-2022, budRich of budlabs
+.br
+SPDX-License-Identifier: MIT

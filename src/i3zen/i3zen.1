@@ -1,0 +1,70 @@
+.nh
+.TH I3ZEN  1 2022-05-19 budlabs "User Manuals"
+.SH NAME
+.PP
+i3zen - zentered container, full focus
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3zen [OPTIONS]\fR
+
+.SH OPTIONS
+.PP
+.RS
+
+.nf
+--dryrun                  | don't execute any commands  
+--height        INT       | height of zen container in percentage  
+-h, --help                | print help and exit  
+-m, --mark      MARK      | zen container mark  
+--verbose                 | show verbose output on stderr during execution  
+-v, --version             | print version info and exit  
+--width         INT       | height of zen container in percentage  
+-w, --workspace WORKSPACE | workspace name to use  
+-x, --xpos      INT       | position of container on the X axis
+-y, --ypos      INT       | position of container on the X axis
+
+.fi
+.RE
+
+.SS -m, --mark      MARK
+.PP
+If not set the \fIzen container\fP will be marked \fBcenterzen\fP\&.
+If set it will instead be marked MARK when it is created.
+This option can be used to create multiple zen containers.
+
+.SS -w, --workspace WORKSPACE
+.PP
+If this option is not set the \fIzen container\fP will
+be created on a vacant workspace (the highest
+numbered workspace + 1).
+
+.SH USAGE
+.PP
+move current window to a "clean" workspace,
+put it in a centered, floating tabbed container.
+
+.PP
+triggering the command on a window that is already
+"zen" will move it back to the workspace it came
+from.
+
+.SH CONTACT
+.PP
+Send bugs and feature requests to:
+.br
+https://github.com/budlabs/i3ass/issues
+
+.SH COPYRIGHT
+.PP
+Copyright (c) 2017-2022, budRich of budlabs
+.br
+SPDX-License-Identifier: MIT
+
+.SH SEE ALSO
+.PP
+https://www.reddit.com/r/i3wm/comments/6x8ajm/oc_i3zen/
+.br
+https://www.reddit.com/r/unixporn/comments/6xbdtk/oci3_i3zen/
+.br
+https://gist.github.com/budRich/16765b5468201aa734d0ec1c0870fd0c

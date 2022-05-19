@@ -1,0 +1,70 @@
+.nh
+.TH I3GW  1 2022-05-19 budlabs "User Manuals"
+.SH NAME
+.PP
+i3gw - a ghost window wrapper for i3wm
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3gw MARK\fR
+
+.SH OPTIONS
+.PP
+.RS
+
+.nf
+-h, --help     | print help and exit  
+--verbose      | short description  
+-v, --version  | print messages to stderr  
+
+.fi
+.RE
+
+.SH USAGE
+.PP
+\fB\fCi3-msg\fR has an undocumented function: \fIopen\fP,
+it creates empty containers,
+or as I call them: ghosts.
+Since these empty containers doesn't contain any windows
+there is no instance/class/title to identify them,
+making it difficult to manage them.
+They do however have a \fB\fCcon_id\fR
+and I found that the easiest way to keep track of ghosts, is to mark them.
+That is what this script does,
+it creates a ghost,
+get its \fB\fCcon_id\fR and marks it.
+
+.SH EXAMPLES
+.PP
+\fB\fC$ i3gw casper\fR
+
+.PP
+this will create a ghost marked casper,
+you can perform any action you can perform on a regular container.
+
+.PP
+.RS
+
+.nf
+$ i3-msg [con_mark=casper] move to workspace 2
+$ i3-msg [con_mark=casper] split v
+$ i3-msg [con_mark=casper] layout tabbed
+$ i3-msg [con_mark=casper] kill
+
+.fi
+.RE
+
+.PP
+the last command (\fB\fCkill\fR), destroys the container.
+
+.SH CONTACT
+.PP
+Send bugs and feature requests to:
+.br
+https://github.com/budlabs/i3ass/issues
+
+.SH COPYRIGHT
+.PP
+Copyright (c) 2017-2022, budRich of budlabs
+.br
+SPDX-License-Identifier: MIT

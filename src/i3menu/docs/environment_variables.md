@@ -2,6 +2,6 @@
 
 # ENVIRONMENT
 
-## I3MENU\_DIR
+## I3MENU_DIR
 
 Path to config directory.

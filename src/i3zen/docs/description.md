@@ -1,5 +1,3 @@
-## USAGE
-
 move current window to a "clean" workspace,
 put it in a centered, floating tabbed container.
 

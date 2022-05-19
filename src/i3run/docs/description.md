@@ -1,6 +1,4 @@
 
-## USAGE
-
 i3run will try to find a window matching a criteria.
 Criteria is specified with one or more command line options:  
 `--class , --instance , --title , --conid , --winid`  
@@ -34,5 +32,3 @@ If COMMAND doesn't result in a window that matches the criteria
 **i3run** will *get stuck* waiting for such a window, and it can
 lead to undesired behavior.  
 Don't do this: `i3run --class Google-chrome -- firefox`
-
-## OPTIONS

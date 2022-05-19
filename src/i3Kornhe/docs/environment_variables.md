@@ -1,5 +1,3 @@
-
-
 ## ENVIRONMENT
 
 ### I3_KORNHE_FIFO_FILE  

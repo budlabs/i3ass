@@ -6,31 +6,37 @@ CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options
 DESCRIPTION  := Run, Raise or hide windows in i3wm
 ORGANISATION := budlabs
+LICENSE      := MIT
 
-MANPAGE      := $(NAME).1
-README       :=
-
-MANPAGE_LAYOUT  ?=                     \
-	$(DOCS_DIR)/manpage_banner.md        \
-	$(CACHE_DIR)/synopsis.txt          \
+MANPAGE_LAYOUT  :=                     \
+	$(CACHE_DIR)/synopsis.txt            \
 	$(DOCS_DIR)/description.md           \
 	$(CACHE_DIR)/help_table.txt          \
 	$(CACHE_DIR)/long_help.md            \
 	$(DOCS_DIR)/environment_variables.md \
-	$(DOCS_DIR)/manpage_footer.md        \
-	../../LICENSE
+	$(CACHE_DIR)/copyright.txt
 
-installed_manpage    = $(DESTDIR)$(PREFIX)/share/man/man$(manpage_section)/$(MANPAGE)
-installed_script    := $(DESTDIR)$(PREFIX)/bin/$(NAME)
+$(CACHE_DIR)/wiki.md: config.mak $(MANPAGE_LAYOUT)
+	@$(info making $@)
+	{
+	  printf '%s\n' '## NAME' '$(NAME) - $(DESCRIPTION)' \
+	                '## SYNOPSIS'
 
-install: all
-	install -Dm644 $(MANPAGE_OUT) $(installed_manpage)
-	install -Dm755 $(MONOLITH) $(installed_script)
+	  sed 's/^/    /g' $(CACHE_DIR)/synopsis.txt
 
-uninstall:
-	@for f in $(installed_script) $(installed_manpage); do
-		[[ -f $$f ]] || continue
-		echo "rm $$f"
-		rm "$$f"
-	done
+	  echo '## OPTIONS'
+	  sed 's/^/    /g' $(CACHE_DIR)/help_table.txt
+	  cat $(CACHE_DIR)/long_help.md
 
+	  echo "## USAGE"
+	  cat $(DOCS_DIR)/description.md
+	  cat $(DOCS_DIR)/environment_variables.md
+
+	  printf '%s\n'                            \
+		  '## CONTACT'                           \
+			"Send bugs and feature requests to:  " \
+			"$(CONTACT)/issues"                    \
+		  '## COPYRIGHT'
+
+		cat $(CACHE_DIR)/copyright.txt
+	} > $@

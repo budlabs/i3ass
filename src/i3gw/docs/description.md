@@ -1,5 +1,3 @@
-## USAGE
-
 `i3-msg` has an undocumented function: *open*, 
 it creates empty containers, 
 or as I call them: ghosts. 
