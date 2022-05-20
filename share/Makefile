@@ -70,16 +70,19 @@ function_files := \
 # this is needed for _init.sh (BASE) to know it needs
 # to be rebuilt on this event.
 
-ifneq ($(wildcard $(CACHE_DIR)/got_func),)
+ifeq ($(wildcard $(CACHE_DIR)/got_func),)
+  $(shell mkdir -p $(CACHE_DIR)/options)
+  $(shell echo 0 > $(CACHE_DIR)/got_func)
+endif
+
 ifneq ($(wildcard $(FUNCS_DIR)/*),)
-ifneq ($(file < $(CACHE_DIR)/got_func), 1)
-$(shell echo 1 > $(CACHE_DIR)/got_func)
-endif
+  ifneq ($(file < $(CACHE_DIR)/got_func), 1)
+    $(shell echo 1 > $(CACHE_DIR)/got_func)
+  endif
 else
-ifneq ($(file < $(CACHE_DIR)/got_func), 0)
-$(shell echo 0 > $(CACHE_DIR)/got_func)
-endif
-endif
+  ifneq ($(file < $(CACHE_DIR)/got_func), 0)
+    $(shell echo 0 > $(CACHE_DIR)/got_func)
+  endif
 endif
 
 clean:
