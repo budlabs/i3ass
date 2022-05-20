@@ -22,14 +22,15 @@ CONF_DIR            := conf
 AWK_DIR             := awklib
 FUNCS_DIR           := func
 INDENT              := $(shell echo -e "  ")
-USAGE               := $(NAME) [OPTIONS]
+USAGE                = $(NAME) [OPTIONS]
 OPTIONS_FILE        := options
-MANPAGE             := $(NAME).1
-MONOLITH            := _$(NAME).sh
+MANPAGE              = $(NAME).1
+MONOLITH             = _$(NAME).sh
 BASE                := _init.sh
 SHBANG              := \#!/bin/bash
 OPTIONS_ARRAY_NAME  := _o
 MANPAGE_OUT          = _$(MANPAGE)
+FUNC_STYLE          := "() {"
 
 ifneq ($(wildcard config.mak),)
 include config.mak
@@ -97,8 +98,9 @@ $(BASE): config.mak $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh $(CACHE_DIR)/
 	@$(info making $@)
 	{
 		printf '%s\n' '$(SHBANG)' '' 'exec 3>&2' ''
-		grep -vhE -e '^#!/' $(CACHE_DIR)/print_version.sh
-		grep -vhE -e '^#!/' $(CACHE_DIR)/print_help.sh
+
+		grep -vhE -e '^#!/' $(CACHE_DIR)/print_version.sh | sed '0,/2/s//3/'
+		grep -vhE -e '^#!/' $(CACHE_DIR)/print_help.sh    | sed '0,/2/s//3/'
 
 		echo
 
@@ -111,6 +113,9 @@ $(BASE): config.mak $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh $(CACHE_DIR)/
 		echo
 		
 		cat $(CACHE_DIR)/getopt
+
+		echo "((BASHBUD_VERBOSE)) && _o[verbose]=1"
+		echo
 
 		echo 'main "$$@"'
 	} > $@
@@ -184,63 +189,58 @@ $(CACHE_DIR)/help_table.txt: $(CACHE_DIR)/long_help.md
 		paste <(echo "$$frag") <(echo "$$desc") | tr -d '\t'
 	done > $@
 
-
-$(CACHE_DIR)/print_help.sh: $(CACHE_DIR)/help_table.txt $(CACHE_DIR)/synopsis.txt 
+$(function_awklib): $(awk_files) | $(FUNCS_DIR)/
 	@$(info making $@)
 	{
 		printf '%s\n' \
-			'$(SHBANG)' '' "__print_help()" "{" "$(INDENT)cat << 'EOB' >&3  "
-		if [[ options = "$(USAGE)" ]]; then
-			cat $(CACHE_DIR)/synopsis.txt
-			echo
-		else 
-			printf '%s\n' 'usage: $(USAGE)' ''
-			echo
-		fi
-		cat $(CACHE_DIR)/help_table.txt
-		printf '%s\n' 'EOB' '}'
-	} > $@
+			'$(SHBANG)'                                                             \
+			''                                                                      \
+			'### _awklib() function is automatically generated'                     \
+			'### from makefile based on the content of the $(AWK_DIR)/ directory'   \
+			''
 
-$(function_awklib): $(awk_files) | $(FUNCS_DIR)/
-	@$(info making $@)
-	printf '%s\n' \
-		'#!/bin/bash'                                                           \
-		''                                                                      \
-		'### _awklib() function is automatically generated'                     \
-		'### from makefile based on the content of the $(AWK_DIR)/ directory'   \
-		''                                                                      \
-		'_awklib() {'                                                           \
-		'[[ -d $$__dir ]] && { cat "$$__dir/$(AWK_DIR)/"* ; return ;} #bashbud' \
-		"cat << 'EOAWK'"   > $@
-		cat $(awk_files)  >> $@
-		printf '%s\n' "EOAWK" '}' >> $@
+		fstyle=$(FUNC_STYLE)
+		printf "_awklib$${fstyle}\n"
+		printf '%s\n' \
+			'[[ -d $$__dir ]] && { cat "$$__dir/$(AWK_DIR)/"* ; return ;} #bashbud' \
+			"cat << 'EOAWK'"
+		cat $(awk_files)
+		printf '%s\n' "EOAWK" '}'
+	} > $@
+	
 
 $(function_createconf): $(conf_files) | $(FUNCS_DIR)/
 	@$(info making $@)
-	printf '%s\n' \
-		'#!/bin/bash'                                                          \
-		''                                                                     \
-		'### _createconf() function is automatically generated'                \
-		'### from makefile based on the content of the $(CONF_DIR)/ directory' \
-		''                                                                     \
-		'_createconf() {'                                                      \
-		'local trgdir="$$1"' > $@
+	{
+		printf '%s\n' \
+			'$(SHBANG)'                                                            \
+			''                                                                     \
+			'### _createconf() function is automatically generated'                \
+			'### from makefile based on the content of the $(CONF_DIR)/ directory' \
+			''
 
-	echo 'mkdir -p $(subst $(CONF_DIR),"$$trgdir",$(conf_dirs))' >> $@
-	for f in $(conf_files); do
 
-		echo "" >> $@
-		echo 'if [[ -d $$__dir ]]; then #bashbud' >> $@
-		echo "cat \"\$$__dir/$$f\" > \"$${f/$(subst /,\/,$(CONF_DIR))/\$$trgdir}\" #bashbud" >> $@
-		echo 'else #bashbud' >> $@
-		echo "cat << 'EOCONF' > \"$${f/$(subst /,\/,$(CONF_DIR))/\$$trgdir}\"" >> $@
-		cat "$$f" >> $@
-		echo "EOCONF" >> $@
-		echo 'fi #bashbud' >> $@
-		[[ -x $$f ]] && echo "chmod +x \"$${f/$(subst /,\/,$(CONF_DIR))/\$$trgdir}\"" >> $@
-	done
+		fstyle=$(FUNC_STYLE)
+		printf "_createconf$${fstyle}\n"
 
-	echo '}' >> $@
+		echo 'local trgdir="$$1"'
+
+		echo 'mkdir -p $(subst $(CONF_DIR),"$$trgdir",$(conf_dirs))'
+		for f in $(conf_files); do
+
+			echo ""
+			echo 'if [[ -d $$__dir ]]; then #bashbud'
+			echo "cat \"\$$__dir/$$f\" > \"$${f/$(subst /,\/,$(CONF_DIR))/\$$trgdir}\" #bashbud"
+			echo 'else #bashbud'
+			echo "cat << 'EOCONF' > \"$${f/$(subst /,\/,$(CONF_DIR))/\$$trgdir}\""
+			cat "$$f"
+			echo "EOCONF"
+			echo 'fi #bashbud'
+			[[ -x $$f ]] && echo "chmod +x \"$${f/$(subst /,\/,$(CONF_DIR))/\$$trgdir}\""
+		done
+
+		echo '}'
+	} > $@
 
 $(CACHE_DIR)/:
 	@$(info creating $(CACHE_DIR)/ dir)
@@ -255,15 +255,33 @@ $(FUNCS_DIR)/:
 
 $(CACHE_DIR)/print_version.sh: config.mak | $(CACHE_DIR)/
 	@$(info making $@)
+	echo $(SHBANG)
+	fstyle=$(FUNC_STYLE)
+	printf "__print_version$${fstyle}\n" > $@                          
 	printf '%s\n'                                            \
-		"__print_version()"                                    \
-		"{"                                                    \
-		"$(INDENT)>&3 printf '%s\n' \\"                        \
+		"$(INDENT)>&2 printf '%s\n' \\"                        \
 		"$(INDENT)$(INDENT)'$(NAME) - version: $(VERSION)' \\" \
 		"$(INDENT)$(INDENT)'updated: $(UPDATED) by $(AUTHOR)'" \
 		"}"                                                    \
-		"" > $@
+		"" >> $@
 
+$(CACHE_DIR)/print_help.sh: $(CACHE_DIR)/help_table.txt $(CACHE_DIR)/synopsis.txt 
+	@$(info making $@)
+	{
+		echo $(SHBANG)
+		fstyle=$(FUNC_STYLE)
+		printf "__print_help$${fstyle}\n"
+		echo "$(INDENT)cat << 'EOB' >&2  "
+		if [[ options = "$(USAGE)" ]]; then
+			cat $(CACHE_DIR)/synopsis.txt
+			echo
+		else 
+			printf '%s\n' 'usage: $(USAGE)' ''
+			echo
+		fi
+		cat $(CACHE_DIR)/help_table.txt
+		printf '%s\n' 'EOB' '}'
+	} > $@
 $(CACHE_DIR)/options_in_use $(CACHE_DIR)/getopt &: $(OPTIONS_FILE) | $(CACHE_DIR)/
 	@$(info parsing $(OPTIONS_FILE))
 	mkdir -p $(DOCS_DIR)/options
@@ -424,8 +442,6 @@ $(CACHE_DIR)/options_in_use $(CACHE_DIR)/getopt &: $(OPTIONS_FILE) | $(CACHE_DIR
 		print "  esac"
 		print "  shift"
 		print "done"
-		print ""
-		print "((BASHBUD_VERBOSE)) && _o[verbose]=1 #bashbud"
 		print ""
 	}
 	' $(OPTIONS_FILE)                  \
