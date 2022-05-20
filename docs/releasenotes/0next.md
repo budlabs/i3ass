@@ -1,5 +1,11 @@
 ## next
 
+### bashbud
+
+Many improvements to the build steps.
+Manpages are included so no need for manpage generator
+as dependency.
+
 ### [i3list]
 NEW KEY: `i3list[SUS]`  
 contains the number of containers matching all criteria
