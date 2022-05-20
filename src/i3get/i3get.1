@@ -1,0 +1,125 @@
+.nh
+.TH I3GET  1 2022-05-19 budlabs "User Manuals"
+.SH NAME
+.PP
+i3get - prints info about a specific window to stdout
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3get [OPTIONS]\fR
+
+.SH OPTIONS
+.PP
+.RS
+
+.nf
+-c, --class        CLASS         | target windows with CLASS  
+-n, --conid        CON_ID        | target windows with CON_ID  
+-h, --help                       | print help and exit  
+-d, --id           WIN_ID        | target windows with WIN_ID  
+-i, --instance     INSTANCE      | target windows with INSTANCE
+--json             TREE          | Use TREE instead of the output of `i3-msg -t get_tree`
+-m, --mark         MARK          | MARK | target containers with MARK  
+-r, --print        OUTPUT        | what to print. defaults to 'n'  
+--print-format     FORMAT_STRING | %v is value, %k is name. default: '%v\\n'  
+--role             ROLE          | match ROLE against window_role  
+-y, --synk                       | block script till window exist.
+-t, --title        TITLE         | target windows with TITLE  
+-o, --titleformat  TITLE_FORMAT  | match TITLE_FORMAT against title_format  
+--type             TYPE          | match TYPE against window_type  
+--verbose                        | print messages to stderr  
+-v, --version                    | print version info and exit  
+--winid            WIN_ID        | target windows with WIN_ID  
+
+.fi
+.RE
+
+.SS -r, --print        OUTPUT
+.PP
+\fIOUTPUT\fP can be one or more of the following
+characters:
+
+.TS
+allbox;
+l l l 
+l l l .
+\fB\fCcharacter\fR	\fB\fCprint\fR	\fB\fCreturn\fR
+\fB\fCt\fR	title	string
+\fB\fCc\fR	class	string
+\fB\fCi\fR	instance	string
+\fB\fCd\fR	Window ID	INT
+\fB\fCn\fR	Con_Id (default)	INT
+\fB\fCm\fR	mark	JSON list
+\fB\fCw\fR	workspace number	INT
+\fB\fCW\fR	workspace name	STRING
+\fB\fCa\fR	is active	true or false
+\fB\fCf\fR	floating state	string
+\fB\fCo\fR	title format	string
+\fB\fCe\fR	fullscreen	1 or 0
+\fB\fCs\fR	sticky	true or false
+\fB\fCu\fR	urgent	true or false
+\fB\fCy\fR	window_type	string
+\fB\fCr\fR	window_role	string
+.TE
+
+.PP
+Each character in OUTPUT will be tested and the
+return value will be printed on a new line. If no
+value is found, \fB\fC--i3get could not find:
+CHARACTER\fR will get printed.
+
+.PP
+In the example below, the target window did not have a mark:
+
+.PP
+.RS
+
+.nf
+$ i3get -r tfcmw
+/dev/pts/9
+user_off
+URxvt
+--i3get could not find: m
+1
+
+.fi
+.RE
+
+.SH USAGE
+.PP
+Search for \fB\fCCRITERIA\fR in the output of \fB\fCi3-msg -t get_tree\fR,
+return desired information.
+If no arguments are passed,
+\fB\fCcon_id\fR of active window is returned.
+If there is more then one criterion,
+all of them must be true to get results.
+
+
+.SH EXAMPLES
+.PP
+search for window with instance name sublime_text.
+Request workspace, title and floating state.
+
+.PP
+.RS
+
+.nf
+$ i3get --instance sublime_text --print wtf 
+1
+~/src/bash/i3ass/i3get (i3ass) - Sublime Text
+user_off
+
+.fi
+.RE
+
+.SH CONTACT
+.PP
+Send bugs and feature requests to:
+.br
+https://github.com/budlabs/i3ass/issues
+
+.SH COPYRIGHT
+.PP
+Copyright (c) 2017-2022, budRich of budlabs
+.br
+SPDX-License-Identifier: MIT

@@ -14,7 +14,7 @@ $ make
 ```
 
 #### build dependencies
-[GNU make], [Gawk], [bash], [lowdown]  
+[GNU make], [Gawk], [bash], [GNU sed](https://www.gnu.org/software/sed/)  
 
 #### runtime dependencies
 [bash], [i3wm], [xdotool], [Gawk]  

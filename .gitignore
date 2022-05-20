@@ -1,4 +1,3 @@
-src/*/*.1
 src/*/func/_*
 src/*/.cache/
 src/*/_*

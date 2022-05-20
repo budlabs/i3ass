@@ -1,0 +1,261 @@
+.nh
+.TH I3FYRA  1 2022-05-19 budlabs "User Manuals"
+.SH NAME
+.PP
+i3fyra - An advanced, simple grid-based tiling layout
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3fyra --show|-s CONTAINER
+i3fyra --float|-a
+i3fyra --hide|-z CONTAINER
+i3fyra --layout|-l LAYOUT [--array ARRAY]
+i3fyra --move|-m DEST [--conid|-n CON_ID] [--speed|-p INT]
+i3fyra --orientation ORIENTATION
+i3fyra --clear-virtuals
+i3fyra [--verbose] [--dryrun] [--force|-f] 
+i3fyra --help|-h
+i3fyra --version|-v 
+
+.fi
+.RE
+
+.PP
+The layout consists of four containers:
+
+.PP
+.RS
+
+.nf
+  A B
+  C D
+
+.fi
+.RE
+
+.PP
+A container can contain one or more windows. The
+internal layout of the containers doesn't matter.
+By default the layout of each container is
+tabbed.
+
+.PP
+A is always to the left of B and D. And always
+above C. B is always to the right of A and C. And
+always above D.
+
+.PP
+This means that the containers will change names
+if their position changes.
+
+.PP
+The size of the containers are defined by the
+three splits: AB, AC and BD.
+
+.PP
+Container A and C belong to one family.
+.br
+Container B and D belong to one family.
+
+.PP
+The visibility of containers and families can be
+toggled. Not visible containers are placed on the
+scratchpad.
+
+.PP
+The visibility is toggled by either using \fB\fC--show\fR
+or \fB\fC--hide\fR\&. But more often by moving a container
+in an \fIimpossible\fP direction,(\fIsee examples
+below\fP).
+
+.PP
+The \fBi3fyra\fP layout is only active on one
+workspace. That workspace can be set with the
+environment variable: \fB\fCi3FYRA_WS\fR, otherwise the
+workspace active when the layout is created will
+be used.
+
+.PP
+The benefit of using this layout is that the
+placement of windows is more predictable and
+easier to control. Especially when using tabbed
+containers, which are very clunky to use
+with \fIdefault i3\fP\&.
+
+
+.SH examples
+.PP
+If containers \fBA\fP,\fBB\fP and \fBC\fP are visible
+but \fBD\fP is hidden or none existent, the visible
+layout would looks like this:
+
+.PP
+.RS
+
+.nf
+  A B
+  C B
+
+.fi
+.RE
+
+.PP
+If action: \fB\fC--move up\fR would be executed when
+container \fBB\fP is active and \fBD\fP is hidden.
+Container \fBD\fP would be shown. If action would
+have been: \fB\fC--move down\fR, \fBD\fP would be shown
+but \fBB\fP would be placed below \fBD\fP, this means
+that the containers will also swap names. If
+action would have been \fB\fC--move left\fR the active
+window in B would be moved to container \fBA\fP\&. If
+action was \fB\fC--move right\fR, \fBA\fP and \fBC\fP would
+be hidden:
+
+.PP
+.RS
+
+.nf
+  B B
+  B B
+
+.fi
+.RE
+
+.PP
+If we now \fB\fC--move left\fR, \fBA\fP and \fBC\fP
+would be shown again but to the right of \fBB\fP,
+the containers would also change names, so \fBB\fP
+becomes \fBA\fP, \fBA\fP becomes \fBB\fP and \fBC\fP
+becomes \fBD\fP:
+
+.PP
+.RS
+
+.nf
+  A B
+  A D
+
+.fi
+.RE
+
+.PP
+If this doesn't make sense, check out this
+demonstration on youtube:
+https://youtu.be/kU8gb6WLFk8
+
+.SH OPTIONS
+.PP
+.RS
+
+.nf
+--array              ARRAY       | ARRAY should be the output of `i3list`  
+--clear-virtuals                 | clear/reset virtual positions  
+-n, --conid          CON_ID      | window with **CON_ID** will be used instead of active window  
+--dryrun                         | don't execute wm commands  
+-a, --float                      | toggle floating state of a window  
+-f, --force                      | ignore virtual positioning.  
+-h, --help                       | print help and exit  
+-z, --hide           CONTAINER   | Hide target containers if visible.  
+-l, --layout         LAYOUT      | update the size of the layout  
+-m, --move           DEST        | move window/create container  
+--orientation        ORIENTATION | short description  
+-s, --show           CONTAINER   | Show target container.  
+-p, --speed          INT         | distance in px a floating windows will be moved  
+--verbose                        | print more stuff to stderr  
+-v, --version                    | louder output  
+
+.fi
+.RE
+
+.SS --array              ARRAY
+.PP
+Use \fB\fC--array ARRAY\fR to improve speed when
+\fBi3fyra\fP is executed from a script that already
+have the array, f.i. \fBi3run\fP and \fBi3Kornhe\fP\&.
+
+.SS -a, --float
+.PP
+Autolayout. If current window is tiled: floating
+enabled If window is floating, it will be put in a
+visible container. If there is no visible
+containers. The window will be placed in a hidden
+container. If no containers exist, container
+'A'will be created and the window will be put
+there.
+
+.SS -l, --layout         LAYOUT
+.PP
+AB is on X axis from the left side if INT is
+positive, from the right side if it is negative.
+AC and BD is on Y axis from the top if INT is
+positive, from the bottom if it is negative. The
+whole argument needs to be quoted. Example:   `$
+i3fyra --layout 'AB=-300 BD=420'
+
+.SS -m, --move           DEST
+.PP
+DEST can either be the name of a container
+(A|B|C|D), or it's position relative to the
+current container with a direction:[\fB\fCl\fR|\fB\fCleft\fR]
+[\fB\fCr\fR|\fB\fCright\fR][\fB\fCu\fR|\fB\fCup\fR][\fB\fCd\fR|\fB\fCdown\fR] If the
+container doesnt exist it is created. If argument
+is a direction and there is no container in that
+direction, Connected container(s) visibility is
+toggled. If current window is floating or not
+inside ABCD, normal movement is performed.
+Distance for moving floating windows with this
+action can be defined with the \fB\fC--speed\fR option.
+Example: \fB\fC$ i3fyra --speed 30 -m r\fR Will move
+current window 30 pixels to the right, if it is
+floating.
+
+.SS -s, --show           CONTAINER
+.PP
+If it doesn't exist, it will be created and
+current window will be put in it. If it is
+visible, nothing happens.
+
+.SH ENVIRONMENT
+.SS I3FYRA_WS
+.PP
+Workspace to use for i3fyra. If not set, the firs
+workspace that request to create the layout will
+be used.
+
+.SS I3FYRA_MAIN_CONTAINER
+.PP
+This container will be the chosen when a container
+is requested but not given. When using the command
+autolayout (\fB\fC-a\fR) for example, if the window is
+floating it will be sent to the main container, if
+no other containers exist. Defaults to A.
+
+.SS I3FYRA_ORIENTATION
+.PP
+If set to \fB\fCvertical\fR main split will be \fB\fCAC\fR and
+families will be \fB\fCAB\fR and \fB\fCCD\fR\&. Otherwise main
+split will be \fB\fCAB\fR and families will be \fB\fCAC\fR and
+\fB\fCBD\fR\&.
+
+.SS I3_KING_PID_FILE
+.PP
+When i3king is running this file contains the pid
+of the i3king process. It is used by \fBi3fyra\fP to
+know if i3king is running, if it is, it will try
+to match windows against the rules when \fB\fC--float\fR
+option toggles the floating state to tiled.
+
+.SH CONTACT
+.PP
+Send bugs and feature requests to:
+.br
+https://github.com/budlabs/i3ass/issues
+
+.SH COPYRIGHT
+.PP
+Copyright (c) 2017-2022, budRich of budlabs
+.br
+SPDX-License-Identifier: MIT

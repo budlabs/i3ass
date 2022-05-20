@@ -11,5 +11,5 @@ script | description
 [i3menu] | Adds more features to rofi when used in i3wm  
 [i3run] | Run, Raise or hide windows in i3wm  
 [i3var] | get or get a i3 variable  
-[i3viswiz] | Professional window focus for i3wm  
+[i3viswiz] | professional window focus for i3wm  
 [i3zen] | zentered container, full focus  

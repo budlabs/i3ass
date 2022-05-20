@@ -1,4 +1,4 @@
-`-s`, `--show`    CONTAINER | Show target container.  
+Show target container.  
 
 If it doesn't exist, it will be created and
 current window will be put in it. If it is

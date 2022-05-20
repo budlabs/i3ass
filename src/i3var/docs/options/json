@@ -1,1 +1,1 @@
-`--json`    JSON | Use JSON instead of the output of `i3-msg -t get_tree`  
+Use JSON instead of the output of `i3-msg -t get_tree`  

@@ -1,11 +1,8 @@
 
 
-# ENVIRONMENT
+## ENVIRONMENT
 
-## I3RUN\_BOTTOM\_GAP
-## I3RUN\_RIGHT\_GAP
-## I3RUN\_LEFT\_GAP
-## I3RUN\_TOP\_GAP
+### I3RUN_BOTTOM_GAP, I3RUN_RIGHT_GAP, I3RUN_LEFT_GAP, I3RUN_TOP_GAP
 
 Distance from the screen edge to
 show floating windows. This only has effect When

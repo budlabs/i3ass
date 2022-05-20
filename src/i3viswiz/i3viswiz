@@ -2,8 +2,6 @@
 
 main(){
 
-  trap 'cleanup' EXIT
-
   (($#)) && {
     arg_direction=${!#:0:1} arg_direction=${arg_direction,,}
     [[ $arg_direction =~ l|r|u|d ]] \

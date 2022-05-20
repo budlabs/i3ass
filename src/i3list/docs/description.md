@@ -10,7 +10,7 @@ By using eval,
 the output can be used as an array in bash scripts, 
 but the array needs to be declared first.
 
-# EXAMPLE
+## EXAMPLE
 
 ```text
 $ i3list

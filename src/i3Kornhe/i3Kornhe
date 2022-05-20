@@ -73,7 +73,7 @@ main(){
   mkfifo "$I3_KORNHE_FIFO_FILE"
 
   echo "$_direction $_next_mode $_speed $_margin" >> "$I3_KORNHE_FIFO_FILE" &
-  trap 'cleanup' EXIT
+  trap 'CLEANUP' EXIT INT HUP
 
   # when modifying FLOATING windows we enter a i3
   # binding mode, and change the title format of 

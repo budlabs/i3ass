@@ -1,4 +1,4 @@
-`-o`, `--hello`   WORD | short description  
+short description  
 
 `--hello` long description  
 this is the long description for `--hello`  

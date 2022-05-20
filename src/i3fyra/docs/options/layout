@@ -1,4 +1,4 @@
-`-l`, `--layout`  LAYOUT | update the size of the layout  
+update the size of the layout  
 
 AB is on X axis from the left side if INT is
 positive, from the right side if it is negative.

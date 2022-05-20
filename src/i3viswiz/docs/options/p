@@ -1,4 +1,4 @@
-`-p` | list windows display parent container name
+list windows display parent container name
 
 This (`-p`) is equivalent to `--parent` without
 any arguments. If you want to use an argument, you

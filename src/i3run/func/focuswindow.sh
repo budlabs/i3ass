@@ -3,26 +3,32 @@
 focuswindow(){
 
   local hvar target_container
+
+  # prioritize "visible" containers 
+  # when we get multiple matches (SUS)
+  if [[ ${i3list[SUS]} = 1 || ${i3list[TWC]} = "${i3list[AWC]}" ]]; then
+    target_container=${i3list[TWC]}
+  elif [[ ${i3list[WTN]} = "${i3list[WAN]}" ]]; then
+    target_container=$(i3viswiz "${_criteria[@]}" "${_pass_json[@]}")
+  elif [[ ${i3list[WTN]} = __i3_scratch ]]; then 
+    target_container=$(i3viswiz --scratchpad "${_criteria[@]}" "${_pass_json[@]}")
+  fi
   
-  # if target window is active, 
-  if ((i3list[AWC] == i3list[TWC])); then
+  : "${target_container:=${i3list[TWC]}}"
+
+  [[ $target_container != "${i3list[TWC]}" ]] && {
+    _array=$(i3list --conid "$target_container" "${_pass_json[@]}")
+    _pass_array=("${_o[verbose]:+--verbose}" --array "$_array")
+    eval "$_array"
+  }
+
+  # hide target window if it is active
+  # or --hide option is used
+  if ((i3list[AWC] == target_container)); then
     hidewindow
   elif [[ ${_o[hide]} ]]; then
     [[ ${i3list[WTN]} != __i3_scratch ]] && hidewindow
-    return
   else # focus target window.
-  
-    # prioritize visible containers
-    if [[ ${_o[conid]} ]]; then
-      target_container=${_o[conid]}
-    elif [[ ${i3list[WTN]} = __i3_scratch ]]; then 
-      target_container=$(i3viswiz --scratchpad "${_criteria[@]}")
-    elif [[ ${i3list[WTN]} = "${i3list[WAN]}" ]]; then
-      target_container=$(i3viswiz "${_criteria[@]}")
-    fi
-    
-    : "${target_container:=${i3list[TWC]}}"
-
     # hvar can contain floating state of target
     hvar=$(i3var get "hidden${target_container}")
     if [[ -n $hvar ]]; then
@@ -50,23 +56,20 @@ focuswindow(){
         
     elif [[ ${i3list[WAN]} != "${i3list[WTN]}" ]]; then
       # window is handled by i3fyra and not active
-      if [[ ${i3list[WFN]} = "${i3list[WAN]}" ]]; then # current ws is i3fyra WS
+      if [[ ${i3list[WFN]} = "${i3list[WAN]}" ]]; then
         # target window is in a hidden (LHI) container
-        [[ ${i3list[TWP]} =~ [${i3list[LHI]}] ]] && {
-          ((_o[verbose])) && ERM "i3run -> i3fyra --force --show ${i3list[TWP]}"
-          i3fyra "${_o[verbose]:+--verbose}" --array "$_array" --force --show "${i3list[TWP]}"
-        }
+        [[ ${i3list[TWP]} =~ [${i3list[LHI]}] ]] \
+          && i3fyra --force --show "${i3list[TWP]}" "${_pass_array[@]}"
 
       else # current ws is not i3fyra WS
-        # WST == -1 , target window is on scratchpad
         if [[ ${i3list[WTN]} = __i3_scratch || ${_o[summon]} ]]; then
 
-          messy "[con_id=${target_container}]"           \
-                move --no-auto-back-and-forth to workspace "${i3list[WAN]}", \
-                floating $fs
+          messy "[con_id=${target_container}]" \
+                "move --no-auto-back-and-forth to workspace ${i3list[WAN]}," \
+                "floating $fs"
 
           ((hvar && _o[mouse])) && sendtomouse
-        else # got to target windows workspace
+        else # goto target windows workspace
           # WTN == name (string) of workspace
           messy workspace --no-auto-back-and-forth "${i3list[WTN]}"
         fi
@@ -75,7 +78,7 @@ focuswindow(){
 
     messy "[con_id=${target_container}]" focus
 
-   ((_o[force] + _o[FORCE] > 0)) && [[ $_command ]] && run_command
+   ((_o[force] + _o[FORCE] > 0)) && [[ ${_command[*]} ]] && run_command
   fi
 
   echo "${target_container}"

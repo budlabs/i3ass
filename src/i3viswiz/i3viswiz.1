@@ -1,0 +1,258 @@
+.nh
+.TH I3VISWIZ  1 2022-05-19 budlabs "User Manuals"
+.SH NAME
+.PP
+i3viswiz - professional window focus for i3wm
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3viswiz     [--gap|-g GAPSIZE] DIRECTION 
+i3viswiz     --title|-t TITLE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f] 
+i3viswiz     --instance|-i INSTANCE   [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz     --class|-c CLASS      [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz     --titleformat|-o FORMAT [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz     --winid|-d  WINID     [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz     --parent|-p  CONTAINER   [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz     --role|-r ROLE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz     --type|-y TYPE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
+i3viswiz     --scratchpad
+i3viswiz     [--json JSON] [--debug VARLIST] [--debug-format FORMAT] [--verbose]
+i3viswiz     --help|-h
+i3viswiz     --version|-v
+
+.fi
+.RE
+
+.SH OPTIONS
+.PP
+.RS
+
+.nf
+-c, --class        CLASS     | find window by **class**
+--debug            VARLIST   | detailed output   
+--debug-format     FORMAT    | how to format debug output  
+-f, --focus                  | focus target **visible** window  
+-g, --gap          GAPSIZE   | distance in pixels from the current window where new focus will be searched.  
+-h, --help                   | print help and exit  
+-i, --instance     INSTANCE  | find window by **instance**
+--json             JSON      | use JSON instead of `i3-msg -t get_tree`  
+-p, --parent       CONTAINER | window is visible in the i3fyra CONTAINER 
+-r, --role         ROLE      | find window by **window_role**
+--scratchpad                 | this will treat the scratchpad as the active workspace.
+-t, --title        TITLE     | find window by **class**  
+-o, --titleformat  FORMAT    | find window by **title_format**  
+-y, --type         TYPE      | find window by **window_type**
+--verbose                    | louder output   
+-v, --version                | print version info and exit  
+-d, --winid        WINID     | window is visible with WINID  
+
+.fi
+.RE
+
+.SS --debug            VARLIST
+.PP
+VARLIST is used to determine what to output. By
+default the value of VARLIST is: \fB\fCLIST\fR .
+Available units are:
+
+.PP
+.RS
+
+.nf
+wall         | none|(up|left|down|right-)(workspace|area)
+trgcon       | container id of the window to be focused
+trgpar       | name of i3fyra container target container is located in
+gap          | internal gap value used
+sw           | active workspace width
+sh           | active workspace height
+sx           | active workspace x position
+sy           | active workspace y position
+aw           | active window width
+ah           | active window height
+ax           | active window x position
+ay           | active window y position
+trgx         | target windows x position
+trgy         | target windows y position
+grouplayout  | active windows parent container layout (tabbed|splitv|splith|stacked)
+groupid      | active windows parent container ID
+grouppos     | active windows position relative to its sibling containers
+groupsize    | number of child containers in active windows parent container
+firstingroup | container ID of the first child in active windows parent container
+lastingroup  | container ID of the last child in active windows parent container
+LIST         | prints a table with all visible windows
+ALL          | all the above combined
+
+.fi
+.RE
+
+.PP
+Multiple units can be used if comma separated.
+
+.PP
+\fBNB\fP
+.br
+For this option to be usefule LIST must be the
+search criterion.
+
+.PP
+Example:
+
+.PP
+.RS
+
+.nf
+$ i3viswiz --instance LIST up --debug gap,wall,grouppos
+gap=5 wall=up-area grouppos=1 
+
+.fi
+.RE
+
+.SS --debug-format     FORMAT
+.PP
+The default value of FORMAT is "%k=%v ".  \fB\fC%k\fR is
+translated to the key/unit name, and \fB\fC%v\fR to the
+value.
+
+.PP
+Example:
+
+.PP
+.RS
+
+.nf
+$ i3viswiz --instance LIST u --debug gap,wall,grouppos --debug-format "%v\\n"
+5
+up-area
+1 
+
+.fi
+.RE
+
+.SS -f, --focus
+.PP
+if this is not set, the CON_ID of target window will
+get printed to STDOUT.
+
+.SS -p, --parent       CONTAINER
+.PP
+CONTAINER is one of the i3fyra containers: A|B|C|D
+
+.SS --scratchpad
+.PP
+This is useful if you have a f.i. a tabbed container
+on the scratchpad, and you want to get the id of the
+window that have focus in that container.
+
+.SH USAGE
+.PP
+\fB\fCi3viswiz\fR either prints a list of the currently
+visible tiled windows to \fB\fCstdout\fR or shifts the
+focus depending on the arguments.
+
+.PP
+If a \fIDIRECTION\fP (left|right|up|down) is passed,
+\fB\fCi3wizvis\fR will shift the focus to the window
+closest in the given \fIDIRECTION\fP, or warp focus
+if there are no windows in the given direction.
+
+
+.SH examples
+.PP
+replace the normal i3 focus keybindings with viswiz like this:
+
+.PP
+.RS
+
+.nf
+Normal binding:
+bindsym Mod4+Shift+Left   focus left
+
+Wizzy binding:
+bindsym Mod4+Left   exec --no-startup-id i3viswiz left
+
+.fi
+.RE
+
+.PP
+example output:
+
+.PP
+.RS
+
+.nf
+$ i3viswiz --instance LIST
+
+* 94475856575600 ws: 1 x: 0     y: 0     w: 1558  h: 410   | termsmall
+- 94475856763248 ws: 1 x: 1558  y: 0     w: 362   h: 272   | gl
+- 94475856286352 ws: 1 x: 0     y: 410   w: 1558  h: 643   | sublime_main
+- 94475856449344 ws: 1 x: 1558  y: 272   w: 362   h: 781   | thunar-lna
+
+.fi
+.RE
+
+.PP
+If \fB\fC--class\fR , \fB\fC--instance\fR, \fB\fC--title\fR,
+\fB\fC--titleformat\fR, \fB\fC--winid\fR or \fB\fC--parent\fR is used
+together with the argument \fBLIST\fP\&.
+i3viswiz will print this output, with the type in
+the last column of the table (class in the
+example above).
+
+.PP
+If the argument is not LIST the container ID of
+a visible window matching the criteria will be printed.
+
+.PP
+Assuming the same scenario as the example above,
+the following command:
+.br
+\fB\fC$ i3viswiz --instance termsmall\fR
+.br
+will output the container_id (\fB\fC94475856575600\fR).
+.br
+If no window is matching output will be blank.
+
+.PP
+Multiple criteria is allowed:
+.br
+\fB\fC$ i3viswiz --instance termsmall --class URxvt\fR
+
+.PP
+\fBfocus wrapping\fP
+
+.PP
+if the setting "focus_wrapping" is set
+to "workspace" in the i3config. i3viswiz will
+wrap the focus only inside the currenttly
+focused workspace instead of the whole work
+area (other monitors).
+
+.PP
+The setting has to be present in the active config
+before the first i3viswiz invokation.
+
+.PP
+To force this behavior otherwise, issue the following
+command:
+.br
+\fB\fCi3var set focus_wrap workspace\fR
+
+.PP
+Or to disable it:
+.br
+\fB\fCi3var set focus_wrap normal\fR
+
+.SH CONTACT
+.PP
+Send bugs and feature requests to:
+.br
+https://github.com/budlabs/i3ass/issues
+
+.SH COPYRIGHT
+.PP
+Copyright (c) 2018-2022, budRich of budlabs
+.br
+SPDX-License-Identifier: MIT

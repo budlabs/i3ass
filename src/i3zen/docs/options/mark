@@ -1,4 +1,4 @@
-`-m`, `--mark`      MARK | zen container mark  
+zen container mark  
 
 If not set the *zen container* will be marked **centerzen**.
 If set it will instead be marked MARK when it is created.

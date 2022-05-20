@@ -1,4 +1,4 @@
-`--debug-format` FORMAT | how to format debug output  
+how to format debug output  
 
 The default value of FORMAT is "%k=%v ".  `%k` is
 translated to the key/unit name, and `%v` to the

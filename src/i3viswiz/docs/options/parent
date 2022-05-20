@@ -1,3 +1,3 @@
-`--parent` `-p` CONTAINER  | window is visible in the i3fyra CONTAINER 
+window is visible in the i3fyra CONTAINER 
 
 CONTAINER is one of the i3fyra containers: A|B|C|D

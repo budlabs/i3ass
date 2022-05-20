@@ -25,7 +25,7 @@ main(){
   gawk -f <(
     echo "BEGIN { $begin_block }"
     _awklib
-  ) FS=: RS=, <<< "${_o[json]:-$(i3-msg -t get_tree)}}"
+  ) FS=: RS=, <<< "${_o[json]:-$(i3-msg -t get_tree)}"
 
 }
 

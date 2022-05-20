@@ -1,114 +1,18 @@
-## 2022.03.12
+## next
 
-#### [i3Kornhe]
+### bashbud
 
-New option: `--oneshot`  To bypass the need of
-being in/entering *sizemode*. To illustrate have
-a floating window focused and then try:  
-`i3Kornhe move --oneshot 6`  
+Many improvements to the build steps.
+Manpages are included so no need for manpage generator
+as dependency.
 
-#### [i3menu]  
+### [i3list]
+NEW KEY: `i3list[SUS]`  
+contains the number of containers matching all criteria
 
-Fixed issue where directory was printed even if
-nothing was selected with `--list-directory`.
+### [i3run]
+When xdotool is used to rename a window class/instance
+the window gets a new `container_id`, and now that
+new id is reported instead of the old.
 
-Minimize the use of **eval** in the script. Remove
-functionality of `--fallback` option.
-
-
-#### [i3get]
-
-New commandline option `--print-format` . The default
-print-format is `%v\n` :  
-
-``` shell
-$ i3get --print wtf
-
-1
-/dev/pts/7
-user_off
-
-# ----
-
-$ i3get --print wtf --print-format '[%k] :: %v '
-
-[ws number] :: 1 [title] :: /dev/pts/7 [floating] :: user_off 
-
-# ---
-
-$ read -r ws title float < <(i3get --print wtf --print-format '%v ')
-$ echo "$float"
-
-user_off
-
-```
-
-#### [i3fyra]
-New option `--orientation vertical|horizontal`  
-*rotates* the main split.  
-
-Fixed a bug with virtual positions getting the wrong names.
-Added option `--clear-virtuals` to force clear virtual positions.
-
-#### [i3run]
-
-New option `--hide` . When used target
-window will be sent to the scratchpad.
-
-#### [i3list]
-
-Better support for multiple criteria.
-Fixed issue where the wrong workspace was reported
-if the workspace was empty.
-
-#### [i3viswiz]
-
-New option `--scratchpad` will search
-*visible* windows on the scratchpad instead of the
-focused workspace. This is probably only usfeful
-if there are tabbed or stacked containers on the
-scratchpad with multiple windows that shares a property.
-
-##### BREAKING CHANGE
-
-The commandline options: `--title`,
-`--class`,`--instance`, `--titleformat`, `--type`,
-`--winid`, `--parent`, `--role` must be used with 
-an argument. It used to be possible to not add an
-argument (criteria), that made i3viswiz print a
-table of the visible windows and the named option
-in the last column. It is still possible to achieve
-this by using the argument **LIST**  
-
-``` shell
-i3viswiz --class LIST
-* 94144799082304 ws: 1 x: 0     y: 0     w: 1570  h: 413   | URxvt
-- 94144797396432 ws: 1 x: 0     y: 413   w: 1570  h: 644   | Subl
-- 94144810244944 ws: 1 x: 1570  y: 0     w: 350   h: 252   | mpv
-- 94144798588784 ws: 1 x: 1570  y: 252   w: 350   h: 805   | Leafpad
-```
-
-The reason for this change is that it is now possible
-to use multiple criterion with i3viswiz.
-
-[wiki]: https://github.com/budlabs/i3ass/wiki
-[Makefile]: https://github.com/budRich/i3ass/blob/master/Makefile
-[install.sh]: https://github.com/budRich/i3ass/blob/master/install.sh
-[i3add]: https://github.com/budRich/scripts/i3add/
-[AUR]: https://aur.archlinux.org/packages/i3ass/
-[i3]: https://i3wm.org/
-[i3wm]: https://i3wm.org/
-[bashbud]: https://github.com/budlabs/bashbud
-[i3flip]: https://github.com/budlabs/i3ass/wiki/i3flip
-[i3fyra]: https://github.com/budlabs/i3ass/wiki/i3fyra
-[i3get]: https://github.com/budlabs/i3ass/wiki/i3get
-[i3gw]: https://github.com/budlabs/i3ass/wiki/i3gw
-[i3Kornhe]: https://github.com/budlabs/i3ass/wiki/i3Kornhe
-[i3list]: https://github.com/budlabs/i3ass/wiki/i3list
-[i3var]: https://github.com/budlabs/i3ass/wiki/i3var
-[i3run]: https://github.com/budlabs/i3ass/wiki/i3run
-[i3menu]: https://github.com/budlabs/i3ass/wiki/i3menu
-[i3viswiz]: https://github.com/budlabs/i3ass/wiki/i3viswiz
-[i3king]: https://github.com/budlabs/i3ass/wiki/i3king
-[i3zen]: https://github.com/budlabs/i3ass/wiki/i3zen
-[youtube channel]: https://youtube.com/c/dubbeltumme
+don't use eval when executing commands. 

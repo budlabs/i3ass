@@ -2,22 +2,12 @@
 
 main(){
 
-  local tmark w
+  [[ ${mark:=$1} ]] || ERX "no name specified"
 
-  IFS=$'\n\t'
-
-  tmark="${1:-}"
-
-  [[ -z $tmark ]] && {
-    ___printhelp
-    ERX "no name specified"
-  }
-
-  # w=$(i3-msg open | sed 's/[^0-9]//g')
   w="$(i3-msg open)"
   w="${w//[^0-9]/}"
 
-  i3-msg -q "[con_id=$w]" floating disable, mark "$tmark"
+  messy "[con_id=$w]" floating disable, mark "$mark"
 }
 
 __dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud

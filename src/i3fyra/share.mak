@@ -1,0 +1,1 @@
+../../share/share.mak

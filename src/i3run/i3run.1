@@ -1,0 +1,184 @@
+.nh
+.TH I3RUN  1 2022-05-19 budlabs "User Manuals"
+.SH NAME
+.PP
+i3run - Run, Raise or hide windows in i3wm
+
+.SH SYNOPSIS
+.PP
+.RS
+
+.nf
+i3run --instance|-i INSTANCE  [--hide] [--summon|-s] [--nohide|-g] [--verbose]
+i3run --class|-c    CLASS     [--hide] [--rename|-x OLD_NAME] 
+i3run --title|-t    TITLE     [--hide] [--rename-instance OLD_NAME] [--rename-class OLD_NAME] [--rename-title OLD_NAME]
+i3run --conid|-n    CON_ID    [--hide] [--force|-f] [--FORCE|-F] 
+i3run --winid|-d    WIN_ID    [--hide] [--command|-e COMMAND] [--mouse|-m]
+i3run --help|-h
+i3run --version|-v
+
+.fi
+.RE
+
+.SH OPTIONS
+.PP
+.RS
+
+.nf
+-F, --FORCE                    | Execute COMMAND (`--command`), even if the window already exist. 
+-c, --class           CLASS    | Search for windows with the given CLASS
+-e, --command         COMMAND  | execute COMMAND if window is not found  
+-n, --conid           CON_ID   | Search for windows with the given CON_ID 
+-f, --force                    | Execute COMMAND (`--command`), even if the window already exist. But not when hiding a window.
+-h, --help                     | print help and exit  
+--hide                         | always send target window to the scratchpad  
+-i, --instance        INSTANCE | Search for windows with the given INSTANCE  
+-m, --mouse                    | windows will be summoned to the mouse cursor  
+-g, --nohide                   | Don't hide window/container if it's active.  
+-x, --rename          OLD_NAME | rename window properties on creation  
+--rename-class        OLD_NAME | explicitly rename the class.
+--rename-instance     OLD_NAME | explicitly rename the instance. 
+--rename-title        OLD_NAME | explicitly rename the title.
+-s, --summon                   | summon window instead of switching workspace focus  
+-t, --title           TITLE    | Search for windows with the given TITLE  
+--verbose                      | More stuff is printed to stderr  
+-v, --version                  | print version info and exit  
+-d, --winid           WIN_ID   | Search for windows with WIN_ID  
+
+.fi
+.RE
+
+.SS -e, --command         COMMAND
+.PP
+\fBExample\fP
+
+.PP
+.RS
+
+.nf
+# with --command:
+i3run --instance sublime_text --command 'subl && notify-send "sublime is started"'
+
+# with -- (recomended)
+i3run --instance sublime_text -- subl "&&" notify-send "sublime is started"
+
+.fi
+.RE
+
+.PP
+Notice that you will need to \fIescape\fP some shell
+builtins that effect the commandline (\fB\fC&&\fR, \fB\fC;\fR,
+\fB\fC&\fR, \fB\fC|\fR, \fB\fC||\fR ...) in the second example.
+
+.SS -x, --rename          OLD_NAME
+.PP
+If the search criteria is \fB\fC--instance\fR, the window
+with instance: \fIOLDNAME\fP will get a new instance
+name matching the criteria when it is created
+(\fIneeds \fB\fCxdotool\fR\fP).
+
+.PP
+\fBNB\fP
+.br
+This option will not work reliably when using multiple
+search criteria. When you want to do that instead use:
+.br
+\fB\fC--rename-instance , --rename-class , --rename-title\fR .
+
+.PP
+.RS
+
+.nf
+i3run --instance budswin --rename sublime_main -- subl
+
+# when the command above is executed:
+# a window with the instance name: "budswin" will be searched for.
+# if no window is found the command: "subl" will get executed,
+# and when a window with the instance name: "sublime_main" is found,
+# the instance name of that window will get renamed to: "budswin"
+
+# the example below, will not work properly:  
+i3run --title bud --instance budswin --rename sublime_main -- subl
+
+# it will start like the first example, but if it
+# doesnt find the custom instance budswin, it will
+# try to search for a window with the TITLE sublime_main
+
+# do this instead:  
+i3run --title bud --instance budswin --rename-instance sublime_main -- subl
+
+.fi
+.RE
+
+.SH USAGE
+.PP
+i3run will try to find a window matching a criteria.
+Criteria is specified with one or more command line options:
+.br
+\fB\fC--class , --instance , --title , --conid , --winid\fR
+.br
+All criteria specified must match, if multiple windows
+match all criteria one will be chosen at random.
+
+.PP
+Depending on the state of target window different actions will apply:
+
+.PP
+.RS
+
+.nf
+Active and not handled by i3fyra     | send to scratchpad
+Active and handled by i3fyra         | send container to scratchpad
+Handled by i3fyra and hidden         | **show** container
+Not handled by i3fyra and hidden     | **show** window
+Not on current workspace             | goto workspace and focus window
+Not active, not hidden, on workspace | focus window
+Not found                            | execute COMMAND
+
+.fi
+.RE
+
+.PP
+Hidden in this context,  means that window is on
+the scratchpad. Show in this context means,  move
+window to current workspace.
+
+.PP
+With \fB\fC--nohide\fR set windows/containers will not be
+sent to the scratchpad by \fBi3run\fP\&.
+
+.PP
+With \fB\fC--summon\fR windows not on current workspace
+will be sent to current workspace instead of switching
+workspace.
+
+.PP
+COMMAND is everything after -- , or the argument to \fB\fC--command\fR\&.
+
+.PP
+If COMMAND doesn't result in a window that matches the criteria
+\fBi3run\fP will \fIget stuck\fP waiting for such a window, and it can
+lead to undesired behavior.
+.br
+Don't do this: \fB\fCi3run --class Google-chrome -- firefox\fR
+
+.SH ENVIRONMENT
+.SS I3RUN_BOTTOM_GAP, I3RUN_RIGHT_GAP, I3RUN_LEFT_GAP, I3RUN_TOP_GAP
+.PP
+Distance from the screen edge to
+show floating windows. This only has effect When
+\fB\fC--mouse\fR option is used and the window needs to
+be autoadjusted not to be rendered \fIoutisde\fP the
+workspace.
+
+.SH CONTACT
+.PP
+Send bugs and feature requests to:
+.br
+https://github.com/budlabs/i3ass/issues
+
+.SH COPYRIGHT
+.PP
+Copyright (c) 2017-2022, budRich of budlabs
+.br
+SPDX-License-Identifier: MIT

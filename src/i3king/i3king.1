@@ -1,0 +1,197 @@
+.nh
+.TH I3KING  1 2022-05-19 budlabs "User Manuals"
+.SH NAME
+.PP
+i3king - window ruler
+
+.SH SYNOPSIS
+.PP
+\fB\fCi3king [OPTIONS]\fR
+
+.SH OPTIONS
+.PP
+.RS
+
+.nf
+-a, --apply                | Match all existing windows against the rules and exit.
+-c, --config         FILE  | use FILE as config  
+-n, --conid          CONID | window with CONID, match against rules and exit exit.
+--dryrun                   | Parse rules but don't execute commands.
+-h, --help                 | print help and exit  
+--json               JSON  | use JSON instead of output from: `i3-msg -t subscribe`
+--log                FILE  | print messages to FILE instead of STDERR  
+--no-apply                 | dont re-apply the rules on i3 crash 
+--no-restart               | dont restart on i3 crash  
+--print-commands           | Print commands to STDOUT instead of executing them.
+--reload                   | force reload of i3king  
+--verbose                  | More verbose output to **STDERR**.  
+-v, --version              | print version info and exit  
+-d, --winid          WINID | window with WINID, match against rules and exit exit.  
+
+.fi
+.RE
+
+.SS -c, --config         FILE
+.PP
+Override the value of the Environment variable
+\fBI3_KING_RULE_FILE\fP . Or the default value:
+.br
+\fB\fC~/.config/i3king/rules\fR
+
+.SS --no-apply
+.PP
+If this option is set it will not automatically
+apply rules to all windows when the IPC socket is
+broken (happens on a crash or on \fB\fCrestart\fR).
+This option has no effect if \fB\fC--no-restart\fR is used.
+
+.SS --no-restart
+.PP
+When the IPC socket is broken, i3king will automatically
+restart if this option is not set.
+
+.SH USAGE
+.PP
+i3king will match all \fBnew\fP windows against the
+rules defined in \fBI3_KING_RULE_FILE\fP
+(\fI\fB\fC~/.config/i3king/rules\fR\fP). If a rule matches
+the created window, the command associated with
+the rule will get passed to \fB\fCi3-msg\fR\&.
+
+.PP
+The criterias a window can get matched against are
+.br
+- \fBclass\fP
+- \fBinstance\fP
+- \fBtitle\fP
+- \fBwindow_type\fP
+- \fBwindow_role\fP
+
+.PP
+Use \fBGLOBAL\fP rules to match any windows. global
+rules can have a \fBblack\fPlist for windows that
+will not trigger the rule.
+
+.PP
+A variant of the GLOBAL rule is \fBDEFAULT\fP rules,
+which works exactly like GLOBAL rules, except they
+only get triggered if the window didn't match any
+\fI"normal"\fP rules (regular GLOBAL rules are normal).
+
+.PP
+\fBON_CLOSE\fP work like normal rules but will only
+trigger when a window is closed.
+
+.PP
+Just like in the i3 config the \fB\fCset\fR directive is
+available, so you can make variables.
+
+.PP
+Some built in magic variables are avaible in the config:
+
+.RS
+.IP \(bu 2
+$INSTANCE
+.IP \(bu 2
+$CLASS
+.IP \(bu 2
+$CONID
+.IP \(bu 2
+$WINID
+.IP \(bu 2
+$TITLE
+
+.RE
+
+.SH EXAMPLE
+.PP
+.RS
+
+.nf
+GLOBAL \\
+  class=URxvt instance=htop, \\
+  instance=firefox
+    title_format $INSTANCE
+
+.fi
+.RE
+
+.PP
+The above rule will set the title_format to the instance
+name of all windows, except a URxvt window with the
+instance name htop, and firefox windows.
+
+.PP
+If $I3_KING_RULES_FILE doesn't exist,
+a example rule file will get created. See that
+file for details about the syntax.
+
+.PP
+If you used to have \fB\fCfor_window\fR rules that triggered
+\fB\fCi3fyra --move\fR commands. It is recommended to use
+the built in varialbe \fB$CONID\fP when executing i3fyra:
+
+.SH EXAMPLE
+.PP
+.RS
+
+.nf
+# old i3 version:
+for_window [instance=qutebrowser] exec --no-startup-id i3fyra --move C
+
+# with i3 king:
+instance=qutebrowser
+  exec --no-startup-id i3fyra --conid $CONID --move C
+
+.fi
+.RE
+
+.PP
+(\fIthe \fB\fC--conid\fR option in i3fyra is brand new\fP)
+
+.PP
+If the \fB\fCrestart\fR command is issued from i3, all
+windows lose gets new container IDs, marks are
+lost and other more or less strange things might
+happen to the layout. Another thing is that all
+open IPC sockets are closed and this means that
+any ipc subscriber would have to be restarted.
+\fBi3king\fP will, when the socket is broken, match
+all known windows against the rules again, and
+automatically restart itself. If you for some
+reason don't want this behaviour, try \fB\fC--no-
+restart\fR and/or \fB\fC--no-apply\fR options.
+
+.SH protip
+.PP
+Sending USR1 to the i3king process will restart
+i3king. Hint: \fB\fCkill -USR1 $(< "$XDG_RUNTIME_DIR/i3ass/i3king.pid")\fR
+
+.SH ENVIRONMENT
+.SS BASHBUD_DIR
+.PP
+bashbud config dir location.
+
+.SS I3_KING_RULE_FILE
+.PP
+Path to file containing rules to be parsed.
+
+.SS I3_KING_PID_FILE
+.PP
+When i3king is running this file contains the pid
+of the i3king process. It is used by \fBi3fyra\fP to
+know if i3king is running, if it is, it will try
+to match windows against the rules when \fB\fC--float\fR
+option toggles the floating state to tiled.
+
+.SH CONTACT
+.PP
+Send bugs and feature requests to:
+.br
+https://github.com/budlabs/i3ass/issues
+
+.SH COPYRIGHT
+.PP
+Copyright (c) 2021-2022, budRich of budlabs
+.br
+SPDX-License-Identifier: MIT

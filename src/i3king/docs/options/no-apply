@@ -1,4 +1,4 @@
-`--no-apply`        | dont re-apply the rules on i3 crash 
+dont re-apply the rules on i3 crash 
 
 If this option is set it will not automatically
 apply rules to all windows when the IPC socket is

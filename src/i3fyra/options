@@ -2,7 +2,7 @@
 --float|-a
 --hide|-z CONTAINER
 --layout|-l LAYOUT [--array ARRAY]
---move|-m DIRECTION|CONTAINER [--conid|-n CON_ID] [--speed|-p INT]
+--move|-m DEST [--conid|-n CON_ID] [--speed|-p INT]
 --orientation ORIENTATION
 --clear-virtuals
 [--verbose] [--dryrun] [--force|-f] 

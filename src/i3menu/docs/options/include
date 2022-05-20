@@ -1,4 +1,4 @@
-`-i`, `--include`          INCLUDESTRING | combination of p e l  
+combination of p e l  
 
 INCLUDESTRING can be set to force which elements of the menu to include.
 INCLUDESTRING can be one or more of the following character:  

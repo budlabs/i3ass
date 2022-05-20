@@ -10,7 +10,7 @@ That is what this script does,
 it creates a ghost, 
 get its `con_id` and marks it.
 
-# EXAMPLES
+## EXAMPLES
 
 `$ i3gw casper`  
 

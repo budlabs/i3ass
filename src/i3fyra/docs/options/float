@@ -1,4 +1,4 @@
-`-a`, `--float`    | toggle floating state of a window  
+toggle floating state of a window  
 
 Autolayout. If current window is tiled: floating
 enabled If window is floating, it will be put in a

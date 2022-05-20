@@ -1,1 +1,1 @@
-`-F`, `--FORCE`            | Execute COMMAND (`--command`), even if the window already exist. 
+Execute COMMAND (`--command`), even if the window already exist. 

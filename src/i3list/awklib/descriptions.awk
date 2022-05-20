@@ -113,4 +113,5 @@ function descriptions() {
   desc["RID"]="root container id"
 
   desc["ORI"]="i3fyra orientation"
+  desc["SUS"]="containers matching all criteria"
 }

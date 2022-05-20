@@ -1,4 +1,4 @@
-`-w`, `--width`            INT | Changes the width of the menu  
+Changes the width of the menu  
 
 If the argument to `--width` ends with a `%`
 character the width will be that many percentages

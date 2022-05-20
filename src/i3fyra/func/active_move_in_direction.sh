@@ -63,7 +63,7 @@ active_move_in_direction() {
   sibling=${i3list[TFS]}
   relatives=${i3list[TFO]}
 
-  if   [[ ! $vw_parent ]]; then
+  if   [[ ! ${i3list[TWP]} =~ [ABCD] ]]; then
     # when triggered on a tiled window on the i3fyra ws
     # that for some reason isn't part of the layout
     move_normal "$direction"
