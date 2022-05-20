@@ -19,7 +19,7 @@ $ make
 ```
 
 #### build dependencies
-[GNU make], [Gawk], [bash], [lowdown]  
+[GNU make], [Gawk], [bash], [GNU sed](https://www.gnu.org/software/sed/)  
 
 #### runtime dependencies
 [bash], [i3wm], [xdotool], [Gawk]  
@@ -48,14 +48,15 @@ script | description
 [i3menu] | Adds more features to rofi when used in i3wm  
 [i3run] | Run, Raise or hide windows in i3wm  
 [i3var] | get or get a i3 variable  
-[i3viswiz] | Professional window focus for i3wm  
+[i3viswiz] | professional window focus for i3wm  
 [i3zen] | zentered container, full focus  
 
 ### known issues
 
-**THERE IS NO SUPPORT FOR i3-gaps**  
-some scripts might still work with i3-gaps,
-but consider that *Happy little accidents™*
+#### **NO SUPPORT FOR i3-gaps**  
+Some **i3ass** scripts does not work with i3-gaps,
+that is the reason `i3-gaps` is listed as a conflict
+in the PKGBUILD on [AUR].
 
 ### license
 
