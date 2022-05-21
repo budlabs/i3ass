@@ -136,7 +136,7 @@ $(MONOLITH): $(CACHE_DIR)/print_version.sh $(NAME) $(CACHE_DIR)/print_help.sh $(
 			grep -vhE -e '^#!/' -e '#bashbud$$' $$f
 		done
 
-		printf '%s\n' '' 'main "@$$"'
+		printf '%s\n' '' 'main "$$@"'
 	} > $@
 	
 	chmod +x $@
