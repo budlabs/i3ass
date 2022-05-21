@@ -1,18 +1,9 @@
-## next
+### 2022.05.21
 
-### bashbud
+#### bashbud
 
-Many improvements to the build steps.
-Manpages are included so no need for manpage generator
-as dependency.
+fixed issue reported in #170, that made all scripts 
+broken (tried to start main() passing `@$` instead of `$@`).
 
-### [i3list]
-NEW KEY: `i3list[SUS]`  
-contains the number of containers matching all criteria
-
-### [i3run]
-When xdotool is used to rename a window class/instance
-the window gets a new `container_id`, and now that
-new id is reported instead of the old.
-
-don't use eval when executing commands. 
+Fixed issue that made all programs look like they 
+where updated on the installation data.

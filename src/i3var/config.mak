@@ -1,6 +1,7 @@
 NAME         := i3var
 VERSION      := 0.050
 CREATED      := 2017-12-22
+UPDATED      := 2022-05-21
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options

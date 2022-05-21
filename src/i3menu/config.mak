@@ -1,6 +1,7 @@
 NAME         := i3menu
 VERSION      := 0.11
 CREATED      := 2018-07-21
+UPDATED      := 2022-05-21
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := i3menu [OPTIONS]
