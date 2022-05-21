@@ -1,6 +1,7 @@
 NAME         := i3list
 VERSION      := 0.51
 CREATED      := 2017-10-06
+UPDATED      := 2022-05-21
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options
