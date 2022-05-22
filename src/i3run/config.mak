@@ -1,7 +1,7 @@
 NAME         := i3run
-VERSION      := 0.2
+VERSION      := 0.2.1
 CREATED      := 2017-04-20
-UPDATED      := 2022-05-21
+UPDATED      := 2022-05-22
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options
