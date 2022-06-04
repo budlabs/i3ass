@@ -9,16 +9,16 @@ focuswindow(){
   if [[ ${i3list[SUS]} = 1 || ${i3list[TWC]} = "${i3list[AWC]}" ]]; then
     target_container=${i3list[TWC]}
   elif [[ ${i3list[WTN]} = "${i3list[WAN]}" ]]; then
-    target_container=$(i3viswiz "${_criteria[@]}" "${_pass_json[@]}")
+    target_container=$(i3viswiz "${_criteria[@]}")
   elif [[ ${i3list[WTN]} = __i3_scratch ]]; then 
-    target_container=$(i3viswiz --scratchpad "${_criteria[@]}" "${_pass_json[@]}")
+    target_container=$(i3viswiz --scratchpad "${_criteria[@]}")
   fi
   
   : "${target_container:=${i3list[TWC]}}"
 
   [[ $target_container != "${i3list[TWC]}" ]] && {
-    _array=$(i3list --conid "$target_container" "${_pass_json[@]}")
-    _pass_array=("${_o[verbose]:+--verbose}" --array "$_array")
+    _array=$(i3list --conid "$target_container")
+    _pass_array=(${_o[verbose]:+--verbose} --array "$_array")
     eval "$_array"
   }
 
