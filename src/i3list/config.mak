@@ -5,7 +5,7 @@ UPDATED      := 2022-06-05
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options
-DESCRIPTION  := list information about the current i3 session.
+DESCRIPTION  := list information about the current i3 session
 ORGANISATION := budlabs
 LICENSE      := MIT
 
