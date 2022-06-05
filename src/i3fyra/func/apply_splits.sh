@@ -4,9 +4,8 @@ apply_splits(){
 
   ((_o[verbose])) && ERM "f ${FUNCNAME[0]}($*)"
   
-  local i tsn dir target sibling layout_string
+  local i tsn dir target sibling layout_string last_layout
   declare -i tsv splitexist size
-  declare -a last_layout
 
   if [[ ${_o[layout]} = redo ]]
     then layout_string=${i3list[RED]//:/ }
