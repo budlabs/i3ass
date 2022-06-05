@@ -18,6 +18,9 @@ README_LAYOUT  =         \
 	docs/readme_license.md \
 	docs/readme_links.md
 
+ass_dirs            := $(wildcard src/*)
+wiki_mds            := $(ass_dirs:src/%=wiki/doc/%.md)
+
 wiki: $(wiki_mds)
 
 $(wiki_mds): wiki/doc/%.md : src/%/.cache/wiki.md
@@ -39,9 +42,8 @@ docs/readme_table.md: $(addsuffix /config.mak,$(ass_dirs))
 			}' $^ 
 	} > $@
 
-ass_dirs            := $(wildcard src/*)
+
 ass_names           := $(ass_dirs:src/%=%)
-wiki_mds            := $(ass_dirs:src/%=wiki/doc/%.md)
 
 each_check          := $(ass_names:%=%-check)
 each_all            := $(ass_names:%=%-all)
