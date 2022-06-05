@@ -13,7 +13,7 @@ README_LAYOUT  =         \
 	docs/readme_header.md  \
 	docs/readme_install.md \
 	docs/readme_about.md   \
-	docs/readme_table.md   \
+	docs/_readme_table.md  \
 	docs/readme_issues.md  \
 	docs/readme_license.md \
 	docs/readme_links.md
@@ -31,7 +31,7 @@ readme: README.md
 README.md: $(README_LAYOUT)
 	cat $^ > $@
 
-docs/readme_table.md: $(addsuffix /config.mak,$(ass_dirs))
+docs/_readme_table.md: $(addsuffix /config.mak,$(ass_dirs))
 	@{
 		echo
 		printf '%s\n' "script | description" "|:-|:-|"
