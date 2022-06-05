@@ -4,10 +4,19 @@ apply_splits(){
 
   ((_o[verbose])) && ERM "f ${FUNCNAME[0]}($*)"
   
-  local i tsn dir target sibling
-  declare -i tsv splitexist size 
+  local i tsn dir target sibling layout_string
+  declare -i tsv splitexist size
+  declare -a last_layout
 
-  for i in ${1}; do
+  if [[ ${_o[layout]} = redo ]]
+    then layout_string=${i3list[RED]//:/ }
+    else layout_string=$1
+  fi
+
+  [[ $layout_string =~ = ]] \
+    || ERX "$layout_string is not a valid layout"
+
+  for i in ${layout_string}; do
     tsn=${i%=*} # target split name
     tsv=${i#*=} # target split value
 
@@ -36,6 +45,8 @@ apply_splits(){
 
     ((tsv<0)) && tsv=$((size-(tsv*-1)))
 
+    last_layout+="${tsn}=${i3list[S${tsn}]}:"
+
     ((splitexist)) && {
       # i3list[Sxx] = current/actual split xx
       i3list[S${tsn}]=${tsv}
@@ -47,4 +58,7 @@ apply_splits(){
     mark_vars["i34M${tsn}"]=$tsv
 
   done
+
+  # store last_layout for --layout redo
+  [[ ${_o[layout]} ]] && mark_vars["i34RED"]=$last_layout
 }
