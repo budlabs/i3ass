@@ -70,5 +70,5 @@ uninstall:     $(each_uninstall)
 uninstall-dev: $(each_uninstall-dev)
 
 $(each_each):
-	@v=$@ ; action=$${v#*-} ; name=$${v%%-*}
+	@v=$@ action=$${v#*-} name=$${v%%-*}
 	$(MAKE) -C src/$$name $$action
