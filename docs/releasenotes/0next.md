@@ -1,9 +1,11 @@
-### 2022.05.21
+### 2022.06.05
 
-#### bashbud
+#### i3fyra
 
-fixed issue reported in #170, that made all scripts 
-broken (tried to start main() passing `@$` instead of `$@`).
+Added "redo" functionality to `--layout`:  
+`i3fyra --layout redo`
 
-Fixed issue that made all programs look like they 
-where updated on the installation data.
+#### i3list
+
+New key: **RED**, contains the last layout applied
+with `i3fyra --layout`. Needed for `i3fyra --layout redo`.
