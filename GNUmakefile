@@ -20,6 +20,11 @@ README_LAYOUT  =         \
 
 ass_dirs            := $(wildcard src/*)
 wiki_mds            := $(ass_dirs:src/%=wiki/doc/%.md)
+wiki_src            := $(ass_dirs:%=%/.cache/wiki.md)
+
+$(wiki_src):
+	@[[ $@ =~ ^(src/[^/]+) ]] && trg=$${BASH_REMATCH[1]}
+	$(MAKE) -C $$trg .cache/wiki.md
 
 wiki: $(wiki_mds)
 
@@ -41,7 +46,6 @@ docs/_readme_table.md: $(addsuffix /config.mak,$(ass_dirs))
 				printf ("[%s] | %s  \n", name , gensub(".+:= ","",1,$$0))
 			}' $^ 
 	} > $@
-
 
 ass_names           := $(ass_dirs:src/%=%)
 
@@ -68,5 +72,3 @@ uninstall-dev: $(each_uninstall-dev)
 $(each_each):
 	@v=$@ ; action=$${v#*-} ; name=$${v%%-*}
 	$(MAKE) -C src/$$name $$action
-
-
