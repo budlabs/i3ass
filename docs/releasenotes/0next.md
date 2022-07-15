@@ -1,11 +1,5 @@
-### 2022.06.05
+#### i3king
 
-#### i3fyra
+added support for '$ROLE and $TYPE' variables in config.
 
-Added "redo" functionality to `--layout`:  
-`i3fyra --layout redo`
 
-#### i3list
-
-New key: **RED**, contains the last layout applied
-with `i3fyra --layout`. Needed for `i3fyra --layout redo`.
