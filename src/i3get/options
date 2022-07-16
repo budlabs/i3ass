@@ -12,6 +12,7 @@
 [--print|-r OUTPUT]
 [--print-format FORMAT_STRING]
 [--json TREE]
+--timeout SECONDS
 --help|-h
 --version|-v
 --verbose
