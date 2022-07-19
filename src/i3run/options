@@ -1,4 +1,4 @@
---instance|-i INSTANCE  [--hide] [--summon|-s] [--nohide|-g] [--verbose]
+--instance|-i INSTANCE  [--hide] [--summon|-s] [--nohide|-g] [--verbose] [--silent]
 --class|-c    CLASS     [--hide] [--rename|-x OLD_NAME] 
 --title|-t    TITLE     [--hide] [--rename-instance OLD_NAME] [--rename-class OLD_NAME] [--rename-title OLD_NAME]
 --conid|-n    CON_ID    [--hide] [--force|-f] [--FORCE|-F] 
