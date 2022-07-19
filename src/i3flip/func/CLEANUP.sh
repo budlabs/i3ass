@@ -4,7 +4,7 @@ trap 'CLEANUP' EXIT INT HUP
 
 CLEANUP() {
   
-  [[ -f /tmp/i3flip_lock ]] && rm /tmp/i3flip_lock
+  [[ -f /tmp/i3flip_lock ]] && rm -f /tmp/i3flip_lock
 
   [[ -n $_msgstring ]] && {
     ((_o[verbose])) || qflag='-q'
