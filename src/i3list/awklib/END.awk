@@ -2,7 +2,7 @@ END {
   descriptions()
 
   # strfrm is the format string used for the output
-  strfrm="i3list[%s]=%-17s# %s\n"
+  strfrm="i3list[%s]=%-26s # %s\n"
 
   # determine target container ID
   if ( length(arg_search) == 0 ) {

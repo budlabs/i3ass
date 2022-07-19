@@ -1,5 +1,5 @@
 .nh
-.TH I3FYRA  1 2022-05-19 budlabs "User Manuals"
+.TH I3FYRA  1 2022-06-05 budlabs "User Manuals"
 .SH NAME
 .PP
 i3fyra - An advanced, simple grid-based tiling layout
@@ -188,12 +188,19 @@ there.
 
 .SS -l, --layout         LAYOUT
 .PP
-AB is on X axis from the left side if INT is
-positive, from the right side if it is negative.
-AC and BD is on Y axis from the top if INT is
-positive, from the bottom if it is negative. The
-whole argument needs to be quoted. Example:   `$
-i3fyra --layout 'AB=-300 BD=420'
+AB is point on the X axis, calculated from the
+left side if INT is positive, from the right side
+if it is negative. AC and BD is on Y axis from
+the top if INT is positive, from the bottom if it
+is negative. The whole argument needs to be
+quoted. Example:
+
+.PP
+`i3fyra --layout 'AB=-300 BD=420'
+
+.PP
+LAYOUT argument can also be the word 'redo', if it
+is, the last layout appended will be restored.
 
 .SS -m, --move           DEST
 .PP

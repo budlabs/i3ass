@@ -68,5 +68,5 @@ launchcommand(){
   ((_o[mouse])) && sendtomouse
 
   messy "[con_id=$conid]" focus
-  echo "$conid"
+  ((_o[silent])) || echo "$conid"
 }

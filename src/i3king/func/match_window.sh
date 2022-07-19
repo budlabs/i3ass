@@ -113,6 +113,8 @@ match_window() {
 
       cmd=$k
       cmd=${cmd//\$INSTANCE/$instance}
+      cmd=${cmd//\$ROLE/$role}
+      cmd=${cmd//\$TYPE/$type}
       cmd=${cmd//\$CLASS/$class}
       cmd=${cmd//\$CONID/$cid}
       cmd=${cmd//\$WINID/$wid}

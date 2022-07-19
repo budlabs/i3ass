@@ -1,9 +1,23 @@
-### 2022.05.21
+#### i3ass
 
-#### bashbud
+Fixed an issue in `share/main.awk` . Titles containing
+a colon (`:`) character where not being captured by
+f.i. `i3get -r o`. #174 thanks @DominikMarcinowski
 
-fixed issue reported in #170, that made all scripts 
-broken (tried to start main() passing `@$` instead of `$@`).
+#### i3run
 
-Fixed issue that made all programs look like they 
-where updated on the installation data.
+Added `--silent` option
+
+#### i3king
+
+fixed issue where commented lines ending with backslash
+concatenated the next line.  
+
+added support for `$ROLE and $TYPE` variables in config.
+
+#### i3get
+
+added `--timeout SECONDS` option. To adjust the timeout
+before `--synk` stops waiting for a window (default 60s)
+
+

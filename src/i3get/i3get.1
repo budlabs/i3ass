@@ -1,5 +1,5 @@
 .nh
-.TH I3GET  1 2022-05-19 budlabs "User Manuals"
+.TH I3GET  1 2022-07-16 budlabs "User Manuals"
 .SH NAME
 .PP
 i3get - prints info about a specific window to stdout
@@ -24,6 +24,7 @@ i3get - prints info about a specific window to stdout
 --print-format     FORMAT_STRING | %v is value, %k is name. default: '%v\\n'  
 --role             ROLE          | match ROLE against window_role  
 -y, --synk                       | block script till window exist.
+--timeout          SECONDS       | seconds for --synk to timeout (defaults to 60)  
 -t, --title        TITLE         | target windows with TITLE  
 -o, --titleformat  TITLE_FORMAT  | match TITLE_FORMAT against title_format  
 --type             TYPE          | match TYPE against window_type  

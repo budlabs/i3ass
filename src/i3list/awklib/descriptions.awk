@@ -111,6 +111,7 @@ function descriptions() {
   desc["VPD"]="virtual position D"
 
   desc["RID"]="root container id"
+  desc["RED"]="last applied layout"
 
   desc["ORI"]="i3fyra orientation"
   desc["SUS"]="containers matching all criteria"

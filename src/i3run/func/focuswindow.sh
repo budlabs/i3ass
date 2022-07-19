@@ -81,5 +81,5 @@ focuswindow(){
    ((_o[force] + _o[FORCE] > 0)) && [[ ${_command[*]} ]] && run_command
   fi
 
-  echo "${target_container}"
+  ((_o[silent])) || echo "${target_container}"
 }

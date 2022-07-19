@@ -1,4 +1,42 @@
-$(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|id|instance|layout|marks|name|num|output|sticky|title_format|type|urgent|window|window_role|window_type|x)"$/ {
+# name|title_format field holds the title, it is the value that
+# is trickiest to capture since it can contain 
+# double quotes, commas (RS) and colon (FS).
+# therefor it is handled here separate from the other
+# keys, which always are at NF-1.
+$1 ~ /"(name|title_format)"/ {
+  key=gensub(/"/,"","g",$1)
+  
+  title=gensub(/^"(name|title_format)":/,"","1",$0)
+  title=gensub(/\\"/,"@@_DQ_@@","g",title)
+
+  # this makes sure to capture titles with escaped quotes
+  # and commas.
+  while (title ~ /[^"]$/ && title != "null") {
+    getline
+    title = title "," gensub(/\\"/,"@@_DQ_@@","g",$0)
+  }
+  title=gensub("@@_DQ_@@","\"","g",title)
+
+  ac[cid][key]=title
+
+  if ( key in arg_search && match(title, arg_search[key]) )
+    suspect_targets[cid]=1
+
+  # store output container id in separate array
+  if ( ac[cid]["type"] ~ /"output"/ && $NF !~ /__i3/)
+    outputs[$NF]=cid
+
+  else if (ac[cid]["type"] == "\"workspace\"") {
+
+    if ($NF == "\"" i3fyra_workspace_name "\"")
+      i3fyra_workspace_id = cid
+
+    else if ($NF == "\"__i3_scratch\"")
+      scratchpad_id = cid
+  }
+}
+
+$(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|id|instance|layout|marks|num|output|sticky|type|urgent|window|window_role|window_type|x)"$/ {
   
   key=gensub(/.*"([^"]+)"$/,"\\1","g",$(NF-1))
     
@@ -16,40 +54,10 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
     case "window_role":
     case "class":
     case "instance":
-    case "title_format":
     case "type":
       ac[cid][key]=$NF
       if ( key in arg_search && $NF == "\""arg_search[key]"\"" )
         suspect_targets[cid]=1
-    break
-
-    case "name":
-      # this makes sure to capture titles with escaped quotes
-      # and commas.
-      title=gensub(/\\"/,"@@_DQ_@@","g",$NF)
-      while (title ~ /[^"]$/ && title != "null") {
-        getline
-        title = title "," gensub(/\\"/,"@@_DQ_@@","g",$0)
-      }
-      title=gensub("@@_DQ_@@","\"","g",title)
-
-      ac[cid][key]=title
-
-      if ( key in arg_search && match(title, arg_search[key]) )
-        suspect_targets[cid]=1
-
-      # store output container id in separate array
-      if ( ac[cid]["type"] ~ /"output"/ && $NF !~ /__i3/)
-        outputs[$NF]=cid
-
-      else if (ac[cid]["type"] == "\"workspace\"") {
-
-        if ($NF == "\"" i3fyra_workspace_name "\"")
-          i3fyra_workspace_id = cid
-
-        else if ($NF == "\"__i3_scratch\"")
-          scratchpad_id = cid
-      }
     break
 
     case "id":

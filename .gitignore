@@ -1,6 +1,7 @@
 src/*/func/_*
 src/*/.cache/
 src/*/_*
+docs/_*
 
 wiki/
 notes.md

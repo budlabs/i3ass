@@ -15,18 +15,17 @@ parse_rules() {
 
     line="${prevline:+$prevline }$REPLY"
 
+    [[ $line =~ ^[[:space:]]*$ || $line =~ ^[[:space:]]*# ]] \
+      && continue
+
     if [[ $line =~ \\$ ]]; then
       prevline=${line%\\}
       continue
     else
       unset prevline
     fi
-
-    if [[ $line =~ ^[[:space:]]*$ ]]; then
-      continue
-    elif [[ $line =~ ^[[:space:]]*# ]]; then
-      continue
-    elif [[ $line =~ $re_set ]]; then
+    
+    if [[ $line =~ $re_set ]]; then
       vars["${BASH_REMATCH[1]}"]=${BASH_REMATCH[2]}
     elif [[ $line =~ ^[[:space:]]+(.+)[[:space:]]*$ ]]; then
 
