@@ -1,49 +1,61 @@
-.PHONY: clean check all install uninstall \
-				install-dev uninstall-dev
+.PHONY: all install-dev uninstall-dev
 
 .ONESHELL:
-.DEFAULT_GOAL   := all
+.DEFAULT_GOAL       := all
 
-SHELL           := /bin/bash
-
+SHELL               := /bin/bash
 CUSTOM_TARGETS       =
 
-PREFIX              := /usr
+PREFIX              ?= /usr
+
 NAME                := $(notdir $(realpath .))
 VERSION             := 0
 UPDATED             := $(shell date +'%Y-%m-%d')
-CREATED             := $(UPDATED)
 AUTHOR              := anon
-CONTACT             := address
-ORGANISATION        :=
 CACHE_DIR           := .cache
 DOCS_DIR            := docs
 CONF_DIR            := conf
 AWK_DIR             := awklib
 FUNCS_DIR           := func
+FILE_EXT            := .sh
 INDENT              := $(shell echo -e "  ")
 USAGE                = $(NAME) [OPTIONS]
 OPTIONS_FILE        := options
-MANPAGE              = $(NAME).1
-MONOLITH             = _$(NAME).sh
-BASE                := _init.sh
+MONOLITH             = _$(NAME)
+BASE                := _init$(FILE_EXT)
 SHBANG              := \#!/bin/bash
 OPTIONS_ARRAY_NAME  := _o
-MANPAGE_OUT          = _$(MANPAGE)
 FUNC_STYLE          := "() {"
 
-ifneq ($(wildcard config.mak),)
+config_mak          := config.mak
+help_table          := $(CACHE_DIR)/help_table.txt
+long_help           := $(CACHE_DIR)/long_help.md
+getopt              := $(CACHE_DIR)/getopt
+print_help          := $(CACHE_DIR)/print_help$(FILE_EXT)
+print_version       := $(CACHE_DIR)/print_version$(FILE_EXT)
+
+ifneq ($(wildcard $(config_mak)),)
   include config.mak
+else
+  config_mak    :=
 endif
 
-manpage_section      = $(subst .,,$(suffix $(MANPAGE)))
-function_createconf := $(FUNCS_DIR)/_createconf.sh
-function_awklib     := $(FUNCS_DIR)/_awklib.sh
+ifeq ($(wildcard $(OPTIONS_FILE)),)
+  OPTIONS_FILE  :=
+  help_table    :=
+  long_help     :=
+  getopt        :=
+  print_help    :=
+  print_version :=
+endif
+
+function_createconf := $(FUNCS_DIR)/_createconf$(FILE_EXT)
+function_awklib     := $(FUNCS_DIR)/_awklib$(FILE_EXT)
 
 ifneq ($(wildcard $(CONF_DIR)/*),)
   include_createconf   = $(function_createconf)
-  conf_dirs            = $(shell find $(CONF_DIR) -type d)
-  conf_files           = $(shell find $(CONF_DIR) -type f)
+  conf_dirs            = $(patsubst ./%,%,$(shell find "./$(CONF_DIR)" -type d))
+  conf_files           = $(patsubst ./%,%,$(shell find "./$(CONF_DIR)" -type f))
 else
   $(shell rm -f $(function_createconf))
 endif
@@ -59,8 +71,9 @@ option_docs          = $(wildcard $(DOCS_DIR)/options/*)
 
 generated_functions := $(function_err) $(include_createconf) $(include_awklib)
 function_files := \
-	$(generated_functions) \
-	$(filter-out $(generated_functions),$(wildcard $(FUNCS_DIR)/*))
+  $(generated_functions) \
+  $(filter-out $(generated_functions),$(wildcard $(FUNCS_DIR)/*))
+
 
 # this hack writes 1 or 0 to the file .cache/got_func
 # depending on existence of files in FUNC_DIR
@@ -95,20 +108,19 @@ install-dev: $(BASE) $(NAME)
 uninstall-dev: $(PREFIX)/bin/$(NAME)
 	rm $^
 
-check: all
-	shellcheck $(MONOLITH)
-
-$(BASE): config.mak $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh $(CACHE_DIR)/print_version.sh $(CACHE_DIR)/got_func
+$(BASE): $(getopt) $(print_help) $(print_version) $(CACHE_DIR)/got_func
 	@$(info making $@)
 	{
-		printf '%s\n' '$(SHBANG)' '' 'exec 3>&2' ''
+		printf '%s\n' '$(SHBANG)' '' 
 
-		grep -vhE -e '^#!/' $(CACHE_DIR)/print_version.sh | sed '0,/2/s//3/'
-		grep -vhE -e '^#!/' $(CACHE_DIR)/print_help.sh    | sed '0,/2/s//3/'
+		[[ -f $${pv:=$(print_version)} ]] \
+			&& grep -vhE -e '^#!/' $(print_version) | sed '0,/2/s//$$\{__stderr:-2\}/'
+		[[ -f $${ph:=$(print_help)} ]] \
+			&& grep -vhE -e '^#!/' $(print_help)    | sed '0,/2/s//$$\{__stderr:-2\}/'
 
 		echo
 
-		[[ -d $(FUNCS_DIR) ]] && {
+		[[ -d $${fd:=$(FUNCS_DIR)} ]] && {
 			printf '%s\n' \
 			'for ___f in "$$__dir/$(FUNCS_DIR)"/*; do' \
 			'$(INDENT). "$$___f" ; done ; unset -v ___f'
@@ -116,7 +128,7 @@ $(BASE): config.mak $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh $(CACHE_DIR)/
 
 		echo
 		
-		cat $(CACHE_DIR)/getopt
+		[[ -f $${go:=$(getopt)} ]] && cat $(getopt)
 
 		echo "((BASHBUD_VERBOSE)) && _o[verbose]=1"
 		echo
@@ -124,7 +136,7 @@ $(BASE): config.mak $(CACHE_DIR)/getopt $(CACHE_DIR)/print_help.sh $(CACHE_DIR)/
 		echo 'main "$$@"'
 	} > $@
 
-$(MONOLITH): $(CACHE_DIR)/print_version.sh $(NAME) $(CACHE_DIR)/print_help.sh $(function_files) $(CACHE_DIR)/getopt
+$(MONOLITH): $(print_version) $(NAME) $(print_help) $(function_files) $(getopt)
 	@$(info making $@)
 	{
 		printf '%s\n' '$(SHBANG)' ''
@@ -133,40 +145,24 @@ $(MONOLITH): $(CACHE_DIR)/print_version.sh $(NAME) $(CACHE_DIR)/print_help.sh $(
 			# ignore files where the first line ends with '#bashbud'
 			[[ $$(head -n1 $$f) =~ $$re ]] && continue	
 			# ignore lines that ends with '#bashbud' (and shbangs)
-			grep -vhE -e '^#!/' -e '#bashbud$$' $$f
+			grep -vhE -e '^#!' -e '#bashbud$$' $$f
 		done
 
-		printf '%s\n' '' 'main "$$@"'
+		echo 'main "$$@"'
 	} > $@
 	
 	chmod +x $@
-
-$(CACHE_DIR)/copyright.txt: config.mak
-	@$(info making $@)
-	year_created=$(CREATED) year_created=$${year_created%%-*}
-	year_updated=$$(date +'%Y')
-
-	copy_text="Copyright (c) "
-
-	((year_created == year_updated)) \
-		&& copy_text+=$$year_created   \
-		|| copy_text+="$${year_created}-$${year_updated}, $(AUTHOR)"
-
-	[[ $${org:=$(ORGANISATION)} ]] \
-		&& copy_text+=" of $(ORGANISATION)  "
-
-	printf '%s\n' \
-		"$$copy_text" "SPDX-License-Identifier: $(LICENSE)" > $@
 
 # if a file in docs/options contains more than
 # 2 lines, it will get added to the file .cache/long_help.md
 # like this:
 #   ### -s, --long-option ARG
 #   text in docs/options/long-option after the first 2 lines
-$(CACHE_DIR)/long_help.md: $(CACHE_DIR)/options_in_use $(option_docs)
+$(long_help): $(CACHE_DIR)/options_in_use $(option_docs)
 	@$(info making $@)
-	for option in $(file < $(CACHE_DIR)/options_in_use); do
-		[[ $$(wc -l < $(DOCS_DIR)/options/$$option) -lt 2 ]] \
+	for option in budlabs $(file < $(CACHE_DIR)/options_in_use)
+	do
+		[[ ! -f $(DOCS_DIR)/options/$$option || $$(wc -l < "$(DOCS_DIR)/options/$$option") -lt 2 ]] \
 			&& continue
 		printf '### '
 		sed -r 's/\|\s*$$//g;s/^\s*//g' $(CACHE_DIR)/options/$$option
@@ -179,7 +175,7 @@ $(CACHE_DIR)/synopsis.txt: $(OPTIONS_FILE) | $(CACHE_DIR)/
 	@$(info making $@)
 	sed 's/^/$(NAME) /g;s/*//g' $< > $@
 
-$(CACHE_DIR)/help_table.txt: $(CACHE_DIR)/long_help.md
+$(help_table): $(long_help)
 	@$(info making $@)
 	for option in $$(cat $(CACHE_DIR)/options_in_use); do
 		[[ -f $(CACHE_DIR)/options/$$option ]]  \
@@ -190,18 +186,10 @@ $(CACHE_DIR)/help_table.txt: $(CACHE_DIR)/long_help.md
 			&& desc=$$(head -qn1 $(DOCS_DIR)/options/$$option) \
 			|| desc='short description  '
 
-		paste <(echo "$$frag") <(echo "$$desc") | tr -d '\t'
-	done > $@
+		paste <(echo "$$frag") <(echo "$$desc")
+	done | tr -d '\t\\' > $@
 
-$(CACHE_DIR)/:
-	@$(info creating $(CACHE_DIR)/ dir)
-	mkdir -p $(CACHE_DIR) $(CACHE_DIR)/options
-
-$(FUNCS_DIR)/:
-	@$(info creating $(FUNCS_DIR)/ dir)
-	mkdir -p $(FUNCS_DIR)
-
-$(CACHE_DIR)/print_version.sh: config.mak | $(CACHE_DIR)/
+$(print_version): $(config_mak) | $(CACHE_DIR)/
 	@$(info making $@)
 	echo $(SHBANG)
 	fstyle=$(FUNC_STYLE)
@@ -213,7 +201,7 @@ $(CACHE_DIR)/print_version.sh: config.mak | $(CACHE_DIR)/
 		"}"                                                    \
 		"" >> $@
 
-$(CACHE_DIR)/print_help.sh: $(CACHE_DIR)/help_table.txt $(CACHE_DIR)/synopsis.txt 
+$(print_help): $(help_table) $(CACHE_DIR)/synopsis.txt 
 	@$(info making $@)
 	{
 		echo $(SHBANG)
@@ -227,7 +215,7 @@ $(CACHE_DIR)/print_help.sh: $(CACHE_DIR)/help_table.txt $(CACHE_DIR)/synopsis.tx
 			printf '%s\n' 'usage: $(USAGE)' ''
 			echo
 		fi
-		cat $(CACHE_DIR)/help_table.txt
+		cat $(help_table)
 		printf '%s\n' 'EOB' '}'
 	} > $@
 
@@ -283,11 +271,19 @@ $(function_awklib): $(awk_files) | $(FUNCS_DIR)/
 		printf '%s\n' "EOAWK" '}'
 	} > $@
 
-$(CACHE_DIR)/options_in_use $(CACHE_DIR)/getopt &: $(OPTIONS_FILE) | $(CACHE_DIR)/
+$(CACHE_DIR)/:
+	@$(info creating $(CACHE_DIR)/ dir)
+	mkdir -p $(CACHE_DIR) $(CACHE_DIR)/options
+
+$(FUNCS_DIR)/:
+	@$(info creating $(FUNCS_DIR)/ dir)
+	mkdir -p $(FUNCS_DIR)
+
+$(CACHE_DIR)/options_in_use $(getopt) &: $(OPTIONS_FILE) | $(CACHE_DIR)/
 	@$(info parsing $(OPTIONS_FILE))
 	mkdir -p $(DOCS_DIR)/options
 	gawk '
-	BEGIN { RS=" |\\n" }
+	BEGIN { RS=" |\\n" ; longest = length("version")}
 
 	/./ {
 		if (match($$0,/^\[?--([^][|[:space:]]+)(([|]-)(\S))?\]?$$/,ma)) 
@@ -447,7 +443,7 @@ $(CACHE_DIR)/options_in_use $(CACHE_DIR)/getopt &: $(OPTIONS_FILE) | $(CACHE_DIR
 	}
 	' $(OPTIONS_FILE)                  \
 			cache=$(CACHE_DIR)             \
-			name=$(NAME) > $(CACHE_DIR)/getopt
+			name=$(NAME) > $(getopt)
 
 other_maks := $(filter-out config.mak,$(wildcard *.mak))
 -include $(other_maks)
