@@ -16,7 +16,7 @@ $(MANPAGE): $(CACHE_DIR)/wiki.md
 		cat $<
 	} | go-md2man > $@
 
-installed_manpage    = $(DESTDIR)$(PREFIX)/share/man/man$(manpage_section)/$(MANPAGE)
+installed_manpage   := $(DESTDIR)$(PREFIX)/share/man/man$(subst .,,$(suffix $(MANPAGE)))/$(MANPAGE)
 installed_script    := $(DESTDIR)$(PREFIX)/bin/$(NAME)
 
 install: all
