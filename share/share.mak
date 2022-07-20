@@ -1,5 +1,8 @@
-.PHONY: manpage
+.PHONY: manpage install uninstall check
 manpage: $(MANPAGE)
+
+check: all
+	shellcheck $(MONOLITH)
 
 $(MANPAGE): $(CACHE_DIR)/wiki.md
 	@$(info making $@)
