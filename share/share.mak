@@ -1,4 +1,7 @@
 .PHONY: manpage install uninstall check
+
+MANPAGE := $(NAME).1
+
 manpage: $(MANPAGE)
 
 check: all
@@ -16,7 +19,7 @@ $(MANPAGE): $(CACHE_DIR)/wiki.md
 		cat $<
 	} | go-md2man > $@
 
-installed_manpage   := $(DESTDIR)$(PREFIX)/share/man/man$(subst .,,$(suffix $(MANPAGE)))/$(MANPAGE)
+installed_manpage    = $(DESTDIR)$(PREFIX)/share/man/man1/$(MANPAGE)
 installed_script    := $(DESTDIR)$(PREFIX)/bin/$(NAME)
 
 install: all
