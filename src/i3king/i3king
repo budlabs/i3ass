@@ -12,6 +12,7 @@ main(){
   declare -ag global_rules
   declare -ag default_rules
   declare -ag close_rules
+  declare -ag title_rules
   declare -ag rules
   declare -ag commands
   declare -g  _fs=$'\x1f' # field separator, US

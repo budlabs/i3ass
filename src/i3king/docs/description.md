@@ -34,6 +34,46 @@ Some built in magic variables are avaible in the config:
 - $WINID
 - $TITLE
 
+**TITLE** is a rule type that works slightly different
+than the others. If triggered it will always execute
+the command `title_format NEW_TITLE`. And triggers
+on new windows and when a window title changes.
+
+Instead of a command you specify: `[option]/REGEX/ template`
+Use `$1,$2,$3...` in the template to expand them to
+the corresponding capture group from the regex.
+
+`[option]` is optional and can be either:  
+- `~0` remove expanded $HOME/ from NEW_TITLE
+  *if this results in empty NEW_TITLE, a single `~` will be used*
+- `~1` replace expanded $HOME with `~`
+
+EXAMPLE
+-------
+```
+# assuming the window class is "Thunar" and the window
+# title is something like "/home/anon/.config/i3 - Thunar"
+
+TITLE class=Thunar
+  /^(.+)\s-\s(Thunar)$/ Filemanager: $2 - $1
+
+# the above will result in NEW_TITLE: 
+# Filemanager: Thunar - /home/anon/.config/i3
+
+TITLE class=Thunar
+  ~0/^(.+)\s-\s(Thunar)$/ $1
+
+# the above will result in NEW_TITLE: 
+# .config/i3
+
+TITLE class=Thunar
+  ~1/^(.+)\s-\s(Thunar)$/ $1
+
+# the above will result in NEW_TITLE: 
+# ~/.config/i3
+
+```
+
 EXAMPLE
 -------
 
