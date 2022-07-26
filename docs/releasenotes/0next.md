@@ -1,3 +1,21 @@
+#### i3king
+
+**TITLE** new rule type
+
+Triggers on new windows and title change.
+Always execute `title_format NEW_TITLE`
+
+Instead of command /REGEX/ TEMPLATE is assumed
+TEMPLATE can use `$1,$2,$3...` to access capture groups
+from the REGEX.'
+
+
+
+
+
+
+
+
 #### i3ass
 
 Fixed an issue in `share/main.awk` . Titles containing
