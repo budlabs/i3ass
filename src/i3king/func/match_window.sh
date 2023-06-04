@@ -6,6 +6,7 @@ match_window() {
   local type=$5 role=$6 wid=$7 change=$8
 
   local last_cmd cmd rule
+  local title_regex title_options new_title
 
   local identifier=""
 
@@ -20,7 +21,8 @@ match_window() {
   [[ $cid =~ ^[0-9]{5,}$ ]] \
     || ERX "match_window(): $cid is not a valid containerID"
 
-  if [[ $change = close ]]; then
+  case "$change" in
+  close )
     for rule in "${!close_rules[@]}"; do
       [[ $identifier =~ ${close_rules[$rule]} ]] || continue
       cmd=${commands[$rule]}
@@ -30,7 +32,8 @@ match_window() {
       execute+=("$cmd")
       matches+=("ON_CLOSE: ${close_rules[$rule]}"$'\n'$'\t'"$cmd")
     done
-  else
+    ;;
+  new )
     # test default rules first
     for rule in "${!default_rules[@]}"; do
 
@@ -92,7 +95,46 @@ match_window() {
       execute+=("$cmd")
       matches+=("NORMAL: $rule_out"$'\n'$'\t'"$cmd")
     done
-  fi
+    ;& # FALLTHRU !!!!
+  
+  title) #  apply both to new windows and titlechange
+    for rule in "${!title_rules[@]}"; do
+      [[ $identifier =~ ${title_rules[$rule]} ]] || continue
+      cmd=${commands[$rule]}
+      cmd=${cmd//\\\//@@SLASH@@}
+      [[ $cmd =~ ^([^/]+)?/([^/]+)/[[:space:]]+(.+)$ ]] && {
+        title_regex=${BASH_REMATCH[2]//@@SLASH@@//}
+        new_title=${BASH_REMATCH[3]}
+        title_options=${BASH_REMATCH[1]}
+
+        [[ $title =~ ${title_regex} ]] && {
+          for rematch in "${!BASH_REMATCH[@]}"; do
+            ((rematch)) || continue
+            new_title="${new_title//\$$rematch/${BASH_REMATCH[rematch]}}"
+          done
+        }
+
+        case "$title_options" in
+        "~0" )
+          [[ $new_title =~ ("${HOME}"[/]?) ]] && {
+            new_title=${new_title//${BASH_REMATCH[1]}/}
+            [[ $new_title ]] || new_title="~"
+          }
+          ;;
+
+        "~1" )
+          [[ $new_title =~ ("${HOME}") ]] \
+            && new_title=${new_title//${BASH_REMATCH[1]}/'~'}
+          ;;
+        esac
+      }
+
+      execute+=("title_format $new_title")
+      matches+=("TITLE: $title")
+      matches+=("REGEX: $cmd")
+    done
+    ;;
+  esac
 
   [[ -a $_file_log && ${#matches[@]} -gt 0 ]] && {
     echo $'\n'"WINDOW: "\

@@ -48,7 +48,7 @@ main(){
 
   [[ -p $I3_KORNHE_FIFO_FILE ]] && {
     echo "$_direction $_next_mode $_speed $_margin" >> "$I3_KORNHE_FIFO_FILE" &
-    ((_o[verbose] && ! _o[dryrun])) && timer_stop
+    # ((_o[verbose] && ! _o[dryrun])) && timer_stop
     exit
   }
 

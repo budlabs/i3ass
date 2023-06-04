@@ -1,4 +1,0 @@
-vertical\|horizontal  
-
-This forces the layout of the menu to be either vertical or horizontal. If `--layout` is set to **window**, the layout will always be `vertical`.
-

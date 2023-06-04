@@ -1,5 +1,0 @@
-target window, passed to i3list  
-
-TARGET is a string containing additional options passed to **i3list**.
-This can be used to change the target window when `--layout` is set to:
-`window`,`titlebar` or `tab`.

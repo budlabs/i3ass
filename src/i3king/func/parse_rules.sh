@@ -7,7 +7,7 @@ parse_rules() {
 
   re_set='^\s*set\s+[$](\S+)\s+(.+)$'
   re_group='(\s*([^=[:space:]]+)=([^=]+\S)\s*)$'
-  re_rule='^(GLOBAL|DEFAULT|ON_CLOSE)?((\s+)?(.+)\s*)?$'
+  re_rule='^(GLOBAL|DEFAULT|ON_CLOSE|TITLE)?((\s+)?(.+)\s*)?$'
 
   declare -i counter_criteria counter_commands
   
@@ -41,7 +41,7 @@ parse_rules() {
       done
 
     elif [[ $line =~ $re_rule ]]; then
-      # re_rules=^(GLOBAL|DEFAULT|ON_CLOSE)?((\s+)?(.+)\s*)?$
+      # re_rules=^(GLOBAL|DEFAULT|ON_CLOSE|TITLE)?((\s+)?(.+)\s*)?$
       rule_type=${BASH_REMATCH[1]:-NORMAL}
 
       [[ $rule_type = ON_CLOSE && ! ${BASH_REMATCH[4]} ]] \
@@ -98,6 +98,7 @@ parse_rules() {
           DEFAULT  ) default_rules[counter_criteria++]=$rule ;;
           GLOBAL   ) global_rules[counter_criteria++]=$rule  ;;
           ON_CLOSE ) close_rules[counter_criteria++]=$rule   ;;
+          TITLE    ) title_rules[counter_criteria++]=$rule   ;;
           *        ) rules[counter_criteria++]=$rule         ;;
         esac
 

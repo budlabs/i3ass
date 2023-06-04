@@ -18,4 +18,3 @@ $ make
 
 #### runtime dependencies
 [bash], [i3wm], [xdotool], [Gawk]  
-[rofi] (*only used by [i3menu]*)  

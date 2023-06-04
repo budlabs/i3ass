@@ -1,9 +1,0 @@
-change appearance of the menu  
-
-If a **.rasi** file with same name as THEME exist in `I3MENU_DIR/themes`, it's content will get appended to theme file before showing the menu.  
-
-`$ echo "list" | i3menu --theme red`  
-this will use the the file: `I3MENU_DIR/themes/red.rasi`
-
-If no matching themefile is found, `I3MENU_DIR/themes/default.rasi` will be used 
-(and created if it doesn't exist).

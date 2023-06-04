@@ -1,9 +1,0 @@
-put TOP at the top of the list  
-
-If TOP is set, the input stream (LIST) will get matched against TOP.
-Lines in LIST with an exact MATCH of those in TOP will get moved to the TOP of LIST before the menu is created.
-
-`$ printf '%s\n' one two three four | i3menu --top "$(printf '%s\n' two four)"`  
-
-will result in a list looking like this:  
-`two four one three`

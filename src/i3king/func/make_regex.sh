@@ -6,7 +6,7 @@ local re
 
 re+=$(cat << EOB
 (\{)
-"change":"(new|close)",
+"change":"(new|close|title)",
 "container":[{]
 "id":([0-9]+),
 "type":"[^"]+",

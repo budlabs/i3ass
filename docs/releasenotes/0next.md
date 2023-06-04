@@ -1,23 +1,5 @@
-#### i3ass
+#### i3menu
 
-Fixed an issue in `share/main.awk` . Titles containing
-a colon (`:`) character where not being captured by
-f.i. `i3get -r o`. #174 thanks @DominikMarcinowski
-
-#### i3run
-
-Added `--silent` option
-
-#### i3king
-
-fixed issue where commented lines ending with backslash
-concatenated the next line.  
-
-added support for `$ROLE and $TYPE` variables in config.
-
-#### i3get
-
-added `--timeout SECONDS` option. To adjust the timeout
-before `--synk` stops waiting for a window (default 60s)
-
-
+has been rewritten to use a custom dmenu fork instead
+of rofi. i3menu is no longer part of i3ass repository
+and now lives in it's own repo.

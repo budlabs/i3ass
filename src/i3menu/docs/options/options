@@ -1,9 +1,0 @@
-extra rofi options  
-
-The argument is a string of aditional options to pass to **rofi**.  
-
-`$ i3menu --prompt "Enter val: " --options '-matching regex'`  
-will result in a call to rofi looking something like this:  
-`rofi -p "Enter val: " -matching regex -dmenu`
-
-Note that the **rofi** options: `-p, -filter, -show, -modi` *could be* entered to as arguments to `i3menu --options`, but it is recommended to use: `--prompt`, `--filter`, `--show` and `--modi` instead, since this will make i3menu optimize the layout better.

@@ -1,7 +1,7 @@
 NAME         := i3king
-VERSION      := 0.33
+VERSION      := 0.4
 CREATED      := 2021-06-01
-UPDATED      := 2022-05-21
+UPDATED      := 2022-07-26
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := i3king [OPTIONS]
