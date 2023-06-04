@@ -1,5 +1,0 @@
-    [--theme THEME] [--layout|-a LAYOUT] [--include|-i INCLUDESTRING] [--top|-t TOP] [--xpos|-x INT] [--xoffset INT] [--ypos|-y INT] [--yoffset INT] [--width|-w INT] [--options|-o OPTIONS] [--prompt|-p PROMPT]  [--filter|-f FILTER] [--show MODE] [--modi MODI] [--target TARGET] [--orientation ORIENTATION] [--anchor INT] [--height INT] [--fallback FALLBACK] [--no-auto-position] 
-    [--verbose] [--dryrun] 
-    [--list-directory DIRECTORY] 
-    --help|-h
-    --version|-v

@@ -1,6 +1,0 @@
-Changes the width of the menu  
-
-If the argument to `--width` ends with a `%`
-character the width will be that many percentages
-of the screenwidth. Without `%` absolute width in
-pixels will be set.

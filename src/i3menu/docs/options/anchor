@@ -1,8 +1,0 @@
-Sets the "*anchor*" point of the menu.  
-
-The default is **1**. **1** means the top left
-corner, **9** means the bottom right corner.
-Corner in this context doesn't refer to the
-corners of the screen, but the corners of the
-menu. If the anchor is *top left* (**1**), the
-menu will *grow* from that point.

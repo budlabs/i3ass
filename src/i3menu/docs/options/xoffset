@@ -1,6 +1,0 @@
-offsets the menu on the x axis  
-
-If `--layout` is set to `window` and `--xpos`
-is set to `-50`, the menu will be placed 50 pixels
-to the left of the active window but have the same
-dimensions as the window.
