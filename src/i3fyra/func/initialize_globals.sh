@@ -19,8 +19,11 @@ initialize_globals() {
 
     [[ $I3FYRA_WS ]] || {
       eval "$(i3list)"
-      I3FYRA_WS=\"${i3list[WAN]}\"
+      I3FYRA_WS=${i3list[WAN]}
     }
+
+    [[ $I3FYRA_WS =~ ^\" ]] \
+      || I3FYRA_WS=$(printf '"%s"' "$I3FYRA_WS")
 
     (( _o[float] && i3list[AWF]==0 )) \
       || i3var set i3fyra_ws "$I3FYRA_WS"
