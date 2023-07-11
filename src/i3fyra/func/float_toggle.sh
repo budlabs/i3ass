@@ -30,7 +30,7 @@ float_toggle(){
     fi
     
 
-    if [[ ${i3list[LVI]} =~ I3FYRA_MAIN_CONTAINER ]]; then
+    if [[ ${i3list[LVI]} =~ $I3FYRA_MAIN_CONTAINER ]]; then
       target=$I3FYRA_MAIN_CONTAINER
     elif [[ ${i3list[LVI]} ]]; then
       target=${i3list[LVI]:0:1}
