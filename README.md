@@ -20,6 +20,9 @@ $ make
 
 #### build dependencies
 [GNU make], [Gawk], [bash], [GNU sed](https://www.gnu.org/software/sed/)  
+[go-md2man] is needed to **re**-build the manpages (optional)
+
+[go-md2man]: https://github.com/cpuguy83/go-md2man
 
 #### runtime dependencies
 [bash], [i3wm], [xdotool], [Gawk]  
@@ -44,6 +47,7 @@ of most of **i3ass**.
 script | description
 |:-|:-|
 [i3Kornhe] | move and resize windows gracefully  
+[i3ass] | Print environment information  
 [i3flip] | Tabswitching done right  
 [i3fyra] | An advanced, simple grid-based tiling layout  
 [i3get] | prints info about a specific window to stdout  
@@ -51,7 +55,7 @@ script | description
 [i3king] | window ruler  
 [i3list] | list information about the current i3 session  
 [i3run] | Run, Raise or hide windows in i3wm  
-[i3var] | get or get a i3 variable  
+[i3var] | get or set a i3 variable  
 [i3viswiz] | professional window focus for i3wm  
 [i3zen] | zentered container, full focus  
 
