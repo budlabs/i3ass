@@ -2,17 +2,18 @@
 
 main(){
 
-  frm="%-8s | %-7s | %-10s | %s\n"
-
-  printf "$frm" ASS VERSION UPDATED PATH
-  echo -------------------------------------------
-
-  for ass in i3{ass,flip,fyra,get,gw,king,Kornhe,list,var,viswiz,zen}; do
+  for ass in i3{flip,fyra,get,gw,king,Kornhe,list,var,viswiz,zen}; do
     path=$(command -v "$ass")
     version_output=$("$ass" -v 2>&1)
-    [[ $path ]] && read -rs _ _ _ version _ updated _ <<< "${version_output//$'\n'/ }"
+    
+    # i3ass - version: 0.0.1
+    # updated: 2023-07-12 by budRich
+    [[ $path ]] \
+      && read -rs _ _ _ version _ updated _ \
+         <<< "${version_output//$'\n'/ }" 
 
-    printf "$frm" "$ass" "${version:--}" "${updated:--}" "${path/~/'~'}"
+    printf "%-8s | %-7s | %-10s | %s\n" \
+      "$ass" "${version:--}" "${updated:--}" "${path/~/'~'}"
   done
 
   echo
@@ -30,8 +31,7 @@ main(){
   echo
   echo -------------------------------------------
   echo
-  echo "export | grep I3FYRA"
-  export | grep I3FYRA
+  export | grep I3FYRA | cut -f3 -d' '
 }
 
 __dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
