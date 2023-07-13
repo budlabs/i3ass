@@ -1,5 +1,13 @@
-#### i3menu
+[i3list]  
 
-has been rewritten to use a custom dmenu fork instead
-of rofi. i3menu is no longer part of i3ass repository
-and now lives in it's own repo.
+Fixed an issue where i3fyra workspace couldn't be
+seen if it wasn't the currently active workspace (#180)
+
+[i3fyra]  
+
+Fixed a typo that made I3FYRA_MAIN_CONTAINER be ignored
+
+[i3king]  
+
+Fixed an issue where commands where not printed
+when `--print-commands` was used (i3fyra)
