@@ -7,6 +7,8 @@ assignees: budRich
 
 ---
 
+### before anything else, try to reproduce the bug with the [wiki config](https://github.com/budlabs/i3ass/wiki/i3-config-example)
+
 **Describe the bug**
 A clear and concise description of what the bug is.
 
