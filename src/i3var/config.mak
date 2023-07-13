@@ -5,7 +5,7 @@ UPDATED      := 2022-05-21
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options
-DESCRIPTION  := get or get a i3 variable
+DESCRIPTION  := get or set a i3 variable
 ORGANISATION := budlabs
 LICENSE      := MIT
 

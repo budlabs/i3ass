@@ -15,6 +15,9 @@ $ make
 
 #### build dependencies
 [GNU make], [Gawk], [bash], [GNU sed](https://www.gnu.org/software/sed/)  
+[go-md2man] is needed to **re**-build the manpages (optional)
+
+[go-md2man]: https://github.com/cpuguy83/go-md2man
 
 #### runtime dependencies
 [bash], [i3wm], [xdotool], [Gawk]  

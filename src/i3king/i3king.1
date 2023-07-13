@@ -1,5 +1,5 @@
 .nh
-.TH I3KING  1 2022-05-19 budlabs "User Manuals"
+.TH I3KING   2023-07-13 budlabs "User Manuals"
 .SH NAME
 .PP
 i3king - window ruler
@@ -103,6 +103,54 @@ $TITLE
 
 .RE
 
+.PP
+\fBTITLE\fP is a rule type that works slightly different
+than the others. If triggered it will always execute
+the command \fB\fCtitle_format NEW_TITLE\fR\&. And triggers
+on new windows and when a window title changes.
+
+.PP
+Instead of a command you specify: \fB\fC[option]/REGEX/ template\fR
+Use \fB\fC$1,$2,$3...\fR in the template to expand them to
+the corresponding capture group from the regex.
+
+.PP
+\fB\fC[option]\fR is optional and can be either:
+.br
+- \fB\fC~0\fR remove expanded $HOME/ from NEW_TITLE
+  \fIif this results in empty NEW_TITLE, a single \fB\fC~\fR will be used\fP
+- \fB\fC~1\fR replace expanded $HOME with \fB\fC~\fR
+
+.SH EXAMPLE
+.PP
+.RS
+
+.nf
+# assuming the window class is "Thunar" and the window
+# title is something like "/home/anon/.config/i3 - Thunar"
+
+TITLE class=Thunar
+  /^(.+)\\s-\\s(Thunar)$/ Filemanager: $2 - $1
+
+# the above will result in NEW_TITLE: 
+# Filemanager: Thunar - /home/anon/.config/i3
+
+TITLE class=Thunar
+  ~0/^(.+)\\s-\\s(Thunar)$/ $1
+
+# the above will result in NEW_TITLE: 
+# .config/i3
+
+TITLE class=Thunar
+  ~1/^(.+)\\s-\\s(Thunar)$/ $1
+
+# the above will result in NEW_TITLE: 
+# ~/.config/i3
+
+
+.fi
+.RE
+
 .SH EXAMPLE
 .PP
 .RS
@@ -192,6 +240,6 @@ https://github.com/budlabs/i3ass/issues
 
 .SH COPYRIGHT
 .PP
-Copyright (c) 2021-2022, budRich of budlabs
+Copyright (c) 2021-2023, budRich of budlabs
 .br
 SPDX-License-Identifier: MIT

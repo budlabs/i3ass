@@ -19,6 +19,7 @@
 [i3menu]: https://github.com/budlabs/i3ass/wiki/i3menu
 [i3viswiz]: https://github.com/budlabs/i3ass/wiki/i3viswiz
 [i3king]: https://github.com/budlabs/i3ass/wiki/i3king
+[i3ass]: https://github.com/budlabs/i3ass/wiki/i3ass
 [i3zen]: https://github.com/budlabs/i3ass/wiki/i3zen
 [youtube channel]: https://youtube.com/c/dubbeltumme
 [rofi]: https://github.com/davatorium/rofi

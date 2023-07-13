@@ -5,6 +5,8 @@ match_window() {
   local cid=$1 class=$2 instance=$3 title=$4 
   local type=$5 role=$6 wid=$7 change=$8
 
+  ((_o[print-commands])) && change=new
+
   local last_cmd cmd rule
   local title_regex title_options new_title
 
@@ -178,8 +180,7 @@ match_window() {
       ((_o[print-commands] || _o[dryrun])) \
         || >&2 i3-msg "${prefix:-} $cmd"
 
-      ((_o[print-commands])) \
-        && echo "${prefix:-} $cmd"
+      ((_o[print-commands])) && echo "${prefix:-} $cmd"
       
     done
   }

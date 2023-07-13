@@ -1,5 +1,5 @@
 NAME         := i3fyra
-VERSION      := 1.35
+VERSION      := 1.36
 CREATED      := 2017-01-14
 UPDATED      := 2022-06-05
 AUTHOR       := budRich
