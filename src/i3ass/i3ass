@@ -1,0 +1,38 @@
+#!/bin/bash
+
+main(){
+
+  frm="%-8s | %-7s | %-10s | %s\n"
+
+  printf "$frm" ASS VERSION UPDATED PATH
+  echo -------------------------------------------
+
+  for ass in i3{ass,flip,fyra,get,gw,king,Kornhe,list,var,viswiz,zen}; do
+    path=$(command -v "$ass")
+    version_output=$("$ass" -v 2>&1)
+    [[ $path ]] && read -rs _ _ _ version _ updated _ <<< "${version_output//$'\n'/ }"
+
+    printf "$frm" "$ass" "${version:--}" "${updated:--}" "${path/~/'~'}"
+  done
+
+  echo
+  echo -------------------------------------------
+  echo
+
+  for cmd in i3 bash gawk xdotool ; do
+    if command -v "$cmd" >/dev/null ; then
+      "$cmd" --version 2>&- | head -n1
+    else
+      echo "WARNING: command $cmd not found"
+    fi
+  done
+
+  echo
+  echo -------------------------------------------
+  echo
+  echo "export | grep I3FYRA"
+  export | grep I3FYRA
+}
+
+__dir=$(dirname $(readlink -f "${BASH_SOURCE[0]}")) #bashbud
+source "$__dir/_init.sh"                            #bashbud
