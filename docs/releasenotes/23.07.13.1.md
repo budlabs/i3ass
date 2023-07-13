@@ -15,3 +15,6 @@ Fixed a typo that made I3FYRA_MAIN_CONTAINER be ignored
 
 Fixed an issue where commands where not printed
 when `--print-commands` was used (i3fyra)
+
+Account for `"actual_deco_rect":` in JSON, not doing
+this made it so some windows never triggered rules

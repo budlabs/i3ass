@@ -88,6 +88,7 @@ main(){
           [w]="${BASH_REMATCH[++i]}"               # rect
           [h]="${BASH_REMATCH[++i]}"               # rect
           [b]="${BASH_REMATCH[++i]}"               # deco_rect, height. i.e. titlebar height
+          [O]="${BASH_REMATCH[++i]}"               # actual_deco_rect (new in i3 4.22)
           [title]="${BASH_REMATCH[++i]//%DQ%/\"}"  # "name:"            - STRING
           [O]="${BASH_REMATCH[++i]}"               # ! optional group
           [frm]="${BASH_REMATCH[++i]//%DQ%/\"}"    # "title_format:"    - string

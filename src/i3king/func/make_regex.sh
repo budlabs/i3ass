@@ -24,6 +24,7 @@ re+=$(cat << EOB
 "current_border_width":[0-9-]+,
 "rect":[{]"x":([0-9]+),"y":([0-9]+),"width":([0-9]+),"height":([0-9]+)},
 "deco_rect":[^g]+ght":([0-9]+)},
+("actual_deco_rect":[^}]+},)?
 "window_rect":[^}]+},
 "geometry":[^}]+},
 "name":"?([^\"]+)"?,
