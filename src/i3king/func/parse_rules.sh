@@ -88,7 +88,7 @@ parse_rules() {
           rule=${rule/$key${_fs}\[^${_fs}]\*${_fs}/$key${_fs}$val${_fs}}
         done
 
-        [[ -a $_file_log ]] && {
+        [[ -a $_file_log && -z ${_o[print-commands]} ]] && {
           rule_out=${rule//$_fs/:}
           rule_out=${rule_out//\[^:]/.}
           echo "$rule_out" 

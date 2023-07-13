@@ -10,7 +10,6 @@ float_toggle(){
   if ((i3list[AWF]==1)); then
 
     [[ -f $I3_KING_PID_FILE ]] && {
-      ERM "hhh"
 
       mapfile -t king_commands <<< "$(i3king --conid "${i3list[TWC]}" --print-commands)"
 
@@ -31,7 +30,7 @@ float_toggle(){
     fi
     
 
-    if [[ ${i3list[LVI]} =~ I3FYRA_MAIN_CONTAINER ]]; then
+    if [[ ${i3list[LVI]} =~ $I3FYRA_MAIN_CONTAINER ]]; then
       target=$I3FYRA_MAIN_CONTAINER
     elif [[ ${i3list[LVI]} ]]; then
       target=${i3list[LVI]:0:1}
