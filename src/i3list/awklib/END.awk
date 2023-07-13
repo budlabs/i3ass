@@ -106,70 +106,80 @@ END {
   }
 
   ### -- I3FYRA STUFF
-  if (i3fyra_workspace_id) {
-    print_workspace("F",i3fyra_workspace_id)
-    print ""
+  if (i3fyra_workspace_name) {
+    if (i3fyra_workspace_id) {
+      print_workspace("F",i3fyra_workspace_id)
+      print ""
 
-    for (container_name in fyra_containers) {
-      container_id=fyra_containers[container_name]["id"]
-      workspace_id=fyra_containers[container_name]["workspace"]
+      for (container_name in fyra_containers) {
+        container_id=fyra_containers[container_name]["id"]
+        workspace_id=fyra_containers[container_name]["workspace"]
 
-      key="C" container_name "L"; printf(strfrm,key, ac[container_id]["layout"], desc[key])
-      key="C" container_name "W"; printf(strfrm,key, ac[workspace_id]["num"], desc[key])
-      key="C" container_name "N"; printf(strfrm,key, ac[workspace_id]["name"], desc[key])
+        key="C" container_name "L"; printf(strfrm,key, ac[container_id]["layout"], desc[key])
+        key="C" container_name "W"; printf(strfrm,key, ac[workspace_id]["num"], desc[key])
+        key="C" container_name "N"; printf(strfrm,key, ac[workspace_id]["name"], desc[key])
 
-      focused=ac[container_id]["focused"]
-      # make sure the focused container is a window
-      # while (!("window" in ac[focused]))
-      #   focused=ac[focused]["focused"]
+        focused=ac[container_id]["focused"]
+        # make sure the focused container is a window
+        # while (!("window" in ac[focused]))
+        #   focused=ac[focused]["focused"]
 
-      key="C" container_name "F"; printf(strfrm,key, focused, desc[key])
+        key="C" container_name "F"; printf(strfrm,key, focused, desc[key])
 
-      if (fyra_containers[container_name]["visible"])
-        LVI=LVI container_name
-      else 
-        LHI=LHI container_name
+        if (fyra_containers[container_name]["visible"])
+          LVI=LVI container_name
+        else 
+          LHI=LHI container_name
+      }
+      
+      print ""
+
+      key="LVI"; printf(strfrm,key, LVI, desc[key])
+      key="LHI"; printf(strfrm,key, LHI, desc[key])
+      key="LEX"; printf(strfrm,key, LVI LHI, desc[key])
+
+      print ""
+      
+      for (family in fyra_splits) {
+
+        first=substr(family,1,1)
+
+        split(family,split_childs,"")
+        first_id=fyra_containers[first]["id"]
+
+        if (family == main_split)
+          family_split_size = main_split_size
+
+        else if ( orientation == "horizontal"       && 
+             fyra_containers[first]["visible"] &&
+             ac[first_id]["h"] != ac[i3fyra_workspace_id]["h"] )
+          family_split_size=ac[first_id]["h"]
+
+        else if ( orientation == "vertical"         && 
+                  fyra_containers[first]["visible"] &&
+                  ac[first_id]["w"] != ac[i3fyra_workspace_id]["w"] )
+          family_split_size=ac[first_id]["w"]
+
+        else
+          family_split_size=0
+
+        key="S" family; printf(strfrm, key, family_split_size, desc[key])
+      }
     }
-    
-    key="LVI"; printf(strfrm,key, LVI, desc[key])
-    key="LHI"; printf(strfrm,key, LHI, desc[key])
-    key="LEX"; printf(strfrm,key, LVI LHI, desc[key])
-
-    for (family in fyra_splits) {
-
-      first=substr(family,1,1)
-
-      split(family,split_childs,"")
-      first_id=fyra_containers[first]["id"]
-
-      if (family == main_split)
-        family_split_size = main_split_size
-
-      else if ( orientation == "horizontal"       && 
-           fyra_containers[first]["visible"] &&
-           ac[first_id]["h"] != ac[i3fyra_workspace_id]["h"] )
-        family_split_size=ac[first_id]["h"]
-
-      else if ( orientation == "vertical"         && 
-                fyra_containers[first]["visible"] &&
-                ac[first_id]["w"] != ac[i3fyra_workspace_id]["w"] )
-        family_split_size=ac[first_id]["w"]
-
-      else
-        family_split_size=0
-
-      key="S" family; printf(strfrm, key, family_split_size, desc[key])
-    }
-    # key="S" main_split; printf(strfrm, key, main_split_size, desc[key])
+    else
+      printf(strfrm,"WFN", i3fyra_workspace_name, desc["WFN"])
 
     print ""
+  }
+
+  if (length(fyra_vars) > 0) {
     for (key in fyra_vars) {
       printf(strfrm, key, fyra_vars[key], desc[key])
     }
-    
-  }
 
-  print ""
+    print ""
+  }
+  
   printf(strfrm, "RID", root_id, desc["RID"])
   printf(strfrm, "SUS", SUS, desc["SUS"])
 }
