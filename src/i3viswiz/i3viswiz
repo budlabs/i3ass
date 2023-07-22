@@ -2,10 +2,14 @@
 
 main(){
 
-  (($#)) && {
-    arg_direction=${!#:0:1} arg_direction=${arg_direction,,}
-    [[ $arg_direction =~ l|r|u|d ]] \
-      || ERX "${!#} not valid direction (l|r|u|d)"
+  [[ ${arg_direction:=${1,,}} ]] && { 
+    [[ ${arg_direction} =~ ^(l|r|u|d|left|right|up|down)$ ]]  \
+      || ERX "i3viswiz: direction ('$arg_direction') is not valid!" \
+             "( left|right|up|down|l|r|u|d )"
+
+    shift
+    (($#)) && ERX "i3viswiz: expected 0 arguments got '($*)'"
+    arg_direction=${arg_direction:0:1}
   }
 
   : "${_o[json]:=$(i3-msg -t get_tree)}"
