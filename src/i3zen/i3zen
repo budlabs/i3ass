@@ -135,9 +135,11 @@ main(){
 
   }
 
-  [[ $_msgstring ]] \
-    && >&2 i3-msg ${qflag:-} "$_msgstring"
-  unset _msgstring
+
+  [[ $_msgstring ]] && {
+    >&2 i3-msg "${qflag:-}" "${_msgstring%;}"
+    unset _msgstring
+  }
 
   # if origin workspace doesn't exist after zen
   # container is created. we move zen container
@@ -150,7 +152,7 @@ main(){
             move --no-auto-back-and-forth to workspace "${i3list[WAN]}", \
             workspace --no-auto-back-and-forth "${i3list[WAN]}"
 
-      >&2 i3-msg ${qflag:-} "$_msgstring"
+      >&2 i3-msg "${qflag:-}" "${_msgstring%;}"
     }
   }
 }
