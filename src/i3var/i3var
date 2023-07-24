@@ -9,7 +9,7 @@ main(){
 
   : "${json:=${_o[json]:-$(i3-msg -t get_tree)}}"
 
-  re='^\{"id":([0-9]+)[^[]+\[([^]]*"'"${variable_name}"'=([^,]*)"[^]]*)?'
+  re='^\{"id":([0-9]+)[^[]+\[([^]]*"'"${variable_name}"'=([^"]*)"[^]]*)?'
   [[ $json =~ $re ]] || ERX "no vars found"
 
   root_id=${BASH_REMATCH[1]}
