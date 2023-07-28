@@ -11,9 +11,11 @@ main(){
   _json=$(i3-msg -t get_tree)
   _mark=${_o[mark]:-centerzen}
 
-  eval "$(i3list -m "$_mark" --json "$_json")"
+  eval "$(i3list --mark "$_mark" --json "$_json")"
 
-  var_data=$(i3var get "zen${i3list[AWC]}")
+  # if a container with mark "$_mark" exist
+  # WTN is workspace-name where that container is
+  ws_zen=${i3list[WTN]}
 
   # zen var: 
   # window was floating: zenCON_ID=WIDTHxHEIGHT+XPOS+YPOS:WORKSPACE_ORIGIN
@@ -82,6 +84,8 @@ main(){
     [[ $var_zen_current ]] \
       || i3var set "zen${i3list[AWC]}" "$var_zen_new"
 
+  # APA = active containers parent ID
+  # TWC = target container (has mark "$mark") ID
   elif ((i3list[APA] == i3list[TWC])); then
     
     [[ $var_zen_current =~ ([^:]+):(.+) ]] && {
@@ -92,9 +96,14 @@ main(){
 
     re='([0-9]+)x([0-9]+)\+([0-9-]+)\+([0-9-]+)'
     if [[ $trg_geo =~ $re ]]; then
+
+      float_as="floating enable"
+
       tmpw=${BASH_REMATCH[1]} tmph=${BASH_REMATCH[2]}
       tmpx=${BASH_REMATCH[3]} tmpy=${BASH_REMATCH[4]}
-      float_as="floating enable, resize set $tmpw $tmph, move position $tmpx $tmpy"
+
+      float_as+=", resize set $tmpw $tmph"
+      float_as+=", move position $tmpx $tmpy"
     else
       float_as="floating disable"
     fi
