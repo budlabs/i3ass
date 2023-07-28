@@ -15,13 +15,16 @@ main(){
 
   var_data=$(i3var get "zen${i3list[AWC]}")
 
+  # zen var: 
+  # window was floating: zenCON_ID=WIDTHxHEIGHT+XPOS+YPOS:WORKSPACE_ORIGIN
+  # window was tiled:    zenCON_ID=tiled:WORKSPACE_ORIGIN
+  var_zen_current=$(i3var get "zen${i3list[AWC]}")
+
   ((i3list[AWF])) \
-    && var="${i3list[AWW]}x${i3list[AWH]}+${i3list[AWX]}+${i3list[AWY]}:" \
-    || var="tiled:"
+    && var_zen_new="${i3list[AWW]}x${i3list[AWH]}+${i3list[AWX]}+${i3list[AWY]}:" \
+    || var_zen_new="tiled:"
 
-  var+=${i3list[WAN]}
-
-  ws_zen=${i3list[WTN]}
+  var_zen_new+=${i3list[WAN]}
 
   ws_json=$(i3-msg -t get_workspaces)
   re=',"name":"([^"]+)"'
@@ -76,14 +79,13 @@ main(){
           "resize set $width $height ," \
           "move absolute position $x $y"
 
-    [[ $var_data ]] || i3var set "zen${i3list[AWC]}" "$var"
+    [[ $var_zen_current ]] \
+      || i3var set "zen${i3list[AWC]}" "$var_zen_new"
 
   elif ((i3list[APA] == i3list[TWC])); then
     
-    [[ $var_data =~ ([^:]+):(.+) ]] && {
-      # trg_geo is "tiled" if the window was tiled before
-      # getting zen. If it was tiled trg_geo is:
-      # WIDTHxHEIGHT+X+Y
+    [[ $var_zen_current =~ ([^:]+):(.+) ]] && {
+      # "WIDTHxHEIGHT+X+Y" || "tiled"
       trg_geo=${BASH_REMATCH[1]}
       trg_ws=${BASH_REMATCH[2]}
     }
@@ -113,7 +115,7 @@ main(){
           "move to mark $_mark,"        \
           "focus, workspace --no-auto-back-and-forth $ws_zen"
 
-    [[ $var_data ]] || i3var set "zen${i3list[AWC]}" "$var"
+    [[ $var_zen_current ]] || i3var set "zen${i3list[AWC]}" "$var_zen_new"
   fi
 
   (( _o[verbose] )) || qflag=-q
