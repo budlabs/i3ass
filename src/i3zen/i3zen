@@ -29,19 +29,21 @@ main(){
   var_zen_new+=${i3list[WAN]}
 
   ws_json=$(i3-msg -t get_workspaces)
-  re=',"name":"([^"]+)"'
 
   while read -rs ; do
     if [[ $REPLY =~ \"num\":([0-9-]+) ]]; then
       ws_temp=${BASH_REMATCH[1]}
       ((ws_temp > ws_free)) && ws_free=$ws_temp
-    elif [[ ${_o[workspace]} && $REPLY =~ \"name\":\"${_o[workspace]} ]]; then
-      unset '_o[workspace]'
+    # elif [[ ${_o[workspace]} && $REPLY =~ \"name\":\"${_o[workspace]} ]]; then
+    #   unset '_o[workspace]'
     fi
   done <<< "${ws_json//,/$'\n'}"
 
   # ws_free is a vacant workspace (highest ws number + 1)
-  if ((++ws_free)) && [[ ! $ws_zen ]]; then
+  ws_free=$((ws_free + 1))
+  unset ws_temp ws_json
+
+  if [[ ! $ws_zen ]]; then
 
     [[ ${_o[workspace]} ]] \
       && ws_zen=${_o[workspace]}          \
