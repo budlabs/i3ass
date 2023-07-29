@@ -10,8 +10,6 @@ next_vacant_workspace() {
     if [[ $REPLY =~ \"num\":([0-9-]+) ]]; then
       ws_temp=${BASH_REMATCH[1]}
       ((ws_temp > ws_free)) && ws_free=$ws_temp
-    # elif [[ ${_o[workspace]} && $REPLY =~ \"name\":\"${_o[workspace]} ]]; then
-    #   unset '_o[workspace]'
     fi
   done <<< "${ws_json//,/$'\n'}"
 
