@@ -5,146 +5,50 @@
 
 main(){
 
-  declare -g _msgstring
+  declare -g _msgstring _mark _json  _ws_zen \
+             _var_zen_current _var_zen_new
   declare -A i3list
 
   _json=$(i3-msg -t get_tree)
   _mark=${_o[mark]:-centerzen}
 
-  eval "$(i3list -m "$_mark" --json "$_json")"
+  eval "$(i3list --mark "$_mark" --json "$_json")"
 
-  var_data=$(i3var get "zen${i3list[AWC]}")
+  # window was floating: zenCON_ID=WIDTHxHEIGHT+XPOS+YPOS:WORKSPACE_ORIGIN
+  # window was tiled:    zenCON_ID=tiled:WORKSPACE_ORIGIN
+  _var_zen_current=$(i3var get "zen${i3list[AWC]}")
 
   ((i3list[AWF])) \
-    && var="${i3list[AWW]}x${i3list[AWH]}+${i3list[AWX]}+${i3list[AWY]}:" \
-    || var="tiled:"
+    && _var_zen_new="${i3list[AWW]}x${i3list[AWH]}+${i3list[AWX]}+${i3list[AWY]}:" \
+    || _var_zen_new="tiled:"
 
-  var+=${i3list[WAN]}
+  _var_zen_new+=${i3list[WAN]}
 
-  ws_zen=${i3list[WTN]}
+  # if a container with mark "$_mark" exist
+  # WTN is workspace-name where that container is
+  if [[ ! ${_ws_zen:=${i3list[WTN]}} ]]; then
+    create_zen_workspace
 
-  ws_json=$(i3-msg -t get_workspaces)
-  re=',"name":"([^"]+)"'
-
-  while read -rs ; do
-    if [[ $REPLY =~ \"num\":([0-9-]+) ]]; then
-      ws_temp=${BASH_REMATCH[1]}
-      ((ws_temp > ws_free)) && ws_free=$ws_temp
-    elif [[ ${_o[workspace]} && $REPLY =~ \"name\":\"${_o[workspace]} ]]; then
-      unset '_o[workspace]'
-    fi
-  done <<< "${ws_json//,/$'\n'}"
-
-  # ws_free is a vacant workspace (highest ws number + 1)
-  if ((++ws_free)) && [[ ! $ws_zen ]]; then
-
-    [[ ${_o[workspace]} ]] \
-      && ws_zen=${_o[workspace]}          \
-      || ws_zen=$ws_free
-
-    messy "[con_id=${i3list[AWC]}]"    \
-          move --no-auto-back-and-forth to workspace "$ws_zen," \
-          floating disable,            \
-          split v, layout tabbed,      \
-          focus, focus parent
-
-    messy "mark $_mark"
-
-    ((_o[width]  > 0 && _o[width]  < 100)) || _o[width]=75
-    ((_o[height] > 0 && _o[height] < 100)) || _o[height]=90
-
-    width=$((  (i3list[WAW] * _o[width])  / 100 ))
-    height=$(( (i3list[WAH] * _o[height]) / 100 ))
-
-    ((_o[xpos] < 0)) && _o[xpos]=$(( i3list[WAW]-(width  - _o[xpos]) ))
-    ((_o[ypos] < 0)) && _o[ypos]=$(( i3list[WAH]-(height - _o[ypos]) ))
-
-    x=${_o[xpos]:-$(( (i3list[WAW]-width)  / 2 ))}
-    y=${_o[ypos]:-$(( (i3list[WAH]-height) / 2 ))}
-
-    x=$((x + i3list[WAX])) y=$((y + i3list[WAY]))
-
-    messy "[con_mark=$_mark]" \
-          floating enable,    \
-          workspace --no-auto-back-and-forth "$ws_zen"
-
-    # if the focus action below isn't included, the
-    # container will not resize properly..
-    messy "[con_id=${i3list[AWC]}] focus"
-
-    messy "[con_mark=$_mark]"           \
-          "resize set $width $height ," \
-          "move absolute position $x $y"
-
-    [[ $var_data ]] || i3var set "zen${i3list[AWC]}" "$var"
-
+  # APA = active containers parent ID
+  # TWC = target container (has mark "$_mark") ID
   elif ((i3list[APA] == i3list[TWC])); then
-    
-    [[ $var_data =~ ([^:]+):(.+) ]] && {
-      # trg_geo is "tiled" if the window was tiled before
-      # getting zen. If it was tiled trg_geo is:
-      # WIDTHxHEIGHT+X+Y
-      trg_geo=${BASH_REMATCH[1]}
-      trg_ws=${BASH_REMATCH[2]}
-    }
-
-    re='([0-9]+)x([0-9]+)\+([0-9-]+)\+([0-9-]+)'
-    if [[ $trg_geo =~ $re ]]; then
-      tmpw=${BASH_REMATCH[1]} tmph=${BASH_REMATCH[2]}
-      tmpx=${BASH_REMATCH[3]} tmpy=${BASH_REMATCH[4]}
-      float_as="floating enable, resize set $tmpw $tmph, move position $tmpx $tmpy"
-    else
-      float_as="floating disable"
-    fi
-
-    messy "[con_id=${i3list[AWC]}]"    \
-          floating enable,             \
-          move --no-auto-back-and-forth to workspace "$trg_ws", \
-          "$float_as" ,                \
-          workspace --no-auto-back-and-forth "$trg_ws"
-
-    i3var set "zen${i3list[AWC]}"
-    
+    unzen_container
 
   else
-    messy "[con_id=${i3list[AWC]}]"     \
-          move --no-auto-back-and-forth to workspace "$ws_free", \
-          "floating disable,"           \
-          "move to mark $_mark,"        \
-          "focus, workspace --no-auto-back-and-forth $ws_zen"
-
-    [[ $var_data ]] || i3var set "zen${i3list[AWC]}" "$var"
+    move_to_zen_container
   fi
 
-  (( _o[verbose] )) || qflag=-q
-
-  [[ $float_as = "floating disable" && -f $I3_KING_PID_FILE ]] && {
-
-    ((_o[verbose])) && ERM "i3zen -> i3king --conid ${i3list[AWC]}"
-
-    mapfile -t king_commands <<< "$(i3king --conid "${i3list[AWC]}" \
-                                           --print-commands         \
-                                           --json "$_json")"
-
-    for command in "${!king_commands[@]}"; do
-      if [[ ${king_commands[command]} =~ floating\ enable ]]
-        then unset 'king_commands[command]'
-        else messy "${king_commands[command]}"
-      fi
-    done
-
-  }
-
+  ((_o[verbose])) || quite_flag=-q
 
   [[ $_msgstring ]] && {
-    >&2 i3-msg "${qflag:-}" "${_msgstring%;}"
+    >&2 i3-msg "$quite_flag" "${_msgstring%;}"
     unset _msgstring
   }
 
   # if origin workspace doesn't exist after zen
-  # container is created. we move zen container
-  # back to that workspace.
-  ((width)) && [[ ! ${_o[workspace]} ]] && {
+  # container is **Automatically** created. we
+  # move zen container back to origin(active) workspace. 
+  [[ ${_o[workspace]}$_ws_zen ]] || {
     re='"name":"'"${i3list[WAN]}"'",'
     [[ $(i3-msg -t get_workspaces) =~ $re ]] || {
 
@@ -152,7 +56,7 @@ main(){
             move --no-auto-back-and-forth to workspace "${i3list[WAN]}", \
             workspace --no-auto-back-and-forth "${i3list[WAN]}"
 
-      >&2 i3-msg "${qflag:-}" "${_msgstring%;}"
+      >&2 i3-msg "$quite_flag" "${_msgstring%;}"
     }
   }
 }
