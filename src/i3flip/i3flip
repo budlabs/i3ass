@@ -10,11 +10,6 @@ main(){
   declare -g _msgstring
   declare -i next prev
 
-  _dir=$1
-  
-  ((_o[verbose])) && ERM "target direction: $_dir"
-  _dir=${_dir,,}
-
   read -r layout last first pos size < <(
     i3viswiz --parent LIST ${_o[json]:+--json "${_o[json]}"} \
              --debug grouplayout,lastingroup,firstingroup,grouppos,groupsize \
@@ -25,6 +20,12 @@ main(){
                              "first:$first" "pos:$pos" "size:$size"
 
   ((size < 2)) && ERX only container in group
+
+  [[ ${_dir:=${1,,}} =~ ^(l|r|u|d|p|n|left|right|up|down|next|prev(ious)?)$ ]] \
+    || ERX  "i3flip: direction ('$1') is not valid!" \
+       $'\n'"Expected: (left|right|up|down|next|previous|l|r|u|d|p|n)"
+
+  ((_o[verbose])) && ERM "flipping: $_dir"
 
   case "${_dir:0:1}" in
 
@@ -40,7 +41,6 @@ main(){
         && ldir=left || ldir=up
     ;;
 
-    *     ) ERX "$1 is not a valid direction" ;;
   esac
 
   # focus/move normally
