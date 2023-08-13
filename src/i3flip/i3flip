@@ -19,7 +19,7 @@ main(){
     i3viswiz --parent LIST ${_o[json]:+--json "${_o[json]}"} \
              --debug grouplayout,lastingroup,firstingroup,grouppos,groupsize \
              --debug-format "%v "
-    )            
+    )
   
   ((_o[verbose])) && ERM "w" "layout:$layout" "last:$last" \
                              "first:$first" "pos:$pos" "size:$size"
