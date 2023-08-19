@@ -4,12 +4,27 @@ parse_rules() {
 
   declare -A vars
   local re_set re_group re_rule rule_type
+  local last_line_type
 
   re_set='^\s*set\s+[$](\S+)\s+(.+)$'
   re_group='(\s*([^=[:space:]]+)=([^=]+\S)\s*)$'
   re_rule='^(GLOBAL|DEFAULT|ON_CLOSE|TITLE)?((\s+)?(.+)\s*)?$'
 
   declare -i counter_criteria counter_commands
+  declare -f dummy_command
+
+  dummy_command() {
+
+    # this function is triggered when a rule is
+    # declared without a command. So we add the command
+    # 'nop' (no operation).
+
+    local  msg='nop SYNTAX ERROR in i3king file'
+   
+    while ((counter_commands < counter_criteria)); do
+      commands[counter_commands++]=$msg
+    done
+  }
   
   while read -r  ; do
 
@@ -27,6 +42,8 @@ parse_rules() {
     
     if [[ $line =~ $re_set ]]; then
       vars["${BASH_REMATCH[1]}"]=${BASH_REMATCH[2]}
+
+    # line is indented, parse command
     elif [[ $line =~ ^[[:space:]]+(.+)[[:space:]]*$ ]]; then
 
       cmd=${BASH_REMATCH[1]}
@@ -40,7 +57,12 @@ parse_rules() {
         commands[counter_commands++]=$cmd
       done
 
+      last_line_type="command"
+
     elif [[ $line =~ $re_rule ]]; then
+
+      [[ $last_line_type = rule ]] && dummy_command "$line"
+
       # re_rules=^(GLOBAL|DEFAULT|ON_CLOSE|TITLE)?((\s+)?(.+)\s*)?$
       rule_type=${BASH_REMATCH[1]:-NORMAL}
 
@@ -51,6 +73,14 @@ parse_rules() {
       mapfile -t ignore_combined <<< "${BASH_REMATCH[4]//,/$'\n'}"
 
       for crit in "${ignore_combined[@]}"; do
+
+        [[ $crit =~ = ]] || {
+          ERR "'$line'" $'\n' \
+              "Expected criteria, got ('$crit')" \
+              "A missplaced command? maybe."
+
+          continue
+        }
 
         # if we don't have  a criteria it is
         # a line with a single GLOBAL/NORMAL
@@ -103,7 +133,11 @@ parse_rules() {
         esac
 
       done
+
+      last_line_type=rule
     fi
 
   done < "$1"
+
+  [[ $last_line_type = rule ]] && dummy_command
 }

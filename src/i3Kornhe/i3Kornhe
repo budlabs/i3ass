@@ -31,17 +31,28 @@ main(){
 
   ((_o[verbose])) || _qflag='-q'
 
-  # mode is first arg, size|move|x|0-9 -> s|m|x|0-9
-  _next_mode="${1:0:1}" ; _next_mode="${_next_mode,,}"
-  
-  __lastarg=${!#}
-  # last arg is direction, left|right|up|down -> l|r|u|d
-  _direction=${__lastarg:0:1} ; _direction=${_direction,,}
+  [[ ${_next_mode:=${1,,}} =~ ^(l|r|u|d|left|right|up|down|[0-9]|size|move|s|m|x)$ ]] \
+    || ERX "i3Kornhe: mode ('$1') is not valid!"
 
-  # remove all none digits from --speed arg
+  _next_mode=${_next_mode:0:1} ; mode=$1
+  shift
+
+  [[ ! $_next_mode =~ s|m && ${#@} -gt 0 ]] \
+    && ERX "i3Kornhe: mode ('$mode') expected 0 arguments got '($*)'"
+
+  [[ $_next_mode =~ s|m && ${#@} -gt 1 ]] \
+    && ERX "i3Kornhe: mode ('$mode') expected 0-1 arguments got '($*)'"
+  
+  [[ ${_direction:=${1,,}} ]] && { 
+    [[ ${_direction} =~ ^(l|r|u|d|left|right|up|down|[0-9])$ ]]  \
+      || ERX "i3Kornhe: direction ('$_direction') is not valid!" \
+             "( left|right|up|down|l|r|u|d|0-9 )"
+  }
+
+  : "${_direction:=$_next_mode}" ; _direction=${_direction:0:1}
+
   _speed=${_o[speed]//[!0-9]}
   ((_speed >= 0)) || _speed=10
-
 
   _margin=${_o[margin]//[!0-9]}
   ((_margin >= 0)) || _margin=5
@@ -71,7 +82,6 @@ main(){
   rm -f "$I3_KORNHE_FIFO_FILE"
   mkdir -p "${I3_KORNHE_FIFO_FILE%/*}"
   mkfifo "$I3_KORNHE_FIFO_FILE"
-
   echo "$_direction $_next_mode $_speed $_margin" >> "$I3_KORNHE_FIFO_FILE" &
   trap 'CLEANUP' EXIT INT HUP
 

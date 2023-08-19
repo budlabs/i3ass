@@ -1,5 +1,5 @@
 .nh
-.TH I3GET  1 2022-07-16 budlabs "User Manuals"
+.TH I3GET   2022-07-19 budlabs "User Manuals"
 .SH NAME
 .PP
 i3get - prints info about a specific window to stdout
@@ -21,7 +21,7 @@ i3get - prints info about a specific window to stdout
 --json             TREE          | Use TREE instead of the output of `i3-msg -t get_tree`
 -m, --mark         MARK          | MARK | target containers with MARK  
 -r, --print        OUTPUT        | what to print. defaults to 'n'  
---print-format     FORMAT_STRING | %v is value, %k is name. default: '%v\\n'  
+--print-format     FORMAT_STRING | %v is value, %k is name. default: '%vn'  
 --role             ROLE          | match ROLE against window_role  
 -y, --synk                       | block script till window exist.
 --timeout          SECONDS       | seconds for --synk to timeout (defaults to 60)  
@@ -121,6 +121,6 @@ https://github.com/budlabs/i3ass/issues
 
 .SH COPYRIGHT
 .PP
-Copyright (c) 2017-2022, budRich of budlabs
+Copyright (c) 2017-2023, budRich of budlabs
 .br
 SPDX-License-Identifier: MIT

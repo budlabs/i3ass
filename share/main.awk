@@ -28,7 +28,7 @@ $1 ~ /"(name|title_format)"/ {
 
   else if (ac[cid]["type"] == "\"workspace\"") {
 
-    if ($NF == "\"" i3fyra_workspace_name "\"")
+    if ($NF == i3fyra_workspace_name)
       i3fyra_workspace_id = cid
 
     else if ($NF == "\"__i3_scratch\"")
@@ -275,7 +275,7 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
           match($0,/"(i3viswiz|i34)?([^"=]+)=([^"]*)"([]])?$/,ma)
 
           if (ma[2] == "i3fyra_ws")
-            i3fyra_workspace_name=ma[3]
+            i3fyra_workspace_name = "\"" ma[3] "\""
           else if (ma[1] == "i3viswiz")
             last_direction_id=ma[3]
           else if (ma[2] == "focus_wrap")

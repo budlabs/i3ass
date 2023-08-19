@@ -24,7 +24,7 @@ swap_move(){
   #       -> ik_current=([0]=C [1]=B [2]=A [3]=D)
   for k in A B C D; do
     current_val=${i3list[VP${k}]:=${ck_default[$k]}}
-    ik_current[${current_val}]=$k
+    ik_current[current_val]=$k
   done
 
    ERM "${ik_current[*]} LLLLLLLL"

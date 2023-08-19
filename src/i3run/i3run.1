@@ -1,5 +1,5 @@
 .nh
-.TH I3RUN  1 2022-05-19 budlabs "User Manuals"
+.TH I3RUN   2022-05-22 budlabs "User Manuals"
 .SH NAME
 .PP
 i3run - Run, Raise or hide windows in i3wm
@@ -9,7 +9,7 @@ i3run - Run, Raise or hide windows in i3wm
 .RS
 
 .nf
-i3run --instance|-i INSTANCE  [--hide] [--summon|-s] [--nohide|-g] [--verbose]
+i3run --instance|-i INSTANCE  [--hide] [--summon|-s] [--nohide|-g] [--verbose] [--silent]
 i3run --class|-c    CLASS     [--hide] [--rename|-x OLD_NAME] 
 i3run --title|-t    TITLE     [--hide] [--rename-instance OLD_NAME] [--rename-class OLD_NAME] [--rename-title OLD_NAME]
 i3run --conid|-n    CON_ID    [--hide] [--force|-f] [--FORCE|-F] 
@@ -39,6 +39,7 @@ i3run --version|-v
 --rename-class        OLD_NAME | explicitly rename the class.
 --rename-instance     OLD_NAME | explicitly rename the instance. 
 --rename-title        OLD_NAME | explicitly rename the title.
+--silent                       | don't print the container ID of found/created window  
 -s, --summon                   | summon window instead of switching workspace focus  
 -t, --title           TITLE    | Search for windows with the given TITLE  
 --verbose                      | More stuff is printed to stderr  
@@ -179,6 +180,6 @@ https://github.com/budlabs/i3ass/issues
 
 .SH COPYRIGHT
 .PP
-Copyright (c) 2017-2022, budRich of budlabs
+Copyright (c) 2017-2023, budRich of budlabs
 .br
 SPDX-License-Identifier: MIT

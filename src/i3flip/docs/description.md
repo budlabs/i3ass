@@ -4,8 +4,8 @@ works on all layouts. If direction is `next` and
 the active container is the last, the first
 container will get focused.
 
-**DIRECTION can be either *prev* or *next*, which
-**can be defined with different words:
+**DIRECTION** can be either *prev* or *next*, which
+can be defined with different words:
 
 **next**|right|down|n|r|d  
 **prev**|left|up|p|l|u  
