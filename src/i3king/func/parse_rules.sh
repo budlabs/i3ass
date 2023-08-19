@@ -57,7 +57,7 @@ parse_rules() {
         commands[counter_commands++]=$cmd
       done
 
-      last_line_type=command
+      last_line_type="command"
 
     elif [[ $line =~ $re_rule ]]; then
 
