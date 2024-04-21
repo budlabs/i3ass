@@ -1,7 +1,5 @@
 END {
 
-
-
   if (length(arg_search))
   {
     for (suspect_id in suspect_targets) {
