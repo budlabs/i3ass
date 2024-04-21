@@ -1,7 +1,7 @@
 NAME         := i3viswiz
-VERSION      := 0.56
+VERSION      := 0.57
 CREATED      := 2018-01-18
-UPDATED      := 2023-07-22
+UPDATED      := 2024-04-21
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options

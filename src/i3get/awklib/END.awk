@@ -1,12 +1,14 @@
 END {
 
+
+
   if (length(arg_search))
   {
     for (suspect_id in suspect_targets) {
 
       search_match=0
 
-      for (search in arg_search) { 
+      for (search in arg_search) {
         if (match(ac[suspect_id][search],arg_search[search]))
           search_match+=1
       }
@@ -39,7 +41,7 @@ END {
 
       case "c":
         k = "class"
-        v = gensub(/^"|"$/,"","g",ac[target_container_id]["class"])
+        v = ac[target_container_id]["class"]
         out = gensub(/%v/,v,"g",format)
         out = gensub(/%k/,k,"g",out)
         printf ("%s", out)
@@ -47,7 +49,7 @@ END {
 
       case "i":
         k = "instance"
-        v = gensub(/^"|"$/,"","g",ac[target_container_id]["instance"])
+        v = ac[target_container_id]["instance"]
         out = gensub(/%v/,v,"g",format)
         out = gensub(/%k/,k,"g",out)
         printf ("%s", out) 
@@ -151,7 +153,7 @@ END {
 
       case "y":
         k = "type"
-        v = gensub(/^"|"$/,"","g",ac[target_container_id]["window_type"])
+        v = ac[target_container_id]["window_type"]
         out = gensub(/%v/,v,"g",format)
         out = gensub(/%k/,k,"g",out)
         printf ("%s", out)
@@ -161,7 +163,7 @@ END {
         k = "role"
 
         if ("window_role" in ac[target_container_id])
-          v = gensub(/^"|"$/,"","g",ac[target_container_id]["window_role"])
+          v = ac[target_container_id]["window_role"]
         else
           v = "unknown"
 
