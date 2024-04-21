@@ -55,9 +55,12 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
     case "class":
     case "instance":
     case "type":
+      if (key in arg_search) {
+        gsub(/^"|"$/,"",$NF)
+        if (match($NF,arg_search[key]))
+          suspect_targets[cid]=1
+      }
       ac[cid][key]=$NF
-      if ( key in arg_search && $NF == "\""arg_search[key]"\"" )
-        suspect_targets[cid]=1
     break
 
     case "id":

@@ -1,7 +1,7 @@
 NAME         := i3Kornhe
-VERSION      := 0.7
+VERSION      := 0.71
 CREATED      := 2017-12-12
-UPDATED      := 2023-07-22
+UPDATED      := 2024-04-21
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options

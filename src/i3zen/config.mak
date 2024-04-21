@@ -1,7 +1,7 @@
 NAME         := i3zen
-VERSION      := 0.2
+VERSION      := 0.21
 CREATED      := 2017-09-11
-UPDATED      := 2023-07-29
+UPDATED      := 2024-04-21
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := $(NAME) [OPTIONS]
