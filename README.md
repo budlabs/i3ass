@@ -6,8 +6,8 @@ commands to assist and extend the use of i3wm.
 
 ### installation
 
-If you are using **Arch linux**, you can install
-the i3ass package from [AUR].
+~~If you are using **Arch linux**, you can install
+the i3ass package from [AUR].~~ (AUR is no longer supported, but as of writing this it still "works")
 
 Or follow the instructions below to install from source:  
 

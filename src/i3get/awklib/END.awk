@@ -39,7 +39,7 @@ END {
 
       case "c":
         k = "class"
-        v = ac[target_container_id]["class"]
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["class"])
         out = gensub(/%v/,v,"g",format)
         out = gensub(/%k/,k,"g",out)
         printf ("%s", out)
@@ -47,7 +47,7 @@ END {
 
       case "i":
         k = "instance"
-        v = ac[target_container_id]["instance"]
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["instance"])
         out = gensub(/%v/,v,"g",format)
         out = gensub(/%k/,k,"g",out)
         printf ("%s", out) 
@@ -151,7 +151,7 @@ END {
 
       case "y":
         k = "type"
-        v = ac[target_container_id]["window_type"]
+        v = gensub(/^"|"$/,"","g",ac[target_container_id]["window_type"])
         out = gensub(/%v/,v,"g",format)
         out = gensub(/%k/,k,"g",out)
         printf ("%s", out)
@@ -161,7 +161,7 @@ END {
         k = "role"
 
         if ("window_role" in ac[target_container_id])
-          v = ac[target_container_id]["window_role"]
+          v = gensub(/^"|"$/,"","g",ac[target_container_id]["window_role"])
         else
           v = "unknown"
 
