@@ -9,10 +9,16 @@ float_toggle(){
   # AWF - 1 = floating; 0 = tiled
   if ((i3list[AWF]==1)); then
 
-    [[ -f $I3_KING_PID_FILE ]] && {
+    # WSA != i3fyra && normal tiling
+    if [[ ${i3list[WAN]} != "${i3list[WFN]}" ]]; then
+      messy "[con_id=${i3list[AWC]}]" floating disable
+      return
 
+    # only on fyra WS, if i3king rule for window
+    # exist that doesn't do: "floating enable",
+    # execute that rule and return
+    elif [[ -f $I3_KING_PID_FILE ]]; then
       mapfile -t king_commands <<< "$(i3king --conid "${i3list[TWC]}" --print-commands)"
-
       for command in "${!king_commands[@]}"; do
         if [[ ${king_commands[command]} =~ floating\ enable ]]
           then unset 'king_commands[command]'
@@ -21,12 +27,6 @@ float_toggle(){
       done
 
       [[ ${king_commands[*]} ]] && return
-    }
-
-    # WSA != i3fyra && normal tiling
-    if [[ ${i3list[WAN]} != "${i3list[WFN]}" ]]; then
-      messy "[con_id=${i3list[AWC]}]" floating disable
-      return
     fi
     
 
