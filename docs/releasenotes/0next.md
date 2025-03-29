@@ -1,10 +1,5 @@
-## broken regex search now works
+## i3king GLOBAL/DEFAULT rules without a criteria
+was never parsed. big thanks to @TimRegeant && @1ntronaut
+for reporting and helping out with this (#214)
 
-fix for issue #211 .  
-Big thanks to @henryzxb for reporting
-
-Allthough small, this change affects all i3ass commands,
-except i3king. Hopefully we didn't break something.
-
-^ above fix introduced an issue with i3get without criterion
-(targeting the active window), but it is now fixed
+## Don't trigger i3king rules on float toggle on non-i3fyra workspace
