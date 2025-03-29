@@ -74,17 +74,16 @@ parse_rules() {
 
       for crit in "${ignore_combined[@]}"; do
 
-        [[ $crit =~ = ]] || {
+        [[ $crit =~ = || $rule_type =~ DEFAULT|GLOBAL ]] || {
           ERR "'$line'" $'\n' \
-              "Expected criteria, got ('$crit')" \
-              "A missplaced command? maybe."
+              "Expected criteria, got ('$crit') A missplaced command?"
 
           continue
         }
 
         # if we don't have  a criteria it is
-        # a line with a single GLOBAL/NORMAL
-        # we set the rule to nonsense (-)
+        # a line with a single GLOBAL/DEFAULT
+        # we set the (blacklist) rule to nonsense (-)
         # to make sure it never matches
         if [[ $crit ]]; then
           wc="${_fs}[^${_fs}]*$_fs" # wildcard :.*:
