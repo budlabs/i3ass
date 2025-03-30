@@ -3,3 +3,6 @@ was never parsed. big thanks to @TimRegeant && @1ntronaut
 for reporting and helping out with this (#214)
 
 ## Don't trigger i3king rules on float toggle on non-i3fyra workspace
+
+## i3ass command now includes i3run, i3term, i3menu and dmenu
+(#218 @1ntronaut )

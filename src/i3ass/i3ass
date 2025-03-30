@@ -2,18 +2,24 @@
 
 main(){
 
-  for ass in i3{flip,fyra,get,gw,king,Kornhe,list,var,viswiz,zen}; do
+  for ass in i3{flip,fyra,get,gw,king,Kornhe,list,run,var,viswiz,zen,menu,term}; do
     path=$(command -v "$ass")
-    version_output=$("$ass" -v 2>&1)
+    
     
     # i3ass - version: 0.0.1
     # updated: 2023-07-12 by budRich
-    [[ $path ]] \
-      && read -rs _ _ _ version _ updated _ \
+    if [[ $path ]]; then
+      version_output=$("$ass" -v 2>&1)
+      read -rs _ _ _ version _ updated _ \
          <<< "${version_output//$'\n'/ }" 
 
-    printf "%-8s | %-7s | %-10s | %s\n" \
-      "$ass" "${version:--}" "${updated:--}" "${path/~/'~'}"
+      printf "%-8s | %-7s | %-10s | %s\n" \
+        "$ass" "${version:--}" "${updated:--}" "${path/~/'~'}"
+    else
+      printf "%-8s | MISSING! %s\n" "$ass"
+    fi
+
+    [[ $ass = i3zen ]] && echo
   done
 
   echo
@@ -21,12 +27,16 @@ main(){
   echo
 
   for cmd in i3 bash gawk xdotool ; do
-    if command -v "$cmd" >/dev/null ; then
-      "$cmd" --version 2>&- | head -n1
-    else
-      echo "WARNING: command $cmd not found"
+    if command -v "$cmd" >/dev/null
+      then "$cmd" --version 2>&- | head -n1
+      else echo "WARNING: command $cmd not found"
     fi
   done
+
+  if command -v dmenu >/dev/null
+    then dmenu -v 2>&-
+    else "WARNING: command $cmd not found"
+  fi
 
   echo
   echo -------------------------------------------
