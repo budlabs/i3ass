@@ -1,7 +1,7 @@
 NAME         := i3fyra
-VERSION      := 1.4.3
+VERSION      := 1.4.4
 CREATED      := 2017-01-14
-UPDATED      := 2024-04-21
+UPDATED      := 2025-03-30
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := options
