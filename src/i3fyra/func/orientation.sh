@@ -6,6 +6,13 @@ orientation() {
   local old_orientation=${i3list[ORI]}
   local i container
 
+  [[ $new_orientation = toggle ]] && {
+    if [[ $old_orientation = vertical ]]
+      then new_orientation=horizontal
+      else new_orientation=vertical
+    fi
+  }
+
   [[ $new_orientation = "$old_orientation" ]] && return
 
   declare -A new_ori

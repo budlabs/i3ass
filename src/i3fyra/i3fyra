@@ -30,7 +30,7 @@ main(){
       layout    ) [[ $arg =~ = || $arg = redo ]] || ERX "$err"             ;;
       float     ) (($#)) && ERX "$err expected 0 arguments got '($*)'"     ;;
       orientation )
-        ex="vertical|horizontal"
+        ex="vertical|horizontal|toggle"
         [[ $arg =~ ${ex} ]] || ERX "$err expected ($ex)" 
         ;;
     esac
