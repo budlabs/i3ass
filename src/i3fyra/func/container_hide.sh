@@ -29,9 +29,12 @@ container_hide(){
 
   # if target is last of it's fam, note it.
   # else focus sibling as the last operation (main())
-  [[ ${i3list[LVI]} =~ $sibling ]]         \
-    && i3list[SIBFOC]=$sibling             \
-    || mark_vars["i34F${target_family}"]=$target
+  if [[ ${i3list[LVI]} =~ $sibling ]]; then
+    i3list[SIBFOC]=$sibling
+    mark_vars["i34F${target_family}"]=${i3list[F${target_family}]/$target/}
+  else
+    mark_vars["i34F${target_family}"]=$target
+  fi
 
   # note splits
   ((split_main && split_main != ori[sizemain])) && {

@@ -15,7 +15,7 @@ main(){
     exit
   }
 
-  for _action in move show hide layout float orientation; do
+  for _action in move show hide layout float orientation mono; do
     
     [[ ${arg:=${_o[$_action]}} ]] || continue
     err="i3fyra: argument for '--$_action': '$arg' not valid!"
@@ -29,7 +29,6 @@ main(){
       show|hide ) [[ $arg =~ ^[ABCD]+$ ]] || ERX "$err expected (A|B|C|D)" ;;
       layout    ) [[ $arg =~ = || $arg = redo ]] || ERX "$err"             ;;
       float     ) (($#)) && ERX "$err expected 0 arguments got '($*)'"     ;;
-
       orientation )
         ex="vertical|horizontal"
         [[ $arg =~ ${ex} ]] || ERX "$err expected ($ex)" 
@@ -61,6 +60,7 @@ main(){
     layout      ) apply_splits "$arg"   ;;
     float       ) float_toggle          ;;
     orientation ) orientation "$arg"    ;;
+    mono        ) monocle_toggle        ;;
 
   esac
 
