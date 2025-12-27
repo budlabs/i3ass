@@ -6,6 +6,7 @@
 --orientation ORIENTATION
 --clear-virtuals
 --mono
+--rotate AXIS
 [--verbose] [--dryrun] [--force|-f] 
 --help|-h
 --version|-v 
