@@ -17,6 +17,7 @@ characters:
 |`f`       | floating state   | string
 |`o`       | title format     | string
 |`e`       | fullscreen       | 1 or 0
+|`M`       | monocled         | 1 or 0
 |`s`       | sticky           | true or false
 |`u`       | urgent           | true or false
 |`y`       | window_type      | string

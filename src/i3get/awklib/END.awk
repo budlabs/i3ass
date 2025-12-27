@@ -77,6 +77,26 @@ END {
         printf ("%s", out)
       break
 
+      case "M":
+        k = "monocled"
+        parent = ac[target_container_id]["i3fyracontainer"]
+
+        if (fyra_containers[parent]["visible"]) {
+          is_mono = 1
+          for (container_name in fyra_containers) {
+            if (fyra_containers[container_name]["visible"]) {
+              is_mono += (container_name == parent ? 0 : 1)
+            }
+          }
+        }
+
+        v = (is_mono == 1 ? 1 : 0)
+
+        out = gensub(/%v/,v,"g",format)
+        out = gensub(/%k/,k,"g",out)
+        printf ("%s", out)
+      break
+
       case "w":
         if (ac[target_container_id]["type"] ~ "workspace")
           target_workspace_id = target_container_id

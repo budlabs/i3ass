@@ -1,7 +1,7 @@
 NAME         := i3get
-VERSION      := 0.94
+VERSION      := 0.95
 CREATED      := 2017-03-08
-UPDATED      := 2024-04-21
+UPDATED      := 2025-12-27
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := i3get [OPTIONS]
