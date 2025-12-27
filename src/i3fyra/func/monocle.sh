@@ -4,7 +4,7 @@
 monocle_toggle() {
 
   ((i3list[WSA] == i3list[WSF])) || {
-    ERM "mono operation only possible on with i3fyra workspace"
+    ERM "mono operation only possible on i3fyra workspace"
     return
   }
 
