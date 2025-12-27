@@ -13,7 +13,7 @@ i3fyra --move|-m DEST [--conid|-n CON_ID] [--speed|-p INT]
 i3fyra --orientation ORIENTATION
 i3fyra --clear-virtuals
 i3fyra --mono|-M
-i3fyra --rotate AXIS
+i3fyra --swap|-S AXIS
 i3fyra [--verbose] [--dryrun] [--force|-f] 
 i3fyra --help|-h
 i3fyra --version|-v 
@@ -135,9 +135,9 @@ https://youtu.be/kU8gb6WLFk8
 -M, --mono                       | toggle monocle mode 
 -m, --move           DEST        | move window/create container  
 --orientation        ORIENTATION | main split orientation on i3fyra WS (horizontal|vertical|toggle)
---rotate             AXIS        | switch position with <sibling|family>  
 -s, --show           CONTAINER   | Show target container.  
 -p, --speed          INT         | distance in px a floating windows will be moved  
+-S, --swap           AXIS        | switch position with <sibling|family>  
 --verbose                        | print more stuff to stderr  
 -v, --version                    | louder output  
 .EE
