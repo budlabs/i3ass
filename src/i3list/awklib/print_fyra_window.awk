@@ -2,6 +2,19 @@ function print_fyra_window(t, container_id, parent, key) {
 
   key=t "WP"; printf(strfrm,key, parent, desc[key])
 
+  is_mono = 0
+  
+  if (fyra_containers[parent]["visible"]) {
+    is_mono = 1
+    for (container_name in fyra_containers) {
+      if (fyra_containers[container_name]["visible"]) {
+        is_mono += (container_name == parent ? 0 : 1)
+      }
+    }
+  }
+
+  key=t "CM"; printf(strfrm,key, (is_mono == 1 ? 1 : 0), desc[key])
+  
   # desc["AFT"]="Active Window twin" 
   key=t "FT"; printf(strfrm,key,
     (parent == "A" ? ( orientation == "horizontal" ? "B" : "C") : 

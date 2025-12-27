@@ -53,6 +53,7 @@ function descriptions() {
   desc["ATW"]="Active Window tab width"
   desc["ABW"]="Active Window border width"
   desc["APA"]="Active Window parent ID"
+  desc["ACM"]="Active Container is monocled"
 
   desc["TWF"]="Target Window Floating"
   desc["TWC"]="Target Window con_id"
@@ -72,6 +73,7 @@ function descriptions() {
   desc["TWB"]="Target Window titlebar height"
   desc["TBW"]="Target Window border width"
   desc["TPA"]="Target Window parent ID"
+  desc["TCM"]="Target Container is monocled"
   
   desc["WAW"]="Active Workspace width"
   desc["WAH"]="Active Workspace height"
