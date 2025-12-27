@@ -5,7 +5,7 @@
 --move|-m DEST [--conid|-n CON_ID] [--speed|-p INT]
 --orientation ORIENTATION
 --clear-virtuals
---mono
+--mono|-M
 --rotate AXIS
 [--verbose] [--dryrun] [--force|-f] 
 --help|-h
