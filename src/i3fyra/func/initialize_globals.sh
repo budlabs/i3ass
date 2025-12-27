@@ -31,6 +31,7 @@ initialize_globals() {
 
     ((_o[verbose])) && ERM INIT FYRA_ORIENTATION
 
+    : "${I3FYRA_ORIENTATION:-horizontal}"
     i3var set i34ORI "${_o[orientation]:-$I3FYRA_ORIENTATION}"
   }
 
