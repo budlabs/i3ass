@@ -17,15 +17,14 @@ family_create() {
       focus, focus parent
     messy mark "i34X$target_family"
   else
+    
     messy "[con_mark=i34$target_container]" \
       move --no-auto-back-and-forth to workspace "${i3list[WFN]}", \
       floating disable, \
       layout "split${ori[charfam]}", \
       focus, focus parent
     messy mark "i34X$target_family"
-    messy "[con_mark=i34X$target_family]" \
-      layout "split${ori[charmain]}", \
-      focus, focus parent
-    messy mark "i34X${ori[main]}"
+    
+    main_create "$target_family"
   fi
 }

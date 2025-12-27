@@ -1,7 +1,7 @@
 NAME         := i3ass
-VERSION      := 2023.08.19.1
+VERSION      := 2025.12.27.1
 CREATED      := 2023-07-12
-UPDATED      := 2023-08-19
+UPDATED      := 2025-12-27
 AUTHOR       := budRich
 CONTACT      := https://github.com/budlabs/i3ass
 USAGE        := i3ass

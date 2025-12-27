@@ -23,6 +23,13 @@ multi_hide(){
 
   # hide rest if any
   ((${#trgs})) && for ((i=0;i<${#trgs};i++)); do
-    container_hide "${trgs:$i:1}"
+    single=${trgs:$i:1}
+    container_hide "$single"
+
+    # setting the family memory to the single hidden
+    # container, let us restore with --mono
+    [[ $f1 =~ $single ]] \
+      && mark_vars["i34F${f1}"]=$single \
+      || mark_vars["i34F${f2}"]=$single
   done
 }

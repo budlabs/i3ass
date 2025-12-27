@@ -1,18 +1,13 @@
 .nh
-.TH I3KING   2023-08-04 budlabs "User Manuals"
+.TH I3KING   2025-03-30 budlabs "User Manuals"
 .SH NAME
-.PP
-i3king - window ruler
+i3king \- window ruler
 
 .SH SYNOPSIS
-.PP
-\fB\fCi3king [OPTIONS]\fR
+\fBi3king [OPTIONS]\fR
 
 .SH OPTIONS
-.PP
-.RS
-
-.nf
+.EX
 -a, --apply                | Match all existing windows against the rules and exit.
 -c, --config         FILE  | use FILE as config  
 -n, --conid          CONID | window with CONID, match against rules and exit exit.
@@ -27,36 +22,30 @@ i3king - window ruler
 --verbose                  | More verbose output to **STDERR**.  
 -v, --version              | print version info and exit  
 -d, --winid          WINID | window with WINID, match against rules and exit exit.  
-
-.fi
-.RE
+.EE
 
 .SS -c, --config         FILE
-.PP
 Override the value of the Environment variable
 \fBI3_KING_RULE_FILE\fP . Or the default value:
 .br
-\fB\fC~/.config/i3king/rules\fR
+\fB~/.config/i3king/rules\fR
 
 .SS --no-apply
-.PP
 If this option is set it will not automatically
 apply rules to all windows when the IPC socket is
-broken (happens on a crash or on \fB\fCrestart\fR).
-This option has no effect if \fB\fC--no-restart\fR is used.
+broken (happens on a crash or on \fBrestart\fR).
+This option has no effect if \fB--no-restart\fR is used.
 
 .SS --no-restart
-.PP
 When the IPC socket is broken, i3king will automatically
 restart if this option is not set.
 
 .SH USAGE
-.PP
 i3king will match all \fBnew\fP windows against the
 rules defined in \fBI3_KING_RULE_FILE\fP
-(\fI\fB\fC~/.config/i3king/rules\fR\fP). If a rule matches
+(\fI\fB~/.config/i3king/rules\fR\fP). If a rule matches
 the created window, the command associated with
-the rule will get passed to \fB\fCi3-msg\fR\&.
+the rule will get passed to \fBi3-msg\fR\&.
 
 .PP
 The criterias a window can get matched against are
@@ -83,13 +72,11 @@ only get triggered if the window didn't match any
 trigger when a window is closed.
 
 .PP
-Just like in the i3 config the \fB\fCset\fR directive is
+Just like in the i3 config the \fBset\fR directive is
 available, so you can make variables.
 
 .PP
 Some built in magic variables are avaible in the config:
-
-.RS
 .IP \(bu 2
 $INSTANCE
 .IP \(bu 2
@@ -101,31 +88,26 @@ $WINID
 .IP \(bu 2
 $TITLE
 
-.RE
-
 .PP
 \fBTITLE\fP is a rule type that works slightly different
 than the others. If triggered it will always execute
-the command \fB\fCtitle_format NEW_TITLE\fR\&. And triggers
+the command \fBtitle_format NEW_TITLE\fR\&. And triggers
 on new windows and when a window title changes.
 
 .PP
-Instead of a command you specify: \fB\fC[option]/REGEX/ template\fR
-Use \fB\fC$1,$2,$3...\fR in the template to expand them to
+Instead of a command you specify: \fB[option]/REGEX/ template\fR
+Use \fB$1,$2,$3...\fR in the template to expand them to
 the corresponding capture group from the regex.
 
 .PP
-\fB\fC[option]\fR is optional and can be either:
+\fB[option]\fR is optional and can be either:
 .br
-- \fB\fC~0\fR remove expanded $HOME/ from NEW_TITLE
-  \fIif this results in empty NEW_TITLE, a single \fB\fC~\fR will be used\fP
-- \fB\fC~1\fR replace expanded $HOME with \fB\fC~\fR
+- \fB~0\fR remove expanded $HOME/ from NEW_TITLE
+  \fIif this results in empty NEW_TITLE, a single \fB~\fR will be used\fP
+- \fB~1\fR replace expanded $HOME with \fB~\fR
 
 .SH EXAMPLE
-.PP
-.RS
-
-.nf
+.EX
 # assuming the window class is "Thunar" and the window
 # title is something like "/home/anon/.config/i3 - Thunar"
 
@@ -147,22 +129,15 @@ TITLE class=Thunar
 # the above will result in NEW_TITLE: 
 # ~/.config/i3
 
-
-.fi
-.RE
+.EE
 
 .SH EXAMPLE
-.PP
-.RS
-
-.nf
+.EX
 GLOBAL \\
   class=URxvt instance=htop, \\
   instance=firefox
     title_format $INSTANCE
-
-.fi
-.RE
+.EE
 
 .PP
 The above rule will set the title_format to the instance
@@ -175,30 +150,25 @@ a example rule file will get created. See that
 file for details about the syntax.
 
 .PP
-If you used to have \fB\fCfor_window\fR rules that triggered
-\fB\fCi3fyra --move\fR commands. It is recommended to use
+If you used to have \fBfor_window\fR rules that triggered
+\fBi3fyra --move\fR commands. It is recommended to use
 the built in varialbe \fB$CONID\fP when executing i3fyra:
 
 .SH EXAMPLE
-.PP
-.RS
-
-.nf
+.EX
 # old i3 version:
 for_window [instance=qutebrowser] exec --no-startup-id i3fyra --move C
 
 # with i3 king:
 instance=qutebrowser
   exec --no-startup-id i3fyra --conid $CONID --move C
-
-.fi
-.RE
+.EE
 
 .PP
-(\fIthe \fB\fC--conid\fR option in i3fyra is brand new\fP)
+(\fIthe \fB--conid\fR option in i3fyra is brand new\fP)
 
 .PP
-If the \fB\fCrestart\fR command is issued from i3, all
+If the \fBrestart\fR command is issued from i3, all
 windows lose gets new container IDs, marks are
 lost and other more or less strange things might
 happen to the layout. Another thing is that all
@@ -207,39 +177,33 @@ any ipc subscriber would have to be restarted.
 \fBi3king\fP will, when the socket is broken, match
 all known windows against the rules again, and
 automatically restart itself. If you for some
-reason don't want this behaviour, try \fB\fC--no-
-restart\fR and/or \fB\fC--no-apply\fR options.
+reason don't want this behaviour, try \fB--no-
+restart\fR and/or \fB--no-apply\fR options.
 
 .SH protip
-.PP
 Sending USR1 to the i3king process will restart
-i3king. Hint: \fB\fCkill -USR1 $(< "$XDG_RUNTIME_DIR/i3ass/i3king.pid")\fR
+i3king. Hint: \fBkill -USR1 $(< "$XDG_RUNTIME_DIR/i3ass/i3king.pid")\fR
 
 .SH ENVIRONMENT
 .SS BASHBUD_DIR
-.PP
 bashbud config dir location.
 
 .SS I3_KING_RULE_FILE
-.PP
 Path to file containing rules to be parsed.
 
 .SS I3_KING_PID_FILE
-.PP
 When i3king is running this file contains the pid
 of the i3king process. It is used by \fBi3fyra\fP to
 know if i3king is running, if it is, it will try
-to match windows against the rules when \fB\fC--float\fR
+to match windows against the rules when \fB--float\fR
 option toggles the floating state to tiled.
 
 .SH CONTACT
-.PP
 Send bugs and feature requests to:
 .br
 https://github.com/budlabs/i3ass/issues
 
 .SH COPYRIGHT
-.PP
-Copyright (c) 2021-2023, budRich of budlabs
+Copyright (c) 2021-2025, budRich of budlabs
 .br
 SPDX-License-Identifier: MIT
