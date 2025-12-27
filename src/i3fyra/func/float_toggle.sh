@@ -40,7 +40,7 @@ float_toggle(){
       target=$I3FYRA_MAIN_CONTAINER
     fi
 
-     if [[ ${i3list[LEX]} =~ $target ]]; then
+    if [[ ${i3list[LEX]} =~ $target ]]; then
       container_show "$target"
       messy "[con_id=${i3list[AWC]}]" floating disable, \
         move to mark "i34${target}"
