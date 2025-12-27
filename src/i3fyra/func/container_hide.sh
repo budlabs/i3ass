@@ -40,8 +40,11 @@ container_hide(){
   ((split_main && split_main != ori[sizemain])) && {
     mark_vars["i34M${ori[main]}"]=$split_main
     i3list[M${main}]=$split_main
+    
+  }
+
+  ((split_family && split_family != ori[sizefam])) && {
     mark_vars["i34M${target_family}"]=$split_family
     i3list[M${target_family}]=$split_family
   }
-
 }

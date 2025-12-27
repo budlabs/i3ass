@@ -27,8 +27,6 @@ swap_move(){
     ik_current[current_val]=$k
   done
 
-   ERM "${ik_current[*]} LLLLLLLL"
-
   # family marks always contain 'X'
   # when we swap families all virtual positions
   # are swapped
@@ -45,7 +43,6 @@ swap_move(){
     mark_vars[i34M${ori[fam1]}]=${i3list[M${ori[fam2]}]}
     mark_vars[i34M${ori[fam2]}]=${i3list[M${ori[fam1]}]}
 
-    ERM "VPA=${i3list[VPA]}; VPB=${i3list[VPB]}; VPC=${i3list[VPC]}; VPD=${i3list[VPD]}"
     for k in A B C D; do
 
       c1=${k}                     c2=${ck_target[$k]}

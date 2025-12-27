@@ -16,6 +16,7 @@ monocle_toggle() {
       || to_show=${i3list[LEX]}
     
     multi_show "$to_show"
+    messy "[con_id=${i3list[AWC]}]" focus
   else
     multi_hide "${i3list[LVI]/${i3list[AWP]}/}"
   fi
