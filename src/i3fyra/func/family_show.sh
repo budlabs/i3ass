@@ -40,10 +40,7 @@ family_show() {
         move to mark "i34X${ori[main]}"
 
     else
-      messy "[con_mark=i34X${target_family}]" \
-        layout split"${ori[charmain]}", \
-        focus, focus parent
-      messy mark "i34X${ori[main]}"
+      main_create "${target_family}"
     fi
   fi
 
