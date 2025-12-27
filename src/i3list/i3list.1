@@ -1,14 +1,10 @@
 .nh
-.TH I3LIST   2023-07-12 budlabs "User Manuals"
+.TH I3LIST   2024-04-21 budlabs "User Manuals"
 .SH NAME
-.PP
-i3list - list information about the current i3 session
+i3list \- list information about the current i3 session
 
 .SH SYNOPSIS
-.PP
-.RS
-
-.nf
+.EX
 i3list     [--json JSON]
 i3list     --instance|-i TARGET [--json JSON] [--verbose]
 i3list     --class|-c    TARGET [--json JSON] [--verbose]
@@ -18,15 +14,10 @@ i3list     --mark|-m     TARGET [--json JSON] [--verbose]
 i3list     --title|-t    TARGET [--json JSON] [--verbose]
 i3list     --help|-h
 i3list     --version|-v
-
-.fi
-.RE
+.EE
 
 .SH OPTIONS
-.PP
-.RS
-
-.nf
+.EX
 -c, --class    TARGET | Search for windows with a class matching *TARGET*  
 -n, --conid    TARGET | Search for windows with a CON_ID matching TARGET  
 -h, --help            | print help and exit  
@@ -37,15 +28,12 @@ i3list     --version|-v
 --verbose             | Short description  
 -v, --version         | Print version info and exit  
 -d, --winid    TARGET | Search for windows with a **WINDOW_ID** matching *TARGET*  
-
-.fi
-.RE
+.EE
 
 .SH USAGE
-.PP
-\fB\fCi3list\fR prints a list in a \fIarray\fP formatted list.
+\fBi3list\fR prints a list in a \fIarray\fP formatted list.
 If a search criteria is given
-(\fB\fC-c\fR|\fB\fC-i\fR|\fB\fC-n\fR|\fB\fC-d\fR|\fB\fC-m\fR)
+(\fB-c\fR|\fB-i\fR|\fB-n\fR|\fB-d\fR|\fB-m\fR)
 information about the first window matching the criteria is displayed.
 Information about the active window is always displayed.
 If no search criteria is given,
@@ -57,10 +45,7 @@ the output can be used as an array in bash scripts,
 but the array needs to be declared first.
 
 .SH EXAMPLE
-.PP
-.RS
-
-.nf
+.EX
 $ i3list
 i3list[AWF]=0                  # Active Window floating
 i3list[ATW]=270                # Active Window tab width
@@ -142,18 +127,14 @@ $ declare -A i3list # declares associative array
 $ eval "$(i3list)"
 $ echo ${i3list[WAW]}
 1080
-
-.fi
-.RE
+.EE
 
 .SH CONTACT
-.PP
 Send bugs and feature requests to:
 .br
 https://github.com/budlabs/i3ass/issues
 
 .SH COPYRIGHT
-.PP
-Copyright (c) 2017-2023, budRich of budlabs
+Copyright (c) 2017-2025, budRich of budlabs
 .br
 SPDX-License-Identifier: MIT

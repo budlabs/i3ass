@@ -1,14 +1,10 @@
 .nh
-.TH I3KORNHE   2023-07-22 budlabs "User Manuals"
+.TH I3KORNHE   2024-04-21 budlabs "User Manuals"
 .SH NAME
-.PP
-i3Kornhe - move and resize windows gracefully
+i3Kornhe \- move and resize windows gracefully
 
 .SH SYNOPSIS
-.PP
-.RS
-
-.nf
+.EX
 i3Kornhe     DIRECTION [--verbose] [--array ARRAY] [--json JSON]
 i3Kornhe     move [--speed|-p SPEED] [DIRECTION]
 i3Kornhe     size [--speed|-p SPEED] [DIRECTION]
@@ -16,15 +12,10 @@ i3Kornhe     1-9 [--margin INT] [--oneshot]
 i3Kornhe     --help|-h
 i3Kornhe     --version|-v
 i3Kornhe     x
-
-.fi
-.RE
+.EE
 
 .SH OPTIONS
-.PP
-.RS
-
-.nf
+.EX
 --array       ARRAY | use ARRAY instead of output of `i3list`  
 -h, --help          | print help and exit  
 --json        JSON  | use ARRAY instead of output of `i3-msg -t get_tree`  
@@ -33,12 +24,9 @@ i3Kornhe     x
 -p, --speed   SPEED | set step SPEED in pixels  
 --verbose           | louder output  
 -v, --version       | print version info and exit  
-
-.fi
-.RE
+.EE
 
 .SS --margin      INT
-.PP
 This is only used when
 moving a window and the direction is a number.
 INT is the number of pixels from the screen
@@ -49,7 +37,6 @@ The default value is 5 and it applies to all
 margins of the screen.
 
 .SH USAGE
-.PP
 i3Kornhe provides an alternative way to move and
 resize windows in \fBi3\fP\&. It has some more
 functions then the defaults and is more
@@ -59,18 +46,15 @@ moving that corner.
 
 .SH ENVIRONMENT
 .SS I3_KORNHE_FIFO_FILE
-.PP
 File that commands will be sent to.
 Defaults to: $XDG_RUNTIME_DIR/i3ass/i3Kornhe.fifo
 
 .SH CONTACT
-.PP
 Send bugs and feature requests to:
 .br
 https://github.com/budlabs/i3ass/issues
 
 .SH COPYRIGHT
-.PP
-Copyright (c) 2017-2023, budRich of budlabs
+Copyright (c) 2017-2025, budRich of budlabs
 .br
 SPDX-License-Identifier: MIT

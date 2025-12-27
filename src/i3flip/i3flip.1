@@ -1,32 +1,25 @@
 .nh
-.TH I3FLIP   2023-08-13 budlabs "User Manuals"
+.TH I3FLIP   2024-04-21 budlabs "User Manuals"
 .SH NAME
-.PP
-i3flip - Tabswitching done right
+i3flip \- Tabswitching done right
 
 .SH SYNOPSIS
-.PP
-\fB\fCi3flip [--move|-m] DIRECTION\fR
+\fBi3flip [--move|-m] DIRECTION\fR
 
 .SH OPTIONS
-.PP
-.RS
-
-.nf
+.EX
 --dryrun           | don't execute any commands  
 -h, --help         | print help and exit  
 --json        JSON | use JSON instead of output of `i3-msg -t get_tree`  
 -m, --move         | move instead of focus shift  
 --verbose          | louder output  
 -v, --version      | print version info and exit  
-
-.fi
-.RE
+.EE
 
 .PP
-\fB\fCi3flip\fR switch containers without leaving the
+\fBi3flip\fR switch containers without leaving the
 parent. Perfect for tabbed or stacked layout, but
-works on all layouts. If direction is \fB\fCnext\fR and
+works on all layouts. If direction is \fBnext\fR and
 the active container is the last, the first
 container will get focused.
 
@@ -40,28 +33,20 @@ can be defined with different words:
 \fBprev\fP|left|up|p|l|u
 
 .SS examples
-.PP
-\fB\fC~/.config/i3/config\fR:
+\fB~/.config/i3/config\fR:
 
-.PP
-.RS
-
-.nf
+.EX
 \&...
 bindsym Mod4+Tab         exec --no-startup-id i3flip next
 bindsym Mod4+Shift+Tab   exec --no-startup-id i3flip prev
-
-.fi
-.RE
+.EE
 
 .SH CONTACT
-.PP
 Send bugs and feature requests to:
 .br
 https://github.com/budlabs/i3ass/issues
 
 .SH COPYRIGHT
-.PP
-Copyright (c) 2018-2023, budRich of budlabs
+Copyright (c) 2018-2025, budRich of budlabs
 .br
 SPDX-License-Identifier: MIT

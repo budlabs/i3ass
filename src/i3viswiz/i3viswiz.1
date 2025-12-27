@@ -1,14 +1,10 @@
 .nh
-.TH I3VISWIZ   2023-07-22 budlabs "User Manuals"
+.TH I3VISWIZ   2024-04-21 budlabs "User Manuals"
 .SH NAME
-.PP
-i3viswiz - professional window focus for i3wm
+i3viswiz \- professional window focus for i3wm
 
 .SH SYNOPSIS
-.PP
-.RS
-
-.nf
+.EX
 i3viswiz     [--gap|-g GAPSIZE] DIRECTION 
 i3viswiz     --title|-t TITLE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f] 
 i3viswiz     --instance|-i INSTANCE   [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
@@ -22,15 +18,10 @@ i3viswiz     --scratchpad
 i3viswiz     [--json JSON] [--debug VARLIST] [--debug-format FORMAT] [--verbose]
 i3viswiz     --help|-h
 i3viswiz     --version|-v
-
-.fi
-.RE
+.EE
 
 .SH OPTIONS
-.PP
-.RS
-
-.nf
+.EX
 -c, --class        CLASS     | find window by **class**
 --debug            VARLIST   | detailed output   
 --debug-format     FORMAT    | how to format debug output  
@@ -48,20 +39,14 @@ i3viswiz     --version|-v
 --verbose                    | louder output   
 -v, --version                | print version info and exit  
 -d, --winid        WINID     | window is visible with WINID  
-
-.fi
-.RE
+.EE
 
 .SS --debug            VARLIST
-.PP
 VARLIST is used to determine what to output. By
-default the value of VARLIST is: \fB\fCLIST\fR .
+default the value of VARLIST is: \fBLIST\fR .
 Available units are:
 
-.PP
-.RS
-
-.nf
+.EX
 wall         | none|(up|left|down|right-)(workspace|area)
 trgcon       | container id of the window to be focused
 trgpar       | name of i3fyra container target container is located in
@@ -84,9 +69,7 @@ firstingroup | container ID of the first child in active windows parent containe
 lastingroup  | container ID of the last child in active windows parent container
 LIST         | prints a table with all visible windows
 ALL          | all the above combined
-
-.fi
-.RE
+.EE
 
 .PP
 Multiple units can be used if comma separated.
@@ -100,102 +83,76 @@ search criterion.
 .PP
 Example:
 
-.PP
-.RS
-
-.nf
+.EX
 $ i3viswiz --instance LIST up --debug gap,wall,grouppos
 gap=5 wall=up-area grouppos=1 
-
-.fi
-.RE
+.EE
 
 .SS --debug-format     FORMAT
-.PP
-The default value of FORMAT is "%k=%v ".  \fB\fC%k\fR is
-translated to the key/unit name, and \fB\fC%v\fR to the
+The default value of FORMAT is "%k=%v ".  \fB%k\fR is
+translated to the key/unit name, and \fB%v\fR to the
 value.
 
 .PP
 Example:
 
-.PP
-.RS
-
-.nf
+.EX
 $ i3viswiz --instance LIST u --debug gap,wall,grouppos --debug-format "%v\\n"
 5
 up-area
 1 
-
-.fi
-.RE
+.EE
 
 .SS -f, --focus
-.PP
 if this is not set, the CON_ID of target window will
 get printed to STDOUT.
 
 .SS -p, --parent       CONTAINER
-.PP
 CONTAINER is one of the i3fyra containers: A|B|C|D
 
 .SS --scratchpad
-.PP
 This is useful if you have a f.i. a tabbed container
 on the scratchpad, and you want to get the id of the
 window that have focus in that container.
 
 .SH USAGE
-.PP
-\fB\fCi3viswiz\fR either prints a list of the currently
-visible tiled windows to \fB\fCstdout\fR or shifts the
+\fBi3viswiz\fR either prints a list of the currently
+visible tiled windows to \fBstdout\fR or shifts the
 focus depending on the arguments.
 
 .PP
 If a \fIDIRECTION\fP (left|right|up|down) is passed,
-\fB\fCi3wizvis\fR will shift the focus to the window
+\fBi3wizvis\fR will shift the focus to the window
 closest in the given \fIDIRECTION\fP, or warp focus
 if there are no windows in the given direction.
 
 
 .SH examples
-.PP
 replace the normal i3 focus keybindings with viswiz like this:
 
-.PP
-.RS
-
-.nf
+.EX
 Normal binding:
 bindsym Mod4+Shift+Left   focus left
 
 Wizzy binding:
 bindsym Mod4+Left   exec --no-startup-id i3viswiz left
-
-.fi
-.RE
+.EE
 
 .PP
 example output:
 
-.PP
-.RS
-
-.nf
+.EX
 $ i3viswiz --instance LIST
 
 * 94475856575600 ws: 1 x: 0     y: 0     w: 1558  h: 410   | termsmall
 - 94475856763248 ws: 1 x: 1558  y: 0     w: 362   h: 272   | gl
 - 94475856286352 ws: 1 x: 0     y: 410   w: 1558  h: 643   | sublime_main
 - 94475856449344 ws: 1 x: 1558  y: 272   w: 362   h: 781   | thunar-lna
-
-.fi
-.RE
+.EE
 
 .PP
-If \fB\fC--class\fR , \fB\fC--instance\fR, \fB\fC--title\fR,
-\fB\fC--titleformat\fR, \fB\fC--winid\fR or \fB\fC--parent\fR is used
+If \fB--class\fR , \fB--instance\fR, \fB--title\fR,
+\fB--titleformat\fR, \fB--winid\fR or \fB--parent\fR is used
 together with the argument \fBLIST\fP\&.
 i3viswiz will print this output, with the type in
 the last column of the table (class in the
@@ -209,16 +166,16 @@ a visible window matching the criteria will be printed.
 Assuming the same scenario as the example above,
 the following command:
 .br
-\fB\fC$ i3viswiz --instance termsmall\fR
+\fB$ i3viswiz --instance termsmall\fR
 .br
-will output the container_id (\fB\fC94475856575600\fR).
+will output the container_id (\fB94475856575600\fR).
 .br
 If no window is matching output will be blank.
 
 .PP
 Multiple criteria is allowed:
 .br
-\fB\fC$ i3viswiz --instance termsmall --class URxvt\fR
+\fB$ i3viswiz --instance termsmall --class URxvt\fR
 
 .PP
 \fBfocus wrapping\fP
@@ -238,21 +195,19 @@ before the first i3viswiz invokation.
 To force this behavior otherwise, issue the following
 command:
 .br
-\fB\fCi3var set focus_wrap workspace\fR
+\fBi3var set focus_wrap workspace\fR
 
 .PP
 Or to disable it:
 .br
-\fB\fCi3var set focus_wrap normal\fR
+\fBi3var set focus_wrap normal\fR
 
 .SH CONTACT
-.PP
 Send bugs and feature requests to:
 .br
 https://github.com/budlabs/i3ass/issues
 
 .SH COPYRIGHT
-.PP
-Copyright (c) 2018-2023, budRich of budlabs
+Copyright (c) 2018-2025, budRich of budlabs
 .br
 SPDX-License-Identifier: MIT
