@@ -1,7 +1,7 @@
 #!/bin/bash
 
-# --rotate sibling|family
-rotate() {
+# --swap sibling|family
+swap() {
   target=$1
 
   if [[ $target = family && ${i3list[AFO]} =~ [${i3list[LVI]}] ]]
