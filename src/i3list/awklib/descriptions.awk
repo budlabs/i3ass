@@ -17,6 +17,11 @@ function descriptions() {
   desc["CDW"]="Container D Workspace number"
   desc["CDN"]="Container D Workspace name"
 
+  desc["CAP"]="Container A Container ID"
+  desc["CBP"]="Container B Container ID"
+  desc["CCP"]="Container C Container ID"
+  desc["CDP"]="Container D Container ID"
+
   desc["SAB"]="Current split: AB"
   desc["SAC"]="Current split: AC"
   desc["SBD"]="Current split: BD"
