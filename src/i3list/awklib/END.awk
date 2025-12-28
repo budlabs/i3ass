@@ -127,6 +127,23 @@ END {
 
         key="C" container_name "F"; printf(strfrm,key, focused, desc[key])
 
+        groupsize=length(ac[container_id]["children"])
+
+        i=0 ; indx=0
+        while (i<groupsize) {
+          if (container_order[++indx] in ac[container_id]["children"]) {
+            curry=container_order[indx]
+
+            # first in group
+            if (++i==1) {
+              key="CF" container_name ; printf(strfrm,key, curry, desc[key])
+            }
+          }
+        }
+        
+        # last  in group
+        key="CL" container_name ; printf(strfrm,key, curry, desc[key])
+        
         if (fyra_containers[container_name]["visible"])
           LVI=LVI container_name
         else 
