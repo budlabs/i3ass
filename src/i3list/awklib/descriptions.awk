@@ -22,6 +22,15 @@ function descriptions() {
   desc["CCP"]="Container C Container ID"
   desc["CDP"]="Container D Container ID"
 
+  desc["CFA"]="First container in A, container ID"
+  desc["CLA"]="Last container in A, container ID"
+  desc["CFB"]="First container in B, container ID"
+  desc["CLB"]="Last container in B, container ID"
+  desc["CFC"]="First container in C, container ID"
+  desc["CLC"]="Last container in C, container ID"
+  desc["CFD"]="First container in D, container ID"
+  desc["CLD"]="Last container in D, container ID"
+
   desc["SAB"]="Current split: AB"
   desc["SAC"]="Current split: AC"
   desc["SBD"]="Current split: BD"

@@ -13,3 +13,8 @@ desc["CAP"]="Container A Container ID"
 desc["CBP"]="Container B Container ID"
 desc["CCP"]="Container C Container ID"
 desc["CDP"]="Container D Container ID"
+
+## add first and last in each i3fyra container in i3list
+
+desc["CFD"]="First container in D, container ID"
+desc["CLD"]="Last container in D, container ID"
