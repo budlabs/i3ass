@@ -17,6 +17,11 @@ function descriptions() {
   desc["CDW"]="Container D Workspace number"
   desc["CDN"]="Container D Workspace name"
 
+  desc["CAP"]="Container A Container ID"
+  desc["CBP"]="Container B Container ID"
+  desc["CCP"]="Container C Container ID"
+  desc["CDP"]="Container D Container ID"
+
   desc["SAB"]="Current split: AB"
   desc["SAC"]="Current split: AC"
   desc["SBD"]="Current split: BD"
@@ -53,6 +58,7 @@ function descriptions() {
   desc["ATW"]="Active Window tab width"
   desc["ABW"]="Active Window border width"
   desc["APA"]="Active Window parent ID"
+  desc["ACM"]="Active Container is monocled"
 
   desc["TWF"]="Target Window Floating"
   desc["TWC"]="Target Window con_id"
@@ -72,6 +78,7 @@ function descriptions() {
   desc["TWB"]="Target Window titlebar height"
   desc["TBW"]="Target Window border width"
   desc["TPA"]="Target Window parent ID"
+  desc["TCM"]="Target Container is monocled"
   
   desc["WAW"]="Active Workspace width"
   desc["WAH"]="Active Workspace height"

@@ -118,7 +118,8 @@ END {
         key="C" container_name "L"; printf(strfrm,key, ac[container_id]["layout"], desc[key])
         key="C" container_name "W"; printf(strfrm,key, ac[workspace_id]["num"], desc[key])
         key="C" container_name "N"; printf(strfrm,key, ac[workspace_id]["name"], desc[key])
-
+        key="C" container_name "P"; printf(strfrm,key, container_id, desc[key])
+        
         focused=ac[container_id]["focused"]
         # make sure the focused container is a window
         # while (!("window" in ac[focused]))
