@@ -8,6 +8,10 @@
     --role|-r ROLE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
     --type|-y TYPE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
     --scratchpad
+    --offset-x INT
+    --offset-y INT
+    --ignore-last
+    --force-wrap TYPE
     [--json JSON] [--debug VARLIST] [--debug-format FORMAT] [--verbose]
     --help|-h
     --version|-v
