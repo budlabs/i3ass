@@ -18,3 +18,11 @@ desc["CDP"]="Container D Container ID"
 
 desc["CFD"]="First container in D, container ID"
 desc["CLD"]="Last container in D, container ID"
+
+## new options for i3viswiz
+
+new command line options: --offset-x, --offset-y, --force-wrap, --ignore-last
+
+## bugfixes in shared awk script and viswiz awk
+
+both related to finding current monitor and focus wrapping.
