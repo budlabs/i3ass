@@ -15,6 +15,8 @@ main(){
   : "${_o[json]:=$(i3-msg -t get_tree)}"
   : "${_o[debug]:=LIST}"
   : "${_o[debug-format]:=%k=%v }"
+  : "${_o[offset-x]:=50}"
+  : "${_o[offset-y]:=50}"
   arg_gap=$((_o[gap] > 0 ? _o[gap] : 5))
 
   # check if focus_wrap workspace is set
@@ -63,7 +65,9 @@ main(){
     ) FS=: RS=, \
     arg_direction="$arg_direction" arg_gap="$arg_gap" \
     arg_debug="${_o[debug]}" arg_debug_format="${_o[debug-format]}" \
-    arg_scratchpad="${_o[scratchpad]}" arg_list="$arg_list"
+    arg_scratchpad="${_o[scratchpad]}" arg_list="$arg_list" \
+    arg_offset_x="${_o[offset-x]}" arg_offset_y="${_o[offset-y]}" \
+    arg_ignore_last="${_o[ignore-last]:-0}" arg_force_wrap="${_o[force-wrap]:-normal}"
   )
   
   if [[ $result =~ ^floating ]]; then
