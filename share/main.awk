@@ -46,6 +46,7 @@ $(NF-1) ~ /"(class|current_border_width|floating|focus|focused|fullscreen_mode|i
     case "current_border_width":
     case "fullscreen_mode":
     case "sticky":
+    case "output":
     case "urgent":
       ac[cid][key]=$NF
     break

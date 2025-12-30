@@ -15,6 +15,10 @@ i3viswiz     --parent|-p  CONTAINER   [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--f
 i3viswiz     --role|-r ROLE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
 i3viswiz     --type|-y TYPE       [--gap|-g GAPSIZE] [DIRECTION|TARGET] [--focus|-f]
 i3viswiz     --scratchpad
+i3viswiz     --offset-x INT
+i3viswiz     --offset-y INT
+i3viswiz     --ignore-last
+i3viswiz     --force-wrap TYPE
 i3viswiz     [--json JSON] [--debug VARLIST] [--debug-format FORMAT] [--verbose]
 i3viswiz     --help|-h
 i3viswiz     --version|-v
@@ -26,10 +30,14 @@ i3viswiz     --version|-v
 --debug            VARLIST   | detailed output   
 --debug-format     FORMAT    | how to format debug output  
 -f, --focus                  | focus target **visible** window  
+--force-wrap       TYPE      | force wrapping of TYPE (normal|workspace)
 -g, --gap          GAPSIZE   | distance in pixels from the current window where new focus will be searched.  
 -h, --help                   | print help and exit  
+--ignore-last                | ignore last focused window when finding next target
 -i, --instance     INSTANCE  | find window by **instance**
 --json             JSON      | use JSON instead of `i3-msg -t get_tree`  
+--offset-x         INT       | offset X search position %of window width, default 50 
+--offset-y         INT       | offset X search position %of window width, default 50
 -p, --parent       CONTAINER | window is visible in the i3fyra CONTAINER 
 -r, --role         ROLE      | find window by **window_role**
 --scratchpad                 | this will treat the scratchpad as the active workspace.

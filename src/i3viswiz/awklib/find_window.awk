@@ -5,7 +5,7 @@ function find_window(direction,
                      opx,opy,opw,oph,
                      rootx,rooty,rootw,rooth,
                      opid,workspace_id,
-                     found,wall)
+                     found,wall,offsety)
 {
   wsx=ac[active_workspace_id]["x"]; wsy=ac[active_workspace_id]["y"]
   wsw=ac[active_workspace_id]["w"]; wsh=ac[active_workspace_id]["h"]
@@ -19,13 +19,16 @@ function find_window(direction,
   rootx=ac[container_order[1]]["x"]; rootw=ac[container_order[1]]["w"]
   rooty=ac[container_order[1]]["y"]; rooth=ac[container_order[1]]["h"]
 
+  offsety=((arg_offset_y/100) * awh)
+  offsety=( ac[active_container_id]["titlebarheight"]*2 > offsety ? ac[active_container_id]["titlebarheight"]*2 : offsety)
+
   trgx=(direction == "r" ? awx+aww+arg_gap :
         direction == "l" ? awx-arg_gap     :
-        awx+(aww/2)+arg_gap )
+        awx+((arg_offset_x/100) * aww) + (arg_offset_x == 50 ? arg_gap : 0) )
 
   trgy=(direction == "d" ? awy+awh+arg_gap :
         direction == "u" ? awy-arg_gap     :
-        awy+(awh/2)-arg_gap )
+        awy+offsety - (arg_offset_y == 50 ? arg_gap : 0) )
 
   found=0
   wall="none"
@@ -38,7 +41,7 @@ function find_window(direction,
     # invert direction
     direction=(direction == "l" ? "r" : "l")
 
-    if (focus_wrap == "workspace") {
+    if (focus_wrap == "workspace" || arg_force_wrap == "workspace") {
 
       trgx=(direction == "r" ? wsx+wsw-arg_gap :
                                wsx+arg_gap)
@@ -66,21 +69,18 @@ function find_window(direction,
           direction == "u" ? opy-arg_gap     :
           awy+(awh/2)-arg_gap )
 
-    # invert direction
-    direction=(direction == "u" ? "d" : "u")
+    if (focus_wrap == "workspace" || arg_force_wrap == "workspace") {
 
-    if (focus_wrap == "workspace") {
-
-      trgy=(direction == "d" ? wsy+wsh-arg_gap :
+      trgy=(direction == "u" ? wsy+wsh-arg_gap :
                                wsy+arg_gap )
 
       wall=wall "-workspace"
     }
 
-    else if ( (direction == "d" && trgy < rooty) ||
-              (direction == "u" && trgy > rooty+rooth) ) {
+    else if ( (direction == "u" && trgy < rooty) ||
+              (direction == "d" && trgy > rooty+rooth) ) {
 
-      trgy=(direction == "d" ? rooty+rooth-arg_gap :
+      trgy=(direction == "u" ? rooty+rooth-arg_gap :
                                rooty+arg_gap )
 
       wall=wall "-area"
@@ -88,7 +88,7 @@ function find_window(direction,
       wall=wall "-workspace"
   }
 
-  if ( last_direction_id in visible_containers ) {
+  if ( (arg_ignore_last == 0) && last_direction_id in visible_containers ) {
 
     # last_direction is set by i3var (a mark)
     # so if it is visible we prioritize focusing that
@@ -156,7 +156,7 @@ function find_window(direction,
       # make sure trgy is outside active output
       # and not just the workspace (top|bottombars)
       if (wall ~ /workspace/)
-        trgy=(direction == "d" ? opy-arg_gap : opy+oph+arg_gap)
+        trgy=(direction == "d" ? opy+arg_gap : opy+oph-arg_gap)
 
       for (workspace_id in visible_workspaces) {
         output_id=outputs[ac[workspace_id]["output"]]
@@ -170,7 +170,7 @@ function find_window(direction,
               is_container_at_pos(active_output_id,tmpx, opy)) {
           # set the target y according to the workspace
           # incase the output has a bottombar
-          trgy=(direction == "d" ? 
+          trgy=(direction == "u" ?
                   ac[workspace_id]["y"]+ac[workspace_id]["h"]-arg_gap :
                   ac[workspace_id]["y"]+arg_gap )
           
@@ -183,7 +183,7 @@ function find_window(direction,
           break
         }
       }
-      trgy=(found == 1 ? trgy : (direction == "d" ? wsy : wsy+wsh))
+      trgy=(found == 1 ? trgy : (direction == "u" ? wsy : wsy+wsh))
     }
   }
 
