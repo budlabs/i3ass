@@ -2,7 +2,7 @@
 
 # --swap sibling|family
 swap() {
-  declare target=$1 current_container
+  declare target=$1 current_container target_container rotation
   declare -A layout
   
   if [[ $target = family && ${i3list[AFO]} =~ [${i3list[LVI]}] ]]
