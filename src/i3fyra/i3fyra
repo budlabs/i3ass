@@ -25,9 +25,9 @@ main(){
         ex="A|B|C|D|l|r|u|d|left|right|up|down"
         [[ $arg =~ ^(${ex})$ ]] || ERX "$err expected ($ex)"
         ;;
-      swap      ) [[ $arg =~ ^(family|sibling)$ ]] || ERX "$err expected (family|sibling)" ;;
-      show|hide ) [[ $arg =~ ^[ABCD]+$ ]]          || ERX "$err expected (A|B|C|D)"        ;;
-      layout    ) [[ $arg =~ = || $arg = redo ]]   || ERX "$err"                           ;;
+      swap      ) [[ $arg =~ ^(family|sibling|cycle) ]] || ERX "$err expected (family|sibling|cycleCW|cycleCC|cycle)" ;;
+      show|hide ) [[ $arg =~ ^[ABCD]+$ ]]               || ERX "$err expected (A|B|C|D)"        ;;
+      layout    ) [[ $arg =~ = || $arg = redo ]]        || ERX "$err"                           ;;
       float     ) (($#)) && ERX "$err expected 0 arguments got '($*)'"                     ;;
       orientation )
         ex="vertical|horizontal|toggle"

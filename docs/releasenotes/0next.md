@@ -26,3 +26,7 @@ new command line options: --offset-x, --offset-y, --force-wrap, --ignore-last
 ## bugfixes in shared awk script and viswiz awk
 
 both related to finding current monitor and focus wrapping.
+
+## i3fyra --swap cycle
+
+cycle is an alias for cycleCW, cycleCC also available as arguments
