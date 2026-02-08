@@ -1,3 +1,5 @@
+# MAINTAINED AT https://git.budlabs.xyz/bud/i3ass
+
 # i3ass  
 
 commands to assist and extend the use of i3wm.
