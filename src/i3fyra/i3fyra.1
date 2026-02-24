@@ -13,7 +13,7 @@ i3fyra --move|-m DEST [--conid|-n CON_ID] [--speed|-p INT]
 i3fyra --orientation ORIENTATION
 i3fyra --clear-virtuals
 i3fyra --mono|-M
-i3fyra --swap|-S AXIS
+i3fyra --swap|-S sibling|family|cycle|cycleCC|cycleCW
 i3fyra [--verbose] [--dryrun] [--force|-f] 
 i3fyra --help|-h
 i3fyra --version|-v 
@@ -123,23 +123,23 @@ https://youtu.be/kU8gb6WLFk8
 
 .SH OPTIONS
 .EX
---array              ARRAY       | ARRAY should be the output of `i3list`  
---clear-virtuals                 | clear/reset virtual positions  
--n, --conid          CON_ID      | window with **CON_ID** will be used instead of active window  
---dryrun                         | don't execute wm commands  
--a, --float                      | toggle floating state of a window  
--f, --force                      | ignore virtual positioning.  
--h, --help                       | print help and exit  
--z, --hide           CONTAINER   | Hide target containers if visible.  
--l, --layout         LAYOUT      | update the size of the layout  
--M, --mono                       | toggle monocle mode 
--m, --move           DEST        | move window/create container  
---orientation        ORIENTATION | main split orientation on i3fyra WS (horizontal|vertical|toggle)
--s, --show           CONTAINER   | Show target container.  
--p, --speed          INT         | distance in px a floating windows will be moved  
--S, --swap           AXIS        | switch position with <sibling|family>  
---verbose                        | print more stuff to stderr  
--v, --version                    | louder output  
+--array              ARRAY                                | ARRAY should be the output of `i3list`  
+--clear-virtuals                                          | clear/reset virtual positions  
+-n, --conid          CON_ID                               | window with **CON_ID** will be used instead of active window  
+--dryrun                                                  | don't execute wm commands  
+-a, --float                                               | toggle floating state of a window  
+-f, --force                                               | ignore virtual positioning.  
+-h, --help                                                | print help and exit  
+-z, --hide           CONTAINER                            | Hide target containers if visible.  
+-l, --layout         LAYOUT                               | update the size of the layout  
+-M, --mono                                                | toggle monocle mode 
+-m, --move           DEST                                 | move window/create container  
+--orientation        ORIENTATION                          | main split orientation on i3fyra WS (horizontal|vertical|toggle)
+-s, --show           CONTAINER                            | Show target container.  
+-p, --speed          INT                                  | distance in px a floating windows will be moved  
+-S, --swap           sibling|family|cycle|cycleCC|cycleCW | switch position with <sibling|family>  
+--verbose                                                 | print more stuff to stderr  
+-v, --version                                             | louder output  
 .EE
 
 .SS --array              ARRAY

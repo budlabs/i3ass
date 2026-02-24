@@ -6,7 +6,7 @@
 --orientation ORIENTATION
 --clear-virtuals
 --mono|-M
---swap|-S AXIS
+--swap|-S sibling|family|cycle|cycleCC|cycleCW
 [--verbose] [--dryrun] [--force|-f] 
 --help|-h
 --version|-v 
